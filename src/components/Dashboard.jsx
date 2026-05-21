@@ -26,6 +26,58 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
     return missingCount;
   };
 
+  const getGrade = (score) => {
+    if (score >= 80) return '4.0';
+    if (score >= 75) return '3.5';
+    if (score >= 70) return '3.0';
+    if (score >= 65) return '2.5';
+    if (score >= 60) return '2.0';
+    if (score >= 55) return '1.5';
+    if (score >= 50) return '1.0';
+    return '0';
+  };
+
+  const getGradeSummaryData = (clsId, clsStudents, clsColumns, clsScores) => {
+    const summary = { '4.0': 0, '3.5': 0, '3.0': 0, '2.5': 0, '2.0': 0, '1.5': 0, '1.0': 0, '0': 0 };
+    const activeClassData = classes.find(c => c.id === clsId);
+    if (!activeClassData) return [];
+    
+    const totalMaxCollected = clsColumns.filter(c => c.type !== 'exam').reduce((sum, col) => sum + col.maxScore, 0);
+    const totalMaxExam = clsColumns.filter(c => c.type === 'exam').reduce((sum, col) => sum + col.maxScore, 0);
+    const collectedRatio = activeClassData.collectedRatio || 80;
+    const examRatio = activeClassData.examRatio || 20;
+
+    clsStudents.forEach(student => {
+      let rawCollected = 0;
+      let rawExam = 0;
+
+      clsColumns.forEach(col => {
+        const record = clsScores.find(s => s.studentId === student.id && s.columnId === col.id);
+        if (record) {
+          if (col.type === 'exam') rawExam += record.score;
+          else rawCollected += record.score;
+        }
+      });
+
+      let scaledCollected = totalMaxCollected > 0 ? (rawCollected / totalMaxCollected) * collectedRatio : 0;
+      let scaledExam = totalMaxExam > 0 ? (rawExam / totalMaxExam) * examRatio : 0;
+      let totalScaled = Math.round(scaledCollected + scaledExam);
+
+      summary[getGrade(totalScaled)]++;
+    });
+
+    return [
+      { grade: '4.0', value: summary['4.0'] },
+      { grade: '3.5', value: summary['3.5'] },
+      { grade: '3.0', value: summary['3.0'] },
+      { grade: '2.5', value: summary['2.5'] },
+      { grade: '2.0', value: summary['2.0'] },
+      { grade: '1.5', value: summary['1.5'] },
+      { grade: '1.0', value: summary['1.0'] },
+      { grade: '0', value: summary['0'] }
+    ];
+  };
+
   // ----- Global Overview Mode -----
   if (!activeClassId) {
     const totalClasses = classes.length;
@@ -366,8 +418,46 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
             )}
           </div>
           <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-            <button className="btn btn-primary" onClick={() => navigate('/grades')} style={{ width: '100%' }}>
-              ดูสรุปผลการเรียนฉบับเต็ม (Print)
+            <button className="btn btn-primary" onClick={() => navigate('/attendance')} style={{ width: '100%' }}>
+              ดูรายละเอียดเวลาเรียน
+            </button>
+          </div>
+        </div>
+        
+        <div className="card" style={{ padding: '1.5rem', gridColumn: '1 / -1' }}>
+          <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.125rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--primary-color)' }}>
+            <BarChart3 size={20} /> สรุปผลการเรียน (ตัดเกรดจำลอง)
+          </h3>
+          <div style={{ width: '100%', height: 300 }}>
+            {classColumns.length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <BarChart data={getGradeSummaryData(activeClassId, classStudents, classColumns, scores)}>
+                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
+                  <XAxis dataKey="grade" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} axisLine={{ stroke: 'var(--border-color)' }} tickLine={false} />
+                  <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} axisLine={false} tickLine={false} allowDecimals={false} />
+                  <Tooltip 
+                    contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#fff' }} 
+                    cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                    formatter={(value) => [`${value} คน`, 'จำนวนนักเรียน']}
+                  />
+                  <Bar dataKey="value" fill="url(#colorGrade)" radius={[6, 6, 0, 0]} />
+                  <defs>
+                    <linearGradient id="colorGrade" x1="0" y1="0" x2="0" y2="1">
+                      <stop offset="5%" stopColor="#34d399" stopOpacity={0.9}/>
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0.4}/>
+                    </linearGradient>
+                  </defs>
+                </BarChart>
+              </ResponsiveContainer>
+            ) : (
+              <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
+                ไม่มีช่องคะแนนสำหรับประเมินผล
+              </div>
+            )}
+          </div>
+          <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+            <button className="btn btn-primary" onClick={() => navigate('/grades')} style={{ width: '100%', maxWidth: '400px' }}>
+              ดูสรุปผลการเรียนฉบับเต็ม (ปพ.5)
             </button>
           </div>
         </div>

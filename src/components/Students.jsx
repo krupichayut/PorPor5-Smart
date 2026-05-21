@@ -1,5 +1,6 @@
-import { useState } from 'react';
-import { Users, Plus, Trash2, Edit } from 'lucide-react';
+import { useState, useRef } from 'react';
+import { Users, Plus, Trash2, Edit, Download, Upload } from 'lucide-react';
+import * as XLSX from 'xlsx';
 
 export default function Students({ students, setStudents, activeClassId, classes, readOnly }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -12,7 +13,9 @@ export default function Students({ students, setStudents, activeClassId, classes
   const [editingStudent, setEditingStudent] = useState(null);
   const [editNumber, setEditNumber] = useState('');
   const [editStudentId, setEditStudentId] = useState('');
+  const [editStudentId, setEditStudentId] = useState('');
   const [editName, setEditName] = useState('');
+  const fileInputRef = useRef(null);
   
   const activeClass = classes.find(c => c.id === activeClassId);
   const classStudents = students.filter(s => s.classId === activeClassId).sort((a, b) => a.number - b.number);
@@ -117,6 +120,87 @@ export default function Students({ students, setStudents, activeClassId, classes
     setEditingStudent(null);
   };
 
+  const handleExportExcel = () => {
+    if (classStudents.length === 0) {
+      alert("ไม่มีข้อมูลนักเรียนให้ส่งออก");
+      return;
+    }
+    const wsData = classStudents.map(s => ({
+      'เลขที่': s.number,
+      'รหัสประจำตัว': s.studentId,
+      'ชื่อ - นามสกุล': s.name
+    }));
+    const ws = XLSX.utils.json_to_sheet(wsData);
+    const wb = XLSX.utils.book_new();
+    XLSX.utils.book_append_sheet(wb, ws, "Students");
+    XLSX.writeFile(wb, `รายชื่อนักเรียน_${activeClass?.name || 'ห้องเรียน'}.xlsx`);
+  };
+
+  const handleImportExcel = (e) => {
+    const file = e.target.files[0];
+    if (!file) return;
+
+    const reader = new FileReader();
+    reader.onload = (event) => {
+      try {
+        const data = new Uint8Array(event.target.result);
+        const workbook = XLSX.read(data, { type: 'array' });
+        const firstSheetName = workbook.SheetNames[0];
+        const worksheet = workbook.Sheets[firstSheetName];
+        const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+        
+        const rows = json.slice(1).filter(r => r.length > 0); // ข้ามแถว header
+        let currentNumber = classStudents.length > 0 ? Math.max(...classStudents.map(s => s.number)) + 1 : 1;
+        const newStudents = [];
+        const timestamp = Date.now();
+
+        rows.forEach((row, idx) => {
+          const strRow = row.map(cell => cell ? String(cell).trim() : '');
+          const validCells = strRow.filter(cell => cell.length > 0);
+          
+          let number, studentId, name;
+          if (validCells.length >= 3) {
+            number = parseInt(validCells[0], 10) || currentNumber++;
+            studentId = validCells[1];
+            name = validCells[2];
+          } else if (validCells.length === 2) {
+            number = currentNumber++;
+            studentId = validCells[0];
+            name = validCells[1];
+          } else if (validCells.length === 1) {
+            number = currentNumber++;
+            studentId = `TMP${number}`;
+            name = validCells[0];
+          }
+
+          if (name) {
+            newStudents.push({
+              id: `${timestamp}-${idx}`,
+              classId: activeClassId,
+              studentId,
+              name,
+              number
+            });
+          }
+        });
+
+        if (newStudents.length > 0) {
+          setStudents([...students, ...newStudents]);
+          alert(`นำเข้านักเรียนสำเร็จ ${newStudents.length} คน`);
+        } else {
+          alert("ไม่พบข้อมูลนักเรียนในไฟล์ Excel หรือรูปแบบไม่ถูกต้อง");
+        }
+      } catch (err) {
+        console.error(err);
+        alert("เกิดข้อผิดพลาดในการอ่านไฟล์ Excel");
+      }
+      
+      // Reset input
+      if (fileInputRef.current) fileInputRef.current.value = '';
+    };
+    reader.readAsArrayBuffer(file);
+  };
+
   if (!activeClassId) {
     return (
       <div className="animate-fade-in">
@@ -142,10 +226,27 @@ export default function Students({ students, setStudents, activeClassId, classes
           <p className="page-subtitle">วิชา {activeClass?.subject} • จำนวนนักเรียน {classStudents.length} คน</p>
         </div>
         {!readOnly && (
-          <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
-            <Plus size={18} />
-            เพิ่มนักเรียน
-          </button>
+          <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+            <input 
+              type="file" 
+              accept=".xlsx, .xls" 
+              style={{ display: 'none' }} 
+              ref={fileInputRef}
+              onChange={handleImportExcel}
+            />
+            <button className="btn btn-secondary" onClick={() => fileInputRef.current?.click()} title="นำเข้าข้อมูลนักเรียนจาก Excel">
+              <Upload size={18} />
+              <span className="hide-on-mobile">นำเข้า Excel</span>
+            </button>
+            <button className="btn btn-secondary" onClick={handleExportExcel} title="ส่งออกข้อมูลนักเรียนเป็น Excel">
+              <Download size={18} />
+              <span className="hide-on-mobile">ส่งออก Excel</span>
+            </button>
+            <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
+              <Plus size={18} />
+              เพิ่มนักเรียน
+            </button>
+          </div>
         )}
       </div>
 

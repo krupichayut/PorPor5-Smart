@@ -580,15 +580,39 @@ body {
   .table-container {
     margin-bottom: 1rem;
     padding-bottom: 0.5rem;
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
   }
   
+  /* Modal adjustments for small screens */
+  .modal-content {
+    padding: 1.5rem;
+    max-height: 85vh;
+  }
+  
+  .modal-footer {
+    flex-direction: column;
+    gap: 0.5rem;
+  }
+  
+  .modal-footer .btn {
+    width: 100%;
+  }
+
+  .hide-on-mobile {
+    display: none;
+  }
+
   /* Stick the name column so it doesn't scroll out of view */
   .table th:nth-child(2), .table td:nth-child(2) {
     position: sticky;
     left: 0;
     z-index: 5;
-    background-color: rgba(255, 255, 255, 0.95);
+    background-color: rgba(15, 23, 42, 0.98);
     backdrop-filter: blur(8px);
     border-right: 1px solid var(--border-color);
+  }
+  .table th:nth-child(2) {
+    z-index: 6; /* Higher than td to stay above when scrolling vertically */
   }
 }
