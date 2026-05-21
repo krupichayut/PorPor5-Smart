@@ -3,6 +3,7 @@ import { Award, Plus, Trash2, Calculator, Edit2 } from 'lucide-react';
 
 export default function Scores({ students, activeClassId, classes, scores, setScores, scoreColumns, setScoreColumns, indicators, readOnly }) {
   const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
+  const [editingColumnId, setEditingColumnId] = useState(null);
   const [newColumnName, setNewColumnName] = useState('');
   const [newColumnMax, setNewColumnMax] = useState(10);
   const [newColumnIndicatorId, setNewColumnIndicatorId] = useState('');
@@ -30,25 +31,47 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
     });
   });
 
-  const handleAddColumn = (e) => {
-    e.preventDefault();
-    if (!newColumnName.trim() || newColumnMax <= 0) return;
-    
-    const newCol = {
-      id: Date.now().toString(),
-      classId: activeClassId,
-      name: newColumnName,
-      maxScore: Number(newColumnMax),
-      indicatorId: newColumnIndicatorId || null,
-      type: newColumnType
-    };
-    
-    setScoreColumns([...scoreColumns, newCol]);
-    setIsColumnModalOpen(false);
+  const handleOpenAddModal = () => {
+    setEditingColumnId(null);
     setNewColumnName('');
     setNewColumnMax(10);
     setNewColumnIndicatorId('');
     setNewColumnType('collected');
+    setIsColumnModalOpen(true);
+  };
+
+  const handleOpenEditModal = (col) => {
+    setEditingColumnId(col.id);
+    setNewColumnName(col.name);
+    setNewColumnMax(col.maxScore);
+    setNewColumnIndicatorId(col.indicatorId || '');
+    setNewColumnType(col.type || 'collected');
+    setIsColumnModalOpen(true);
+  };
+
+  const handleSaveColumn = (e) => {
+    e.preventDefault();
+    if (!newColumnName.trim() || newColumnMax <= 0) return;
+    
+    if (editingColumnId) {
+      setScoreColumns(scoreColumns.map(col => 
+        col.id === editingColumnId 
+          ? { ...col, name: newColumnName, maxScore: Number(newColumnMax), indicatorId: newColumnIndicatorId || null, type: newColumnType }
+          : col
+      ));
+    } else {
+      const newCol = {
+        id: Date.now().toString(),
+        classId: activeClassId,
+        name: newColumnName,
+        maxScore: Number(newColumnMax),
+        indicatorId: newColumnIndicatorId || null,
+        type: newColumnType
+      };
+      setScoreColumns([...scoreColumns, newCol]);
+    }
+    
+    setIsColumnModalOpen(false);
   };
 
   const handleScoreChange = (studentId, columnId, value) => {
@@ -153,7 +176,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
           <p className="page-subtitle">จัดการคะแนนเก็บและคะแนนสอบ</p>
         </div>
         {!readOnly && (
-          <button className="btn btn-primary" onClick={() => setIsColumnModalOpen(true)}>
+          <button className="btn btn-primary" onClick={handleOpenAddModal}>
             <Plus size={18} />
             เพิ่มช่องคะแนน
           </button>
@@ -211,9 +234,14 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                             </div>
                           </div>
                           {!readOnly && (
-                            <button className="btn-icon" style={{ padding: '2px', color: 'var(--danger-color)', opacity: 0.5 }} onClick={() => handleDeleteColumn(col.id)}>
-                              <Trash2 size={12} />
-                            </button>
+                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
+                              <button className="btn-icon" style={{ padding: '2px', color: 'var(--text-muted)' }} onClick={() => handleOpenEditModal(col)}>
+                                <Edit2 size={12} />
+                              </button>
+                              <button className="btn-icon" style={{ padding: '2px', color: 'var(--danger-color)', opacity: 0.5 }} onClick={() => handleDeleteColumn(col.id)}>
+                                <Trash2 size={12} />
+                              </button>
+                            </div>
                           )}
                         </div>
                       </th>
@@ -279,10 +307,10 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
-              <h3 className="modal-title">เพิ่มช่องคะแนน</h3>
+              <h3 className="modal-title">{editingColumnId ? 'แก้ไขช่องคะแนน' : 'เพิ่มช่องคะแนน'}</h3>
               <button className="btn-icon" onClick={() => setIsColumnModalOpen(false)}>×</button>
             </div>
-            <form onSubmit={handleAddColumn}>
+            <form onSubmit={handleSaveColumn}>
               <div className="form-group">
                 <label className="form-label">ประเภทคะแนน</label>
                 <div style={{ display: 'flex', gap: '1rem' }}>
@@ -347,7 +375,9 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={() => setIsColumnModalOpen(false)}>ยกเลิก</button>
-                <button type="submit" className="btn btn-primary" disabled={!newColumnName.trim() || newColumnMax <= 0}>เพิ่มช่องคะแนน</button>
+                <button type="submit" className="btn btn-primary" disabled={!newColumnName.trim() || newColumnMax <= 0}>
+                  {editingColumnId ? 'บันทึกการแก้ไข' : 'เพิ่มช่องคะแนน'}
+                </button>
               </div>
             </form>
           </div>
