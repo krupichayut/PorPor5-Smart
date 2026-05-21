@@ -1,11 +1,14 @@
 import { useState } from 'react';
-import { FileText, Plus, Trash2, ChevronDown, ChevronRight } from 'lucide-react';
+import { FileText, Plus, Trash2, ChevronDown, ChevronRight, Pencil } from 'lucide-react';
 
 export default function Indicators({ activeClassId, classes, indicators, setIndicators, readOnly }) {
   const [isUnitModalOpen, setIsUnitModalOpen] = useState(false);
   const [isIndicatorModalOpen, setIsIndicatorModalOpen] = useState(false);
   const [activeUnitId, setActiveUnitId] = useState(null);
   const [expandedUnits, setExpandedUnits] = useState({});
+
+  const [editingUnitId, setEditingUnitId] = useState(null);
+  const [editingIndicatorId, setEditingIndicatorId] = useState(null);
 
   const [newUnitName, setNewUnitName] = useState('');
   const [newUnitWeight, setNewUnitWeight] = useState(10);
@@ -26,21 +29,44 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
     e.preventDefault();
     if (!newUnitName.trim()) return;
 
-    const newUnit = {
-      id: Date.now().toString(),
-      classId: activeClassId,
-      name: newUnitName,
-      weight: Number(newUnitWeight),
-      hours: Number(newUnitHours),
-      items: []
-    };
+    if (editingUnitId) {
+      setIndicators(indicators.map(u => 
+        u.id === editingUnitId ? { ...u, name: newUnitName, weight: Number(newUnitWeight), hours: Number(newUnitHours) } : u
+      ));
+    } else {
+      const newUnit = {
+        id: Date.now().toString(),
+        classId: activeClassId,
+        name: newUnitName,
+        weight: Number(newUnitWeight),
+        hours: Number(newUnitHours),
+        items: []
+      };
+      setIndicators([...indicators, newUnit]);
+      setExpandedUnits(prev => ({ ...prev, [newUnit.id]: true }));
+    }
 
-    setIndicators([...indicators, newUnit]);
-    setExpandedUnits(prev => ({ ...prev, [newUnit.id]: true }));
     setIsUnitModalOpen(false);
     setNewUnitName('');
     setNewUnitWeight(10);
     setNewUnitHours(5);
+    setEditingUnitId(null);
+  };
+
+  const openAddUnitModal = () => {
+    setEditingUnitId(null);
+    setNewUnitName('');
+    setNewUnitWeight(10);
+    setNewUnitHours(5);
+    setIsUnitModalOpen(true);
+  };
+
+  const openEditUnitModal = (unit) => {
+    setEditingUnitId(unit.id);
+    setNewUnitName(unit.name);
+    setNewUnitWeight(unit.weight);
+    setNewUnitHours(unit.hours);
+    setIsUnitModalOpen(true);
   };
 
   const handleDeleteUnit = (unitId) => {
@@ -51,6 +77,19 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
 
   const openIndicatorModal = (unitId) => {
     setActiveUnitId(unitId);
+    setEditingIndicatorId(null);
+    setNewIndicatorCode('');
+    setNewIndicatorDesc('');
+    setNewIndicatorType('');
+    setIsIndicatorModalOpen(true);
+  };
+
+  const openEditIndicatorModal = (unitId, indicator) => {
+    setActiveUnitId(unitId);
+    setEditingIndicatorId(indicator.id);
+    setNewIndicatorCode(indicator.code);
+    setNewIndicatorDesc(indicator.description);
+    setNewIndicatorType(indicator.type || '');
     setIsIndicatorModalOpen(true);
   };
 
@@ -60,18 +99,29 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
 
     const updatedIndicators = indicators.map(unit => {
       if (unit.id === activeUnitId) {
-        return {
-          ...unit,
-          items: [
-            ...unit.items,
-            {
-              id: Date.now().toString(),
-              code: newIndicatorCode,
-              description: newIndicatorDesc,
-              type: newIndicatorType
-            }
-          ]
-        };
+        if (editingIndicatorId) {
+          return {
+            ...unit,
+            items: unit.items.map(item => 
+              item.id === editingIndicatorId 
+                ? { ...item, code: newIndicatorCode, description: newIndicatorDesc, type: newIndicatorType } 
+                : item
+            )
+          };
+        } else {
+          return {
+            ...unit,
+            items: [
+              ...unit.items,
+              {
+                id: Date.now().toString(),
+                code: newIndicatorCode,
+                description: newIndicatorDesc,
+                type: newIndicatorType
+              }
+            ]
+          };
+        }
       }
       return unit;
     });
@@ -81,6 +131,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
     setNewIndicatorCode('');
     setNewIndicatorDesc('');
     setNewIndicatorType('');
+    setEditingIndicatorId(null);
   };
 
   const handleDeleteIndicator = (unitId, indicatorId) => {
@@ -126,7 +177,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
           <p className="page-subtitle">ชั้น {activeClass?.name} • รวม {totalWeight} คะแนน • {totalHours} ชั่วโมง</p>
         </div>
         {!readOnly && (
-          <button className="btn btn-primary" onClick={() => setIsUnitModalOpen(true)}>
+          <button className="btn btn-primary" onClick={openAddUnitModal}>
             <Plus size={18} />
             เพิ่มหน่วยการเรียนรู้
           </button>
@@ -169,14 +220,24 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
                               {item.type === 'end' && <span style={{ marginLeft: '6px', backgroundColor: '#e0e7ff', color: '#4338ca', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600 }}>ปลายทาง</span>}
                               {' '}{item.description}
                               {!readOnly && (
-                                <button 
-                                  className="btn-icon" 
-                                  style={{ display: 'inline-flex', padding: '0 4px', color: 'var(--danger-color)', opacity: 0.6, verticalAlign: 'middle' }} 
-                                  onClick={() => handleDeleteIndicator(unit.id, item.id)}
-                                  title="ลบตัวชี้วัดนี้"
-                                >
-                                  <Trash2 size={12} />
-                                </button>
+                                <>
+                                  <button 
+                                    className="btn-icon" 
+                                    style={{ display: 'inline-flex', padding: '0 4px', color: 'var(--primary-color)', opacity: 0.8, verticalAlign: 'middle', marginLeft: '8px' }} 
+                                    onClick={() => openEditIndicatorModal(unit.id, item)}
+                                    title="แก้ไขตัวชี้วัดนี้"
+                                  >
+                                    <Pencil size={12} />
+                                  </button>
+                                  <button 
+                                    className="btn-icon" 
+                                    style={{ display: 'inline-flex', padding: '0 4px', color: 'var(--danger-color)', opacity: 0.6, verticalAlign: 'middle' }} 
+                                    onClick={() => handleDeleteIndicator(unit.id, item.id)}
+                                    title="ลบตัวชี้วัดนี้"
+                                  >
+                                    <Trash2 size={12} />
+                                  </button>
+                                </>
                               )}
                             </li>
                           ))}
@@ -191,7 +252,10 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
                     <td style={{ textAlign: 'center', paddingTop: '1rem' }}>{unit.hours}</td>
                     <td style={{ textAlign: 'center', paddingTop: '1rem' }}>{unit.weight}</td>
                     {!readOnly && (
-                      <td style={{ textAlign: 'center', paddingTop: '1rem' }}>
+                      <td style={{ textAlign: 'center', paddingTop: '1rem', display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
+                        <button className="btn-icon" style={{ color: 'var(--primary-color)' }} onClick={() => openEditUnitModal(unit)} title="แก้ไขหน่วยการเรียนรู้นี้">
+                          <Pencil size={16} />
+                        </button>
                         <button className="btn-icon" style={{ color: 'var(--danger-color)' }} onClick={() => handleDeleteUnit(unit.id)} title="ลบหน่วยการเรียนรู้นี้">
                           <Trash2 size={16} />
                         </button>
@@ -216,7 +280,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
-              <h3 className="modal-title">เพิ่มหน่วยการเรียนรู้</h3>
+              <h3 className="modal-title">{editingUnitId ? 'แก้ไขหน่วยการเรียนรู้' : 'เพิ่มหน่วยการเรียนรู้'}</h3>
               <button className="btn-icon" onClick={() => setIsUnitModalOpen(false)}>×</button>
             </div>
             <form onSubmit={handleAddUnit}>
@@ -257,7 +321,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={() => setIsUnitModalOpen(false)}>ยกเลิก</button>
-                <button type="submit" className="btn btn-primary" disabled={!newUnitName.trim()}>เพิ่มหน่วยฯ</button>
+                <button type="submit" className="btn btn-primary" disabled={!newUnitName.trim()}>{editingUnitId ? 'บันทึกการแก้ไข' : 'เพิ่มหน่วยฯ'}</button>
               </div>
             </form>
           </div>
@@ -269,7 +333,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
-              <h3 className="modal-title">เพิ่มตัวชี้วัด / ผลการเรียนรู้</h3>
+              <h3 className="modal-title">{editingIndicatorId ? 'แก้ไขตัวชี้วัด / ผลการเรียนรู้' : 'เพิ่มตัวชี้วัด / ผลการเรียนรู้'}</h3>
               <button className="btn-icon" onClick={() => setIsIndicatorModalOpen(false)}>×</button>
             </div>
             <form onSubmit={handleAddIndicator}>
@@ -308,7 +372,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={() => setIsIndicatorModalOpen(false)}>ยกเลิก</button>
-                <button type="submit" className="btn btn-primary" disabled={!newIndicatorCode.trim() || !newIndicatorDesc.trim()}>บันทึกข้อมูล</button>
+                <button type="submit" className="btn btn-primary" disabled={!newIndicatorCode.trim() || !newIndicatorDesc.trim()}>{editingIndicatorId ? 'บันทึกการแก้ไข' : 'บันทึกข้อมูล'}</button>
               </div>
             </form>
           </div>
