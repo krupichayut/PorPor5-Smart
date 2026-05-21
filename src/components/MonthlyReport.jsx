@@ -44,6 +44,15 @@ export default function MonthlyReport({ appSettings, activeClassId, classes, stu
   return (
     <div className="animate-fade-in">
       <style>{`
+        .print-a4 {
+          color: black !important;
+        }
+        .print-a4 .table td, .print-a4 .table th {
+          color: black !important;
+        }
+        .print-a4 .table th {
+          background-color: #f1f5f9 !important;
+        }
         @media print {
           body { background: white; margin: 0; padding: 0; }
           .app-container { display: block !important; height: auto; }
@@ -69,11 +78,12 @@ export default function MonthlyReport({ appSettings, activeClassId, classes, stu
             border: 1px solid black !important;
             padding: 4px 8px !important;
             color: black !important;
+            background-color: white !important;
           }
           
           @page {
             size: A4 portrait;
-            margin: 15mm 20mm; /* Top/Bottom 15mm, Left/Right 20mm to center on page */
+            margin: 15mm 20mm;
           }
         }
       `}</style>
