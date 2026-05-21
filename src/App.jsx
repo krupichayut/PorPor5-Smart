@@ -121,11 +121,7 @@ function App() {
             <div style={{ margin: '1rem 0 0.5rem 1rem', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               ข้อมูลพื้นฐาน
             </div>
-            
-            <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Settings />
-              <span>ตั้งค่าข้อมูลโรงเรียน</span>
-            </NavLink>
+
             <NavLink to="/classes" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <BookOpen />
               <span>ห้องเรียน / วิชา</span>
@@ -187,6 +183,10 @@ function App() {
           </nav>
           
           <div style={{ marginTop: 'auto', padding: '1rem', borderTop: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ marginBottom: '0.5rem' }}>
+              <Settings />
+              <span>ตั้งค่าระบบ (ปพ.5)</span>
+            </NavLink>
             {user ? (
               <button className="btn btn-secondary" style={{ width: '100%', justifyContent: 'center' }} onClick={handleLogout}>
                 <LogOut size={18} style={{ marginRight: '0.5rem' }} />
