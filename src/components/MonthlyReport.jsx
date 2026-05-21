@@ -1,0 +1,213 @@
+import { useState, useRef } from 'react';
+import { Printer, CalendarDays, FileText } from 'lucide-react';
+
+export default function MonthlyReport({ appSettings, activeClassId, classes, students, attendance, scoreColumns, scores }) {
+  const [selectedMonth, setSelectedMonth] = useState(() => {
+    const today = new Date();
+    return `${today.getFullYear()}-${String(today.getMonth() + 1).padStart(2, '0')}`;
+  });
+
+  const activeClass = classes.find(c => c.id === activeClassId);
+  const classStudents = students.filter(s => s.classId === activeClassId).sort((a, b) => a.number - b.number);
+  const classScoreColumns = scoreColumns.filter(c => c.classId === activeClassId && c.type !== 'exam');
+
+  const monthObj = new Date(selectedMonth + '-01');
+  const monthName = monthObj.toLocaleDateString('th-TH', { month: 'long', year: 'numeric' });
+  const todayFormatted = new Date().toLocaleDateString('th-TH', { day: 'numeric', month: 'long', year: 'numeric' });
+
+  // Process data for the selected month
+  const classAttendance = attendance.filter(a => a.classId === activeClassId && a.date.startsWith(selectedMonth));
+  const uniqueDatesInMonth = [...new Set(classAttendance.map(a => a.date))];
+  const totalDaysInMonth = uniqueDatesInMonth.length;
+
+  const handlePrint = () => {
+    window.print();
+  };
+
+  if (!activeClassId) {
+    return (
+      <div className="animate-fade-in">
+        <div className="page-header">
+          <div>
+            <h2 className="page-title">รายงานประจำเดือน</h2>
+            <p className="page-subtitle">พิมพ์รายงานสรุปผลการเรียนและเวลาเรียนรูปแบบทางการ</p>
+          </div>
+        </div>
+        <div className="card" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
+          <FileText size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
+          <p>กรุณาเลือกห้องเรียนจากเมนู <strong>ห้องเรียน / วิชา</strong> ก่อน</p>
+        </div>
+      </div>
+    );
+  }
+
+  return (
+    <div className="animate-fade-in">
+      <style>{`
+        @media print {
+          body { background: white; margin: 0; padding: 0; }
+          .app-container { display: block !important; height: auto; }
+          .sidebar, .page-header, .no-print { display: none !important; }
+          .main-content { padding: 0 !important; margin: 0 !important; }
+          
+          .print-a4 {
+            width: 210mm;
+            min-height: 297mm;
+            margin: 0 auto !important;
+            padding: 20mm !important;
+            box-sizing: border-box;
+            background: white;
+            box-shadow: none !important;
+          }
+          
+          .official-font {
+            font-family: 'Sarabun', 'TH Sarabun PSK', sans-serif;
+            color: black !important;
+          }
+          
+          .print-table th, .print-table td {
+            border: 1px solid black !important;
+            padding: 4px 8px !important;
+            color: black !important;
+          }
+          
+          @page {
+            size: A4 portrait;
+            margin: 0;
+          }
+        }
+      `}</style>
+
+      <div className="page-header no-print">
+        <div>
+          <h2 className="page-title">รายงานประจำเดือน: {activeClass?.name}</h2>
+          <p className="page-subtitle">สร้างเอกสารบันทึกข้อความสรุปการจัดการเรียนการสอน</p>
+        </div>
+        <button className="btn btn-primary" onClick={handlePrint}>
+          <Printer size={18} />
+          พิมพ์รายงาน (PDF)
+        </button>
+      </div>
+
+      <div className="card no-print" style={{ marginBottom: '2rem', display: 'flex', alignItems: 'flex-end', gap: '1rem' }}>
+        <div className="form-group" style={{ flex: 1, margin: 0 }}>
+          <label className="form-label">เลือกเดือนที่ต้องการรายงาน</label>
+          <input 
+            type="month" 
+            className="form-input" 
+            value={selectedMonth}
+            onChange={(e) => setSelectedMonth(e.target.value)}
+          />
+        </div>
+        <div style={{ color: 'var(--text-muted)', fontSize: '0.875rem', paddingBottom: '0.5rem' }}>
+          * ข้อมูลในตารางจะคำนวณจากเดือนที่เลือกเท่านั้น
+        </div>
+      </div>
+
+      {/* A4 Printable Area */}
+      <div className="card print-a4 official-font" style={{ margin: '0 auto', maxWidth: '210mm', backgroundColor: 'white', color: 'black' }}>
+        
+        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
+          <div style={{ width: '60px', height: '65px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Tra_Khrut_small.svg/100px-Tra_Khrut_small.svg.png" alt="ตราครุฑ" style={{ width: '100%', height: 'auto', opacity: 0.8 }} />
+          </div>
+          <div style={{ flex: 1, textAlign: 'center', fontSize: '24pt', fontWeight: 'bold' }}>บันทึกข้อความ</div>
+          <div style={{ width: '60px' }}></div>
+        </div>
+        
+        <div style={{ fontSize: '16pt', marginBottom: '5px' }}>
+          <strong>ส่วนราชการ</strong> <span style={{ textDecoration: 'dotted underline', textUnderlineOffset: '4px' }}>{appSettings?.schoolName || 'โรงเรียน....................................'}</span>
+        </div>
+        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16pt', marginBottom: '5px' }}>
+          <div><strong>ที่</strong> ........................................</div>
+          <div><strong>วันที่</strong> <span style={{ textDecoration: 'dotted underline', textUnderlineOffset: '4px' }}>{todayFormatted}</span></div>
+        </div>
+        <div style={{ fontSize: '16pt', marginBottom: '20px' }}>
+          <strong>เรื่อง</strong> รายงานผลการจัดการเรียนการสอนและสถิติเวลาเรียน ประจำเดือน {monthName}
+        </div>
+        
+        <hr style={{ borderTop: '1px solid black', margin: '20px 0' }} />
+        
+        <div style={{ fontSize: '16pt', marginBottom: '15px' }}>
+          <strong>เรียน</strong> ผู้อำนวยการ{appSettings?.schoolName || 'โรงเรียน....................................'}
+        </div>
+        
+        <div style={{ fontSize: '16pt', textIndent: '2.5em', textAlign: 'justify', marginBottom: '20px', lineHeight: '1.5' }}>
+          ด้วยข้าพเจ้า {appSettings?.teacherName || '....................................'} ตำแหน่ง ครูผู้สอน ได้รับมอบหมายให้ปฏิบัติหน้าที่สอนในรายวิชา {activeClass?.subject} ชั้น {activeClass?.name} ประจำภาคเรียนที่ {appSettings?.semester || '....'} ปีการศึกษา {appSettings?.academicYear || '....'} บัดนี้การจัดการเรียนการสอนประจำเดือน {monthName} ได้เสร็จสิ้นลงแล้ว จึงขอรายงานสถิติเวลาเรียนและการส่งงานของนักเรียน ดังตารางแนบท้ายนี้
+        </div>
+        
+        {totalDaysInMonth === 0 ? (
+          <div style={{ textAlign: 'center', margin: '2rem 0', fontStyle: 'italic', color: '#666' }}>
+            (ไม่มีข้อมูลการเช็คชื่อในเดือนนี้)
+          </div>
+        ) : (
+          <table className="table print-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14pt', marginBottom: '20px' }}>
+            <thead>
+              <tr>
+                <th style={{ width: '50px', textAlign: 'center' }}>เลขที่</th>
+                <th>ชื่อ-นามสกุล</th>
+                <th style={{ width: '60px', textAlign: 'center' }}>มา/หยุด</th>
+                <th style={{ width: '60px', textAlign: 'center' }}>ลา</th>
+                <th style={{ width: '60px', textAlign: 'center' }}>ขาด</th>
+                <th style={{ width: '60px', textAlign: 'center' }}>สาย</th>
+                <th style={{ width: '100px', textAlign: 'center' }}>งานค้าง (ชิ้น)</th>
+              </tr>
+            </thead>
+            <tbody>
+              {classStudents.map(student => {
+                const studentAttendance = classAttendance.filter(a => a.studentId === student.id);
+                const presentCount = studentAttendance.filter(a => a.status === 'present').length;
+                const holidayCount = studentAttendance.filter(a => a.status === 'holiday').length;
+                const leaveCount = studentAttendance.filter(a => a.status === 'leave').length;
+                const absentCount = studentAttendance.filter(a => a.status === 'absent').length;
+                const lateCount = studentAttendance.filter(a => a.status === 'late').length;
+                
+                // Count missing works (only collected ones, overall)
+                const missingWorks = classScoreColumns.filter(col => {
+                  const record = scores.find(s => s.studentId === student.id && s.columnId === col.id);
+                  return !record || record.score === '';
+                }).length;
+
+                return (
+                  <tr key={student.id}>
+                    <td style={{ textAlign: 'center' }}>{student.number}</td>
+                    <td>{student.name}</td>
+                    <td style={{ textAlign: 'center' }}>{presentCount + holidayCount}</td>
+                    <td style={{ textAlign: 'center' }}>{leaveCount}</td>
+                    <td style={{ textAlign: 'center' }}>{absentCount}</td>
+                    <td style={{ textAlign: 'center' }}>{lateCount}</td>
+                    <td style={{ textAlign: 'center' }}>{missingWorks > 0 ? missingWorks : '-'}</td>
+                  </tr>
+                );
+              })}
+            </tbody>
+          </table>
+        )}
+        
+        <div style={{ fontSize: '16pt', textIndent: '2.5em', marginBottom: '40px' }}>
+          จึงเรียนมาเพื่อโปรดทราบและพิจารณา
+        </div>
+
+        <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: '40px', fontSize: '16pt', textAlign: 'center' }}>
+          <div>
+            ลงชื่อ......................................................ผู้รายงาน<br />
+            ({appSettings?.teacherName || '......................................'})<br />
+            ครูผู้สอน
+          </div>
+          <div>
+            ลงชื่อ......................................................ผู้รับรอง<br />
+            ({appSettings?.academicHeadName || '......................................'})<br />
+            หัวหน้าฝ่ายวิชาการ
+          </div>
+        </div>
+        
+        <div style={{ textAlign: 'center', marginTop: '60px', fontSize: '16pt' }}>
+          ลงชื่อ......................................................ผู้อนุมัติ<br />
+          ({appSettings?.principalName || '......................................'})<br />
+          ผู้อำนวยการ{appSettings?.schoolName || 'โรงเรียน........................'}
+        </div>
+        
+      </div>
+    </div>
+  );
+}

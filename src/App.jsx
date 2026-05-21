@@ -13,6 +13,8 @@ import Literacy from './components/Literacy';
 import Competencies from './components/Competencies';
 import Indicators from './components/Indicators';
 import MissingWork from './components/MissingWork';
+import SettingsPage from './components/SettingsPage';
+import MonthlyReport from './components/MonthlyReport';
 
 const Dashboard = ({ classes, students, activeClassId }) => {
   const activeClass = classes.find(c => c.id === activeClassId);
@@ -83,8 +85,17 @@ function App() {
   const [competencies, setCompetencies, compInit] = useFirestoreData('appData', 'competencies', []);
   
   const [indicators, setIndicators, indInit] = useFirestoreData('appData', 'indicators', []);
+  
+  const [appSettings, setAppSettings, settingsInit] = useFirestoreData('appData', 'settings', {
+    schoolName: '',
+    teacherName: '',
+    academicHeadName: '',
+    principalName: '',
+    academicYear: '',
+    semester: ''
+  });
 
-  const isDataLoaded = classesInit && studentsInit && attInit && scInit && scoresInit && attrInit && litInit && compInit && indInit;
+  const isDataLoaded = classesInit && studentsInit && attInit && scInit && scoresInit && attrInit && litInit && compInit && indInit && settingsInit;
 
   const activeClass = classes ? classes.find(c => c.id === activeClassId) : null;
 
@@ -128,6 +139,10 @@ function App() {
               ข้อมูลพื้นฐาน
             </div>
             
+            <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Settings />
+              <span>ตั้งค่าข้อมูลโรงเรียน</span>
+            </NavLink>
             <NavLink to="/classes" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <BookOpen />
               <span>ห้องเรียน / วิชา</span>
@@ -178,6 +193,10 @@ function App() {
             <div style={{ margin: '1rem 0 0.5rem 1rem', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               รายงาน
             </div>
+            <NavLink to="/monthly-report" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <FileText />
+              <span>รายงานประจำเดือน</span>
+            </NavLink>
             <NavLink to="/grades" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <BarChart3 />
               <span>สรุปผลการเรียน (Print)</span>
@@ -190,12 +209,14 @@ function App() {
         <main className="main-content">
           <Routes>
             <Route path="/" element={<Dashboard classes={classes} students={students} activeClassId={activeClassId} />} />
+            <Route path="/settings" element={<SettingsPage appSettings={appSettings} setAppSettings={setAppSettings} />} />
             <Route path="/classes" element={<Classes classes={classes} setClasses={setClasses} activeClassId={activeClassId} setActiveClassId={setActiveClassId} />} />
             <Route path="/indicators" element={<Indicators activeClassId={activeClassId} classes={classes} indicators={indicators} setIndicators={setIndicators} />} />
             <Route path="/students" element={<Students students={students} setStudents={setStudents} classes={classes} activeClassId={activeClassId} />} />
             <Route path="/attendance" element={<Attendance students={students} activeClassId={activeClassId} classes={classes} attendance={attendance} setAttendance={setAttendance} />} />
             <Route path="/scores" element={<Scores students={students} activeClassId={activeClassId} classes={classes} scores={scores} setScores={setScores} scoreColumns={scoreColumns} setScoreColumns={setScoreColumns} indicators={indicators} />} />
             <Route path="/missing-work" element={<MissingWork students={students} activeClassId={activeClassId} classes={classes} scores={scores} setScores={setScores} scoreColumns={scoreColumns} />} />
+            <Route path="/monthly-report" element={<MonthlyReport appSettings={appSettings} activeClassId={activeClassId} classes={classes} students={students} attendance={attendance} scoreColumns={scoreColumns} scores={scores} />} />
             <Route path="/grades" element={<Grades students={students} activeClassId={activeClassId} classes={classes} scores={scores} scoreColumns={scoreColumns} attributes={attributes} literacy={literacy} competencies={competencies} />} />
             
             <Route path="/attributes" element={<Attributes students={students} activeClassId={activeClassId} classes={classes} attributes={attributes} setAttributes={setAttributes} />} />
