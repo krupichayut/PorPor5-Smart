@@ -51,13 +51,13 @@ export default function MonthlyReport({ appSettings, activeClassId, classes, stu
           .main-content { padding: 0 !important; margin: 0 !important; }
           
           .print-a4 {
-            width: 210mm;
-            min-height: 297mm;
-            margin: 0 auto !important;
-            padding: 20mm !important;
-            box-sizing: border-box;
+            width: 100% !important;
+            max-width: 100% !important;
+            margin: 0 !important;
+            padding: 0 !important;
             background: white;
             box-shadow: none !important;
+            border: none !important;
           }
           
           .official-font {
@@ -73,7 +73,7 @@ export default function MonthlyReport({ appSettings, activeClassId, classes, stu
           
           @page {
             size: A4 portrait;
-            margin: 0;
+            margin: 15mm 20mm; /* Top/Bottom 15mm, Left/Right 20mm to center on page */
           }
         }
       `}</style>
