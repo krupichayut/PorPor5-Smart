@@ -107,33 +107,21 @@ export default function MonthlyReport({ appSettings, activeClassId, classes, stu
       {/* A4 Printable Area */}
       <div className="card print-a4 official-font" style={{ margin: '0 auto', maxWidth: '210mm', backgroundColor: 'white', color: 'black' }}>
         
-        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', marginBottom: '20px' }}>
-          <div style={{ width: '60px', height: '65px', display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
-            <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/1/15/Tra_Khrut_small.svg/100px-Tra_Khrut_small.svg.png" alt="ตราครุฑ" style={{ width: '100%', height: 'auto', opacity: 0.8 }} />
+        <div style={{ textAlign: 'center', marginBottom: '30px', lineHeight: '1.4' }}>
+          <div style={{ fontSize: '20pt', fontWeight: 'bold' }}>แบบรายงานผลการจัดการเรียนการสอนและสถิติเวลาเรียน</div>
+          <div style={{ fontSize: '18pt', fontWeight: 'bold' }}>ประจำเดือน {monthName} ภาคเรียนที่ {appSettings?.semester || '....'} ปีการศึกษา {appSettings?.academicYear || '...........'}</div>
+          <div style={{ fontSize: '18pt', fontWeight: 'bold' }}>{appSettings?.schoolName || 'โรงเรียน....................................'}</div>
+        </div>
+        
+        <div style={{ fontSize: '16pt', marginBottom: '20px', lineHeight: '1.5' }}>
+          <div style={{ display: 'flex', gap: '2rem' }}>
+            <div><strong>รายวิชา:</strong> {activeClass?.subject}</div>
+            <div><strong>ระดับชั้น:</strong> {activeClass?.name}</div>
           </div>
-          <div style={{ flex: 1, textAlign: 'center', fontSize: '24pt', fontWeight: 'bold' }}>บันทึกข้อความ</div>
-          <div style={{ width: '60px' }}></div>
-        </div>
-        
-        <div style={{ fontSize: '16pt', marginBottom: '5px' }}>
-          <strong>ส่วนราชการ</strong> <span style={{ textDecoration: 'dotted underline', textUnderlineOffset: '4px' }}>{appSettings?.schoolName || 'โรงเรียน....................................'}</span>
-        </div>
-        <div style={{ display: 'flex', justifyContent: 'space-between', fontSize: '16pt', marginBottom: '5px' }}>
-          <div><strong>ที่</strong> ........................................</div>
-          <div><strong>วันที่</strong> <span style={{ textDecoration: 'dotted underline', textUnderlineOffset: '4px' }}>{todayFormatted}</span></div>
-        </div>
-        <div style={{ fontSize: '16pt', marginBottom: '20px' }}>
-          <strong>เรื่อง</strong> รายงานผลการจัดการเรียนการสอนและสถิติเวลาเรียน ประจำเดือน {monthName}
-        </div>
-        
-        <hr style={{ borderTop: '1px solid black', margin: '20px 0' }} />
-        
-        <div style={{ fontSize: '16pt', marginBottom: '15px' }}>
-          <strong>เรียน</strong> ผู้อำนวยการ{appSettings?.schoolName || 'โรงเรียน....................................'}
-        </div>
-        
-        <div style={{ fontSize: '16pt', textIndent: '2.5em', textAlign: 'justify', marginBottom: '20px', lineHeight: '1.5' }}>
-          ด้วยข้าพเจ้า {appSettings?.teacherName || '....................................'} ตำแหน่ง ครูผู้สอน ได้รับมอบหมายให้ปฏิบัติหน้าที่สอนในรายวิชา {activeClass?.subject} ชั้น {activeClass?.name} ประจำภาคเรียนที่ {appSettings?.semester || '....'} ปีการศึกษา {appSettings?.academicYear || '....'} บัดนี้การจัดการเรียนการสอนประจำเดือน {monthName} ได้เสร็จสิ้นลงแล้ว จึงขอรายงานสถิติเวลาเรียนและการส่งงานของนักเรียน ดังตารางแนบท้ายนี้
+          <div style={{ display: 'flex', gap: '2rem' }}>
+            <div><strong>ครูผู้สอน:</strong> {appSettings?.teacherName || '....................................'}</div>
+            <div><strong>วันที่รายงาน:</strong> {todayFormatted}</div>
+          </div>
         </div>
         
         {totalDaysInMonth === 0 ? (
@@ -184,11 +172,7 @@ export default function MonthlyReport({ appSettings, activeClassId, classes, stu
           </table>
         )}
         
-        <div style={{ fontSize: '16pt', textIndent: '2.5em', marginBottom: '40px' }}>
-          จึงเรียนมาเพื่อโปรดทราบและพิจารณา
-        </div>
-
-        <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: '40px', fontSize: '16pt', textAlign: 'center' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: '60px', fontSize: '16pt', textAlign: 'center' }}>
           <div>
             ลงชื่อ......................................................ผู้รายงาน<br />
             ({appSettings?.teacherName || '......................................'})<br />
