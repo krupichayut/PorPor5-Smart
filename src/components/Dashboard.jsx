@@ -1,5 +1,6 @@
 import { BarChart3, Users, Calendar, Award, FileWarning, TrendingUp, ChevronRight, BookOpen } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
+import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 
 export default function Dashboard({ classes, students, activeClassId, setActiveClassId, attendance, scores, scoreColumns }) {
   const navigate = useNavigate();
@@ -102,6 +103,41 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                   <h3 style={{ fontSize: '1.875rem', fontWeight: 700, margin: 0, color: totalMissing > 0 ? '#dc2626' : 'inherit' }}>
                     {totalMissing} <span style={{ fontSize: '1rem', fontWeight: 'normal', color: 'var(--text-muted)' }}>ชิ้น</span>
                   </h3>
+                </div>
+              </div>
+            </div>
+
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem', marginBottom: '2rem' }}>
+              <div className="card">
+                <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.125rem' }}>เปรียบเทียบอัตราการเข้าเรียนแต่ละห้อง</h3>
+                <div style={{ width: '100%', height: 300 }}>
+                  {classes.length > 0 ? (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={classes.map(cls => ({
+                        name: cls.name,
+                        อัตราเข้าเรียน: calculateAttendanceRate(attendance.filter(a => a.classId === cls.id))
+                      }))}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
+                        <XAxis dataKey="name" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} axisLine={{ stroke: 'var(--border-color)' }} tickLine={false} />
+                        <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} axisLine={false} tickLine={false} domain={[0, 100]} />
+                        <Tooltip 
+                          contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.3)', color: '#fff' }} 
+                          cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                        />
+                        <Bar dataKey="อัตราเข้าเรียน" fill="url(#colorAttendance)" radius={[6, 6, 0, 0]}>
+                           {/* Using standard color if gradient fails, but gradient is nicer */}
+                        </Bar>
+                        <defs>
+                          <linearGradient id="colorAttendance" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#818cf8" stopOpacity={0.9}/>
+                            <stop offset="95%" stopColor="#6366f1" stopOpacity={0.4}/>
+                          </linearGradient>
+                        </defs>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>ไม่มีข้อมูลห้องเรียน</div>
+                  )}
                 </div>
               </div>
             </div>
@@ -293,15 +329,47 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
           </div>
         </div>
 
-        <div className="card" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center', alignItems: 'center', padding: '3rem' }}>
-          <BarChart3 size={64} style={{ color: 'var(--primary-light)', marginBottom: '1.5rem' }} />
-          <h3 style={{ margin: '0 0 1rem 0' }}>สถิติและคะแนนเต็มรูปแบบ</h3>
-          <p style={{ color: 'var(--text-muted)', textAlign: 'center', marginBottom: '1.5rem' }}>
-            ต้องการดูรายงานฉบับเต็มและสถิติเกรดทั้งหมดหรือไม่?
-          </p>
-          <button className="btn btn-primary" onClick={() => navigate('/grades')}>
-            ไปยัง สรุปผลการเรียน (Print)
-          </button>
+        <div className="card" style={{ padding: '1.5rem' }}>
+          <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.125rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--success-color)' }}>
+            <Calendar size={20} /> สัดส่วนการมาเรียนรวม
+          </h3>
+          <div style={{ width: '100%', height: 260 }}>
+            {classAttendance.filter(r => r.status !== 'holiday').length > 0 ? (
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={[
+                      { name: 'มาเรียน/สาย', value: classAttendance.filter(r => r.status === 'present' || r.status === 'late').length },
+                      { name: 'ลา', value: classAttendance.filter(r => r.status === 'leave').length },
+                      { name: 'ขาด', value: classAttendance.filter(r => r.status === 'absent').length }
+                    ]}
+                    cx="50%"
+                    cy="45%"
+                    innerRadius={70}
+                    outerRadius={90}
+                    paddingAngle={5}
+                    dataKey="value"
+                    stroke="none"
+                  >
+                    <Cell fill="#34d399" />
+                    <Cell fill="#fbbf24" />
+                    <Cell fill="#f87171" />
+                  </Pie>
+                  <Tooltip contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#fff' }} itemStyle={{ color: '#fff' }} />
+                  <Legend verticalAlign="bottom" height={36} iconType="circle" />
+                </PieChart>
+              </ResponsiveContainer>
+            ) : (
+              <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
+                ไม่มีข้อมูลเช็คชื่อ
+              </div>
+            )}
+          </div>
+          <div style={{ textAlign: 'center', marginTop: '1rem' }}>
+            <button className="btn btn-primary" onClick={() => navigate('/grades')} style={{ width: '100%' }}>
+              ดูสรุปผลการเรียนฉบับเต็ม (Print)
+            </button>
+          </div>
         </div>
       </div>
     </div>
