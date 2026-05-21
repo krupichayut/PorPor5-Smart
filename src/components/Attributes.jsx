@@ -1,6 +1,6 @@
 import { Star } from 'lucide-react';
 
-export default function Attributes({ students, activeClassId, classes, attributes, setAttributes }) {
+export default function Attributes({ students, activeClassId, classes, attributes, setAttributes, readOnly }) {
   const activeClass = classes.find(c => c.id === activeClassId);
   const classStudents = students.filter(s => s.classId === activeClassId).sort((a, b) => a.number - b.number);
 
@@ -16,6 +16,7 @@ export default function Attributes({ students, activeClassId, classes, attribute
   ];
 
   const handleScoreChange = (studentId, criteriaId, value) => {
+    if (readOnly) return;
     const existingIndex = attributes.findIndex(a => a.studentId === studentId && a.criteriaId === criteriaId);
     let newAttributes = [...attributes];
     
@@ -115,6 +116,7 @@ export default function Attributes({ students, activeClassId, classes, attribute
                             <select 
                               value={record ? record.score : ''}
                               onChange={(e) => handleScoreChange(s.id, c.id, e.target.value)}
+                              disabled={readOnly}
                               style={{ 
                                 padding: '4px', 
                                 border: '1px solid var(--border-color)',

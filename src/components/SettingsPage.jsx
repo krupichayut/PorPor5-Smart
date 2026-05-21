@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
-import { Settings, Save } from 'lucide-react';
+import { Settings, Save, AlertCircle } from 'lucide-react';
 
-export default function SettingsPage({ appSettings, setAppSettings }) {
+export default function SettingsPage({ appSettings, setAppSettings, readOnly }) {
   const [formData, setFormData] = useState({
     schoolName: '',
     teacherName: '',
@@ -62,6 +62,7 @@ export default function SettingsPage({ appSettings, setAppSettings }) {
                 value={formData.academicYear}
                 onChange={handleChange}
                 placeholder="เช่น 2567"
+                disabled={readOnly}
               />
             </div>
             <div className="form-group">
@@ -73,6 +74,7 @@ export default function SettingsPage({ appSettings, setAppSettings }) {
                 value={formData.semester}
                 onChange={handleChange}
                 placeholder="เช่น 1 หรือ 2"
+                disabled={readOnly}
               />
             </div>
           </div>
@@ -86,6 +88,7 @@ export default function SettingsPage({ appSettings, setAppSettings }) {
               value={formData.schoolName}
               onChange={handleChange}
               placeholder="เช่น โรงเรียนตัวอย่างวิทยา"
+              disabled={readOnly}
             />
           </div>
 
@@ -101,6 +104,7 @@ export default function SettingsPage({ appSettings, setAppSettings }) {
               value={formData.teacherName}
               onChange={handleChange}
               placeholder="เช่น นายใจดี สอนเก่ง (ไม่ต้องใส่คำว่า ครู)"
+              disabled={readOnly}
             />
           </div>
 
@@ -113,6 +117,7 @@ export default function SettingsPage({ appSettings, setAppSettings }) {
               value={formData.academicHeadName}
               onChange={handleChange}
               placeholder="เช่น นางวิชาการ เชี่ยวชาญ"
+              disabled={readOnly}
             />
           </div>
 
@@ -125,16 +130,19 @@ export default function SettingsPage({ appSettings, setAppSettings }) {
               value={formData.principalName}
               onChange={handleChange}
               placeholder="เช่น นายบริหาร เก่งกาจ"
+              disabled={readOnly}
             />
           </div>
 
-          <div style={{ marginTop: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-            <button type="submit" className="btn btn-primary" style={{ padding: '0.75rem 2rem' }}>
-              <Save size={18} style={{ marginRight: '0.5rem' }} />
-              บันทึกข้อมูล
-            </button>
-            {isSaved && <span style={{ color: '#10b981', fontWeight: 500 }}>บันทึกข้อมูลเรียบร้อยแล้ว!</span>}
-          </div>
+          {!readOnly && (
+            <div style={{ marginTop: '2rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <button type="submit" className="btn btn-primary" style={{ padding: '0.75rem 2rem' }}>
+                <Save size={18} style={{ marginRight: '0.5rem' }} />
+                บันทึกข้อมูล
+              </button>
+              {isSaved && <span style={{ color: '#10b981', fontWeight: 500 }}>บันทึกข้อมูลเรียบร้อยแล้ว!</span>}
+            </div>
+          )}
         </form>
       </div>
     </div>

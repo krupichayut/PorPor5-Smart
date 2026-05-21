@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Calendar, Plus, Check, X, Clock, FileText, Trash2, Star } from 'lucide-react';
 
-export default function Attendance({ students, activeClassId, classes, attendance, setAttendance }) {
+export default function Attendance({ students, activeClassId, classes, attendance, setAttendance, readOnly }) {
   const [newDate, setNewDate] = useState('');
   const [isHoliday, setIsHoliday] = useState(false);
   const [holidayName, setHolidayName] = useState('');
@@ -51,6 +51,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
   };
 
   const handleUpdateStatus = (studentId, date, status) => {
+    if (readOnly) return;
     const updatedRecords = attendance.map(record => {
       if (record.studentId === studentId && record.date === date) {
         return { ...record, status };
@@ -105,10 +106,12 @@ export default function Attendance({ students, activeClassId, classes, attendanc
           <h2 className="page-title">เช็คเวลาเรียน: {activeClass?.name}</h2>
           <p className="page-subtitle">คลิกที่สถานะในตารางเพื่อเปลี่ยน (มา &rarr; ขาด &rarr; สาย &rarr; ลา)</p>
         </div>
-        <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
-          <Plus size={18} />
-          เพิ่มวันเช็คชื่อ
-        </button>
+        {!readOnly && (
+          <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
+            <Plus size={18} />
+            เพิ่มวันเช็คชื่อ
+          </button>
+        )}
       </div>
 
       <div className="card">
@@ -119,7 +122,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
         ) : dates.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
             <Calendar size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-            <p>ยังไม่มีการเช็คชื่อ กรุณากดปุ่ม "เพิ่มวันเช็คชื่อ"</p>
+            <p>ยังไม่มีการเช็คชื่อ{!readOnly && ' กรุณากดปุ่ม "เพิ่มวันเช็คชื่อ"'}</p>
           </div>
         ) : (
           <div className="table-container">
@@ -141,13 +144,15 @@ export default function Attendance({ students, activeClassId, classes, attendanc
                               {colNote}
                             </span>
                           )}
-                          <button 
-                            onClick={() => handleDeleteDate(date)}
-                            style={{ background: 'none', border: 'none', color: 'var(--danger-color)', cursor: 'pointer', opacity: 0.7, padding: '2px' }}
-                            title="ลบวันที่นี้"
-                          >
-                            <Trash2 size={14} />
-                          </button>
+                          {!readOnly && (
+                            <button 
+                              onClick={() => handleDeleteDate(date)}
+                              style={{ background: 'none', border: 'none', color: 'var(--danger-color)', cursor: 'pointer', opacity: 0.7, padding: '2px' }}
+                              title="ลบวันที่นี้"
+                            >
+                              <Trash2 size={14} />
+                            </button>
+                          )}
                         </div>
                       </th>
                     );

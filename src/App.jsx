@@ -1,5 +1,8 @@
+import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
-import { BookOpen, Users, Calendar, Award, BarChart3, Settings, GraduationCap, Star, BookType, Brain, FileText } from 'lucide-react';
+import { BookOpen, Users, Calendar, Award, BarChart3, Settings, GraduationCap, Star, BookType, Brain, FileText, Key, LogOut } from 'lucide-react';
+import { auth } from './firebase';
+import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import './index.css';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { useFirestoreData } from './hooks/useFirestoreData';
@@ -72,6 +75,38 @@ const Dashboard = ({ classes, students, activeClassId }) => {
 };
 
 function App() {
+  const [user, setUser] = useState(null);
+  const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
+  const [loginEmail, setLoginEmail] = useState('');
+  const [loginPassword, setLoginPassword] = useState('');
+  const [loginError, setLoginError] = useState('');
+
+  useEffect(() => {
+    const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
+      setUser(currentUser);
+    });
+    return () => unsubscribe();
+  }, []);
+
+  const handleLogin = async (e) => {
+    e.preventDefault();
+    try {
+      setLoginError('');
+      await signInWithEmailAndPassword(auth, loginEmail, loginPassword);
+      setIsLoginModalOpen(false);
+      setLoginEmail('');
+      setLoginPassword('');
+    } catch (err) {
+      setLoginError('อีเมลหรือรหัสผ่านไม่ถูกต้อง');
+    }
+  };
+
+  const handleLogout = async () => {
+    await signOut(auth);
+  };
+
+  const readOnly = !user;
+
   const [activeClassId, setActiveClassId] = useLocalStorage('porpor5_active_class', null);
 
   const [classes, setClasses, classesInit] = useFirestoreData('appData', 'classes', []);
@@ -203,25 +238,54 @@ function App() {
             </NavLink>
           </nav>
           
+          <div style={{ marginTop: 'auto', padding: '1rem', borderTop: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            {user ? (
+              <button className="btn btn-secondary" style={{ width: '100%', justifyContent: 'center' }} onClick={handleLogout}>
+                <LogOut size={18} style={{ marginRight: '0.5rem' }} />
+                ออกจากระบบ (ครู)
+              </button>
+            ) : (
+              <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }} onClick={() => setIsLoginModalOpen(true)}>
+                <Key size={18} style={{ marginRight: '0.5rem' }} />
+                เข้าสู่ระบบครู
+              </button>
+            )}
+          </div>
         </aside>
+
+        {isLoginModalOpen && (
+          <div className="modal-overlay">
+            <div className="modal-content" style={{ maxWidth: '400px' }}>
+              <h2>เข้าสู่ระบบสำหรับครู</h2>
+              {loginError && <p style={{ color: 'red' }}>{loginError}</p>}
+              <form onSubmit={handleLogin}>
+                <input type="email" placeholder="อีเมล" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} style={{ width: '100%', marginBottom: '10px' }} required />
+                <input type="password" placeholder="รหัสผ่าน" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} style={{ width: '100%', marginBottom: '10px' }} required />
+                <div style={{ display: 'flex', gap: '10px' }}>
+                  <button type="submit" className="btn btn-primary">เข้าสู่ระบบ</button>
+                  <button type="button" className="btn btn-secondary" onClick={() => setIsLoginModalOpen(false)}>ยกเลิก</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
 
         {/* Main Content */}
         <main className="main-content">
           <Routes>
             <Route path="/" element={<Dashboard classes={classes} students={students} activeClassId={activeClassId} />} />
-            <Route path="/settings" element={<SettingsPage appSettings={appSettings} setAppSettings={setAppSettings} />} />
-            <Route path="/classes" element={<Classes classes={classes} setClasses={setClasses} activeClassId={activeClassId} setActiveClassId={setActiveClassId} />} />
-            <Route path="/indicators" element={<Indicators activeClassId={activeClassId} classes={classes} indicators={indicators} setIndicators={setIndicators} />} />
-            <Route path="/students" element={<Students students={students} setStudents={setStudents} classes={classes} activeClassId={activeClassId} />} />
-            <Route path="/attendance" element={<Attendance students={students} activeClassId={activeClassId} classes={classes} attendance={attendance} setAttendance={setAttendance} />} />
-            <Route path="/scores" element={<Scores students={students} activeClassId={activeClassId} classes={classes} scores={scores} setScores={setScores} scoreColumns={scoreColumns} setScoreColumns={setScoreColumns} indicators={indicators} />} />
-            <Route path="/missing-work" element={<MissingWork students={students} activeClassId={activeClassId} classes={classes} scores={scores} setScores={setScores} scoreColumns={scoreColumns} />} />
+            <Route path="/settings" element={<SettingsPage appSettings={appSettings} setAppSettings={setAppSettings} readOnly={readOnly} />} />
+            <Route path="/classes" element={<Classes classes={classes} setClasses={setClasses} activeClassId={activeClassId} setActiveClassId={setActiveClassId} readOnly={readOnly} />} />
+            <Route path="/indicators" element={<Indicators activeClassId={activeClassId} classes={classes} indicators={indicators} setIndicators={setIndicators} readOnly={readOnly} />} />
+            <Route path="/students" element={<Students students={students} setStudents={setStudents} classes={classes} activeClassId={activeClassId} readOnly={readOnly} />} />
+            <Route path="/attendance" element={<Attendance students={students} activeClassId={activeClassId} classes={classes} attendance={attendance} setAttendance={setAttendance} readOnly={readOnly} />} />
+            <Route path="/scores" element={<Scores students={students} activeClassId={activeClassId} classes={classes} scores={scores} setScores={setScores} scoreColumns={scoreColumns} setScoreColumns={setScoreColumns} indicators={indicators} readOnly={readOnly} />} />
+            <Route path="/missing-work" element={<MissingWork students={students} activeClassId={activeClassId} classes={classes} scores={scores} setScores={setScores} scoreColumns={scoreColumns} readOnly={readOnly} />} />
             <Route path="/monthly-report" element={<MonthlyReport appSettings={appSettings} activeClassId={activeClassId} classes={classes} students={students} attendance={attendance} scoreColumns={scoreColumns} scores={scores} />} />
-            <Route path="/grades" element={<Grades students={students} activeClassId={activeClassId} classes={classes} scores={scores} scoreColumns={scoreColumns} attributes={attributes} literacy={literacy} competencies={competencies} />} />
-            
-            <Route path="/attributes" element={<Attributes students={students} activeClassId={activeClassId} classes={classes} attributes={attributes} setAttributes={setAttributes} />} />
-            <Route path="/literacy" element={<Literacy students={students} activeClassId={activeClassId} classes={classes} literacy={literacy} setLiteracy={setLiteracy} />} />
-            <Route path="/competencies" element={<Competencies students={students} activeClassId={activeClassId} classes={classes} competencies={competencies} setCompetencies={setCompetencies} />} />
+            <Route path="/grades" element={<Grades students={students} activeClassId={activeClassId} classes={classes} scores={scores} scoreColumns={scoreColumns} attributes={attributes} literacy={literacy} competencies={competencies} readOnly={readOnly} />} />
+            <Route path="/attributes" element={<Attributes students={students} activeClassId={activeClassId} classes={classes} attributes={attributes} setAttributes={setAttributes} readOnly={readOnly} />} />
+            <Route path="/literacy" element={<Literacy students={students} activeClassId={activeClassId} classes={classes} literacy={literacy} setLiteracy={setLiteracy} readOnly={readOnly} />} />
+            <Route path="/competencies" element={<Competencies students={students} activeClassId={activeClassId} classes={classes} competencies={competencies} setCompetencies={setCompetencies} readOnly={readOnly} />} />
           </Routes>
         </main>
       </div>

@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { FileText, Plus, Trash2, ChevronDown, ChevronRight } from 'lucide-react';
 
-export default function Indicators({ activeClassId, classes, indicators, setIndicators }) {
+export default function Indicators({ activeClassId, classes, indicators, setIndicators, readOnly }) {
   const [isUnitModalOpen, setIsUnitModalOpen] = useState(false);
   const [isIndicatorModalOpen, setIsIndicatorModalOpen] = useState(false);
   const [activeUnitId, setActiveUnitId] = useState(null);
@@ -122,17 +122,19 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
           <h2 className="page-title">โครงสร้างวิชา: {activeClass?.subject}</h2>
           <p className="page-subtitle">ชั้น {activeClass?.name} • รวม {totalWeight} คะแนน • {totalHours} ชั่วโมง</p>
         </div>
-        <button className="btn btn-primary" onClick={() => setIsUnitModalOpen(true)}>
-          <Plus size={18} />
-          เพิ่มหน่วยการเรียนรู้
-        </button>
+        {!readOnly && (
+          <button className="btn btn-primary" onClick={() => setIsUnitModalOpen(true)}>
+            <Plus size={18} />
+            เพิ่มหน่วยการเรียนรู้
+          </button>
+        )}
       </div>
 
       <div className="card">
         {classUnits.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
             <FileText size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-            <p>ยังไม่มีข้อมูลโครงสร้างรายวิชา กรุณากด "เพิ่มหน่วยการเรียนรู้"</p>
+            <p>ยังไม่มีข้อมูลโครงสร้างรายวิชา {!readOnly && 'กรุณากด "เพิ่มหน่วยการเรียนรู้"'}</p>
           </div>
         ) : (
           <div className="table-container">
@@ -144,7 +146,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
                   <th>ตัวชี้วัด/ผลการเรียนรู้</th>
                   <th style={{ width: '100px', textAlign: 'center' }}>เวลา (ชม.)</th>
                   <th style={{ width: '120px', textAlign: 'center' }}>น้ำหนักคะแนน</th>
-                  <th style={{ width: '80px', textAlign: 'center' }}>จัดการ</th>
+                  {!readOnly && <th style={{ width: '80px', textAlign: 'center' }}>จัดการ</th>}
                 </tr>
               </thead>
               <tbody>
@@ -160,29 +162,35 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
                           {unit.items.map(item => (
                             <li key={item.id} style={{ marginBottom: '0.5rem', lineHeight: '1.4' }}>
                               <strong style={{ color: 'var(--primary-color)' }}>{item.code}</strong> {item.description}
-                              <button 
-                                className="btn-icon" 
-                                style={{ display: 'inline-flex', padding: '0 4px', color: 'var(--danger-color)', opacity: 0.6, verticalAlign: 'middle' }} 
-                                onClick={() => handleDeleteIndicator(unit.id, item.id)}
-                                title="ลบตัวชี้วัดนี้"
-                              >
-                                <Trash2 size={12} />
-                              </button>
+                              {!readOnly && (
+                                <button 
+                                  className="btn-icon" 
+                                  style={{ display: 'inline-flex', padding: '0 4px', color: 'var(--danger-color)', opacity: 0.6, verticalAlign: 'middle' }} 
+                                  onClick={() => handleDeleteIndicator(unit.id, item.id)}
+                                  title="ลบตัวชี้วัดนี้"
+                                >
+                                  <Trash2 size={12} />
+                                </button>
+                              )}
                             </li>
                           ))}
                         </ul>
                       )}
-                      <button className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }} onClick={() => openIndicatorModal(unit.id)}>
-                        <Plus size={12} style={{ marginRight: '4px', display: 'inline' }} /> เพิ่มตัวชี้วัด
-                      </button>
+                      {!readOnly && (
+                        <button className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }} onClick={() => openIndicatorModal(unit.id)}>
+                          <Plus size={12} style={{ marginRight: '4px', display: 'inline' }} /> เพิ่มตัวชี้วัด
+                        </button>
+                      )}
                     </td>
                     <td style={{ textAlign: 'center', paddingTop: '1rem' }}>{unit.hours}</td>
                     <td style={{ textAlign: 'center', paddingTop: '1rem' }}>{unit.weight}</td>
-                    <td style={{ textAlign: 'center', paddingTop: '1rem' }}>
-                      <button className="btn-icon" style={{ color: 'var(--danger-color)' }} onClick={() => handleDeleteUnit(unit.id)} title="ลบหน่วยการเรียนรู้นี้">
-                        <Trash2 size={16} />
-                      </button>
-                    </td>
+                    {!readOnly && (
+                      <td style={{ textAlign: 'center', paddingTop: '1rem' }}>
+                        <button className="btn-icon" style={{ color: 'var(--danger-color)' }} onClick={() => handleDeleteUnit(unit.id)} title="ลบหน่วยการเรียนรู้นี้">
+                          <Trash2 size={16} />
+                        </button>
+                      </td>
+                    )}
                   </tr>
                 ))}
                 <tr style={{ backgroundColor: 'var(--bg-tertiary)', fontWeight: 'bold' }}>

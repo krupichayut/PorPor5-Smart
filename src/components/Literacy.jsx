@@ -1,6 +1,6 @@
 import { BookType } from 'lucide-react';
 
-export default function Literacy({ students, activeClassId, classes, literacy, setLiteracy }) {
+export default function Literacy({ students, activeClassId, classes, literacy, setLiteracy, readOnly }) {
   const activeClass = classes.find(c => c.id === activeClassId);
   const classStudents = students.filter(s => s.classId === activeClassId).sort((a, b) => a.number - b.number);
 
@@ -11,6 +11,7 @@ export default function Literacy({ students, activeClassId, classes, literacy, s
   ];
 
   const handleScoreChange = (studentId, criteriaId, value) => {
+    if (readOnly) return;
     const existingIndex = literacy.findIndex(a => a.studentId === studentId && a.criteriaId === criteriaId);
     let newLiteracy = [...literacy];
     
@@ -110,6 +111,7 @@ export default function Literacy({ students, activeClassId, classes, literacy, s
                             <select 
                               value={record ? record.score : ''}
                               onChange={(e) => handleScoreChange(s.id, c.id, e.target.value)}
+                              disabled={readOnly}
                               style={{ 
                                 padding: '4px', 
                                 border: '1px solid var(--border-color)',

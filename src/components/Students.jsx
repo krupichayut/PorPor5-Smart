@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Users, Plus, Trash2, Edit } from 'lucide-react';
 
-export default function Students({ students, setStudents, activeClassId, classes }) {
+export default function Students({ students, setStudents, activeClassId, classes, readOnly }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [addMode, setAddMode] = useState('single');
   const [bulkData, setBulkData] = useState('');
@@ -141,10 +141,12 @@ export default function Students({ students, setStudents, activeClassId, classes
           <h2 className="page-title">จัดการนักเรียน: {activeClass?.name}</h2>
           <p className="page-subtitle">วิชา {activeClass?.subject} • จำนวนนักเรียน {classStudents.length} คน</p>
         </div>
-        <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
-          <Plus size={18} />
-          เพิ่มนักเรียน
-        </button>
+        {!readOnly && (
+          <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
+            <Plus size={18} />
+            เพิ่มนักเรียน
+          </button>
+        )}
       </div>
 
       <div className="card">
@@ -152,9 +154,11 @@ export default function Students({ students, setStudents, activeClassId, classes
           <div style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
             <Users size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
             <p>ยังไม่มีข้อมูลนักเรียนในห้องนี้</p>
-            <button className="btn btn-primary" style={{ marginTop: '1rem' }} onClick={() => setIsModalOpen(true)}>
-              เพิ่มนักเรียนคนแรก
-            </button>
+            {!readOnly && (
+              <button className="btn btn-primary" style={{ marginTop: '1rem' }} onClick={() => setIsModalOpen(true)}>
+                เพิ่มนักเรียนคนแรก
+              </button>
+            )}
           </div>
         ) : (
           <div className="table-container">
@@ -174,12 +178,16 @@ export default function Students({ students, setStudents, activeClassId, classes
                     <td>{s.studentId}</td>
                     <td style={{ fontWeight: 500 }}>{s.name}</td>
                     <td style={{ textAlign: 'right' }}>
-                      <button className="btn-icon" onClick={() => handleEditClick(s)} style={{ color: 'var(--primary-color)', marginRight: '0.5rem' }}>
-                        <Edit size={18} />
-                      </button>
-                      <button className="btn-icon" onClick={() => handleDeleteStudent(s.id)} style={{ color: 'var(--danger-color)' }}>
-                        <Trash2 size={18} />
-                      </button>
+                      {!readOnly && (
+                        <>
+                          <button className="btn-icon" onClick={() => handleEditClick(s)} style={{ color: 'var(--primary-color)', marginRight: '0.5rem' }}>
+                            <Edit size={18} />
+                          </button>
+                          <button className="btn-icon" onClick={() => handleDeleteStudent(s.id)} style={{ color: 'var(--danger-color)' }}>
+                            <Trash2 size={18} />
+                          </button>
+                        </>
+                      )}
                     </td>
                   </tr>
                 ))}

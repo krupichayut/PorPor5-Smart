@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { Award, Plus, Trash2, Calculator } from 'lucide-react';
+import { Award, Plus, Trash2, Calculator, Edit2 } from 'lucide-react';
 
-export default function Scores({ students, activeClassId, classes, scores, setScores, scoreColumns, setScoreColumns, indicators }) {
+export default function Scores({ students, activeClassId, classes, scores, setScores, scoreColumns, setScoreColumns, indicators, readOnly }) {
   const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
   const [newColumnName, setNewColumnName] = useState('');
   const [newColumnMax, setNewColumnMax] = useState(10);
@@ -52,6 +52,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
   };
 
   const handleScoreChange = (studentId, columnId, value) => {
+    if (readOnly) return;
     const numValue = value === '' ? '' : Number(value);
     
     const column = scoreColumns.find(c => c.id === columnId);
@@ -149,12 +150,14 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
       <div className="page-header">
         <div>
           <h2 className="page-title">บันทึกคะแนน: {activeClass?.name}</h2>
-          <p className="page-subtitle">ระบบจะนำคะแนนที่กรอกไปแปลงสัดส่วนให้อัตโนมัติ (เก็บ {collectedRatio} : สอบ {examRatio})</p>
+          <p className="page-subtitle">จัดการคะแนนเก็บและคะแนนสอบ</p>
         </div>
-        <button className="btn btn-primary" onClick={() => setIsColumnModalOpen(true)}>
-          <Plus size={18} />
-          เพิ่มช่องคะแนน
-        </button>
+        {!readOnly && (
+          <button className="btn btn-primary" onClick={() => setIsColumnModalOpen(true)}>
+            <Plus size={18} />
+            เพิ่มช่องคะแนน
+          </button>
+        )}
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
@@ -186,7 +189,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
         ) : classScoreColumns.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
             <Award size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-            <p>ยังไม่มีช่องกรอกคะแนน กรุณากดปุ่ม "เพิ่มช่องคะแนน"</p>
+            <p>ยังไม่มีช่องกรอกคะแนน {!readOnly && 'กรุณากดปุ่ม "เพิ่มช่องคะแนน"'}</p>
           </div>
         ) : (
           <div className="table-container">
@@ -207,9 +210,11 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                               {col.type === 'exam' ? '(สอบ)' : '(เก็บ)'} เต็ม {col.maxScore}
                             </div>
                           </div>
-                          <button className="btn-icon" style={{ padding: '2px', color: 'var(--danger-color)', opacity: 0.5 }} onClick={() => handleDeleteColumn(col.id)}>
-                            <Trash2 size={12} />
-                          </button>
+                          {!readOnly && (
+                            <button className="btn-icon" style={{ padding: '2px', color: 'var(--danger-color)', opacity: 0.5 }} onClick={() => handleDeleteColumn(col.id)}>
+                              <Trash2 size={12} />
+                            </button>
+                          )}
                         </div>
                       </th>
                     );
@@ -239,6 +244,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                               max={col.maxScore}
                               value={record ? record.score : ''}
                               onChange={(e) => handleScoreChange(s.id, col.id, e.target.value)}
+                              disabled={readOnly}
                               style={{ 
                                 width: '60px', 
                                 padding: '4px', 

@@ -1,6 +1,6 @@
 import { Brain } from 'lucide-react';
 
-export default function Competencies({ students, activeClassId, classes, competencies, setCompetencies }) {
+export default function Competencies({ students, activeClassId, classes, competencies, setCompetencies, readOnly }) {
   const activeClass = classes.find(c => c.id === activeClassId);
   const classStudents = students.filter(s => s.classId === activeClassId).sort((a, b) => a.number - b.number);
 
@@ -13,6 +13,7 @@ export default function Competencies({ students, activeClassId, classes, compete
   ];
 
   const handleScoreChange = (studentId, criteriaId, value) => {
+    if (readOnly) return;
     const existingIndex = competencies.findIndex(a => a.studentId === studentId && a.criteriaId === criteriaId);
     let newCompetencies = [...competencies];
     
@@ -112,6 +113,7 @@ export default function Competencies({ students, activeClassId, classes, compete
                             <select 
                               value={record ? record.score : ''}
                               onChange={(e) => handleScoreChange(s.id, c.id, e.target.value)}
+                              disabled={readOnly}
                               style={{ 
                                 padding: '4px', 
                                 border: '1px solid var(--border-color)',

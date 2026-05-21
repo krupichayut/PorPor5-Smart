@@ -1,7 +1,7 @@
 import { useState } from 'react';
-import { FileWarning, Search, ChevronRight, Save, CheckCircle } from 'lucide-react';
+import { FileWarning, Search, ChevronRight, Save, CheckCircle, Users } from 'lucide-react';
 
-export default function MissingWork({ students, activeClassId, classes, scores, setScores, scoreColumns }) {
+export default function MissingWork({ students, activeClassId, classes, scores, setScores, scoreColumns, readOnly }) {
   const [activeTab, setActiveTab] = useState('byAssignment');
   const [selectedAssignmentId, setSelectedAssignmentId] = useState('');
   const [selectedStudentId, setSelectedStudentId] = useState('');
@@ -180,17 +180,20 @@ export default function MissingWork({ students, activeClassId, classes, scores, 
                                 onChange={(e) => handleScoreChange(student.id, selectedAssignmentId, e.target.value)}
                                 style={{ width: '80px', padding: '4px 8px', textAlign: 'center', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-sm)' }}
                                 placeholder="-"
+                                disabled={readOnly}
                               />
                             </td>
                             <td style={{ textAlign: 'center' }}>
-                              <button 
-                                className="btn btn-primary" 
-                                style={{ padding: '4px 12px' }}
-                                disabled={val === ''}
-                                onClick={() => saveScore(student.id, selectedAssignmentId)}
-                              >
-                                บันทึก
-                              </button>
+                              {!readOnly && (
+                                <button 
+                                  className="btn btn-primary" 
+                                  style={{ padding: '4px 12px' }}
+                                  disabled={val === ''}
+                                  onClick={() => saveScore(student.id, selectedAssignmentId)}
+                                >
+                                  บันทึก
+                                </button>
+                              )}
                             </td>
                           </tr>
                         );
@@ -292,17 +295,20 @@ export default function MissingWork({ students, activeClassId, classes, scores, 
                                   onChange={(e) => handleScoreChange(selectedStudentId, col.id, e.target.value)}
                                   style={{ width: '80px', padding: '4px 8px', textAlign: 'center', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-sm)' }}
                                   placeholder="-"
+                                  disabled={readOnly}
                                 />
                               </td>
                               <td style={{ textAlign: 'center' }}>
-                                <button 
-                                  className="btn btn-primary" 
-                                  style={{ padding: '4px 12px' }}
-                                  disabled={val === ''}
-                                  onClick={() => saveScore(selectedStudentId, col.id)}
-                                >
-                                  บันทึก
-                                </button>
+                                {!readOnly && (
+                                  <button 
+                                    className="btn btn-primary" 
+                                    style={{ padding: '4px 12px' }}
+                                    disabled={val === ''}
+                                    onClick={() => saveScore(selectedStudentId, col.id)}
+                                  >
+                                    บันทึก
+                                  </button>
+                                )}
                               </td>
                             </tr>
                           );

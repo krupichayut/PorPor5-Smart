@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { BookOpen, Plus, Trash2 } from 'lucide-react';
 
-export default function Classes({ classes, setClasses, activeClassId, setActiveClassId }) {
+export default function Classes({ classes, setClasses, activeClassId, setActiveClassId, readOnly }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newClassName, setNewClassName] = useState('');
   const [newClassSubject, setNewClassSubject] = useState('');
@@ -47,12 +47,14 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
       <div className="page-header">
         <div>
           <h2 className="page-title">จัดการห้องเรียน</h2>
-          <p className="page-subtitle">เพิ่มหรือลบห้องเรียนและรายวิชา</p>
+          <p className="page-subtitle">จัดการห้องเรียนและรายวิชาทั้งหมด</p>
         </div>
-        <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
-          <Plus size={18} />
-          เพิ่มห้องเรียน
-        </button>
+        {!readOnly && (
+          <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
+            <Plus size={18} />
+            เพิ่มห้องเรียน
+          </button>
+        )}
       </div>
 
       <div className="card">
@@ -60,9 +62,11 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
           <div style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
             <BookOpen size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
             <p>ยังไม่มีข้อมูลห้องเรียน</p>
-            <button className="btn btn-primary" style={{ marginTop: '1rem' }} onClick={() => setIsModalOpen(true)}>
-              เพิ่มห้องเรียนแรกของคุณ
-            </button>
+            {!readOnly && (
+              <button className="btn btn-primary" style={{ marginTop: '1rem' }} onClick={() => setIsModalOpen(true)}>
+                เพิ่มห้องเรียนแรกของคุณ
+              </button>
+            )}
           </div>
         ) : (
           <div className="table-container">
@@ -100,9 +104,11 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
                       )}
                     </td>
                     <td style={{ textAlign: 'right' }}>
-                      <button className="btn-icon" onClick={() => handleDeleteClass(c.id)} style={{ color: 'var(--danger-color)' }}>
-                        <Trash2 size={18} />
-                      </button>
+                      {!readOnly && (
+                        <button className="btn-icon" onClick={() => handleDeleteClass(c.id)} style={{ color: 'var(--danger-color)' }}>
+                          <Trash2 size={18} />
+                        </button>
+                      )}
                     </td>
                   </tr>
                 ))}
