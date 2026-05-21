@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Users, Plus, Trash2 } from 'lucide-react';
+import { Users, Plus, Trash2, Edit } from 'lucide-react';
 
 export default function Students({ students, setStudents, activeClassId, classes }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -8,8 +8,14 @@ export default function Students({ students, setStudents, activeClassId, classes
   const [newStudentId, setNewStudentId] = useState('');
   const [newStudentName, setNewStudentName] = useState('');
   
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editingStudent, setEditingStudent] = useState(null);
+  const [editNumber, setEditNumber] = useState('');
+  const [editStudentId, setEditStudentId] = useState('');
+  const [editName, setEditName] = useState('');
+  
   const activeClass = classes.find(c => c.id === activeClassId);
-  const classStudents = students.filter(s => s.classId === activeClassId);
+  const classStudents = students.filter(s => s.classId === activeClassId).sort((a, b) => a.number - b.number);
 
   const handleAddStudent = (e) => {
     e.preventDefault();
@@ -82,6 +88,35 @@ export default function Students({ students, setStudents, activeClassId, classes
     }
   };
 
+  const handleEditClick = (student) => {
+    setEditingStudent(student);
+    setEditNumber(student.number);
+    setEditStudentId(student.studentId);
+    setEditName(student.name);
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveEdit = (e) => {
+    e.preventDefault();
+    if (!editStudentId.trim() || !editName.trim() || !editNumber) return;
+
+    const updatedStudents = students.map(s => {
+      if (s.id === editingStudent.id) {
+        return {
+          ...s,
+          studentId: editStudentId,
+          name: editName,
+          number: Number(editNumber)
+        };
+      }
+      return s;
+    });
+
+    setStudents(updatedStudents);
+    setIsEditModalOpen(false);
+    setEditingStudent(null);
+  };
+
   if (!activeClassId) {
     return (
       <div className="animate-fade-in">
@@ -133,12 +168,15 @@ export default function Students({ students, setStudents, activeClassId, classes
                 </tr>
               </thead>
               <tbody>
-                {classStudents.map((s, index) => (
+                {classStudents.map((s) => (
                   <tr key={s.id}>
-                    <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--text-muted)' }}>{index + 1}</td>
+                    <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--text-muted)' }}>{s.number}</td>
                     <td>{s.studentId}</td>
                     <td style={{ fontWeight: 500 }}>{s.name}</td>
                     <td style={{ textAlign: 'right' }}>
+                      <button className="btn-icon" onClick={() => handleEditClick(s)} style={{ color: 'var(--primary-color)', marginRight: '0.5rem' }}>
+                        <Edit size={18} />
+                      </button>
                       <button className="btn-icon" onClick={() => handleDeleteStudent(s.id)} style={{ color: 'var(--danger-color)' }}>
                         <Trash2 size={18} />
                       </button>
@@ -226,6 +264,54 @@ export default function Students({ students, setStudents, activeClassId, classes
                 </div>
               </form>
             )}
+          </div>
+        </div>
+      )}
+
+      {isEditModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3 className="modal-title">แก้ไขข้อมูลนักเรียน</h3>
+              <button className="btn-icon" onClick={() => setIsEditModalOpen(false)}>×</button>
+            </div>
+            <form onSubmit={handleSaveEdit}>
+              <div className="form-group">
+                <label className="form-label">เลขที่</label>
+                <input 
+                  type="number" 
+                  className="form-input" 
+                  value={editNumber}
+                  onChange={(e) => setEditNumber(e.target.value)}
+                  min="1"
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">รหัสประจำตัวนักเรียน</label>
+                <input 
+                  type="text" 
+                  className="form-input" 
+                  value={editStudentId}
+                  onChange={(e) => setEditStudentId(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">ชื่อ - นามสกุล</label>
+                <input 
+                  type="text" 
+                  className="form-input" 
+                  value={editName}
+                  onChange={(e) => setEditName(e.target.value)}
+                  required
+                />
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setIsEditModalOpen(false)}>ยกเลิก</button>
+                <button type="submit" className="btn btn-primary">บันทึกการแก้ไข</button>
+              </div>
+            </form>
           </div>
         </div>
       )}

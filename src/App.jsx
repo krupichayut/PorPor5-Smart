@@ -12,6 +12,7 @@ import Attributes from './components/Attributes';
 import Literacy from './components/Literacy';
 import Competencies from './components/Competencies';
 import Indicators from './components/Indicators';
+import MissingWork from './components/MissingWork';
 
 const Dashboard = ({ classes, students, activeClassId }) => {
   const activeClass = classes.find(c => c.id === activeClassId);
@@ -152,6 +153,10 @@ function App() {
               <Award />
               <span>บันทึกคะแนน</span>
             </NavLink>
+            <NavLink to="/missing-work" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <FileText />
+              <span>ติดตามงานค้าง</span>
+            </NavLink>
 
             <div style={{ margin: '1rem 0 0.5rem 1rem', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               การประเมิน 3 หมวด
@@ -190,6 +195,7 @@ function App() {
             <Route path="/students" element={<Students students={students} setStudents={setStudents} classes={classes} activeClassId={activeClassId} />} />
             <Route path="/attendance" element={<Attendance students={students} activeClassId={activeClassId} classes={classes} attendance={attendance} setAttendance={setAttendance} />} />
             <Route path="/scores" element={<Scores students={students} activeClassId={activeClassId} classes={classes} scores={scores} setScores={setScores} scoreColumns={scoreColumns} setScoreColumns={setScoreColumns} indicators={indicators} />} />
+            <Route path="/missing-work" element={<MissingWork students={students} activeClassId={activeClassId} classes={classes} scores={scores} setScores={setScores} scoreColumns={scoreColumns} />} />
             <Route path="/grades" element={<Grades students={students} activeClassId={activeClassId} classes={classes} scores={scores} scoreColumns={scoreColumns} attributes={attributes} literacy={literacy} competencies={competencies} />} />
             
             <Route path="/attributes" element={<Attributes students={students} activeClassId={activeClassId} classes={classes} attributes={attributes} setAttributes={setAttributes} />} />
