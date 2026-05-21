@@ -4,6 +4,7 @@ import { Calendar, Plus, Check, X, Clock, FileText, Trash2, Star } from 'lucide-
 export default function Attendance({ students, activeClassId, classes, attendance, setAttendance }) {
   const [newDate, setNewDate] = useState('');
   const [isHoliday, setIsHoliday] = useState(false);
+  const [holidayName, setHolidayName] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   const activeClass = classes.find(c => c.id === activeClassId);
@@ -30,7 +31,8 @@ export default function Attendance({ students, activeClassId, classes, attendanc
           classId: activeClassId,
           studentId: student.id,
           date: newDate,
-          status: isHoliday ? 'holiday' : 'present' // present, absent, late, leave, holiday
+          status: isHoliday ? 'holiday' : 'present', // present, absent, late, leave, holiday
+          note: isHoliday ? holidayName : ''
         });
       }
     });
@@ -39,6 +41,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
     setIsModalOpen(false);
     setNewDate('');
     setIsHoliday(false);
+    setHolidayName('');
   };
 
   const handleDeleteDate = (dateToDelete) => {
@@ -57,13 +60,16 @@ export default function Attendance({ students, activeClassId, classes, attendanc
     setAttendance(updatedRecords);
   };
 
-  const getStatusIcon = (status) => {
+  const getStatusIcon = (record) => {
+    const status = record?.status || 'present';
+    const note = record?.note || '';
+    
     switch(status) {
       case 'present': return <div className="badge badge-success"><Check size={14} style={{ marginRight: '4px' }}/> มา</div>;
       case 'absent': return <div className="badge badge-danger"><X size={14} style={{ marginRight: '4px' }}/> ขาด</div>;
       case 'late': return <div className="badge badge-warning"><Clock size={14} style={{ marginRight: '4px' }}/> สาย</div>;
       case 'leave': return <div className="badge" style={{ backgroundColor: '#e2e8f0', color: '#475569' }}><FileText size={14} style={{ marginRight: '4px' }}/> ลา</div>;
-      case 'holiday': return <div className="badge" style={{ backgroundColor: '#fef08a', color: '#854d0e' }}><Star size={14} style={{ marginRight: '4px' }}/> วันหยุด</div>;
+      case 'holiday': return <div className="badge" style={{ backgroundColor: '#fef08a', color: '#854d0e' }} title={note}><Star size={14} style={{ marginRight: '4px' }}/> วันหยุด</div>;
       default: return null;
     }
   };
@@ -122,20 +128,30 @@ export default function Attendance({ students, activeClassId, classes, attendanc
                 <tr>
                   <th style={{ width: '60px', textAlign: 'center', position: 'sticky', left: 0, backgroundColor: 'var(--bg-tertiary)', zIndex: 2 }}>เลขที่</th>
                   <th style={{ position: 'sticky', left: '60px', backgroundColor: 'var(--bg-tertiary)', zIndex: 2, minWidth: '200px' }}>ชื่อ - นามสกุล</th>
-                  {dates.map(date => (
-                    <th key={date} style={{ textAlign: 'center', minWidth: '100px', position: 'relative' }}>
-                      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                        <span>{new Date(date).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })}</span>
-                        <button 
-                          onClick={() => handleDeleteDate(date)}
-                          style={{ background: 'none', border: 'none', color: 'var(--danger-color)', cursor: 'pointer', opacity: 0.7, padding: '2px' }}
-                          title="ลบวันที่นี้"
-                        >
-                          <Trash2 size={14} />
-                        </button>
-                      </div>
-                    </th>
-                  ))}
+                  {dates.map(date => {
+                    const firstRecord = classAttendance.find(a => a.date === date && a.status === 'holiday');
+                    const colNote = firstRecord?.note || '';
+                    
+                    return (
+                      <th key={date} style={{ textAlign: 'center', minWidth: '100px', position: 'relative' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
+                          <span>{new Date(date).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })}</span>
+                          {colNote && (
+                            <span style={{ fontSize: '0.7rem', color: '#854d0e', backgroundColor: '#fef08a', padding: '2px 4px', borderRadius: '4px', maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={colNote}>
+                              {colNote}
+                            </span>
+                          )}
+                          <button 
+                            onClick={() => handleDeleteDate(date)}
+                            style={{ background: 'none', border: 'none', color: 'var(--danger-color)', cursor: 'pointer', opacity: 0.7, padding: '2px' }}
+                            title="ลบวันที่นี้"
+                          >
+                            <Trash2 size={14} />
+                          </button>
+                        </div>
+                      </th>
+                    );
+                  })}
                   <th style={{ textAlign: 'center', minWidth: '60px', backgroundColor: '#f1f5f9' }}>เต็ม</th>
                   <th style={{ textAlign: 'center', minWidth: '60px', color: '#10b981', backgroundColor: '#ecfdf5' }}>มา</th>
                   <th style={{ textAlign: 'center', minWidth: '60px', color: '#64748b', backgroundColor: '#f1f5f9' }}>ลา</th>
@@ -170,7 +186,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
                               onClick={() => handleUpdateStatus(s.id, date, cycleStatus(record?.status || 'present'))}
                               title="คลิกเพื่อเปลี่ยนสถานะ"
                             >
-                              {getStatusIcon(record?.status || 'present')}
+                              {getStatusIcon(record)}
                             </button>
                           </td>
                         );
@@ -210,17 +226,31 @@ export default function Attendance({ students, activeClassId, classes, attendanc
                   required
                 />
               </div>
-              <div className="form-group" style={{ display: 'flex', alignItems: 'center', gap: '8px', marginTop: '1rem' }}>
-                <input 
-                  type="checkbox" 
-                  id="isHoliday"
-                  checked={isHoliday}
-                  onChange={(e) => setIsHoliday(e.target.checked)}
-                  style={{ width: '18px', height: '18px', cursor: 'pointer' }}
-                />
-                <label htmlFor="isHoliday" style={{ margin: 0, cursor: 'pointer', fontWeight: 500 }}>
-                  กำหนดให้เป็นวันหยุดพิเศษ (ทุกคนจะได้สถานะ "วันหยุด" และถือว่ามาเรียน)
-                </label>
+              <div className="form-group" style={{ display: 'flex', flexDirection: 'column', gap: '8px', marginTop: '1rem' }}>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+                  <input 
+                    type="checkbox" 
+                    id="isHoliday"
+                    checked={isHoliday}
+                    onChange={(e) => setIsHoliday(e.target.checked)}
+                    style={{ width: '18px', height: '18px', cursor: 'pointer' }}
+                  />
+                  <label htmlFor="isHoliday" style={{ margin: 0, cursor: 'pointer', fontWeight: 500 }}>
+                    กำหนดให้เป็นวันหยุดพิเศษ (ทุกคนจะได้สถานะ "วันหยุด" และถือว่ามาเรียน)
+                  </label>
+                </div>
+                
+                {isHoliday && (
+                  <input 
+                    type="text" 
+                    className="form-input" 
+                    placeholder="ระบุชื่อวันหยุด เช่น วันแม่แห่งชาติ, กีฬาสี" 
+                    value={holidayName}
+                    onChange={(e) => setHolidayName(e.target.value)}
+                    style={{ marginLeft: '26px', width: 'calc(100% - 26px)' }}
+                    autoFocus
+                  />
+                )}
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>ยกเลิก</button>
