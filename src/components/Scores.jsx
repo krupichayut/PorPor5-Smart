@@ -100,6 +100,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
       }
     } else if (value !== '') {
       newScores.push({
+        // eslint-disable-next-line react-hooks/purity
         id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
         studentId,
         columnId,

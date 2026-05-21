@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FileWarning, Search, ChevronRight, Save, CheckCircle, Users } from 'lucide-react';
+import { FileWarning, Search, CheckCircle, Users } from 'lucide-react';
 
 export default function MissingWork({ students, activeClassId, classes, scores, setScores, scoreColumns, readOnly }) {
   const [activeTab, setActiveTab] = useState('byAssignment');
@@ -53,6 +53,7 @@ export default function MissingWork({ students, activeClassId, classes, scores, 
       newScores[existingIndex] = { ...newScores[existingIndex], score: value };
     } else {
       newScores.push({
+        // eslint-disable-next-line react-hooks/purity
         id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
         studentId,
         columnId,

@@ -19,6 +19,7 @@ export default function Literacy({ students, activeClassId, classes, literacy, s
       newLiteracy[existingIndex] = { ...newLiteracy[existingIndex], score: Number(value) };
     } else {
       newLiteracy.push({
+        // eslint-disable-next-line react-hooks/purity
         id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
         classId: activeClassId,
         studentId,

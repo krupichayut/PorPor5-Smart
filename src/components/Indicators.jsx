@@ -1,11 +1,10 @@
 import { useState } from 'react';
-import { FileText, Plus, Trash2, ChevronDown, ChevronRight, Pencil } from 'lucide-react';
+import { FileText, Plus, Trash2, Pencil } from 'lucide-react';
 
 export default function Indicators({ activeClassId, classes, indicators, setIndicators, readOnly }) {
   const [isUnitModalOpen, setIsUnitModalOpen] = useState(false);
   const [isIndicatorModalOpen, setIsIndicatorModalOpen] = useState(false);
   const [activeUnitId, setActiveUnitId] = useState(null);
-  const [expandedUnits, setExpandedUnits] = useState({});
 
   const [editingUnitId, setEditingUnitId] = useState(null);
   const [editingIndicatorId, setEditingIndicatorId] = useState(null);
@@ -21,9 +20,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
   const activeClass = classes.find(c => c.id === activeClassId);
   const classUnits = indicators.filter(i => i.classId === activeClassId);
 
-  const toggleUnit = (unitId) => {
-    setExpandedUnits(prev => ({ ...prev, [unitId]: !prev[unitId] }));
-  };
+
 
   const handleAddUnit = (e) => {
     e.preventDefault();
@@ -43,7 +40,6 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
         items: []
       };
       setIndicators([...indicators, newUnit]);
-      setExpandedUnits(prev => ({ ...prev, [newUnit.id]: true }));
     }
 
     setIsUnitModalOpen(false);

@@ -24,6 +24,7 @@ export default function Attributes({ students, activeClassId, classes, attribute
       newAttributes[existingIndex] = { ...newAttributes[existingIndex], score: Number(value) };
     } else {
       newAttributes.push({
+        // eslint-disable-next-line react-hooks/purity
         id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
         classId: activeClassId,
         studentId,

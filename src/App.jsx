@@ -47,7 +47,8 @@ function App() {
       setIsLoginModalOpen(false);
       setLoginEmail('');
       setLoginPassword('');
-    } catch (err) {
+    } catch (error) {
+      console.error(error);
       setLoginError('อีเมลหรือรหัสผ่านไม่ถูกต้อง');
     }
   };

@@ -1,5 +1,5 @@
-import { useState, useRef } from 'react';
-import { Printer, CalendarDays, FileText } from 'lucide-react';
+import { useState } from 'react';
+import { Printer, FileText } from 'lucide-react';
 
 export default function MonthlyReport({ appSettings, activeClassId, classes, students, attendance, scoreColumns, scores }) {
   const [selectedMonth, setSelectedMonth] = useState(() => {

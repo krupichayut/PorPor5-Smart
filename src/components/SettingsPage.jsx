@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Settings, Save, AlertCircle } from 'lucide-react';
+import { Save } from 'lucide-react';
 
 export default function SettingsPage({ appSettings, setAppSettings, readOnly }) {
   const [formData, setFormData] = useState({
@@ -14,6 +14,7 @@ export default function SettingsPage({ appSettings, setAppSettings, readOnly }) 
 
   useEffect(() => {
     if (appSettings) {
+      // eslint-disable-next-line
       setFormData({
         schoolName: appSettings.schoolName || '',
         teacherName: appSettings.teacherName || '',
