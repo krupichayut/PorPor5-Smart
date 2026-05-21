@@ -13,6 +13,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
 
   const [newIndicatorCode, setNewIndicatorCode] = useState('');
   const [newIndicatorDesc, setNewIndicatorDesc] = useState('');
+  const [newIndicatorType, setNewIndicatorType] = useState('');
 
   const activeClass = classes.find(c => c.id === activeClassId);
   const classUnits = indicators.filter(i => i.classId === activeClassId);
@@ -66,7 +67,8 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
             {
               id: Date.now().toString(),
               code: newIndicatorCode,
-              description: newIndicatorDesc
+              description: newIndicatorDesc,
+              type: newIndicatorType
             }
           ]
         };
@@ -78,6 +80,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
     setIsIndicatorModalOpen(false);
     setNewIndicatorCode('');
     setNewIndicatorDesc('');
+    setNewIndicatorType('');
   };
 
   const handleDeleteIndicator = (unitId, indicatorId) => {
@@ -161,7 +164,10 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
                         <ul style={{ margin: 0, paddingLeft: '1.25rem', fontSize: '0.875rem', marginBottom: '0.75rem', color: 'var(--text-primary)' }}>
                           {unit.items.map(item => (
                             <li key={item.id} style={{ marginBottom: '0.5rem', lineHeight: '1.4' }}>
-                              <strong style={{ color: 'var(--primary-color)' }}>{item.code}</strong> {item.description}
+                              <strong style={{ color: 'var(--primary-color)' }}>{item.code}</strong> 
+                              {item.type === 'between' && <span style={{ marginLeft: '6px', backgroundColor: '#fef3c7', color: '#b45309', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600 }}>ระหว่างทาง</span>}
+                              {item.type === 'end' && <span style={{ marginLeft: '6px', backgroundColor: '#e0e7ff', color: '#4338ca', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600 }}>ปลายทาง</span>}
+                              {' '}{item.description}
                               {!readOnly && (
                                 <button 
                                   className="btn-icon" 
@@ -277,6 +283,18 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
                   required
                   autoFocus
                 />
+              </div>
+              <div className="form-group">
+                <label className="form-label">ประเภทตัวชี้วัด</label>
+                <select 
+                  className="form-select"
+                  value={newIndicatorType}
+                  onChange={(e) => setNewIndicatorType(e.target.value)}
+                >
+                  <option value="">-- ไม่ระบุ --</option>
+                  <option value="between">ระหว่างทาง</option>
+                  <option value="end">ปลายทาง</option>
+                </select>
               </div>
               <div className="form-group">
                 <label className="form-label">คำอธิบายตัวชี้วัด</label>
