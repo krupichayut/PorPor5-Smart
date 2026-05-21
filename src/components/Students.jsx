@@ -13,7 +13,6 @@ export default function Students({ students, setStudents, activeClassId, classes
   const [editingStudent, setEditingStudent] = useState(null);
   const [editNumber, setEditNumber] = useState('');
   const [editStudentId, setEditStudentId] = useState('');
-  const [editStudentId, setEditStudentId] = useState('');
   const [editName, setEditName] = useState('');
   const fileInputRef = useRef(null);
   
