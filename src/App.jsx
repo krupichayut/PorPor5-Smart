@@ -18,61 +18,9 @@ import Indicators from './components/Indicators';
 import MissingWork from './components/MissingWork';
 import SettingsPage from './components/SettingsPage';
 import MonthlyReport from './components/MonthlyReport';
+import Dashboard from './components/Dashboard';
 
-const Dashboard = ({ classes, students, activeClassId }) => {
-  const activeClass = classes.find(c => c.id === activeClassId);
-  const classStudents = students.filter(s => s.classId === activeClassId);
 
-  return (
-    <div className="animate-fade-in">
-      <div className="page-header">
-        <div>
-          <h2 className="page-title">แดชบอร์ด</h2>
-          <p className="page-subtitle">ภาพรวมข้อมูลห้องเรียน</p>
-        </div>
-      </div>
-      
-      {!activeClassId ? (
-        <div className="card" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
-          <BarChart3 size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-          <p>กรุณาเลือกห้องเรียนจากเมนู <strong>ห้องเรียน / วิชา</strong> เพื่อดูแดชบอร์ด</p>
-        </div>
-      ) : (
-        <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(240px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-          <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-            <div style={{ backgroundColor: 'var(--primary-light)', color: 'var(--primary-color)', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
-              <Users size={32} />
-            </div>
-            <div>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 500 }}>นักเรียนทั้งหมด</p>
-              <h3 style={{ fontSize: '1.875rem', fontWeight: 700, margin: 0 }}>{classStudents.length}</h3>
-            </div>
-          </div>
-          
-          <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-            <div style={{ backgroundColor: '#d1fae5', color: '#047857', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
-              <Calendar size={32} />
-            </div>
-            <div>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 500 }}>ระบบเวลาเรียน & คะแนน</p>
-              <h3 style={{ fontSize: '1.125rem', fontWeight: 700, margin: 0 }}>พร้อมใช้งาน</h3>
-            </div>
-          </div>
-
-          <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-            <div style={{ backgroundColor: '#fef3c7', color: '#b45309', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
-              <Star size={32} />
-            </div>
-            <div>
-              <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 500 }}>ระบบประเมิน 3 หมวด</p>
-              <h3 style={{ fontSize: '1.125rem', fontWeight: 700, margin: 0 }}>พร้อมใช้งาน</h3>
-            </div>
-          </div>
-        </div>
-      )}
-    </div>
-  );
-};
 
 function App() {
   const [user, setUser] = useState(null);
@@ -273,7 +221,7 @@ function App() {
         {/* Main Content */}
         <main className="main-content">
           <Routes>
-            <Route path="/" element={<Dashboard classes={classes} students={students} activeClassId={activeClassId} />} />
+            <Route path="/" element={<Dashboard classes={classes} students={students} activeClassId={activeClassId} setActiveClassId={setActiveClassId} attendance={attendance} scores={scores} scoreColumns={scoreColumns} />} />
             <Route path="/settings" element={<SettingsPage appSettings={appSettings} setAppSettings={setAppSettings} readOnly={readOnly} />} />
             <Route path="/classes" element={<Classes classes={classes} setClasses={setClasses} activeClassId={activeClassId} setActiveClassId={setActiveClassId} readOnly={readOnly} />} />
             <Route path="/indicators" element={<Indicators activeClassId={activeClassId} classes={classes} indicators={indicators} setIndicators={setIndicators} readOnly={readOnly} />} />
