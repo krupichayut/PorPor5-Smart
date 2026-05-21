@@ -185,7 +185,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
         <div className="card" style={{ padding: '1rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{ padding: '0.75rem', backgroundColor: '#e0e7ff', color: '#4f46e5', borderRadius: 'var(--radius-md)' }}>
+          <div style={{ padding: '0.75rem', backgroundColor: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary-light)', borderRadius: 'var(--radius-md)' }}>
             <Calculator size={24} />
           </div>
           <div>
@@ -194,7 +194,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
           </div>
         </div>
         <div className="card" style={{ padding: '1rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{ padding: '0.75rem', backgroundColor: '#fee2e2', color: '#ef4444', borderRadius: 'var(--radius-md)' }}>
+          <div style={{ padding: '0.75rem', backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#f87171', borderRadius: 'var(--radius-md)' }}>
             <Award size={24} />
           </div>
           <div>
@@ -224,7 +224,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                   {classScoreColumns.map(col => {
                     const indicator = allIndicatorsList.find(i => i.id === col.indicatorId);
                     return (
-                      <th rowSpan={2} key={col.id} style={{ textAlign: 'center', minWidth: '100px', backgroundColor: col.type === 'exam' ? '#fef2f2' : 'var(--bg-tertiary)' }}>
+                      <th rowSpan={2} key={col.id} style={{ textAlign: 'center', minWidth: '100px', backgroundColor: col.type === 'exam' ? 'rgba(239, 68, 68, 0.1)' : 'var(--bg-tertiary)' }}>
                         <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
                           <div>
                             <div>{col.name}</div>
@@ -252,7 +252,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                 <tr>
                   <th style={{ textAlign: 'center', backgroundColor: 'var(--primary-light)', color: 'var(--primary-color)', fontSize: '0.875rem' }}>เก็บ ({collectedRatio})</th>
                   <th style={{ textAlign: 'center', backgroundColor: 'var(--primary-light)', color: 'var(--primary-color)', fontSize: '0.875rem' }}>สอบ ({examRatio})</th>
-                  <th style={{ textAlign: 'center', backgroundColor: '#e0e7ff', color: 'var(--primary-hover)', fontSize: '0.875rem' }}>รวม 100</th>
+                  <th style={{ textAlign: 'center', backgroundColor: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary-light)', fontSize: '0.875rem' }}>รวม 100</th>
                 </tr>
               </thead>
               <tbody>
@@ -265,7 +265,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                       {classScoreColumns.map(col => {
                         const record = scores.find(record => record.studentId === s.id && record.columnId === col.id);
                         return (
-                          <td key={col.id} style={{ textAlign: 'center', backgroundColor: col.type === 'exam' ? '#fef2f2' : 'transparent' }}>
+                          <td key={col.id} style={{ textAlign: 'center', backgroundColor: col.type === 'exam' ? 'rgba(239, 68, 68, 0.05)' : 'transparent' }}>
                             <input 
                               type="number"
                               min="0"
@@ -288,10 +288,10 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                       <td style={{ textAlign: 'center', fontWeight: 600, color: '#4f46e5', backgroundColor: 'var(--bg-primary)' }}>
                         <div title={`ดิบ: ${studentScores.rawCollected}/${totalMaxCollected}`}>{studentScores.scaledCollected}</div>
                       </td>
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: '#ef4444', backgroundColor: 'var(--bg-primary)' }}>
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: '#f87171', backgroundColor: 'var(--bg-primary)' }}>
                         <div title={`ดิบ: ${studentScores.rawExam}/${totalMaxExam}`}>{studentScores.scaledExam}</div>
                       </td>
-                      <td style={{ textAlign: 'center', fontWeight: 700, fontSize: '1.1rem', color: 'var(--primary-color)', backgroundColor: '#e0e7ff' }}>
+                      <td style={{ textAlign: 'center', fontWeight: 700, fontSize: '1.1rem', color: 'var(--primary-color)', backgroundColor: 'rgba(99, 102, 241, 0.1)' }}>
                         {studentScores.totalScaled}
                       </td>
                     </tr>

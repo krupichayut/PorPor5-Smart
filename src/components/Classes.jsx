@@ -86,7 +86,7 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
                     <td style={{ fontWeight: 500 }}>{c.name}</td>
                     <td>{c.subject}</td>
                     <td style={{ textAlign: 'center' }}>
-                      <span className="badge" style={{ backgroundColor: '#e0e7ff', color: '#4f46e5' }}>
+                      <span className="badge" style={{ backgroundColor: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary-light)' }}>
                         {c.collectedRatio || 80} : {c.examRatio || 20}
                       </span>
                     </td>

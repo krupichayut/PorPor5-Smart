@@ -162,14 +162,14 @@ export default function Grades({ students, activeClassId, classes, scores, score
                   <th rowSpan={2} style={{ width: '50px', textAlign: 'center', verticalAlign: 'middle' }}>เลขที่</th>
                   <th rowSpan={2} style={{ verticalAlign: 'middle' }}>รหัสประจำตัว</th>
                   <th rowSpan={2} style={{ verticalAlign: 'middle' }}>ชื่อ - นามสกุล</th>
-                  <th colSpan={2} style={{ textAlign: 'center', borderBottom: '1px solid var(--border-color)', backgroundColor: '#f8fafc' }}>สัดส่วนคะแนน 100</th>
-                  <th rowSpan={2} style={{ textAlign: 'center', verticalAlign: 'middle', backgroundColor: '#e0e7ff', color: 'var(--primary-color)' }}>รวม 100</th>
+                  <th colSpan={2} style={{ textAlign: 'center', borderBottom: '1px solid var(--border-color)', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>สัดส่วนคะแนน 100</th>
+                  <th rowSpan={2} style={{ textAlign: 'center', verticalAlign: 'middle', backgroundColor: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary-light)' }}>รวม 100</th>
                   <th rowSpan={2} style={{ textAlign: 'center', verticalAlign: 'middle' }}>ระดับผลการเรียน</th>
                   <th colSpan={3} style={{ textAlign: 'center', borderBottom: '1px solid var(--border-color)' }}>การประเมิน (3=ดีเยี่ยม, 2=ดี, 1=ผ่าน, 0=ไม่ผ่าน)</th>
                 </tr>
                 <tr>
-                  <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: '#f8fafc' }}>เก็บ ({collectedRatio})</th>
-                  <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: '#f8fafc' }}>สอบ ({examRatio})</th>
+                  <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>เก็บ ({collectedRatio})</th>
+                  <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>สอบ ({examRatio})</th>
                   <th style={{ textAlign: 'center', fontSize: '0.75rem' }}>คุณลักษณะฯ</th>
                   <th style={{ textAlign: 'center', fontSize: '0.75rem' }}>อ่าน คิดวิเคราะห์ เขียน</th>
                   <th style={{ textAlign: 'center', fontSize: '0.75rem' }}>สมรรถนะสำคัญ</th>
@@ -191,7 +191,7 @@ export default function Grades({ students, activeClassId, classes, scores, score
                       <td>{s.name}</td>
                       <td style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>{studentScores.scaledCollected}</td>
                       <td style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>{studentScores.scaledExam}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 700, color: 'var(--primary-color)', backgroundColor: '#f5f7ff' }}>{studentScores.totalScaled}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 700, color: 'var(--primary-color)', backgroundColor: 'rgba(99, 102, 241, 0.1)' }}>{studentScores.totalScaled}</td>
                       <td style={{ textAlign: 'center', fontWeight: 600 }}>{grade}</td>
                       <td style={{ textAlign: 'center' }}>{getLevelLabel(attrAvg)}</td>
                       <td style={{ textAlign: 'center' }}>{getLevelLabel(litAvg)}</td>

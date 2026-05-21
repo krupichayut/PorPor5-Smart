@@ -75,7 +75,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
               </div>
               
               <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                <div style={{ backgroundColor: '#e0f2fe', color: '#0284c7', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
+                <div style={{ backgroundColor: 'rgba(14, 165, 233, 0.15)', color: 'var(--primary-light)', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
                   <Users size={32} />
                 </div>
                 <div>
@@ -85,7 +85,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
               </div>
 
               <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                <div style={{ backgroundColor: '#d1fae5', color: '#047857', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
+                <div style={{ backgroundColor: 'rgba(52, 211, 153, 0.15)', color: '#34d399', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
                   <TrendingUp size={32} />
                 </div>
                 <div>
@@ -94,13 +94,13 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                 </div>
               </div>
 
-              <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', border: totalMissing > 0 ? '1px solid #fca5a5' : 'none' }}>
-                <div style={{ backgroundColor: '#fee2e2', color: '#dc2626', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
+              <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', border: totalMissing > 0 ? '1px solid rgba(239, 68, 68, 0.3)' : 'none' }}>
+                <div style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#f87171', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
                   <FileWarning size={32} />
                 </div>
                 <div>
                   <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 500 }}>ปริมาณงานค้างรวม</p>
-                  <h3 style={{ fontSize: '1.875rem', fontWeight: 700, margin: 0, color: totalMissing > 0 ? '#dc2626' : 'inherit' }}>
+                  <h3 style={{ fontSize: '1.875rem', fontWeight: 700, margin: 0, color: totalMissing > 0 ? '#f87171' : 'inherit' }}>
                     {totalMissing} <span style={{ fontSize: '1rem', fontWeight: 'normal', color: 'var(--text-muted)' }}>ชิ้น</span>
                   </h3>
                 </div>
@@ -259,7 +259,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
         </div>
         
         <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-          <div style={{ backgroundColor: '#d1fae5', color: '#047857', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
+          <div style={{ backgroundColor: 'rgba(52, 211, 153, 0.15)', color: '#34d399', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
             <Calendar size={32} />
           </div>
           <div>
@@ -269,7 +269,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
         </div>
 
         <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-          <div style={{ backgroundColor: '#fef3c7', color: '#b45309', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
+          <div style={{ backgroundColor: 'rgba(251, 191, 36, 0.15)', color: '#fbbf24', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
             <Award size={32} />
           </div>
           <div>
@@ -278,13 +278,13 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
           </div>
         </div>
 
-        <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', border: totalMissingClass > 0 ? '1px solid #fca5a5' : 'none' }}>
-          <div style={{ backgroundColor: '#fee2e2', color: '#dc2626', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
+        <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', border: totalMissingClass > 0 ? '1px solid rgba(239, 68, 68, 0.3)' : 'none' }}>
+          <div style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#f87171', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
             <FileWarning size={32} />
           </div>
           <div>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 500 }}>งานค้าง (ทั้งห้อง)</p>
-            <h3 style={{ fontSize: '1.875rem', fontWeight: 700, margin: 0, color: totalMissingClass > 0 ? '#dc2626' : 'inherit' }}>
+            <h3 style={{ fontSize: '1.875rem', fontWeight: 700, margin: 0, color: totalMissingClass > 0 ? '#f87171' : 'inherit' }}>
               {totalMissingClass} <span style={{ fontSize: '1rem', fontWeight: 'normal', color: 'var(--text-muted)' }}>ชิ้น</span>
             </h3>
           </div>
@@ -292,9 +292,9 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', gap: '1.5rem' }}>
-        <div className="card" style={{ padding: 0, border: '1px solid #fecaca' }}>
-          <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-color)', backgroundColor: '#fff5f5' }}>
-            <h3 style={{ margin: 0, fontSize: '1.125rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#dc2626' }}>
+        <div className="card" style={{ padding: 0, border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+          <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'rgba(239, 68, 68, 0.05)' }}>
+            <h3 style={{ margin: 0, fontSize: '1.125rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#f87171' }}>
               <FileWarning size={20} /> นักเรียนที่งานค้างเยอะที่สุด (Top 5)
             </h3>
           </div>
@@ -308,7 +308,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                 {topMissingStudents.map((s, idx) => (
                   <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '0.75rem', borderBottom: idx !== topMissingStudents.length - 1 ? '1px solid var(--border-color)' : 'none' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: '#fee2e2', color: '#dc2626', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.875rem' }}>
+                      <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#f87171', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.875rem' }}>
                         {idx + 1}
                       </div>
                       <div>
@@ -317,7 +317,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                       </div>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <div style={{ fontWeight: 700, color: '#dc2626' }}>{s.missingCount} ชิ้น</div>
+                      <div style={{ fontWeight: 700, color: '#f87171' }}>{s.missingCount} ชิ้น</div>
                       <button className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }} onClick={() => navigate('/missing-work')}>
                         ดูรายละเอียด
                       </button>
