@@ -3,6 +3,7 @@ import { BarChart3, Download } from 'lucide-react';
 
 export default function Grades({ students, activeClassId, classes, scores, scoreColumns, attributes, literacy, competencies }) {
   const [selectedTerm, setSelectedTerm] = useState('all');
+  const [reportType, setReportType] = useState('all'); // 'all', 'grades', 'evaluations'
 
   const activeClass = classes.find(c => c.id === activeClassId);
   const classStudents = students.filter(s => s.classId === activeClassId).sort((a, b) => a.number - b.number);
@@ -141,7 +142,17 @@ export default function Grades({ students, activeClassId, classes, scores, score
             <strong>สัดส่วนคะแนน:</strong> {collectedRatio} : {examRatio}
           </p>
         </div>
-        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }} className="no-print">
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }} className="no-print">
+          <select 
+            className="form-select" 
+            value={reportType}
+            onChange={(e) => setReportType(e.target.value)}
+            style={{ width: '180px', margin: 0 }}
+          >
+            <option value="all">แสดงตารางรวม</option>
+            <option value="grades">เฉพาะสรุปผลการเรียน</option>
+            <option value="evaluations">เฉพาะการประเมิน</option>
+          </select>
           <select 
             className="form-select" 
             value={selectedTerm}
@@ -185,17 +196,31 @@ export default function Grades({ students, activeClassId, classes, scores, score
                   <th rowSpan={2} style={{ width: '50px', textAlign: 'center', verticalAlign: 'middle' }}>เลขที่</th>
                   <th rowSpan={2} style={{ verticalAlign: 'middle' }}>รหัสประจำตัว</th>
                   <th rowSpan={2} style={{ verticalAlign: 'middle' }}>ชื่อ - นามสกุล</th>
-                  <th colSpan={2} style={{ textAlign: 'center', borderBottom: '1px solid var(--border-color)', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>สัดส่วนคะแนน 100</th>
-                  <th rowSpan={2} style={{ textAlign: 'center', verticalAlign: 'middle', backgroundColor: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary-light)' }}>รวม 100</th>
-                  <th rowSpan={2} style={{ textAlign: 'center', verticalAlign: 'middle' }}>ระดับผลการเรียน</th>
-                  <th colSpan={3} style={{ textAlign: 'center', borderBottom: '1px solid var(--border-color)' }}>การประเมิน (3=ดีเยี่ยม, 2=ดี, 1=ผ่าน, 0=ไม่ผ่าน)</th>
+                  {reportType !== 'evaluations' && (
+                    <>
+                      <th colSpan={2} style={{ textAlign: 'center', borderBottom: '1px solid var(--border-color)', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>สัดส่วนคะแนน 100</th>
+                      <th rowSpan={2} style={{ textAlign: 'center', verticalAlign: 'middle', backgroundColor: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary-light)' }}>รวม 100</th>
+                      <th rowSpan={2} style={{ textAlign: 'center', verticalAlign: 'middle' }}>ระดับผลการเรียน</th>
+                    </>
+                  )}
+                  {reportType !== 'grades' && (
+                    <th colSpan={3} style={{ textAlign: 'center', borderBottom: '1px solid var(--border-color)' }}>การประเมิน (3=ดีเยี่ยม, 2=ดี, 1=ผ่าน, 0=ไม่ผ่าน)</th>
+                  )}
                 </tr>
                 <tr>
-                  <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>เก็บ ({collectedRatio})</th>
-                  <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>สอบ ({examRatio})</th>
-                  <th style={{ textAlign: 'center', fontSize: '0.75rem' }}>คุณลักษณะฯ</th>
-                  <th style={{ textAlign: 'center', fontSize: '0.75rem' }}>อ่าน คิดวิเคราะห์ เขียน</th>
-                  <th style={{ textAlign: 'center', fontSize: '0.75rem' }}>สมรรถนะสำคัญ</th>
+                  {reportType !== 'evaluations' && (
+                    <>
+                      <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>เก็บ ({collectedRatio})</th>
+                      <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>สอบ ({examRatio})</th>
+                    </>
+                  )}
+                  {reportType !== 'grades' && (
+                    <>
+                      <th style={{ textAlign: 'center', fontSize: '0.75rem' }}>คุณลักษณะฯ</th>
+                      <th style={{ textAlign: 'center', fontSize: '0.75rem' }}>อ่าน คิดวิเคราะห์ เขียน</th>
+                      <th style={{ textAlign: 'center', fontSize: '0.75rem' }}>สมรรถนะสำคัญ</th>
+                    </>
+                  )}
                 </tr>
               </thead>
               <tbody>
@@ -212,13 +237,21 @@ export default function Grades({ students, activeClassId, classes, scores, score
                       <td style={{ textAlign: 'center' }}>{index + 1}</td>
                       <td>{s.studentId}</td>
                       <td>{s.name}</td>
-                      <td style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>{studentScores.scaledCollected}</td>
-                      <td style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>{studentScores.scaledExam}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 700, color: 'var(--primary-color)', backgroundColor: 'rgba(99, 102, 241, 0.1)' }}>{studentScores.totalScaled}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 600 }}>{grade}</td>
-                      <td style={{ textAlign: 'center' }}>{getLevelLabel(attrAvg)}</td>
-                      <td style={{ textAlign: 'center' }}>{getLevelLabel(litAvg)}</td>
-                      <td style={{ textAlign: 'center' }}>{getLevelLabel(compAvg)}</td>
+                      {reportType !== 'evaluations' && (
+                        <>
+                          <td style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>{studentScores.scaledCollected}</td>
+                          <td style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>{studentScores.scaledExam}</td>
+                          <td style={{ textAlign: 'center', fontWeight: 700, color: 'var(--primary-color)', backgroundColor: 'rgba(99, 102, 241, 0.1)' }}>{studentScores.totalScaled}</td>
+                          <td style={{ textAlign: 'center', fontWeight: 600 }}>{grade}</td>
+                        </>
+                      )}
+                      {reportType !== 'grades' && (
+                        <>
+                          <td style={{ textAlign: 'center' }}>{getLevelLabel(attrAvg)}</td>
+                          <td style={{ textAlign: 'center' }}>{getLevelLabel(litAvg)}</td>
+                          <td style={{ textAlign: 'center' }}>{getLevelLabel(compAvg)}</td>
+                        </>
+                      )}
                     </tr>
                   )
                 })}
