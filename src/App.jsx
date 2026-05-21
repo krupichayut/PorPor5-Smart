@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
-import { BookOpen, Users, Calendar, Award, BarChart3, Settings, GraduationCap, Star, BookType, Brain, FileText, Key, LogOut } from 'lucide-react';
+import { BookOpen, Users, Calendar, Award, BarChart3, Settings, GraduationCap, Star, BookType, Brain, FileText, Key, LogOut, Menu, X } from 'lucide-react';
 import { auth } from './firebase';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import './index.css';
@@ -28,6 +28,9 @@ function App() {
   const [loginEmail, setLoginEmail] = useState('');
   const [loginPassword, setLoginPassword] = useState('');
   const [loginError, setLoginError] = useState('');
+  const [isMobileMenuOpen, setIsMobileMenuOpen] = useState(false);
+
+  const closeMobileMenu = () => setIsMobileMenuOpen(false);
 
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
@@ -95,13 +98,35 @@ function App() {
   return (
     <Router>
       <div className="app-container">
+        
+        {/* Mobile Top Bar */}
+        <div className="mobile-top-bar">
+          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+            <div style={{ backgroundColor: 'var(--primary-light)', padding: '0.4rem', borderRadius: 'var(--radius-md)', color: 'var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <GraduationCap size={20} />
+            </div>
+            <h1 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)' }}>ปพ.5 Smart</h1>
+          </div>
+          <button className="btn-icon" onClick={() => setIsMobileMenuOpen(true)}>
+            <Menu size={24} />
+          </button>
+        </div>
+
+        {/* Mobile Overlay Background */}
+        {isMobileMenuOpen && (
+          <div className="mobile-overlay" onClick={closeMobileMenu}></div>
+        )}
+
         {/* Sidebar */}
-        <aside className="sidebar">
+        <aside className={`sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
           <div className="sidebar-header">
             <div style={{ backgroundColor: 'var(--primary-light)', padding: '0.5rem', borderRadius: 'var(--radius-md)', color: 'var(--primary-color)' }}>
               <GraduationCap size={24} />
             </div>
             <h1>ปพ.5 Smart</h1>
+            <button className="btn-icon mobile-close-btn" onClick={closeMobileMenu}>
+              <X size={24} />
+            </button>
           </div>
           
           {activeClass && (
@@ -113,7 +138,7 @@ function App() {
           )}
           
           <nav className="sidebar-nav">
-            <NavLink to="/" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} end>
+            <NavLink to="/" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu} end>
               <BarChart3 />
               <span>แดชบอร์ด</span>
             </NavLink>
@@ -122,15 +147,15 @@ function App() {
               ข้อมูลพื้นฐาน
             </div>
 
-            <NavLink to="/classes" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink to="/classes" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
               <BookOpen />
               <span>ห้องเรียน / วิชา</span>
             </NavLink>
-            <NavLink to="/indicators" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink to="/indicators" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
               <FileText />
               <span>โครงสร้างวิชา / ตัวชี้วัด</span>
             </NavLink>
-            <NavLink to="/students" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink to="/students" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
               <Users />
               <span>นักเรียน</span>
             </NavLink>
@@ -139,15 +164,15 @@ function App() {
               ผลสัมฤทธิ์
             </div>
             
-            <NavLink to="/attendance" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink to="/attendance" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
               <Calendar />
               <span>เวลาเรียน</span>
             </NavLink>
-            <NavLink to="/scores" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink to="/scores" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
               <Award />
               <span>บันทึกคะแนน</span>
             </NavLink>
-            <NavLink to="/missing-work" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink to="/missing-work" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
               <FileText />
               <span>ติดตามงานค้าง</span>
             </NavLink>
@@ -156,15 +181,15 @@ function App() {
               การประเมิน 3 หมวด
             </div>
             
-            <NavLink to="/attributes" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink to="/attributes" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
               <Star />
               <span>คุณลักษณะฯ</span>
             </NavLink>
-            <NavLink to="/literacy" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink to="/literacy" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
               <BookType />
               <span>อ่าน คิดวิเคราะห์ เขียน</span>
             </NavLink>
-            <NavLink to="/competencies" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink to="/competencies" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
               <Brain />
               <span>สมรรถนะสำคัญ</span>
             </NavLink>
@@ -172,18 +197,18 @@ function App() {
             <div style={{ margin: '1rem 0 0.5rem 1rem', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               รายงาน
             </div>
-            <NavLink to="/monthly-report" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink to="/monthly-report" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
               <FileText />
               <span>รายงานประจำเดือน</span>
             </NavLink>
-            <NavLink to="/grades" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink to="/grades" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
               <BarChart3 />
               <span>สรุปผลการเรียน (Print)</span>
             </NavLink>
           </nav>
           
           <div style={{ marginTop: 'auto', padding: '1rem', borderTop: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ marginBottom: '0.5rem' }}>
+            <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ marginBottom: '0.5rem' }} onClick={closeMobileMenu}>
               <Settings />
               <span>ตั้งค่าระบบ (ปพ.5)</span>
             </NavLink>
