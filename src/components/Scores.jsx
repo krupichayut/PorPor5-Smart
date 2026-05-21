@@ -8,6 +8,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
   const [newColumnMax, setNewColumnMax] = useState(10);
   const [newColumnIndicatorId, setNewColumnIndicatorId] = useState('');
   const [newColumnType, setNewColumnType] = useState('collected'); // 'collected' or 'exam'
+  const [newColumnTerm, setNewColumnTerm] = useState('all'); // '1', '2', 'all'
   
   const activeClass = classes.find(c => c.id === activeClassId);
   const classStudents = students.filter(s => s.classId === activeClassId).sort((a, b) => a.number - b.number);
@@ -37,6 +38,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
     setNewColumnMax(10);
     setNewColumnIndicatorId('');
     setNewColumnType('collected');
+    setNewColumnTerm('all');
     setIsColumnModalOpen(true);
   };
 
@@ -46,6 +48,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
     setNewColumnMax(col.maxScore);
     setNewColumnIndicatorId(col.indicatorId || '');
     setNewColumnType(col.type || 'collected');
+    setNewColumnTerm(col.term || 'all');
     setIsColumnModalOpen(true);
   };
 
@@ -56,7 +59,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
     if (editingColumnId) {
       setScoreColumns(scoreColumns.map(col => 
         col.id === editingColumnId 
-          ? { ...col, name: newColumnName, maxScore: Number(newColumnMax), indicatorId: newColumnIndicatorId || null, type: newColumnType }
+          ? { ...col, name: newColumnName, maxScore: Number(newColumnMax), indicatorId: newColumnIndicatorId || null, type: newColumnType, term: newColumnTerm }
           : col
       ));
     } else {
@@ -66,7 +69,8 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
         name: newColumnName,
         maxScore: Number(newColumnMax),
         indicatorId: newColumnIndicatorId || null,
-        type: newColumnType
+        type: newColumnType,
+        term: newColumnTerm
       };
       setScoreColumns([...scoreColumns, newCol]);
     }
@@ -232,6 +236,9 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                             <div style={{ fontSize: '0.75rem', fontWeight: 'normal', color: 'var(--text-muted)' }}>
                               {col.type === 'exam' ? '(สอบ)' : '(เก็บ)'} เต็ม {col.maxScore}
                             </div>
+                            <div style={{ fontSize: '0.7rem', color: 'var(--primary-color)', marginTop: '2px', backgroundColor: 'var(--primary-light)', padding: '2px 6px', borderRadius: '4px', display: 'inline-block' }}>
+                              {col.term === '1' ? 'เทอม 1' : col.term === '2' ? 'เทอม 2' : 'ตลอดปี'}
+                            </div>
                           </div>
                           {!readOnly && (
                             <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
@@ -333,6 +340,41 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                       onChange={() => setNewColumnType('exam')}
                     />
                     คะแนนสอบ
+                  </label>
+                </div>
+              </div>
+              <div className="form-group">
+                <label className="form-label">ภาคเรียน</label>
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                    <input 
+                      type="radio" 
+                      name="scoreTerm" 
+                      value="all" 
+                      checked={newColumnTerm === 'all'}
+                      onChange={() => setNewColumnTerm('all')}
+                    />
+                    ตลอดปี / ใช้ร่วมกัน
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                    <input 
+                      type="radio" 
+                      name="scoreTerm" 
+                      value="1" 
+                      checked={newColumnTerm === '1'}
+                      onChange={() => setNewColumnTerm('1')}
+                    />
+                    เทอม 1
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                    <input 
+                      type="radio" 
+                      name="scoreTerm" 
+                      value="2" 
+                      checked={newColumnTerm === '2'}
+                      onChange={() => setNewColumnTerm('2')}
+                    />
+                    เทอม 2
                   </label>
                 </div>
               </div>

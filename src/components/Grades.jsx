@@ -1,10 +1,16 @@
+import { useState } from 'react';
 import { BarChart3, Download } from 'lucide-react';
 
 export default function Grades({ students, activeClassId, classes, scores, scoreColumns, attributes, literacy, competencies }) {
+  const [selectedTerm, setSelectedTerm] = useState('all');
+
   const activeClass = classes.find(c => c.id === activeClassId);
   const classStudents = students.filter(s => s.classId === activeClassId).sort((a, b) => a.number - b.number);
   
-  const classScoreColumns = scoreColumns.filter(c => c.classId === activeClassId);
+  const classScoreColumns = scoreColumns.filter(c => 
+    c.classId === activeClassId && 
+    (selectedTerm === 'all' || c.term === selectedTerm || c.term === 'all' || !c.term)
+  );
   const totalMaxCollected = classScoreColumns.filter(c => c.type !== 'exam').reduce((sum, col) => sum + col.maxScore, 0);
   const totalMaxExam = classScoreColumns.filter(c => c.type === 'exam').reduce((sum, col) => sum + col.maxScore, 0);
 
@@ -123,17 +129,34 @@ export default function Grades({ students, activeClassId, classes, scores, score
     <div className="animate-fade-in print-container">
       <div className="page-header print-header">
         <div>
-          <h2 className="page-title">แบบบันทึกผลการพัฒนาคุณภาพผู้เรียน (ปพ.5)</h2>
+          <h2 className="page-title">
+            แบบบันทึกผลการพัฒนาคุณภาพผู้เรียน (ปพ.5) 
+            <span style={{ fontSize: '1.25rem', marginLeft: '0.5rem', color: 'var(--text-secondary)' }}>
+              {selectedTerm === '1' ? '(ภาคเรียนที่ 1)' : selectedTerm === '2' ? '(ภาคเรียนที่ 2)' : '(รวมตลอดปี)'}
+            </span>
+          </h2>
           <p className="page-subtitle" style={{ fontSize: '1rem', marginTop: '0.5rem', color: 'var(--text-primary)' }}>
             <strong>รายวิชา:</strong> {activeClass?.subject} &nbsp;&nbsp;&nbsp; 
             <strong>ชั้น:</strong> {activeClass?.name} &nbsp;&nbsp;&nbsp;
             <strong>สัดส่วนคะแนน:</strong> {collectedRatio} : {examRatio}
           </p>
         </div>
-        <button className="btn btn-secondary no-print" onClick={() => window.print()}>
-          <Download size={18} />
-          พิมพ์รายงาน
-        </button>
+        <div style={{ display: 'flex', gap: '1rem', alignItems: 'center' }} className="no-print">
+          <select 
+            className="form-select" 
+            value={selectedTerm}
+            onChange={(e) => setSelectedTerm(e.target.value)}
+            style={{ width: '220px', margin: 0 }}
+          >
+            <option value="all">แสดงผลรวมตลอดปี</option>
+            <option value="1">แสดงเฉพาะภาคเรียนที่ 1</option>
+            <option value="2">แสดงเฉพาะภาคเรียนที่ 2</option>
+          </select>
+          <button className="btn btn-secondary" onClick={() => window.print()}>
+            <Download size={18} />
+            พิมพ์รายงาน
+          </button>
+        </div>
       </div>
 
       {classStudents.length > 0 && classScoreColumns.length > 0 && (
@@ -255,10 +278,11 @@ export default function Grades({ students, activeClassId, classes, scores, score
           .print-header .page-subtitle { font-size: 1.2rem; text-align: center; }
           
           .table { border: 1px solid black; }
+          .table tr { break-inside: avoid; page-break-inside: avoid; }
           .table th, .table td { border: 1px solid black !important; padding: 0.5rem !important; color: black !important; background: white !important; font-size: 12pt; }
           .table th { background-color: #f0f0f0 !important; font-weight: bold; }
           
-          .print-signatures { display: block !important; page-break-inside: avoid; }
+          .print-signatures { display: block !important; break-inside: avoid; page-break-inside: avoid; }
         }
       `}</style>
     </div>
