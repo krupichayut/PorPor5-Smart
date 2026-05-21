@@ -173,20 +173,20 @@ export default function MonthlyReport({ appSettings, activeClassId, classes, stu
         )}
         
         <div style={{ display: 'flex', justifyContent: 'space-around', marginTop: '60px', fontSize: '16pt', textAlign: 'center' }}>
-          <div>
-            ลงชื่อ......................................................ผู้รายงาน<br />
+          <div style={{ padding: '0 1rem' }}>
+            ลงชื่อ..........................................ผู้รายงาน<br />
             ({appSettings?.teacherName || '......................................'})<br />
             ครูผู้สอน
           </div>
-          <div>
-            ลงชื่อ......................................................ผู้รับรอง<br />
+          <div style={{ padding: '0 1rem' }}>
+            ลงชื่อ..........................................ผู้รับรอง<br />
             ({appSettings?.academicHeadName || '......................................'})<br />
             หัวหน้าฝ่ายวิชาการ
           </div>
         </div>
         
         <div style={{ textAlign: 'center', marginTop: '60px', fontSize: '16pt' }}>
-          ลงชื่อ......................................................ผู้อนุมัติ<br />
+          ลงชื่อ..........................................ผู้อนุมัติ<br />
           ({appSettings?.principalName || '......................................'})<br />
           ผู้อำนวยการ{appSettings?.schoolName || 'โรงเรียน........................'}
         </div>
