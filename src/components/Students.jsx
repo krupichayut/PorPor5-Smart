@@ -3,6 +3,8 @@ import { Users, Plus, Trash2 } from 'lucide-react';
 
 export default function Students({ students, setStudents, activeClassId, classes }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [addMode, setAddMode] = useState('single');
+  const [bulkData, setBulkData] = useState('');
   const [newStudentId, setNewStudentId] = useState('');
   const [newStudentName, setNewStudentName] = useState('');
   
@@ -25,6 +27,51 @@ export default function Students({ students, setStudents, activeClassId, classes
     setNewStudentId('');
     setNewStudentName('');
     setIsModalOpen(false);
+  };
+
+  const handleBulkAdd = (e) => {
+    e.preventDefault();
+    if (!bulkData.trim() || !activeClassId) return;
+
+    const lines = bulkData.split('\n');
+    let currentNumber = classStudents.length + 1;
+    const newStudents = [];
+    const timestamp = Date.now();
+
+    lines.forEach((line, idx) => {
+      // split by tab or multiple spaces
+      const parts = line.split(/\t| {2,}/);
+      if (parts.length >= 2) {
+        const sid = parts[0].trim();
+        const sname = parts[1].trim();
+        if (sid && sname) {
+          newStudents.push({
+            id: `${timestamp}-${idx}`,
+            classId: activeClassId,
+            studentId: sid,
+            name: sname,
+            number: currentNumber++
+          });
+        }
+      } else if (parts.length === 1 && parts[0].trim()) {
+         const sname = parts[0].trim();
+         newStudents.push({
+            id: `${timestamp}-${idx}`,
+            classId: activeClassId,
+            studentId: `TMP${currentNumber}`,
+            name: sname,
+            number: currentNumber++
+          });
+      }
+    });
+
+    if (newStudents.length > 0) {
+      setStudents([...students, ...newStudents]);
+      setIsModalOpen(false);
+      setBulkData('');
+    } else {
+      alert("ไม่พบข้อมูลที่ถูกต้อง กรุณาตรวจสอบรูปแบบ (รหัสประจำตัว [Tab] ชื่อ-นามสกุล)");
+    }
   };
 
   const handleDeleteStudent = (id) => {
@@ -106,38 +153,79 @@ export default function Students({ students, setStudents, activeClassId, classes
 
       {isModalOpen && (
         <div className="modal-overlay">
-          <div className="modal-content">
+          <div className="modal-content" style={{ maxWidth: '600px' }}>
             <div className="modal-header">
               <h3 className="modal-title">เพิ่มรายชื่อนักเรียน</h3>
               <button className="btn-icon" onClick={() => setIsModalOpen(false)}>×</button>
             </div>
-            <form onSubmit={handleAddStudent}>
-              <div className="form-group">
-                <label className="form-label">เลขประจำตัวนักเรียน</label>
-                <input 
-                  type="text" 
-                  className="form-input" 
-                  value={newStudentId}
-                  onChange={(e) => setNewStudentId(e.target.value)}
-                  placeholder="เช่น 12345"
-                  autoFocus
-                />
-              </div>
-              <div className="form-group">
-                <label className="form-label">ชื่อ - นามสกุล</label>
-                <input 
-                  type="text" 
-                  className="form-input" 
-                  value={newStudentName}
-                  onChange={(e) => setNewStudentName(e.target.value)}
-                  placeholder="เช่น เด็กชายรักเรียน ขยันยิ่ง"
-                />
-              </div>
-              <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>ยกเลิก</button>
-                <button type="submit" className="btn btn-primary" disabled={!newStudentId.trim() || !newStudentName.trim()}>เพิ่มนักเรียน</button>
-              </div>
-            </form>
+            
+            <div style={{ display: 'flex', borderBottom: '1px solid var(--border-color)', marginBottom: '1.5rem' }}>
+              <button 
+                type="button"
+                style={{ flex: 1, padding: '0.75rem', background: 'none', border: 'none', borderBottom: addMode === 'single' ? '2px solid var(--primary-color)' : '2px solid transparent', color: addMode === 'single' ? 'var(--primary-color)' : 'var(--text-muted)', fontWeight: addMode === 'single' ? 600 : 400, cursor: 'pointer' }}
+                onClick={() => setAddMode('single')}
+              >
+                เพิ่มทีละคน
+              </button>
+              <button 
+                type="button"
+                style={{ flex: 1, padding: '0.75rem', background: 'none', border: 'none', borderBottom: addMode === 'bulk' ? '2px solid var(--primary-color)' : '2px solid transparent', color: addMode === 'bulk' ? 'var(--primary-color)' : 'var(--text-muted)', fontWeight: addMode === 'bulk' ? 600 : 400, cursor: 'pointer' }}
+                onClick={() => setAddMode('bulk')}
+              >
+                เพิ่มหลายคน (ก๊อปปี้จาก Excel)
+              </button>
+            </div>
+
+            {addMode === 'single' ? (
+              <form onSubmit={handleAddStudent}>
+                <div className="form-group">
+                  <label className="form-label">เลขประจำตัวนักเรียน</label>
+                  <input 
+                    type="text" 
+                    className="form-input" 
+                    value={newStudentId}
+                    onChange={(e) => setNewStudentId(e.target.value)}
+                    placeholder="เช่น 12345"
+                    autoFocus
+                  />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">ชื่อ - นามสกุล</label>
+                  <input 
+                    type="text" 
+                    className="form-input" 
+                    value={newStudentName}
+                    onChange={(e) => setNewStudentName(e.target.value)}
+                    placeholder="เช่น เด็กชายรักเรียน ขยันยิ่ง"
+                  />
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>ยกเลิก</button>
+                  <button type="submit" className="btn btn-primary" disabled={!newStudentId.trim() || !newStudentName.trim()}>เพิ่มนักเรียน</button>
+                </div>
+              </form>
+            ) : (
+              <form onSubmit={handleBulkAdd}>
+                <div className="form-group">
+                  <label className="form-label">วางข้อมูลรายชื่อนักเรียน (ลากคลุมจาก Excel แล้ว Paste ลงที่นี่ได้เลย)</label>
+                  <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>
+                    * รูปแบบ: <strong>รหัสประจำตัว</strong> [ช่องว่าง/Tab] <strong>ชื่อ-นามสกุล</strong> (ถ้ามีแต่ชื่อ ระบบจะสร้างรหัสชั่วคราวให้)
+                  </div>
+                  <textarea 
+                    className="form-input" 
+                    value={bulkData}
+                    onChange={(e) => setBulkData(e.target.value)}
+                    placeholder="12345    เด็กชายเอ รักเรียน&#10;12346    เด็กหญิงบี ขยัน"
+                    rows="8"
+                    autoFocus
+                  />
+                </div>
+                <div className="modal-footer">
+                  <button type="button" className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>ยกเลิก</button>
+                  <button type="submit" className="btn btn-primary" disabled={!bulkData.trim()}>เพิ่มรายชื่อทั้งหมด</button>
+                </div>
+              </form>
+            )}
           </div>
         </div>
       )}
