@@ -20,6 +20,19 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
   const activeClass = classes.find(c => c.id === activeClassId);
   const classUnits = indicators.filter(i => i.classId === activeClassId);
 
+  const getExpectedHours = (className) => {
+    if (!className) return 0;
+    const match = className.match(/ป\.([1-6])/);
+    if (match) {
+      const grade = parseInt(match[1], 10);
+      if (grade === 1 || grade === 2) return 40;
+      if (grade >= 3 && grade <= 6) return 80;
+    }
+    return 0;
+  };
+
+  const expectedHours = getExpectedHours(activeClass?.name);
+
 
 
   const handleAddUnit = (e) => {
@@ -170,7 +183,12 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
       <div className="page-header">
         <div>
           <h2 className="page-title">โครงสร้างวิชา: {activeClass?.subject}</h2>
-          <p className="page-subtitle">ชั้น {activeClass?.name} • รวม {totalWeight} คะแนน • {totalHours} ชั่วโมง</p>
+          <p className="page-subtitle">
+            ชั้น {activeClass?.name} • รวม {totalWeight} คะแนน • {totalHours} {expectedHours > 0 ? `/ ${expectedHours}` : ''} ชั่วโมง
+            {expectedHours > 0 && totalHours !== expectedHours && (
+              <span style={{ color: '#fbbf24', marginLeft: '8px', fontWeight: 500 }}>(ควรจัดให้ได้ {expectedHours} ชั่วโมง/ปี)</span>
+            )}
+          </p>
         </div>
         {!readOnly && (
           <button className="btn btn-primary" onClick={openAddUnitModal}>
@@ -261,7 +279,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
                 ))}
                 <tr style={{ backgroundColor: 'var(--bg-tertiary)', fontWeight: 'bold' }}>
                   <td colSpan={3} style={{ textAlign: 'right', paddingRight: '1rem' }}>รวมทั้งหมด:</td>
-                  <td style={{ textAlign: 'center', color: 'var(--primary-color)' }}>{totalHours}</td>
+                  <td style={{ textAlign: 'center', color: expectedHours > 0 && totalHours !== expectedHours ? '#fbbf24' : 'var(--primary-color)' }}>{totalHours} {expectedHours > 0 ? `/ ${expectedHours}` : ''}</td>
                   <td style={{ textAlign: 'center', color: 'var(--primary-color)' }}>{totalWeight}</td>
                   <td></td>
                 </tr>

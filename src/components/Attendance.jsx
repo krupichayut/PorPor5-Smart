@@ -16,6 +16,19 @@ export default function Attendance({ students, activeClassId, classes, attendanc
   // Get unique dates
   const dates = [...new Set(classAttendance.map(a => a.date))].sort();
 
+  const getExpectedHours = (className) => {
+    if (!className) return 0;
+    const match = className.match(/ป\.([1-6])/);
+    if (match) {
+      const grade = parseInt(match[1], 10);
+      if (grade === 1 || grade === 2) return 40;
+      if (grade >= 3 && grade <= 6) return 80;
+    }
+    return 0;
+  };
+  
+  const expectedHours = getExpectedHours(activeClass?.name);
+
   const handleAddDate = (e) => {
     e.preventDefault();
     if (!newDate) return;
@@ -104,7 +117,10 @@ export default function Attendance({ students, activeClassId, classes, attendanc
       <div className="page-header">
         <div>
           <h2 className="page-title">เช็คเวลาเรียน: {activeClass?.name}</h2>
-          <p className="page-subtitle">คลิกที่สถานะในตารางเพื่อเปลี่ยน (มา &rarr; ขาด &rarr; สาย &rarr; ลา)</p>
+          <p className="page-subtitle">
+            คลิกที่สถานะในตารางเพื่อเปลี่ยน (มา &rarr; ขาด &rarr; สาย &rarr; ลา)
+            {expectedHours > 0 && <span style={{ marginLeft: '8px', color: 'var(--primary-color)' }}>• เวลาเรียนเต็ม {expectedHours} ชั่วโมง/ปี</span>}
+          </p>
         </div>
         {!readOnly && (
           <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
@@ -173,7 +189,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
                   const lateCount = classAttendance.filter(a => a.studentId === s.id && a.status === 'late').length;
                   const holidayCount = classAttendance.filter(a => a.studentId === s.id && a.status === 'holiday').length;
                   
-                  const totalDays = dates.length;
+                  const totalDays = expectedHours > 0 ? expectedHours : dates.length;
                   // In Thai schools, late and holidays are counted as present for the final attended count
                   const actualAttended = presentCount + lateCount + holidayCount; 
                   const percentage = totalDays > 0 ? Math.round((actualAttended / totalDays) * 100) : 0;
