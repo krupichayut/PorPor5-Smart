@@ -2,14 +2,14 @@
 @import url('https://fonts.googleapis.com/css2?family=Sarabun:wght@300;400;500;600;700&display=swap');
 
 :root {
-  /* Colors - Premium Dark Glassmorphism Palette */
+  /* Colors - Premium Dark Glassmorphism Palette (High Contrast) */
   --bg-primary: #0b0f19;
-  --bg-secondary: rgba(30, 41, 59, 0.6);
-  --bg-tertiary: rgba(51, 65, 85, 0.4);
+  --bg-secondary: rgba(30, 41, 59, 0.85);
+  --bg-tertiary: rgba(51, 65, 85, 0.7);
   
   --primary-color: #818cf8;
   --primary-hover: #6366f1;
-  --primary-light: rgba(99, 102, 241, 0.2);
+  --primary-light: rgba(99, 102, 241, 0.25);
   --primary-gradient: linear-gradient(135deg, #818cf8 0%, #c084fc 100%);
   --primary-gradient-hover: linear-gradient(135deg, #6366f1 0%, #a855f7 100%);
   
@@ -19,11 +19,11 @@
   --danger-color: #f87171;
   
   --text-primary: #f8fafc;
-  --text-secondary: #cbd5e1;
-  --text-muted: #94a3b8;
+  --text-secondary: #e2e8f0;
+  --text-muted: #cbd5e1;
   
-  --border-color: rgba(255, 255, 255, 0.1);
-  --glass-border: rgba(255, 255, 255, 0.15);
+  --border-color: rgba(255, 255, 255, 0.15);
+  --glass-border: rgba(255, 255, 255, 0.2);
   
   /* Shadows - Premium Soft */
   --shadow-sm: 0 2px 4px rgba(0, 0, 0, 0.02);
@@ -156,7 +156,7 @@ body {
 
 /* Premium Glass Cards */
 .card {
-  background: rgba(30, 41, 59, 0.6);
+  background: var(--bg-secondary);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-radius: var(--radius-lg);
@@ -270,7 +270,7 @@ body {
   font-family: inherit;
   font-size: 0.9rem;
   color: var(--text-primary);
-  background-color: rgba(15, 23, 42, 0.6);
+  background-color: rgba(15, 23, 42, 0.85);
   transition: all var(--transition-fast);
   box-shadow: inset 0 2px 4px rgba(0,0,0,0.2);
 }
@@ -306,10 +306,8 @@ body {
 }
 
 .table th {
-  background: rgba(30, 41, 59, 0.8);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  color: var(--text-secondary);
+  background: #0f172a;
+  color: var(--text-primary);
   font-weight: 600;
   font-size: 0.875rem;
   padding: 1rem;
@@ -321,7 +319,7 @@ body {
 
 .table td {
   padding: 1rem;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+  border-bottom: 1px solid var(--border-color);
   color: var(--text-primary);
   font-size: 0.875rem;
   background-color: transparent;
@@ -341,8 +339,7 @@ body {
 
 /* Fix sticky columns background in the new table style */
 .table th.sticky-col, .table td.sticky-col {
-  background-color: rgba(30, 41, 59, 0.95);
-  backdrop-filter: blur(8px);
+  background-color: #0f172a;
 }
 
 /* Page Header */
@@ -389,13 +386,13 @@ body {
 }
 
 .badge-warning {
-  background-color: #fef3c7;
-  color: #b45309;
+  background-color: #fcd34d;
+  color: #92400e;
 }
 
 .badge-danger {
-  background-color: #fee2e2;
-  color: #b91c1c;
+  background-color: #fca5a5;
+  color: #991b1b;
 }
 
 /* Animations */
@@ -428,7 +425,7 @@ body {
 }
 
 .modal-content {
-  background: rgba(15, 23, 42, 0.95);
+  background: rgba(15, 23, 42, 0.98);
   backdrop-filter: blur(16px);
   -webkit-backdrop-filter: blur(16px);
   border-radius: var(--radius-xl);
@@ -531,6 +528,8 @@ body {
     z-index: 50;
     transform: translateX(-100%);
     transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    overflow-y: auto;
+    -webkit-overflow-scrolling: touch;
   }
   
   .sidebar.mobile-open {
@@ -572,6 +571,15 @@ body {
     font-size: 1.5rem;
   }
   
+  .form-input, .form-select {
+    font-size: 16px;
+    min-height: 44px;
+  }
+  
+  .btn {
+    min-height: 44px;
+  }
+  
   .card {
     padding: 1rem;
   }
@@ -582,17 +590,30 @@ body {
     padding-bottom: 0.5rem;
     overflow-x: auto;
     -webkit-overflow-scrolling: touch;
+    /* Add scroll shadow hints */
+    background: 
+      linear-gradient(to right, rgba(15, 23, 42, 1) 30%, rgba(15, 23, 42, 0)),
+      linear-gradient(to right, rgba(15, 23, 42, 0), rgba(15, 23, 42, 1) 70%) 100% 0,
+      radial-gradient(farthest-side at 0 50%, rgba(0,0,0,.5), rgba(0,0,0,0)),
+      radial-gradient(farthest-side at 100% 50%, rgba(0,0,0,.5), rgba(0,0,0,0)) 100% 0;
+    background-repeat: no-repeat;
+    background-color: rgba(15, 23, 42, 0.4);
+    background-size: 40px 100%, 40px 100%, 14px 100%, 14px 100%;
+    background-attachment: local, local, scroll, scroll;
   }
   
   /* Modal adjustments for small screens */
   .modal-content {
-    padding: 1.5rem;
-    max-height: 85vh;
+    padding: 1rem;
+    max-height: 90vh;
+    width: 95%;
+    margin: 0 auto;
   }
   
   .modal-footer {
     flex-direction: column;
-    gap: 0.5rem;
+    gap: 0.75rem;
+    margin-top: 1.5rem;
   }
   
   .modal-footer .btn {
@@ -601,18 +622,5 @@ body {
 
   .hide-on-mobile {
     display: none;
-  }
-
-  /* Stick the name column so it doesn't scroll out of view */
-  .table th:nth-child(2), .table td:nth-child(2) {
-    position: sticky;
-    left: 0;
-    z-index: 5;
-    background-color: rgba(15, 23, 42, 0.98);
-    backdrop-filter: blur(8px);
-    border-right: 1px solid var(--border-color);
-  }
-  .table th:nth-child(2) {
-    z-index: 6; /* Higher than td to stay above when scrolling vertically */
   }
 }
