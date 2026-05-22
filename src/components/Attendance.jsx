@@ -95,6 +95,9 @@ export default function Attendance({ students, activeClassId, classes, attendanc
     return statuses[(currentIndex + 1) % statuses.length];
   };
 
+  const displayTotal = Math.max(expectedHours, dates.length);
+  const required80 = Math.ceil(displayTotal * 0.8);
+
   if (!activeClassId) {
     return (
       <div className="animate-fade-in">
@@ -119,7 +122,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
           <h2 className="page-title">เช็คเวลาเรียน: {activeClass?.name}</h2>
           <p className="page-subtitle">
             คลิกที่สถานะในตารางเพื่อเปลี่ยน (มา &rarr; ขาด &rarr; สาย &rarr; ลา)
-            {expectedHours > 0 && <span style={{ marginLeft: '8px', color: 'var(--primary-color)' }}>• เวลาเรียนเต็ม {expectedHours} ชั่วโมง/ปี</span>}
+            {displayTotal > 0 && <span style={{ marginLeft: '8px', color: 'var(--primary-color)' }}>• เวลาเรียนเต็ม {displayTotal} คาบ (ต้องมาเรียนไม่น้อยกว่า {required80} คาบ)</span>}
           </p>
         </div>
         {!readOnly && (
@@ -189,7 +192,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
                   const lateCount = classAttendance.filter(a => a.studentId === s.id && a.status === 'late').length;
                   const holidayCount = classAttendance.filter(a => a.studentId === s.id && a.status === 'holiday').length;
                   
-                  const totalDays = expectedHours > 0 ? expectedHours : dates.length;
+                  const totalDays = Math.max(expectedHours, dates.length);
                   // In Thai schools, late and holidays are counted as present for the final attended count
                   const actualAttended = presentCount + lateCount + holidayCount; 
                   const percentage = totalDays > 0 ? Math.round((actualAttended / totalDays) * 100) : 0;
