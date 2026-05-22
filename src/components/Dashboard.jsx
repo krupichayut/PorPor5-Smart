@@ -117,7 +117,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
           <>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
               <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                <div style={{ backgroundColor: 'var(--primary-light)', color: 'var(--primary-color)', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
+                <div style={{ backgroundColor: 'rgba(99, 102, 241, 0.2)', color: 'var(--primary-color)', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
                   <BookOpen size={32} />
                 </div>
                 <div>
@@ -127,7 +127,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
               </div>
               
               <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-                <div style={{ backgroundColor: 'rgba(14, 165, 233, 0.15)', color: 'var(--primary-light)', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
+                <div style={{ backgroundColor: 'rgba(14, 165, 233, 0.15)', color: 'var(--accent-color)', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
                   <Users size={32} />
                 </div>
                 <div>
@@ -301,7 +301,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
       
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
         <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-          <div style={{ backgroundColor: 'var(--primary-light)', color: 'var(--primary-color)', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
+          <div style={{ backgroundColor: 'rgba(99, 102, 241, 0.2)', color: 'var(--primary-color)', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
             <Users size={32} />
           </div>
           <div>

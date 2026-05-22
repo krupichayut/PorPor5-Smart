@@ -158,10 +158,10 @@ export default function Attendance({ students, activeClassId, classes, attendanc
                     );
                   })}
                   <th style={{ textAlign: 'center', minWidth: '60px', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>เต็ม</th>
-                  <th style={{ textAlign: 'center', minWidth: '60px', color: '#34d399', backgroundColor: 'rgba(52, 211, 153, 0.1)' }}>มา</th>
-                  <th style={{ textAlign: 'center', minWidth: '60px', color: '#94a3b8', backgroundColor: 'rgba(148, 163, 184, 0.1)' }}>ลา</th>
-                  <th style={{ textAlign: 'center', minWidth: '60px', color: '#f87171', backgroundColor: 'rgba(248, 113, 113, 0.1)' }}>ขาด</th>
-                  <th style={{ textAlign: 'center', minWidth: '60px', color: '#fbbf24', backgroundColor: 'rgba(251, 191, 36, 0.1)' }}>สาย</th>
+                  <th style={{ textAlign: 'center', minWidth: '60px', color: '#6ee7b7', backgroundColor: 'rgba(52, 211, 153, 0.1)' }}>มา</th>
+                  <th style={{ textAlign: 'center', minWidth: '60px', color: '#cbd5e1', backgroundColor: 'rgba(148, 163, 184, 0.1)' }}>ลา</th>
+                  <th style={{ textAlign: 'center', minWidth: '60px', color: '#fca5a5', backgroundColor: 'rgba(248, 113, 113, 0.1)' }}>ขาด</th>
+                  <th style={{ textAlign: 'center', minWidth: '60px', color: '#fde047', backgroundColor: 'rgba(251, 191, 36, 0.1)' }}>สาย</th>
                   <th style={{ textAlign: 'center', minWidth: '80px', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>ร้อยละ %</th>
                 </tr>
               </thead>
@@ -201,7 +201,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
                       <td style={{ textAlign: 'center', fontWeight: 600, color: '#94a3b8', backgroundColor: 'rgba(148, 163, 184, 0.05)' }}>{leaveCount}</td>
                       <td style={{ textAlign: 'center', fontWeight: 600, color: '#f87171', backgroundColor: 'rgba(248, 113, 113, 0.05)' }}>{absentCount}</td>
                       <td style={{ textAlign: 'center', fontWeight: 600, color: '#fbbf24', backgroundColor: 'rgba(251, 191, 36, 0.05)' }}>{lateCount}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 700, color: percentage < 80 ? '#f87171' : 'var(--primary-light)', backgroundColor: 'rgba(255, 255, 255, 0.02)' }}>
+                      <td style={{ textAlign: 'center', fontWeight: 700, color: percentage < 80 ? '#fca5a5' : 'var(--primary-color)', backgroundColor: 'rgba(255, 255, 255, 0.02)' }}>
                         {percentage}%
                       </td>
                     </tr>

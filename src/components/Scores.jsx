@@ -190,7 +190,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
         <div className="card" style={{ padding: '1rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{ padding: '0.75rem', backgroundColor: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary-light)', borderRadius: 'var(--radius-md)' }}>
+          <div style={{ padding: '0.75rem', backgroundColor: 'rgba(99, 102, 241, 0.2)', color: 'var(--primary-color)', borderRadius: 'var(--radius-md)' }}>
             <Calculator size={24} />
           </div>
           <div>
@@ -237,7 +237,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                             <div style={{ fontSize: '0.75rem', fontWeight: 'normal', color: 'var(--text-muted)' }}>
                               {col.type === 'exam' ? '(สอบ)' : '(เก็บ)'} เต็ม {col.maxScore}
                             </div>
-                            <div style={{ fontSize: '0.7rem', color: 'var(--primary-color)', marginTop: '2px', backgroundColor: 'var(--primary-light)', padding: '2px 6px', borderRadius: '4px', display: 'inline-block' }}>
+                            <div style={{ fontSize: '0.7rem', color: 'var(--text-primary)', marginTop: '2px', backgroundColor: 'var(--primary-color)', padding: '2px 6px', borderRadius: '4px', display: 'inline-block' }}>
                               {col.term === '1' ? 'เทอม 1' : col.term === '2' ? 'เทอม 2' : 'ตลอดปี'}
                             </div>
                           </div>
@@ -255,12 +255,12 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                       </th>
                     );
                   })}
-                  <th colSpan={3} style={{ textAlign: 'center', backgroundColor: 'var(--primary-light)', color: 'var(--primary-color)', borderBottom: '1px solid var(--border-color)' }}>คะแนนที่แปลงสัดส่วนแล้ว (Scaled)</th>
+                  <th colSpan={3} style={{ textAlign: 'center', backgroundColor: 'rgba(99, 102, 241, 0.2)', color: 'var(--primary-color)', borderBottom: '1px solid var(--border-color)' }}>คะแนนที่แปลงสัดส่วนแล้ว (Scaled)</th>
                 </tr>
                 <tr>
-                  <th style={{ textAlign: 'center', backgroundColor: 'var(--primary-light)', color: 'var(--primary-color)', fontSize: '0.875rem' }}>เก็บ ({collectedRatio})</th>
-                  <th style={{ textAlign: 'center', backgroundColor: 'var(--primary-light)', color: 'var(--primary-color)', fontSize: '0.875rem' }}>สอบ ({examRatio})</th>
-                  <th style={{ textAlign: 'center', backgroundColor: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary-light)', fontSize: '0.875rem' }}>รวม 100</th>
+                  <th style={{ textAlign: 'center', backgroundColor: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary-color)', fontSize: '0.875rem' }}>เก็บ ({collectedRatio})</th>
+                  <th style={{ textAlign: 'center', backgroundColor: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary-color)', fontSize: '0.875rem' }}>สอบ ({examRatio})</th>
+                  <th style={{ textAlign: 'center', backgroundColor: 'rgba(99, 102, 241, 0.25)', color: 'var(--primary-color)', fontSize: '0.875rem' }}>รวม 100</th>
                 </tr>
               </thead>
               <tbody>

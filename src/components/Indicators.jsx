@@ -212,8 +212,8 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
                           {unit.items.map(item => (
                             <li key={item.id} style={{ marginBottom: '0.5rem', lineHeight: '1.4' }}>
                               <strong style={{ color: 'var(--primary-color)' }}>{item.code}</strong> 
-                              {item.type === 'between' && <span style={{ marginLeft: '6px', backgroundColor: 'rgba(251, 191, 36, 0.15)', color: '#fbbf24', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600 }}>ระหว่างทาง</span>}
-                              {item.type === 'end' && <span style={{ marginLeft: '6px', backgroundColor: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary-light)', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600 }}>ปลายทาง</span>}
+                              {item.type === 'between' && <span style={{ marginLeft: '6px', backgroundColor: 'rgba(251, 191, 36, 0.2)', color: '#fde047', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600 }}>ระหว่างทาง</span>}
+                              {item.type === 'end' && <span style={{ marginLeft: '6px', backgroundColor: 'rgba(99, 102, 241, 0.2)', color: 'var(--primary-color)', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600 }}>ปลายทาง</span>}
                               {' '}{item.description}
                               {!readOnly && (
                                 <>
