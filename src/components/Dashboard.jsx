@@ -1,4 +1,4 @@
-import { BarChart3, Users, Calendar, Award, FileWarning, TrendingUp, ChevronRight, BookOpen } from 'lucide-react';
+import { BarChart3, Users, Calendar, Award, FileWarning, TrendingUp, ChevronRight, BookOpen, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 
@@ -116,7 +116,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
         ) : (
           <>
             <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-              <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+              <div className="card hover-card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', cursor: 'pointer' }} onClick={() => navigate('/classes')}>
                 <div style={{ backgroundColor: 'rgba(99, 102, 241, 0.2)', color: 'var(--primary-color)', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
                   <BookOpen size={32} />
                 </div>
@@ -126,7 +126,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                 </div>
               </div>
               
-              <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+              <div className="card hover-card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', cursor: 'pointer' }} onClick={() => navigate('/students')}>
                 <div style={{ backgroundColor: 'rgba(14, 165, 233, 0.15)', color: 'var(--accent-color)', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
                   <Users size={32} />
                 </div>
@@ -136,7 +136,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                 </div>
               </div>
 
-              <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+              <div className="card hover-card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', cursor: 'pointer' }} onClick={() => navigate('/attendance')}>
                 <div style={{ backgroundColor: 'rgba(52, 211, 153, 0.15)', color: '#34d399', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
                   <TrendingUp size={32} />
                 </div>
@@ -146,7 +146,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                 </div>
               </div>
 
-              <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', border: totalMissing > 0 ? '1px solid rgba(239, 68, 68, 0.3)' : 'none' }}>
+              <div className="card hover-card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', border: totalMissing > 0 ? '1px solid rgba(239, 68, 68, 0.3)' : 'none', cursor: 'pointer' }} onClick={() => navigate('/missing-work')}>
                 <div style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#f87171', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
                   <FileWarning size={32} />
                 </div>
@@ -248,8 +248,87 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
               </div>
             </div>
             
+            <div style={{ marginTop: '3rem' }}>
+              <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#f87171' }}>
+                <FileWarning size={24} /> งานค้างมากที่สุด (แยกตามห้อง)
+              </h3>
+              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+                {classes.map(cls => {
+                  const clsStudents = students.filter(s => s.classId === cls.id);
+                  const clsColumns = scoreColumns.filter(c => c.classId === cls.id);
+                  
+                  const missingByStudent = clsStudents.map(student => {
+                    let missingCount = 0;
+                    clsColumns.forEach(col => {
+                      const hasScore = scores.some(s => s.studentId === student.id && s.columnId === col.id && s.score !== null && s.score !== '');
+                      if (!hasScore) missingCount++;
+                    });
+                    return { ...student, missingCount };
+                  });
+
+                  const topMissing = missingByStudent
+                    .filter(s => s.missingCount > 0)
+                    .sort((a, b) => b.missingCount - a.missingCount)
+                    .slice(0, 3);
+
+                  if (topMissing.length === 0) {
+                    return (
+                      <div className="card" key={cls.id} style={{ padding: 0, border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+                        <div style={{ padding: '1rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'rgba(16, 185, 129, 0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <h4 style={{ margin: 0, fontSize: '1rem', color: 'var(--text-primary)' }}>{cls.name}</h4>
+                          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{cls.subject}</span>
+                        </div>
+                        <div style={{ padding: '2rem 1rem', textAlign: 'center', color: '#10b981' }}>
+                          <CheckCircle size={32} style={{ margin: '0 auto 0.5rem', opacity: 0.5 }} />
+                          <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>ไม่มีงานค้าง</div>
+                        </div>
+                      </div>
+                    );
+                  }
+
+                  return (
+                    <div className="card" key={cls.id} style={{ padding: 0, border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+                      <div style={{ padding: '1rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'rgba(239, 68, 68, 0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                        <h4 style={{ margin: 0, fontSize: '1rem', color: 'var(--text-primary)' }}>{cls.name}</h4>
+                        <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{cls.subject}</span>
+                      </div>
+                      <div style={{ padding: '1rem' }}>
+                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+                          {topMissing.map((s, idx) => (
+                            <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '0.5rem', borderBottom: idx !== topMissing.length - 1 ? '1px solid var(--border-color)' : 'none' }}>
+                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                                <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#f87171', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.8rem' }}>
+                                  {idx + 1}
+                                </div>
+                                <div>
+                                  <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{s.name}</div>
+                                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>เลขที่ {s.number}</div>
+                                </div>
+                              </div>
+                              <div style={{ fontWeight: 700, color: '#f87171', fontSize: '0.9rem' }}>{s.missingCount} ชิ้น</div>
+                            </div>
+                          ))}
+                        </div>
+                        <button className="btn btn-secondary" style={{ width: '100%', marginTop: '1rem', fontSize: '0.8rem', padding: '0.5rem' }} onClick={() => { setActiveClassId(cls.id); navigate('/missing-work'); }}>
+                          จัดการงานค้าง
+                        </button>
+                      </div>
+                    </div>
+                  );
+                })}
+              </div>
+            </div>
+
             <style>{`
               .hover-row:hover {
+                background-color: var(--bg-secondary);
+              }
+              .hover-card {
+                transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
+              }
+              .hover-card:hover {
+                transform: translateY(-2px);
+                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
                 background-color: var(--bg-secondary);
               }
             `}</style>
