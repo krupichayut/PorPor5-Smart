@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
-import { BookOpen, Users, Calendar, Award, BarChart3, Settings, GraduationCap, Star, BookType, Brain, FileText, Key, LogOut, Menu, X } from 'lucide-react';
+import { BookOpen, Users, Calendar, Award, BarChart3, Settings, GraduationCap, Star, BookType, Brain, FileText, Key, LogOut, Menu, X, ClipboardList } from 'lucide-react';
 import { auth } from './firebase';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import './index.css';
@@ -15,6 +15,7 @@ import Attributes from './components/Attributes';
 import Literacy from './components/Literacy';
 import Competencies from './components/Competencies';
 import Indicators from './components/Indicators';
+import LessonPlans from './components/LessonPlans';
 import MissingWork from './components/MissingWork';
 import SettingsPage from './components/SettingsPage';
 import MonthlyReport from './components/MonthlyReport';
@@ -72,6 +73,7 @@ function App() {
   const [competencies, setCompetencies, compInit] = useFirestoreData('appData', 'competencies', []);
   
   const [indicators, setIndicators, indInit] = useFirestoreData('appData', 'indicators', []);
+  const [lessonPlans, setLessonPlans, lpInit] = useFirestoreData('appData', 'lessonPlans', []);
   
   const [appSettings, setAppSettings, settingsInit] = useFirestoreData('appData', 'settings', {
     schoolName: '',
@@ -82,7 +84,7 @@ function App() {
     semester: ''
   });
 
-  const isDataLoaded = classesInit && studentsInit && attInit && scInit && scoresInit && attrInit && litInit && compInit && indInit && settingsInit;
+  const isDataLoaded = classesInit && studentsInit && attInit && scInit && scoresInit && attrInit && litInit && compInit && indInit && settingsInit && lpInit;
 
   const activeClass = classes ? classes.find(c => c.id === activeClassId) : null;
 
@@ -155,6 +157,10 @@ function App() {
             <NavLink to="/indicators" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
               <FileText />
               <span>โครงสร้างวิชา / ตัวชี้วัด</span>
+            </NavLink>
+            <NavLink to="/lesson-plans" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
+              <ClipboardList />
+              <span>แผนการสอน / บันทึก</span>
             </NavLink>
             <NavLink to="/students" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
               <Users />
@@ -251,6 +257,7 @@ function App() {
             <Route path="/settings" element={<SettingsPage appSettings={appSettings} setAppSettings={setAppSettings} readOnly={readOnly} />} />
             <Route path="/classes" element={<Classes classes={classes} setClasses={setClasses} activeClassId={activeClassId} setActiveClassId={setActiveClassId} readOnly={readOnly} />} />
             <Route path="/indicators" element={<Indicators activeClassId={activeClassId} classes={classes} indicators={indicators} setIndicators={setIndicators} readOnly={readOnly} />} />
+            <Route path="/lesson-plans" element={<LessonPlans activeClassId={activeClassId} classes={classes} lessonPlans={lessonPlans} setLessonPlans={setLessonPlans} readOnly={readOnly} />} />
             <Route path="/students" element={<Students students={students} setStudents={setStudents} classes={classes} activeClassId={activeClassId} readOnly={readOnly} />} />
             <Route path="/attendance" element={<Attendance students={students} activeClassId={activeClassId} classes={classes} attendance={attendance} setAttendance={setAttendance} readOnly={readOnly} />} />
             <Route path="/scores" element={<Scores students={students} activeClassId={activeClassId} classes={classes} scores={scores} setScores={setScores} scoreColumns={scoreColumns} setScoreColumns={setScoreColumns} indicators={indicators} readOnly={readOnly} />} />
