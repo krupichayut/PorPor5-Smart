@@ -159,9 +159,9 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
               </div>
             </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr', gap: '1.5rem', marginBottom: '2rem' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2rem' }}>
               <div className="card">
-                <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.125rem' }}>เปรียบเทียบอัตราการเข้าเรียนแต่ละห้อง</h3>
+                <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.125rem' }}>เปรียบเทียบอัตราเข้าเรียน</h3>
                 <div style={{ width: '100%', height: 300 }}>
                   {classes.length > 0 ? (
                     <ResponsiveContainer width="100%" height="100%">
@@ -189,6 +189,52 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                     </ResponsiveContainer>
                   ) : (
                     <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>ไม่มีข้อมูลห้องเรียน</div>
+                  )}
+                </div>
+              </div>
+              <div className="card">
+                <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.125rem' }}>ภาพรวมผลการเรียน (ตัดเกรดจำลองทุกห้อง)</h3>
+                <div style={{ width: '100%', height: 300 }}>
+                  {classes.length > 0 ? (
+                    <ResponsiveContainer width="100%" height="100%">
+                      <BarChart data={(() => {
+                        const totalSummary = { '4.0': 0, '3.5': 0, '3.0': 0, '2.5': 0, '2.0': 0, '1.5': 0, '1.0': 0, '0': 0 };
+                        classes.forEach(cls => {
+                          const clsStudents = students.filter(s => s.classId === cls.id);
+                          const clsColumns = scoreColumns.filter(c => c.classId === cls.id);
+                          const clsSummaryData = getGradeSummaryData(cls.id, clsStudents, clsColumns, scores);
+                          clsSummaryData.forEach(d => { totalSummary[d.grade] += d.value; });
+                        });
+                        return [
+                          { grade: '4.0', value: totalSummary['4.0'] },
+                          { grade: '3.5', value: totalSummary['3.5'] },
+                          { grade: '3.0', value: totalSummary['3.0'] },
+                          { grade: '2.5', value: totalSummary['2.5'] },
+                          { grade: '2.0', value: totalSummary['2.0'] },
+                          { grade: '1.5', value: totalSummary['1.5'] },
+                          { grade: '1.0', value: totalSummary['1.0'] },
+                          { grade: '0', value: totalSummary['0'] }
+                        ];
+                      })()}>
+                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
+                        <XAxis dataKey="grade" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} axisLine={{ stroke: 'var(--border-color)' }} tickLine={false} />
+                        <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} axisLine={false} tickLine={false} allowDecimals={false} />
+                        <Tooltip 
+                          contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.3)', color: '#fff' }} 
+                          cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                          formatter={(value) => [`${value} คน`, 'จำนวนนักเรียน']}
+                        />
+                        <Bar dataKey="value" fill="url(#colorTotalGrade)" radius={[6, 6, 0, 0]} />
+                        <defs>
+                          <linearGradient id="colorTotalGrade" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#34d399" stopOpacity={0.9}/>
+                            <stop offset="95%" stopColor="#10b981" stopOpacity={0.4}/>
+                          </linearGradient>
+                        </defs>
+                      </BarChart>
+                    </ResponsiveContainer>
+                  ) : (
+                    <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>ไม่มีข้อมูลคะแนน</div>
                   )}
                 </div>
               </div>

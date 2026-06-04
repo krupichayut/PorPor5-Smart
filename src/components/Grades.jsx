@@ -300,22 +300,26 @@ export default function Grades({ students, activeClassId, classes, scores, score
       
       <style>{`
         @media print {
-          @page { size: landscape; margin: 1cm; }
-          .sidebar, .no-print, .modal-overlay { display: none !important; }
+          @page { size: A4 landscape; margin: 10mm; }
+          * { -webkit-print-color-adjust: exact !important; color-adjust: exact !important; print-color-adjust: exact !important; }
+          .sidebar, .no-print, .mobile-top-bar, .modal-overlay { display: none !important; }
           .app-container { display: block; height: auto; overflow: visible; }
-          .main-content { padding: 0 !important; margin: 0 !important; overflow: visible; }
-          body { background: white; color: black; }
-          .card { box-shadow: none !important; border: none !important; padding: 0 !important; }
-          .print-header { border-bottom: 2px solid black; padding-bottom: 1rem; margin-bottom: 2rem; display: block !important; text-align: center; }
-          .print-header .page-title { font-size: 1.5rem; text-align: center; }
-          .print-header .page-subtitle { font-size: 1.2rem; text-align: center; }
+          .main-content { padding: 0 !important; margin: 0 !important; overflow: visible; background: white !important; }
+          body { background: white !important; color: black !important; }
+          .card { box-shadow: none !important; border: none !important; padding: 0 !important; background: transparent !important; }
+          .table-container { overflow: visible !important; }
           
-          .table { border: 1px solid black; }
+          .print-header { border-bottom: 2px solid black; padding-bottom: 1rem; margin-bottom: 1.5rem; display: block !important; text-align: center; color: black !important; }
+          .print-header .page-title { font-size: 18pt !important; text-align: center; color: black !important; margin-bottom: 0.5rem; }
+          .print-header .page-subtitle { font-size: 12pt !important; text-align: center; color: black !important; }
+          
+          .table { border: 1px solid black; border-collapse: collapse; width: 100%; margin-bottom: 2rem; }
+          .table thead { display: table-header-group; } /* Repeats header on new pages */
           .table tr { break-inside: avoid; page-break-inside: avoid; }
-          .table th, .table td { border: 1px solid black !important; padding: 0.5rem !important; color: black !important; background: white !important; font-size: 12pt; }
-          .table th { background-color: #f0f0f0 !important; font-weight: bold; }
+          .table th, .table td { border: 1px solid black !important; padding: 6px !important; color: black !important; background: white !important; font-size: 11pt !important; }
+          .table th { background-color: #e2e8f0 !important; font-weight: bold; text-align: center; }
           
-          .print-signatures { display: block !important; break-inside: avoid; page-break-inside: avoid; }
+          .print-signatures { display: block !important; break-inside: avoid; page-break-inside: avoid; margin-top: 2rem; font-size: 12pt; color: black !important; }
         }
       `}</style>
     </div>

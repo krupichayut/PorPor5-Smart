@@ -1,7 +1,8 @@
 import { useState, useEffect } from 'react';
-import { Save } from 'lucide-react';
+import { Save, Download, Database } from 'lucide-react';
+import * as XLSX from 'xlsx';
 
-export default function SettingsPage({ appSettings, setAppSettings, readOnly }) {
+export default function SettingsPage({ appSettings, setAppSettings, readOnly, classes, students, attendance, scores, scoreColumns, attributes, literacy, competencies, lessonPlans, indicators }) {
   const [formData, setFormData] = useState({
     schoolName: '',
     teacherName: '',
@@ -39,6 +40,44 @@ export default function SettingsPage({ appSettings, setAppSettings, readOnly }) 
     setAppSettings(formData);
     setIsSaved(true);
     setTimeout(() => setIsSaved(false), 3000);
+  };
+
+  const handleBackup = () => {
+    if (readOnly) return;
+    try {
+      const wb = XLSX.utils.book_new();
+      
+      const appendSheet = (data, name) => {
+        if (data && data.length > 0) {
+          const ws = XLSX.utils.json_to_sheet(data);
+          XLSX.utils.book_append_sheet(wb, ws, name.substring(0, 31)); // Max sheet name length is 31
+        } else {
+          // Empty sheet fallback
+          const ws = XLSX.utils.json_to_sheet([{ info: 'No data available' }]);
+          XLSX.utils.book_append_sheet(wb, ws, name.substring(0, 31));
+        }
+      };
+
+      appendSheet(classes, "Classes");
+      appendSheet(students, "Students");
+      appendSheet(scoreColumns, "Score_Columns");
+      appendSheet(scores, "Scores");
+      appendSheet(attendance, "Attendance");
+      appendSheet(attributes, "Attributes");
+      appendSheet(literacy, "Literacy");
+      appendSheet(competencies, "Competencies");
+      appendSheet(indicators, "Indicators");
+      appendSheet(lessonPlans, "LessonPlans");
+      
+      const settingsArray = [appSettings];
+      appendSheet(settingsArray, "Settings");
+
+      const dateStr = new Date().toISOString().split('T')[0].replace(/-/g, '');
+      XLSX.writeFile(wb, `PorPor5_FullBackup_${dateStr}.xlsx`);
+    } catch (error) {
+      console.error('Backup failed:', error);
+      alert('เกิดข้อผิดพลาดในการสำรองข้อมูล');
+    }
   };
 
   return (
@@ -145,6 +184,25 @@ export default function SettingsPage({ appSettings, setAppSettings, readOnly }) 
             </div>
           )}
         </form>
+      </div>
+
+      <div className="card" style={{ maxWidth: '800px', marginTop: '1.5rem', backgroundColor: 'rgba(15, 23, 42, 0.4)' }}>
+        <h3 style={{ margin: '0 0 1rem 0', color: 'var(--text-primary)', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+          <Database size={20} className="text-primary" /> ระบบสำรองข้อมูล (Backup)
+        </h3>
+        <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', fontSize: '0.95rem', lineHeight: 1.5 }}>
+          คุณสามารถดาวน์โหลดข้อมูลทั้งหมดในระบบ (ห้องเรียน, รายชื่อนักเรียน, คะแนน, เวลาเรียน และอื่นๆ) ออกมาเป็นไฟล์ Excel (รวมหลาย Sheet) 
+          เพื่อเก็บสำรองไว้ในเครื่องคอมพิวเตอร์ของคุณเองได้ตลอดเวลา
+        </p>
+        <button 
+          className="btn btn-secondary" 
+          onClick={handleBackup}
+          disabled={readOnly}
+          style={{ width: '100%', maxWidth: '300px', display: 'flex', justifyContent: 'center' }}
+        >
+          <Download size={18} style={{ marginRight: '0.5rem' }} />
+          ดาวน์โหลดข้อมูลสำรอง (Excel)
+        </button>
       </div>
     </div>
   );

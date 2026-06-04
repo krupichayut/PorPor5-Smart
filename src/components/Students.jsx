@@ -1,8 +1,8 @@
 import { useState, useRef } from 'react';
-import { Users, Plus, Trash2, Edit, Download, Upload, Search } from 'lucide-react';
+import { Users, Plus, Trash2, Edit, Download, Upload, Search, Printer, FileText, Award, Calendar, AlertCircle } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
-export default function Students({ students, setStudents, activeClassId, classes, readOnly }) {
+export default function Students({ students, setStudents, activeClassId, classes, readOnly, attendance, scores, scoreColumns, attributes, literacy, competencies }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [addMode, setAddMode] = useState('single');
   const [bulkData, setBulkData] = useState('');
@@ -15,6 +15,7 @@ export default function Students({ students, setStudents, activeClassId, classes
   const [editStudentId, setEditStudentId] = useState('');
   const [editName, setEditName] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedStudentProfile, setSelectedStudentProfile] = useState(null);
   const fileInputRef = useRef(null);
   
   const activeClass = classes.find(c => c.id === activeClassId);
@@ -23,6 +24,33 @@ export default function Students({ students, setStudents, activeClassId, classes
     s.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
     s.studentId.toLowerCase().includes(searchTerm.toLowerCase())
   );
+
+  const getStudentStats = (studentId) => {
+    let present = 0, absent = 0, late = 0, leave = 0;
+    const studentAtt = attendance?.filter(a => a.studentId === studentId) || [];
+    studentAtt.forEach(a => {
+      if (a.status === 'present') present++;
+      if (a.status === 'absent') absent++;
+      if (a.status === 'late') late++;
+      if (a.status === 'leave') leave++;
+    });
+
+    let totalScore = 0;
+    let missingWorkCount = 0;
+    const classCols = scoreColumns?.filter(c => c.classId === activeClassId) || [];
+    classCols.forEach(col => {
+      const record = scores?.find(s => s.studentId === studentId && s.columnId === col.id);
+      if (record) {
+        totalScore += record.score;
+      } else if (col.type !== 'exam') {
+        missingWorkCount++;
+      }
+    });
+
+    const totalMax = classCols.reduce((sum, col) => sum + col.maxScore, 0);
+
+    return { present, absent, late, leave, totalScore, totalMax, missingWorkCount };
+  };
 
   const handleAddStudent = (e) => {
     e.preventDefault();
@@ -313,7 +341,13 @@ export default function Students({ students, setStudents, activeClassId, classes
                     <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--text-muted)' }}>{s.number}</td>
                     <td>{s.studentId}</td>
                     <td style={{ fontWeight: 500 }}>
-                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                      <div 
+                        style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', transition: 'color 0.2s' }}
+                        onClick={() => setSelectedStudentProfile(s)}
+                        onMouseOver={(e) => e.currentTarget.style.color = 'var(--primary-color)'}
+                        onMouseOut={(e) => e.currentTarget.style.color = 'inherit'}
+                        title="คลิกเพื่อดูรายงานรายบุคคล"
+                      >
                         <span className={`avatar-circle c${colorIndex}`}>{firstChar}</span>
                         {s.name}
                       </div>
@@ -465,6 +499,123 @@ export default function Students({ students, setStudents, activeClassId, classes
           </div>
         </div>
       )}
+
+      {selectedStudentProfile && (
+        <div className="modal-overlay">
+          <div className="modal-content print-only-modal" style={{ maxWidth: '700px' }}>
+            <div className="modal-header no-print">
+              <h3 className="modal-title">รายงานผลรายบุคคล</h3>
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <button className="btn btn-secondary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem' }} onClick={() => window.print()}>
+                  <Printer size={16} style={{ marginRight: '0.5rem' }} /> พิมพ์รายงาน
+                </button>
+                <button className="btn-icon" onClick={() => setSelectedStudentProfile(null)}>×</button>
+              </div>
+            </div>
+            
+            {(() => {
+              const stats = getStudentStats(selectedStudentProfile.id);
+              const charCode = selectedStudentProfile.name.charCodeAt(0) || 0;
+              const colorIndex = (charCode % 6) + 1;
+              const firstChar = selectedStudentProfile.name.replace(/^(เด็กชาย|เด็กหญิง|ด\.ช\.|ด\.ญ\.)/i, '').trim().charAt(0) || selectedStudentProfile.name.charAt(0);
+              const attTotal = stats.present + stats.absent + stats.late + stats.leave;
+              const attPercent = attTotal > 0 ? Math.round(((stats.present + stats.late) / attTotal) * 100) : 0;
+              
+              return (
+                <div style={{ padding: '1rem 0' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', marginBottom: '2rem', gap: '1.5rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1.5rem' }}>
+                    <div className={`avatar-circle c${colorIndex}`} style={{ width: '80px', height: '80px', fontSize: '2.5rem', margin: 0, boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}>
+                      {firstChar}
+                    </div>
+                    <div>
+                      <div style={{ fontSize: '1.5rem', fontWeight: 700, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>{selectedStudentProfile.name}</div>
+                      <div style={{ color: 'var(--text-muted)' }}>
+                        เลขที่ {selectedStudentProfile.number} • รหัสประจำตัว: {selectedStudentProfile.studentId} • ห้อง: {activeClass?.name}
+                      </div>
+                    </div>
+                  </div>
+
+                  <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--primary-light)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                    <Award size={18} /> สรุปผลการเรียน
+                  </h4>
+                  <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
+                    <div style={{ backgroundColor: 'rgba(15, 23, 42, 0.4)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1.25rem', textAlign: 'center' }}>
+                      <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>คะแนนสะสม</div>
+                      <div style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--primary-color)' }}>{stats.totalScore} <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 400 }}>/ {stats.totalMax}</span></div>
+                    </div>
+                    <div style={{ backgroundColor: 'rgba(15, 23, 42, 0.4)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1.25rem', textAlign: 'center' }}>
+                      <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>งานที่ค้างส่ง</div>
+                      <div style={{ fontSize: '1.75rem', fontWeight: 700, color: stats.missingWorkCount > 0 ? '#ef4444' : '#10b981' }}>{stats.missingWorkCount} <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 400 }}>ชิ้น</span></div>
+                    </div>
+                    <div style={{ backgroundColor: 'rgba(15, 23, 42, 0.4)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1.25rem', textAlign: 'center' }}>
+                      <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>เวลาเรียน</div>
+                      <div style={{ fontSize: '1.75rem', fontWeight: 700, color: attPercent >= 80 ? '#10b981' : '#f59e0b' }}>{attPercent}%</div>
+                    </div>
+                  </div>
+
+                  <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '2rem' }}>
+                    <div>
+                      <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--primary-light)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <Calendar size={18} /> สถิติการมาเรียน
+                      </h4>
+                      <ul style={{ listStyle: 'none', padding: 0, margin: 0, border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)' }}>
+                        <li style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 1rem', borderBottom: '1px solid var(--border-color)' }}>
+                          <span style={{ color: '#10b981' }}>มาเรียนปกติ</span>
+                          <span style={{ fontWeight: 600 }}>{stats.present} วัน</span>
+                        </li>
+                        <li style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 1rem', borderBottom: '1px solid var(--border-color)' }}>
+                          <span style={{ color: '#f59e0b' }}>มาสาย</span>
+                          <span style={{ fontWeight: 600 }}>{stats.late} วัน</span>
+                        </li>
+                        <li style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 1rem', borderBottom: '1px solid var(--border-color)' }}>
+                          <span style={{ color: '#3b82f6' }}>ลาป่วย/ลากิจ</span>
+                          <span style={{ fontWeight: 600 }}>{stats.leave} วัน</span>
+                        </li>
+                        <li style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 1rem' }}>
+                          <span style={{ color: '#ef4444' }}>ขาดเรียน</span>
+                          <span style={{ fontWeight: 600 }}>{stats.absent} วัน</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <div>
+                      <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--primary-light)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                        <AlertCircle size={18} /> สถานะการประเมิน 3 หมวด
+                      </h4>
+                      <div style={{ padding: '1rem', border: '1px dashed rgba(255, 255, 255, 0.2)', borderRadius: 'var(--radius-md)', textAlign: 'center', height: 'calc(100% - 2.5rem)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>การประเมินสามารถดูรายละเอียดเชิงลึก</p>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>ได้ที่หน้ารายงาน ปพ.5 ฉบับสมบูรณ์</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
+          </div>
+        </div>
+      )}
+
+      <style>{`
+        @media print {
+          body * { visibility: hidden; }
+          .print-only-modal, .print-only-modal * { visibility: visible; }
+          .print-only-modal {
+            position: absolute;
+            left: 0;
+            top: 0;
+            width: 100%;
+            max-width: 100% !important;
+            box-shadow: none;
+            border: none;
+            background: white !important;
+            color: black !important;
+          }
+          .print-only-modal * {
+            color: black !important;
+            border-color: #ccc !important;
+          }
+          .no-print { display: none !important; }
+        }
+      `}</style>
     </div>
   );
 }
