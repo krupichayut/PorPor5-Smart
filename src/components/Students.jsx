@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Users, Plus, Trash2, Edit, Download, Upload } from 'lucide-react';
+import { Users, Plus, Trash2, Edit, Download, Upload, Search } from 'lucide-react';
 import * as XLSX from 'xlsx';
 
 export default function Students({ students, setStudents, activeClassId, classes, readOnly }) {
@@ -14,10 +14,15 @@ export default function Students({ students, setStudents, activeClassId, classes
   const [editNumber, setEditNumber] = useState('');
   const [editStudentId, setEditStudentId] = useState('');
   const [editName, setEditName] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
   const fileInputRef = useRef(null);
   
   const activeClass = classes.find(c => c.id === activeClassId);
   const classStudents = students.filter(s => s.classId === activeClassId).sort((a, b) => a.number - b.number);
+  const filteredStudents = classStudents.filter(s => 
+    s.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    s.studentId.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleAddStudent = (e) => {
     e.preventDefault();
@@ -209,9 +214,10 @@ export default function Students({ students, setStudents, activeClassId, classes
             <p className="page-subtitle">เพิ่ม แก้ไข ลบ รายชื่อนักเรียน</p>
           </div>
         </div>
-        <div className="card" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
-          <Users size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-          <p>กรุณาเลือกห้องเรียนจากเมนู <strong>ห้องเรียน / วิชา</strong> ก่อน</p>
+        <div className="empty-state">
+          <Users size={64} className="empty-state-icon" />
+          <h3>ยังไม่ได้เลือกห้องเรียน</h3>
+          <p>กรุณาเลือกห้องเรียนจากเมนู <strong>ห้องเรียน / วิชา</strong> เพื่อจัดการรายชื่อนักเรียน</p>
         </div>
       </div>
     );
@@ -250,15 +256,39 @@ export default function Students({ students, setStudents, activeClassId, classes
       </div>
 
       <div className="card">
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+          <div className="search-wrapper">
+            <Search size={18} className="search-icon" />
+            <input 
+              type="text" 
+              className="search-input" 
+              placeholder="ค้นหาชื่อ หรือ รหัสประจำตัว..." 
+              value={searchTerm}
+              onChange={(e) => setSearchTerm(e.target.value)}
+            />
+          </div>
+          <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+            แสดง {filteredStudents.length} จาก {classStudents.length} รายการ
+          </div>
+        </div>
+
         {classStudents.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
-            <Users size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-            <p>ยังไม่มีข้อมูลนักเรียนในห้องนี้</p>
+          <div className="empty-state">
+            <Users size={64} className="empty-state-icon" />
+            <h3>ยังไม่มีรายชื่อนักเรียน</h3>
+            <p>ห้องเรียนนี้ยังว่างเปล่า คุณสามารถเพิ่มรายชื่อนักเรียนทีละคน หรือนำเข้าจากไฟล์ Excel ได้เลย</p>
             {!readOnly && (
               <button className="btn btn-primary" style={{ marginTop: '1rem' }} onClick={() => setIsModalOpen(true)}>
+                <Plus size={18} />
                 เพิ่มนักเรียนคนแรก
               </button>
             )}
+          </div>
+        ) : filteredStudents.length === 0 ? (
+          <div className="empty-state">
+            <Search size={48} className="empty-state-icon" style={{ opacity: 0.3 }} />
+            <h3>ไม่พบผลการค้นหา</h3>
+            <p>ไม่มีนักเรียนที่ตรงกับ "{searchTerm}" ลองค้นหาด้วยคำอื่นดูอีกครั้ง</p>
           </div>
         ) : (
           <div className="table-container">
@@ -272,11 +302,22 @@ export default function Students({ students, setStudents, activeClassId, classes
                 </tr>
               </thead>
               <tbody>
-                {classStudents.map((s) => (
+                {filteredStudents.map((s) => {
+                  // Generate random color class based on name characters
+                  const charCode = s.name.charCodeAt(0) || 0;
+                  const colorIndex = (charCode % 6) + 1;
+                  const firstChar = s.name.replace(/^(เด็กชาย|เด็กหญิง|ด\.ช\.|ด\.ญ\.)/i, '').trim().charAt(0) || s.name.charAt(0);
+                  
+                  return (
                   <tr key={s.id}>
                     <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--text-muted)' }}>{s.number}</td>
                     <td>{s.studentId}</td>
-                    <td style={{ fontWeight: 500 }}>{s.name}</td>
+                    <td style={{ fontWeight: 500 }}>
+                      <div style={{ display: 'flex', alignItems: 'center' }}>
+                        <span className={`avatar-circle c${colorIndex}`}>{firstChar}</span>
+                        {s.name}
+                      </div>
+                    </td>
                     <td style={{ textAlign: 'right' }}>
                       {!readOnly && (
                         <>
@@ -290,7 +331,8 @@ export default function Students({ students, setStudents, activeClassId, classes
                       )}
                     </td>
                   </tr>
-                ))}
+                  );
+                })}
               </tbody>
             </table>
           </div>

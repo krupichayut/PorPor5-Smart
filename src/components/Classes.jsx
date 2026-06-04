@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { BookOpen, Plus, Trash2 } from 'lucide-react';
+import { BookOpen, Plus, Trash2, Search, CheckCircle2 } from 'lucide-react';
 
 export default function Classes({ classes, setClasses, activeClassId, setActiveClassId, readOnly }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
@@ -7,6 +7,12 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
   const [newClassSubject, setNewClassSubject] = useState('');
   const [newCollectedRatio, setNewCollectedRatio] = useState(80);
   const [newExamRatio, setNewExamRatio] = useState(20);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const filteredClasses = classes.filter(c => 
+    c.name.toLowerCase().includes(searchTerm.toLowerCase()) || 
+    c.subject.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleAddClass = (e) => {
     e.preventDefault();
@@ -59,18 +65,44 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
 
       <div className="card">
         {classes.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
-            <BookOpen size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-            <p>ยังไม่มีข้อมูลห้องเรียน</p>
+          <div className="empty-state">
+            <BookOpen size={64} className="empty-state-icon" />
+            <h3>ยังไม่มีข้อมูลห้องเรียน</h3>
+            <p>คุณสามารถเริ่มต้นใช้งานระบบได้โดยการสร้างห้องเรียนและรายวิชาแรกของคุณ</p>
             {!readOnly && (
               <button className="btn btn-primary" style={{ marginTop: '1rem' }} onClick={() => setIsModalOpen(true)}>
+                <Plus size={18} />
                 เพิ่มห้องเรียนแรกของคุณ
               </button>
             )}
           </div>
         ) : (
-          <div className="table-container">
-            <table className="table">
+          <>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+              <div className="search-wrapper">
+                <Search size={18} className="search-icon" />
+                <input 
+                  type="text" 
+                  className="search-input" 
+                  placeholder="ค้นหาชื่อห้องเรียน หรือ รายวิชา..." 
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+              <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>
+                แสดง {filteredClasses.length} จาก {classes.length} รายการ
+              </div>
+            </div>
+
+            {filteredClasses.length === 0 ? (
+              <div className="empty-state" style={{ padding: '3rem 1rem' }}>
+                <Search size={48} className="empty-state-icon" style={{ opacity: 0.3 }} />
+                <h3>ไม่พบห้องเรียน</h3>
+                <p>ไม่มีห้องเรียนที่ตรงกับ "{searchTerm}"</p>
+              </div>
+            ) : (
+              <div className="table-container">
+                <table className="table">
               <thead>
                 <tr>
                   <th>ห้องเรียน / ชั้น</th>
@@ -81,7 +113,7 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
                 </tr>
               </thead>
               <tbody>
-                {classes.map(c => (
+                {filteredClasses.map(c => (
                   <tr key={c.id} style={{ backgroundColor: activeClassId === c.id ? 'var(--primary-light)' : 'transparent' }}>
                     <td style={{ fontWeight: 500 }}>{c.name}</td>
                     <td>{c.subject}</td>
@@ -92,7 +124,9 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
                     </td>
                     <td>
                       {activeClassId === c.id ? (
-                        <span className="badge badge-success">กำลังเลือกทำงาน</span>
+                        <span className="badge badge-success" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                          <CheckCircle2 size={14} /> กำลังเลือกทำงาน
+                        </span>
                       ) : (
                         <button 
                           className="btn btn-secondary" 
@@ -115,6 +149,8 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
               </tbody>
             </table>
           </div>
+            )}
+          </>
         )}
       </div>
 
