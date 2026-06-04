@@ -20,8 +20,10 @@ import MissingWork from './components/MissingWork';
 import SettingsPage from './components/SettingsPage';
 import MonthlyReport from './components/MonthlyReport';
 import Dashboard from './components/Dashboard';
-
-
+import AssessmentsContainer from './components/AssessmentsContainer';
+import GradingContainer from './components/GradingContainer';
+import ReportsContainer from './components/ReportsContainer';
+import CoursePlanContainer from './components/CoursePlanContainer';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -132,11 +134,20 @@ function App() {
             </button>
           </div>
           
-          {activeClass && (
+          {classes && classes.length > 0 && (
             <div style={{ marginBottom: '1.5rem', padding: '0.75rem', backgroundColor: 'var(--bg-tertiary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.25rem' }}>ห้องเรียนที่เลือก:</div>
-              <div style={{ fontWeight: 600, color: 'var(--primary-color)' }}>{activeClass.name}</div>
-              <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)' }}>{activeClass.subject}</div>
+              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>สลับห้องเรียนปัจจุบัน:</div>
+              <select 
+                className="form-input" 
+                style={{ padding: '0.4rem', fontSize: '0.9rem', width: '100%', cursor: 'pointer', appearance: 'auto' }}
+                value={activeClassId || ''}
+                onChange={(e) => setActiveClassId(e.target.value)}
+              >
+                <option value="" disabled>-- เลือกห้องเรียน --</option>
+                {classes.map(c => (
+                  <option key={c.id} value={c.id}>{c.name} - {c.subject}</option>
+                ))}
+              </select>
             </div>
           )}
           
@@ -152,19 +163,15 @@ function App() {
 
             <NavLink to="/classes" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
               <BookOpen />
-              <span>ห้องเรียน / วิชา</span>
+              <span>จัดการห้องเรียน / วิชา</span>
             </NavLink>
-            <NavLink to="/indicators" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
-              <FileText />
-              <span>โครงสร้างวิชา / ตัวชี้วัด</span>
-            </NavLink>
-            <NavLink to="/lesson-plans" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
+            <NavLink to="/course-plan" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
               <ClipboardList />
-              <span>แผนการสอน / บันทึก</span>
+              <span>โครงสร้างและแผนการสอน</span>
             </NavLink>
             <NavLink to="/students" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
               <Users />
-              <span>นักเรียน</span>
+              <span>รายชื่อนักเรียน</span>
             </NavLink>
             
             <div style={{ margin: '1rem 0 0.5rem 1rem', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
@@ -173,44 +180,28 @@ function App() {
             
             <NavLink to="/attendance" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
               <Calendar />
-              <span>เวลาเรียน</span>
+              <span>เช็คเวลาเรียน</span>
             </NavLink>
-            <NavLink to="/scores" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
+            <NavLink to="/grading" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
               <Award />
-              <span>บันทึกคะแนน</span>
-            </NavLink>
-            <NavLink to="/missing-work" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
-              <FileText />
-              <span>ติดตามงานค้าง</span>
+              <span>บันทึกคะแนนและงานค้าง</span>
             </NavLink>
 
             <div style={{ margin: '1rem 0 0.5rem 1rem', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              การประเมิน 3 หมวด
+              การประเมิน
             </div>
             
-            <NavLink to="/attributes" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
+            <NavLink to="/assessments" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
               <Star />
-              <span>คุณลักษณะฯ</span>
-            </NavLink>
-            <NavLink to="/literacy" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
-              <BookType />
-              <span>อ่าน คิดวิเคราะห์ เขียน</span>
-            </NavLink>
-            <NavLink to="/competencies" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
-              <Brain />
-              <span>สมรรถนะสำคัญ</span>
+              <span>การประเมิน 3 หมวด</span>
             </NavLink>
             
             <div style={{ margin: '1rem 0 0.5rem 1rem', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               รายงาน
             </div>
-            <NavLink to="/monthly-report" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
+            <NavLink to="/reports" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
               <FileText />
-              <span>รายงานประจำเดือน</span>
-            </NavLink>
-            <NavLink to="/grades" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
-              <BarChart3 />
-              <span>สรุปผลการเรียน (Print)</span>
+              <span>พิมพ์รายงานและ ปพ.5</span>
             </NavLink>
           </nav>
           
@@ -256,17 +247,12 @@ function App() {
             <Route path="/" element={<Dashboard classes={classes} students={students} activeClassId={activeClassId} setActiveClassId={setActiveClassId} attendance={attendance} scores={scores} scoreColumns={scoreColumns} />} />
             <Route path="/settings" element={<SettingsPage appSettings={appSettings} setAppSettings={setAppSettings} readOnly={readOnly} />} />
             <Route path="/classes" element={<Classes classes={classes} setClasses={setClasses} activeClassId={activeClassId} setActiveClassId={setActiveClassId} readOnly={readOnly} />} />
-            <Route path="/indicators" element={<Indicators activeClassId={activeClassId} classes={classes} indicators={indicators} setIndicators={setIndicators} readOnly={readOnly} />} />
-            <Route path="/lesson-plans" element={<LessonPlans activeClassId={activeClassId} classes={classes} lessonPlans={lessonPlans} setLessonPlans={setLessonPlans} readOnly={readOnly} />} />
+            <Route path="/course-plan" element={<CoursePlanContainer activeClassId={activeClassId} classes={classes} indicators={indicators} setIndicators={setIndicators} lessonPlans={lessonPlans} setLessonPlans={setLessonPlans} readOnly={readOnly} />} />
             <Route path="/students" element={<Students students={students} setStudents={setStudents} classes={classes} activeClassId={activeClassId} readOnly={readOnly} />} />
             <Route path="/attendance" element={<Attendance students={students} activeClassId={activeClassId} classes={classes} attendance={attendance} setAttendance={setAttendance} readOnly={readOnly} />} />
-            <Route path="/scores" element={<Scores students={students} activeClassId={activeClassId} classes={classes} scores={scores} setScores={setScores} scoreColumns={scoreColumns} setScoreColumns={setScoreColumns} indicators={indicators} readOnly={readOnly} />} />
-            <Route path="/missing-work" element={<MissingWork students={students} activeClassId={activeClassId} classes={classes} scores={scores} setScores={setScores} scoreColumns={scoreColumns} readOnly={readOnly} />} />
-            <Route path="/monthly-report" element={<MonthlyReport appSettings={appSettings} activeClassId={activeClassId} classes={classes} students={students} attendance={attendance} scoreColumns={scoreColumns} scores={scores} />} />
-            <Route path="/grades" element={<Grades students={students} activeClassId={activeClassId} classes={classes} scores={scores} scoreColumns={scoreColumns} attributes={attributes} literacy={literacy} competencies={competencies} readOnly={readOnly} />} />
-            <Route path="/attributes" element={<Attributes students={students} activeClassId={activeClassId} classes={classes} attributes={attributes} setAttributes={setAttributes} readOnly={readOnly} />} />
-            <Route path="/literacy" element={<Literacy students={students} activeClassId={activeClassId} classes={classes} literacy={literacy} setLiteracy={setLiteracy} readOnly={readOnly} />} />
-            <Route path="/competencies" element={<Competencies students={students} activeClassId={activeClassId} classes={classes} competencies={competencies} setCompetencies={setCompetencies} readOnly={readOnly} />} />
+            <Route path="/grading" element={<GradingContainer students={students} activeClassId={activeClassId} classes={classes} scores={scores} setScores={setScores} scoreColumns={scoreColumns} setScoreColumns={setScoreColumns} indicators={indicators} readOnly={readOnly} />} />
+            <Route path="/reports" element={<ReportsContainer appSettings={appSettings} activeClassId={activeClassId} classes={classes} students={students} attendance={attendance} scoreColumns={scoreColumns} scores={scores} attributes={attributes} literacy={literacy} competencies={competencies} readOnly={readOnly} />} />
+            <Route path="/assessments" element={<AssessmentsContainer students={students} activeClassId={activeClassId} classes={classes} attributes={attributes} setAttributes={setAttributes} literacy={literacy} setLiteracy={setLiteracy} competencies={competencies} setCompetencies={setCompetencies} readOnly={readOnly} />} />
           </Routes>
         </main>
       </div>
