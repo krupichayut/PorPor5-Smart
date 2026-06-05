@@ -2,7 +2,7 @@ import { BarChart3, Users, Calendar, Award, FileWarning, TrendingUp, ChevronRigh
 import { useNavigate } from 'react-router-dom';
 import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
 
-export default function Dashboard({ classes, students, activeClassId, setActiveClassId, attendance, scores, scoreColumns }) {
+export default function Dashboard({ classes, students, activeClassId, setActiveClassId, attendance, scores, scoreColumns, indicators }) {
   const navigate = useNavigate();
 
   // ----- Global Helpers -----
@@ -42,26 +42,41 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
     const activeClassData = classes.find(c => c.id === clsId);
     if (!activeClassData) return [];
     
-    const totalMaxCollected = clsColumns.filter(c => c.type !== 'exam').reduce((sum, col) => sum + col.maxScore, 0);
-    const totalMaxExam = clsColumns.filter(c => c.type === 'exam').reduce((sum, col) => sum + col.maxScore, 0);
-    const collectedRatio = activeClassData.collectedRatio || 80;
-    const examRatio = activeClassData.examRatio || 20;
+    const classUnits = indicators ? indicators.filter(i => i.classId === clsId) : [];
+    const midtermWeight = activeClassData?.midtermWeight || 10;
+    const finalWeight = activeClassData?.finalWeight || 10;
 
     clsStudents.forEach(student => {
-      let rawCollected = 0;
-      let rawExam = 0;
-
-      clsColumns.forEach(col => {
-        const record = clsScores.find(s => s.studentId === student.id && s.columnId === col.id);
-        if (record) {
-          if (col.type === 'exam') rawExam += record.score;
-          else rawCollected += record.score;
-        }
+      let term1Collected = 0;
+      let term2Collected = 0;
+      
+      classUnits.forEach(unit => {
+        const unitCols = clsColumns.filter(c => c.unitId === unit.id && c.type === 'collected');
+        const unitMaxRaw = unitCols.reduce((sum, col) => sum + col.maxScore, 0);
+        const unitRaw = unitCols.reduce((sum, col) => {
+          const s = clsScores.find(s => s.studentId === student.id && s.columnId === col.id);
+          return sum + (s ? s.score : 0);
+        }, 0);
+        const scaled = unitMaxRaw > 0 ? (unitRaw / unitMaxRaw) * unit.weight : 0;
+        if (unit.term === '1') term1Collected += scaled;
+        else if (unit.term === '2') term2Collected += scaled;
+        else term1Collected += scaled; 
       });
 
-      let scaledCollected = totalMaxCollected > 0 ? (rawCollected / totalMaxCollected) * collectedRatio : 0;
-      let scaledExam = totalMaxExam > 0 ? (rawExam / totalMaxExam) * examRatio : 0;
-      let totalScaled = Math.round(scaledCollected + scaledExam);
+      const getExamScaled = (type, weight) => {
+        const cols = clsColumns.filter(c => c.type === type);
+        const maxRaw = cols.reduce((sum, col) => sum + col.maxScore, 0);
+        const raw = cols.reduce((sum, col) => {
+          const s = clsScores.find(s => s.studentId === student.id && s.columnId === col.id);
+          return sum + (s ? s.score : 0);
+        }, 0);
+        return maxRaw > 0 ? (raw / maxRaw) * weight : 0;
+      };
+
+      const midtermScaled = getExamScaled('midterm', midtermWeight);
+      const finalScaled = getExamScaled('final', finalWeight);
+
+      let totalScaled = Math.round(term1Collected + term2Collected + midtermScaled + finalScaled);
 
       summary[getGrade(totalScaled)]++;
     });

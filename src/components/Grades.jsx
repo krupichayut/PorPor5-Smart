@@ -1,54 +1,77 @@
 import { useState } from 'react';
 import { BarChart3, Download } from 'lucide-react';
 
-export default function Grades({ students, activeClassId, classes, scores, scoreColumns, attributes, literacy, competencies }) {
+export default function Grades({ students, activeClassId, classes, scores, scoreColumns, attributes, literacy, competencies, indicators }) {
   const [selectedTerm, setSelectedTerm] = useState('all');
   const [reportType, setReportType] = useState('all'); // 'all', 'grades', 'evaluations'
 
   const activeClass = classes.find(c => c.id === activeClassId);
   const classStudents = students.filter(s => s.classId === activeClassId).sort((a, b) => a.number - b.number);
   
-  const classScoreColumns = scoreColumns.filter(c => 
-    c.classId === activeClassId && 
-    (selectedTerm === 'all' || c.term === selectedTerm || c.term === 'all' || !c.term)
-  );
-  const totalMaxCollected = classScoreColumns.filter(c => c.type !== 'exam').reduce((sum, col) => sum + col.maxScore, 0);
-  const totalMaxExam = classScoreColumns.filter(c => c.type === 'exam').reduce((sum, col) => sum + col.maxScore, 0);
+  const classScoreColumns = scoreColumns.filter(c => c.classId === activeClassId);
+  const classUnits = indicators ? indicators.filter(i => i.classId === activeClassId) : [];
 
-  const collectedRatio = activeClass?.collectedRatio || 80;
-  const examRatio = activeClass?.examRatio || 20;
+  const midtermWeight = activeClass?.midtermWeight || 10;
+  const finalWeight = activeClass?.finalWeight || 10;
+
+  const getUnitWeightSum = (term) => {
+    return classUnits
+      .filter(u => u.term === term || u.term === 'all')
+      .reduce((sum, u) => sum + u.weight, 0);
+  };
+  
+  const term1CollectedWeight = getUnitWeightSum('1');
+  const term2CollectedWeight = getUnitWeightSum('2');
 
   const calculateStudentScores = (studentId) => {
-    let rawCollected = 0;
-    let rawExam = 0;
-
-    classScoreColumns.forEach(col => {
-      const record = scores.find(s => s.studentId === studentId && s.columnId === col.id);
-      if (record) {
-        if (col.type === 'exam') {
-          rawExam += record.score;
-        } else {
-          rawCollected += record.score;
-        }
+    let term1Collected = 0;
+    let term2Collected = 0;
+    
+    classUnits.forEach(unit => {
+      const unitCols = classScoreColumns.filter(c => c.unitId === unit.id && c.type === 'collected');
+      const unitMaxRaw = unitCols.reduce((sum, col) => sum + col.maxScore, 0);
+      const unitRaw = unitCols.reduce((sum, col) => {
+        const s = scores.find(s => s.studentId === studentId && s.columnId === col.id);
+        return sum + (s ? s.score : 0);
+      }, 0);
+      const scaled = unitMaxRaw > 0 ? (unitRaw / unitMaxRaw) * unit.weight : 0;
+      
+      if (unit.term === '1') term1Collected += scaled;
+      else if (unit.term === '2') term2Collected += scaled;
+      else {
+        // distribute 'all' term units evenly for display? or just add to term1. 
+        term1Collected += scaled; 
       }
     });
 
-    let scaledCollected = 0;
-    if (totalMaxCollected > 0) {
-      scaledCollected = (rawCollected / totalMaxCollected) * collectedRatio;
-    }
+    const getExamScaled = (type, weight) => {
+      const cols = classScoreColumns.filter(c => c.type === type);
+      const maxRaw = cols.reduce((sum, col) => sum + col.maxScore, 0);
+      const raw = cols.reduce((sum, col) => {
+        const s = scores.find(s => s.studentId === studentId && s.columnId === col.id);
+        return sum + (s ? s.score : 0);
+      }, 0);
+      return maxRaw > 0 ? (raw / maxRaw) * weight : 0;
+    };
 
-    let scaledExam = 0;
-    if (totalMaxExam > 0) {
-      scaledExam = (rawExam / totalMaxExam) * examRatio;
+    const midtermScaled = getExamScaled('midterm', midtermWeight);
+    const finalScaled = getExamScaled('final', finalWeight);
+
+    let finalTotal = 0;
+    if (selectedTerm === '1') {
+      finalTotal = term1Collected + midtermScaled;
+    } else if (selectedTerm === '2') {
+      finalTotal = term2Collected + finalScaled;
+    } else {
+      finalTotal = term1Collected + term2Collected + midtermScaled + finalScaled;
     }
 
     return {
-      rawCollected,
-      rawExam,
-      scaledCollected: Number(scaledCollected.toFixed(2)),
-      scaledExam: Number(scaledExam.toFixed(2)),
-      totalScaled: Math.round(scaledCollected + scaledExam)
+      term1Collected: Number(term1Collected.toFixed(2)),
+      term2Collected: Number(term2Collected.toFixed(2)),
+      midtermScaled: Number(midtermScaled.toFixed(2)),
+      finalScaled: Number(finalScaled.toFixed(2)),
+      totalScaled: Math.round(finalTotal)
     };
   };
 
@@ -113,7 +136,7 @@ export default function Grades({ students, activeClassId, classes, scores, score
         <div className="page-header">
           <div>
             <h2 className="page-title">สรุปผลการเรียน</h2>
-            <p className="page-subtitle">รายงาน ปพ.5 ฉบับสมบูรณ์ (พร้อมระบบแปลงสัดส่วนคะแนน)</p>
+            <p className="page-subtitle">รายงาน ปพ.5 ฉบับสมบูรณ์ (พร้อมระบบแปลงสัดส่วนคะแนนตามหน่วย)</p>
           </div>
         </div>
         <div className="card" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
@@ -125,6 +148,12 @@ export default function Grades({ students, activeClassId, classes, scores, score
   }
 
   const gradeSummary = getGradeSummary();
+
+  const totalPossible = (() => {
+    if (selectedTerm === '1') return term1CollectedWeight + midtermWeight;
+    if (selectedTerm === '2') return term2CollectedWeight + finalWeight;
+    return term1CollectedWeight + midtermWeight + term2CollectedWeight + finalWeight;
+  })();
 
   return (
     <div className="animate-fade-in print-container">
@@ -139,7 +168,7 @@ export default function Grades({ students, activeClassId, classes, scores, score
           <p className="page-subtitle" style={{ fontSize: '1rem', marginTop: '0.5rem', color: 'var(--text-primary)' }}>
             <strong>รายวิชา:</strong> {activeClass?.subject} &nbsp;&nbsp;&nbsp; 
             <strong>ชั้น:</strong> {activeClass?.name} &nbsp;&nbsp;&nbsp;
-            <strong>สัดส่วนคะแนน:</strong> {collectedRatio} : {examRatio}
+            <strong>คะแนนเต็ม:</strong> {totalPossible} คะแนน
           </p>
         </div>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }} className="no-print">
@@ -198,8 +227,8 @@ export default function Grades({ students, activeClassId, classes, scores, score
                   <th rowSpan={2} style={{ verticalAlign: 'middle' }}>ชื่อ - นามสกุล</th>
                   {reportType !== 'evaluations' && (
                     <>
-                      <th colSpan={2} style={{ textAlign: 'center', borderBottom: '1px solid var(--border-color)', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>สัดส่วนคะแนน 100</th>
-                      <th rowSpan={2} style={{ textAlign: 'center', verticalAlign: 'middle', backgroundColor: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary-light)' }}>รวม 100</th>
+                      <th colSpan={selectedTerm === 'all' ? 4 : 2} style={{ textAlign: 'center', borderBottom: '1px solid var(--border-color)', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>สัดส่วนคะแนน</th>
+                      <th rowSpan={2} style={{ textAlign: 'center', verticalAlign: 'middle', backgroundColor: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary-light)' }}>รวม {totalPossible}</th>
                       <th rowSpan={2} style={{ textAlign: 'center', verticalAlign: 'middle' }}>ระดับผลการเรียน</th>
                     </>
                   )}
@@ -210,8 +239,18 @@ export default function Grades({ students, activeClassId, classes, scores, score
                 <tr>
                   {reportType !== 'evaluations' && (
                     <>
-                      <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>เก็บ ({collectedRatio})</th>
-                      <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>สอบ ({examRatio})</th>
+                      {(selectedTerm === '1' || selectedTerm === 'all') && (
+                        <>
+                          <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>เทอม 1 ({term1CollectedWeight})</th>
+                          <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>กลางภาค ({midtermWeight})</th>
+                        </>
+                      )}
+                      {(selectedTerm === '2' || selectedTerm === 'all') && (
+                        <>
+                          <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>เทอม 2 ({term2CollectedWeight})</th>
+                          <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>ปลายภาค ({finalWeight})</th>
+                        </>
+                      )}
                     </>
                   )}
                   {reportType !== 'grades' && (
@@ -239,8 +278,18 @@ export default function Grades({ students, activeClassId, classes, scores, score
                       <td>{s.name}</td>
                       {reportType !== 'evaluations' && (
                         <>
-                          <td style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>{studentScores.scaledCollected}</td>
-                          <td style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>{studentScores.scaledExam}</td>
+                          {(selectedTerm === '1' || selectedTerm === 'all') && (
+                            <>
+                              <td style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>{studentScores.term1Collected}</td>
+                              <td style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>{studentScores.midtermScaled}</td>
+                            </>
+                          )}
+                          {(selectedTerm === '2' || selectedTerm === 'all') && (
+                            <>
+                              <td style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>{studentScores.term2Collected}</td>
+                              <td style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>{studentScores.finalScaled}</td>
+                            </>
+                          )}
                           <td style={{ textAlign: 'center', fontWeight: 700, color: 'var(--primary-color)', backgroundColor: 'rgba(99, 102, 241, 0.1)' }}>{studentScores.totalScaled}</td>
                           <td style={{ textAlign: 'center', fontWeight: 600 }}>{grade}</td>
                         </>
@@ -314,7 +363,7 @@ export default function Grades({ students, activeClassId, classes, scores, score
           .print-header .page-subtitle { font-size: 12pt !important; text-align: center; color: black !important; }
           
           .table { border: 1px solid black; border-collapse: collapse; width: 100%; margin-bottom: 2rem; }
-          .table thead { display: table-header-group; } /* Repeats header on new pages */
+          .table thead { display: table-header-group; }
           .table tr { break-inside: avoid; page-break-inside: avoid; }
           .table th, .table td { border: 1px solid black !important; padding: 6px !important; color: black !important; background: white !important; font-size: 11pt !important; }
           .table th { background-color: #e2e8f0 !important; font-weight: bold; text-align: center; }

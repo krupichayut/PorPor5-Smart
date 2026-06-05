@@ -1,44 +1,37 @@
 import { useState } from 'react';
-import { Award, Plus, Trash2, Calculator, Edit2 } from 'lucide-react';
+import { Award, Plus, Trash2, Calculator, Edit2, Filter } from 'lucide-react';
 
 export default function Scores({ students, activeClassId, classes, scores, setScores, scoreColumns, setScoreColumns, indicators, readOnly }) {
   const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
   const [editingColumnId, setEditingColumnId] = useState(null);
   const [newColumnName, setNewColumnName] = useState('');
   const [newColumnMax, setNewColumnMax] = useState(10);
+  const [newColumnType, setNewColumnType] = useState('collected'); // 'collected', 'midterm', 'final'
+  const [newColumnUnitId, setNewColumnUnitId] = useState('');
   const [newColumnIndicatorId, setNewColumnIndicatorId] = useState('');
-  const [newColumnType, setNewColumnType] = useState('collected'); // 'collected' or 'exam'
-  const [newColumnTerm, setNewColumnTerm] = useState('all'); // '1', '2', 'all'
   
+  const [viewTerm, setViewTerm] = useState('1'); // '1', '2', 'all'
+
   const activeClass = classes.find(c => c.id === activeClassId);
   const classStudents = students.filter(s => s.classId === activeClassId).sort((a, b) => a.number - b.number);
   
   const classScoreColumns = scoreColumns.filter(c => c.classId === activeClassId);
-  const classIndicators = indicators ? indicators.filter(i => i.classId === activeClassId) : [];
+  const classUnits = indicators ? indicators.filter(i => i.classId === activeClassId) : [];
   
-  // Calculate max possible raw scores
-  const totalMaxCollected = classScoreColumns.filter(c => c.type !== 'exam').reduce((sum, col) => sum + col.maxScore, 0);
-  const totalMaxExam = classScoreColumns.filter(c => c.type === 'exam').reduce((sum, col) => sum + col.maxScore, 0);
+  const midtermWeight = activeClass?.midtermWeight || 10;
+  const finalWeight = activeClass?.finalWeight || 10;
+  const totalUnitsWeight = classUnits.reduce((sum, u) => sum + u.weight, 0);
+  const totalClassWeight = totalUnitsWeight + midtermWeight + finalWeight;
 
-  // Class Ratios
-  const collectedRatio = activeClass?.collectedRatio || 80;
-  const examRatio = activeClass?.examRatio || 20;
-
-  // Flatten indicators for dropdown
-  const allIndicatorsList = [];
-  classIndicators.forEach(unit => {
-    unit.items.forEach(item => {
-      allIndicatorsList.push({ ...item, unitName: unit.name });
-    });
-  });
+  const currentUnitIndicators = classUnits.find(u => u.id === newColumnUnitId)?.items || [];
 
   const handleOpenAddModal = () => {
     setEditingColumnId(null);
     setNewColumnName('');
     setNewColumnMax(10);
-    setNewColumnIndicatorId('');
     setNewColumnType('collected');
-    setNewColumnTerm('all');
+    setNewColumnUnitId('');
+    setNewColumnIndicatorId('');
     setIsColumnModalOpen(true);
   };
 
@@ -46,20 +39,31 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
     setEditingColumnId(col.id);
     setNewColumnName(col.name);
     setNewColumnMax(col.maxScore);
-    setNewColumnIndicatorId(col.indicatorId || '');
     setNewColumnType(col.type || 'collected');
-    setNewColumnTerm(col.term || 'all');
+    setNewColumnUnitId(col.unitId || '');
+    setNewColumnIndicatorId(col.indicatorId || '');
     setIsColumnModalOpen(true);
   };
 
   const handleSaveColumn = (e) => {
     e.preventDefault();
     if (!newColumnName.trim() || newColumnMax <= 0) return;
+    if (newColumnType === 'collected' && !newColumnUnitId) {
+      alert('กรุณาเลือกหน่วยการเรียนรู้');
+      return;
+    }
     
     if (editingColumnId) {
       setScoreColumns(scoreColumns.map(col => 
         col.id === editingColumnId 
-          ? { ...col, name: newColumnName, maxScore: Number(newColumnMax), indicatorId: newColumnIndicatorId || null, type: newColumnType, term: newColumnTerm }
+          ? { 
+              ...col, 
+              name: newColumnName, 
+              maxScore: Number(newColumnMax), 
+              type: newColumnType,
+              unitId: newColumnType === 'collected' ? newColumnUnitId : null,
+              indicatorId: newColumnIndicatorId || null 
+            }
           : col
       ));
     } else {
@@ -68,9 +72,9 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
         classId: activeClassId,
         name: newColumnName,
         maxScore: Number(newColumnMax),
-        indicatorId: newColumnIndicatorId || null,
         type: newColumnType,
-        term: newColumnTerm
+        unitId: newColumnType === 'collected' ? newColumnUnitId : null,
+        indicatorId: newColumnIndicatorId || null
       };
       setScoreColumns([...scoreColumns, newCol]);
     }
@@ -118,43 +122,35 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
     }
   };
 
-  const calculateStudentScores = (studentId) => {
-    let rawCollected = 0;
-    let rawExam = 0;
-
-    classScoreColumns.forEach(col => {
-      const record = scores.find(s => s.studentId === studentId && s.columnId === col.id);
-      if (record) {
-        if (col.type === 'exam') {
-          rawExam += record.score;
-        } else {
-          rawCollected += record.score;
-        }
-      }
-    });
-
-    // Scale calculations
-    let scaledCollected = 0;
-    if (totalMaxCollected > 0) {
-      scaledCollected = (rawCollected / totalMaxCollected) * collectedRatio;
-    }
-
-    let scaledExam = 0;
-    if (totalMaxExam > 0) {
-      scaledExam = (rawExam / totalMaxExam) * examRatio;
-    }
-
-    const totalScaled = scaledCollected + scaledExam;
-
-    return {
-      rawCollected,
-      rawExam,
-      totalRaw: rawCollected + rawExam,
-      scaledCollected: Number(scaledCollected.toFixed(2)),
-      scaledExam: Number(scaledExam.toFixed(2)),
-      totalScaled: Math.round(totalScaled) // Round to nearest integer for final grade
-    };
+  // ----- Calculation Functions -----
+  const getUnitScore = (studentId, unitId) => {
+    const unitCols = classScoreColumns.filter(c => c.unitId === unitId && c.type === 'collected');
+    const unitMaxRaw = unitCols.reduce((sum, col) => sum + col.maxScore, 0);
+    const unitRaw = unitCols.reduce((sum, col) => {
+      const s = scores.find(s => s.studentId === studentId && s.columnId === col.id);
+      return sum + (s ? s.score : 0);
+    }, 0);
+    const unitWeight = classUnits.find(u => u.id === unitId)?.weight || 0;
+    const scaled = unitMaxRaw > 0 ? (unitRaw / unitMaxRaw) * unitWeight : 0;
+    return { raw: unitRaw, maxRaw: unitMaxRaw, weight: unitWeight, scaled: Number(scaled.toFixed(2)) };
   };
+
+  const getExamScore = (studentId, type) => {
+    const examCols = classScoreColumns.filter(c => c.type === type);
+    const examMaxRaw = examCols.reduce((sum, col) => sum + col.maxScore, 0);
+    const examRaw = examCols.reduce((sum, col) => {
+      const s = scores.find(s => s.studentId === studentId && s.columnId === col.id);
+      return sum + (s ? s.score : 0);
+    }, 0);
+    const examWeight = type === 'midterm' ? midtermWeight : finalWeight;
+    const scaled = examMaxRaw > 0 ? (examRaw / examMaxRaw) * examWeight : 0;
+    return { raw: examRaw, maxRaw: examMaxRaw, weight: examWeight, scaled: Number(scaled.toFixed(2)) };
+  };
+
+  // Build the view structure
+  const displayUnits = classUnits.filter(u => viewTerm === 'all' || u.term === viewTerm || u.term === 'all');
+  const showMidterm = viewTerm === '1' || viewTerm === 'all';
+  const showFinal = viewTerm === '2' || viewTerm === 'all';
 
   if (!activeClassId) {
     return (
@@ -162,7 +158,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
         <div className="page-header">
           <div>
             <h2 className="page-title">บันทึกคะแนน</h2>
-            <p className="page-subtitle">บันทึกคะแนนเก็บและสอบ พร้อมระบบแปลงสัดส่วนอัตโนมัติ</p>
+            <p className="page-subtitle">บันทึกคะแนนตามโครงสร้างหน่วยการเรียนรู้</p>
           </div>
         </div>
         <div className="card" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
@@ -178,7 +174,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
       <div className="page-header">
         <div>
           <h2 className="page-title">บันทึกคะแนน: {activeClass?.name}</h2>
-          <p className="page-subtitle">จัดการคะแนนเก็บและคะแนนสอบ</p>
+          <p className="page-subtitle">จัดการคะแนนเก็บตามหน่วยและคะแนนสอบ</p>
         </div>
         {!readOnly && (
           <button className="btn btn-primary" onClick={handleOpenAddModal}>
@@ -194,17 +190,27 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
             <Calculator size={24} />
           </div>
           <div>
-            <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>สรุปคะแนนเก็บดิบ (สัดส่วน {collectedRatio})</div>
-            <div style={{ fontSize: '1.25rem', fontWeight: 600 }}>คะแนนเต็มรวม {totalMaxCollected} คะแนน</div>
+            <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>น้ำหนักคะแนนรวม (ที่ตั้งค่าไว้)</div>
+            <div style={{ fontSize: '1.25rem', fontWeight: 600, color: totalClassWeight !== 100 ? '#f87171' : 'inherit' }}>
+              {totalClassWeight} คะแนน {totalClassWeight !== 100 && <span style={{ fontSize: '0.8rem', fontWeight: 'normal' }}>(ควรปรับโครงสร้างให้ครบ 100)</span>}
+            </div>
           </div>
         </div>
-        <div className="card" style={{ padding: '1rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{ padding: '0.75rem', backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#f87171', borderRadius: 'var(--radius-md)' }}>
-            <Award size={24} />
-          </div>
-          <div>
-            <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>สรุปคะแนนสอบดิบ (สัดส่วน {examRatio})</div>
-            <div style={{ fontSize: '1.25rem', fontWeight: 600 }}>คะแนนเต็มรวม {totalMaxExam} คะแนน</div>
+        <div className="card" style={{ padding: '0', display: 'flex' }}>
+          <div style={{ flex: 1, padding: '1rem', borderRight: '1px solid var(--border-color)' }}>
+            <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+              <Filter size={14} /> เลือกดูข้อมูล
+            </div>
+            <select 
+              className="form-select" 
+              value={viewTerm}
+              onChange={(e) => setViewTerm(e.target.value)}
+              style={{ width: '100%' }}
+            >
+              <option value="1">เทอม 1 (หน่วย + กลางภาค)</option>
+              <option value="2">เทอม 2 (หน่วย + ปลายภาค)</option>
+              <option value="all">ทั้งปีการศึกษา</option>
+            </select>
           </div>
         </div>
       </div>
@@ -214,102 +220,249 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
           <div style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
             <p>ยังไม่มีข้อมูลนักเรียนในห้องนี้ กรุณาเพิ่มนักเรียนก่อน</p>
           </div>
-        ) : classScoreColumns.length === 0 ? (
+        ) : classUnits.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
             <Award size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-            <p>ยังไม่มีช่องกรอกคะแนน {!readOnly && 'กรุณากดปุ่ม "เพิ่มช่องคะแนน"'}</p>
+            <p>ยังไม่ได้สร้างหน่วยการเรียนรู้ กรุณาไปที่เมนู <strong>โครงสร้างรายวิชา</strong> ก่อน</p>
           </div>
         ) : (
           <div className="table-container">
             <table className="table" style={{ whiteSpace: 'nowrap' }}>
               <thead>
                 <tr>
-                  <th rowSpan={2} style={{ width: '60px', textAlign: 'center', position: 'sticky', left: 0, backgroundColor: 'var(--bg-tertiary)', zIndex: 1, verticalAlign: 'middle' }}>เลขที่</th>
-                  <th rowSpan={2} style={{ position: 'sticky', left: '60px', backgroundColor: 'var(--bg-tertiary)', zIndex: 1, verticalAlign: 'middle' }}>ชื่อ - นามสกุล</th>
-                  {classScoreColumns.map(col => {
-                    const indicator = allIndicatorsList.find(i => i.id === col.indicatorId);
+                  <th rowSpan={2} style={{ width: '60px', textAlign: 'center', position: 'sticky', left: 0, backgroundColor: 'var(--bg-tertiary)', zIndex: 3, verticalAlign: 'middle' }}>เลขที่</th>
+                  <th rowSpan={2} style={{ position: 'sticky', left: '60px', backgroundColor: 'var(--bg-tertiary)', zIndex: 3, verticalAlign: 'middle', minWidth: '150px' }}>ชื่อ - นามสกุล</th>
+                  
+                  {/* Unit Groups */}
+                  {displayUnits.map(unit => {
+                    const unitCols = classScoreColumns.filter(c => c.unitId === unit.id && c.type === 'collected');
                     return (
-                      <th rowSpan={2} key={col.id} style={{ textAlign: 'center', minWidth: '100px', backgroundColor: col.type === 'exam' ? 'rgba(239, 68, 68, 0.1)' : 'var(--bg-tertiary)' }}>
-                        <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }}>
-                          <div>
-                            <div>{col.name}</div>
-                            {indicator && <div style={{ fontSize: '0.7rem', color: 'var(--primary-color)' }}>{indicator.code}</div>}
-                            <div style={{ fontSize: '0.75rem', fontWeight: 'normal', color: 'var(--text-muted)' }}>
-                              {col.type === 'exam' ? '(สอบ)' : '(เก็บ)'} เต็ม {col.maxScore}
-                            </div>
-                            <div style={{ fontSize: '0.7rem', color: 'var(--text-primary)', marginTop: '2px', backgroundColor: 'var(--primary-color)', padding: '2px 6px', borderRadius: '4px', display: 'inline-block' }}>
-                              {col.term === '1' ? 'เทอม 1' : col.term === '2' ? 'เทอม 2' : 'ตลอดปี'}
-                            </div>
-                          </div>
-                          {!readOnly && (
-                            <div style={{ display: 'flex', flexDirection: 'column', gap: '2px' }}>
-                              <button className="btn-icon" style={{ padding: '2px', color: 'var(--text-muted)' }} onClick={() => handleOpenEditModal(col)}>
-                                <Edit2 size={12} />
-                              </button>
-                              <button className="btn-icon" style={{ padding: '2px', color: 'var(--danger-color)', opacity: 0.5 }} onClick={() => handleDeleteColumn(col.id)}>
-                                <Trash2 size={12} />
-                              </button>
-                            </div>
-                          )}
-                        </div>
+                      <th key={unit.id} colSpan={Math.max(1, unitCols.length) + 1} style={{ textAlign: 'center', borderLeft: '2px solid var(--border-color)', backgroundColor: 'var(--bg-tertiary)' }}>
+                        <div style={{ color: 'var(--primary-color)' }}>{unit.name}</div>
+                        <div style={{ fontSize: '0.75rem', fontWeight: 'normal' }}>น้ำหนัก: {unit.weight} คะแนน</div>
                       </th>
                     );
                   })}
-                  <th colSpan={2} style={{ textAlign: 'center', backgroundColor: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-color)', borderLeft: '2px solid var(--border-color)' }}>รวมคะแนนดิบ (Raw)</th>
-                  <th colSpan={3} style={{ textAlign: 'center', backgroundColor: 'rgba(99, 102, 241, 0.2)', color: 'var(--primary-color)', borderBottom: '1px solid var(--border-color)', borderLeft: '2px solid var(--border-color)' }}>แปลงสัดส่วน ({collectedRatio}:{examRatio})</th>
+                  
+                  {/* Exams Groups */}
+                  {showMidterm && (
+                    <th colSpan={Math.max(1, classScoreColumns.filter(c => c.type === 'midterm').length) + 1} style={{ textAlign: 'center', borderLeft: '2px solid var(--border-color)', backgroundColor: 'rgba(239, 68, 68, 0.1)' }}>
+                      <div style={{ color: '#ef4444' }}>สอบกลางภาค</div>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 'normal' }}>น้ำหนัก: {midtermWeight} คะแนน</div>
+                    </th>
+                  )}
+                  {showFinal && (
+                    <th colSpan={Math.max(1, classScoreColumns.filter(c => c.type === 'final').length) + 1} style={{ textAlign: 'center', borderLeft: '2px solid var(--border-color)', backgroundColor: 'rgba(220, 38, 38, 0.1)' }}>
+                      <div style={{ color: '#dc2626' }}>สอบปลายภาค</div>
+                      <div style={{ fontSize: '0.75rem', fontWeight: 'normal' }}>น้ำหนัก: {finalWeight} คะแนน</div>
+                    </th>
+                  )}
+                  
+                  {/* Summary */}
+                  <th rowSpan={2} style={{ textAlign: 'center', borderLeft: '2px solid var(--primary-color)', backgroundColor: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary-color)', verticalAlign: 'middle' }}>
+                    รวมเทอม {viewTerm !== 'all' ? viewTerm : 'ทั้งหมด'}
+                  </th>
                 </tr>
                 <tr>
-                  <th style={{ textAlign: 'center', backgroundColor: 'var(--bg-secondary)', fontSize: '0.875rem', borderLeft: '2px solid var(--border-color)' }}>เก็บ (เต็ม {totalMaxCollected})</th>
-                  <th style={{ textAlign: 'center', backgroundColor: 'var(--bg-secondary)', fontSize: '0.875rem' }}>สอบ (เต็ม {totalMaxExam})</th>
-                  <th style={{ textAlign: 'center', backgroundColor: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary-color)', fontSize: '0.875rem', borderLeft: '2px solid var(--border-color)' }}>เก็บ (เต็ม {collectedRatio})</th>
-                  <th style={{ textAlign: 'center', backgroundColor: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary-color)', fontSize: '0.875rem' }}>สอบ (เต็ม {examRatio})</th>
-                  <th style={{ textAlign: 'center', backgroundColor: 'rgba(99, 102, 241, 0.25)', color: 'var(--primary-color)', fontSize: '0.875rem' }}>รวม 100</th>
+                  {/* Unit Columns */}
+                  {displayUnits.map(unit => {
+                    const unitCols = classScoreColumns.filter(c => c.unitId === unit.id && c.type === 'collected');
+                    const colsElements = unitCols.length > 0 ? unitCols.map(col => (
+                      <th key={col.id} style={{ textAlign: 'center', minWidth: '80px', borderLeft: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)', fontWeight: 'normal' }}>
+                        <div>{col.name}</div>
+                        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>(เต็ม {col.maxScore})</div>
+                        {!readOnly && (
+                          <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '4px' }}>
+                            <button className="btn-icon" style={{ padding: '2px', color: 'var(--text-muted)' }} onClick={() => handleOpenEditModal(col)}><Edit2 size={12} /></button>
+                            <button className="btn-icon" style={{ padding: '2px', color: 'var(--danger-color)', opacity: 0.5 }} onClick={() => handleDeleteColumn(col.id)}><Trash2 size={12} /></button>
+                          </div>
+                        )}
+                      </th>
+                    )) : [
+                      <th key={`empty-${unit.id}`} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)', color: 'var(--text-muted)', fontWeight: 'normal', fontStyle: 'italic', fontSize: '0.75rem' }}>
+                        (ยังไม่มีช่อง)
+                      </th>
+                    ];
+
+                    return [
+                      ...colsElements,
+                      <th key={`total-${unit.id}`} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)', backgroundColor: 'rgba(99, 102, 241, 0.05)', color: 'var(--primary-color)' }}>
+                        <div style={{ fontSize: '0.75rem' }}>แปลงแล้ว</div>
+                        <div>(/{unit.weight})</div>
+                      </th>
+                    ];
+                  })}
+
+                  {/* Midterm Columns */}
+                  {showMidterm && (() => {
+                    const examCols = classScoreColumns.filter(c => c.type === 'midterm');
+                    const colsElements = examCols.length > 0 ? examCols.map(col => (
+                      <th key={col.id} style={{ textAlign: 'center', minWidth: '80px', borderLeft: '1px solid var(--border-color)', backgroundColor: 'rgba(239, 68, 68, 0.02)', fontWeight: 'normal' }}>
+                        <div>{col.name}</div>
+                        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>(เต็ม {col.maxScore})</div>
+                        {!readOnly && (
+                          <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '4px' }}>
+                            <button className="btn-icon" style={{ padding: '2px', color: 'var(--text-muted)' }} onClick={() => handleOpenEditModal(col)}><Edit2 size={12} /></button>
+                            <button className="btn-icon" style={{ padding: '2px', color: 'var(--danger-color)', opacity: 0.5 }} onClick={() => handleDeleteColumn(col.id)}><Trash2 size={12} /></button>
+                          </div>
+                        )}
+                      </th>
+                    )) : [
+                      <th key="empty-midterm" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)', color: 'var(--text-muted)', fontWeight: 'normal', fontStyle: 'italic', fontSize: '0.75rem' }}>
+                        (ยังไม่มีช่อง)
+                      </th>
+                    ];
+
+                    return [
+                      ...colsElements,
+                      <th key="total-midterm" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)', backgroundColor: 'rgba(239, 68, 68, 0.05)', color: '#ef4444' }}>
+                        <div style={{ fontSize: '0.75rem' }}>แปลงแล้ว</div>
+                        <div>(/{midtermWeight})</div>
+                      </th>
+                    ];
+                  })()}
+
+                  {/* Final Columns */}
+                  {showFinal && (() => {
+                    const examCols = classScoreColumns.filter(c => c.type === 'final');
+                    const colsElements = examCols.length > 0 ? examCols.map(col => (
+                      <th key={col.id} style={{ textAlign: 'center', minWidth: '80px', borderLeft: '1px solid var(--border-color)', backgroundColor: 'rgba(220, 38, 38, 0.02)', fontWeight: 'normal' }}>
+                        <div>{col.name}</div>
+                        <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>(เต็ม {col.maxScore})</div>
+                        {!readOnly && (
+                          <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '4px' }}>
+                            <button className="btn-icon" style={{ padding: '2px', color: 'var(--text-muted)' }} onClick={() => handleOpenEditModal(col)}><Edit2 size={12} /></button>
+                            <button className="btn-icon" style={{ padding: '2px', color: 'var(--danger-color)', opacity: 0.5 }} onClick={() => handleDeleteColumn(col.id)}><Trash2 size={12} /></button>
+                          </div>
+                        )}
+                      </th>
+                    )) : [
+                      <th key="empty-final" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)', color: 'var(--text-muted)', fontWeight: 'normal', fontStyle: 'italic', fontSize: '0.75rem' }}>
+                        (ยังไม่มีช่อง)
+                      </th>
+                    ];
+
+                    return [
+                      ...colsElements,
+                      <th key="total-final" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)', backgroundColor: 'rgba(220, 38, 38, 0.05)', color: '#dc2626' }}>
+                        <div style={{ fontSize: '0.75rem' }}>แปลงแล้ว</div>
+                        <div>(/{finalWeight})</div>
+                      </th>
+                    ];
+                  })()}
                 </tr>
               </thead>
               <tbody>
                 {classStudents.map((s, index) => {
-                  const studentScores = calculateStudentScores(s.id);
+                  let studentViewTotal = 0;
+                  
                   return (
                     <tr key={s.id}>
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--text-muted)', position: 'sticky', left: 0, backgroundColor: 'var(--bg-secondary)', zIndex: 1 }}>{index + 1}</td>
-                      <td style={{ fontWeight: 500, position: 'sticky', left: '60px', backgroundColor: 'var(--bg-secondary)', zIndex: 1 }}>{s.name}</td>
-                      {classScoreColumns.map(col => {
-                        const record = scores.find(record => record.studentId === s.id && record.columnId === col.id);
-                        return (
-                          <td key={col.id} style={{ textAlign: 'center', backgroundColor: col.type === 'exam' ? 'rgba(239, 68, 68, 0.05)' : 'transparent' }}>
-                            <input 
-                              type="number"
-                              min="0"
-                              max={col.maxScore}
-                              value={record ? record.score : ''}
-                              onChange={(e) => handleScoreChange(s.id, col.id, e.target.value)}
-                              disabled={readOnly}
-                              style={{ 
-                                width: '60px', 
-                                padding: '4px', 
-                                textAlign: 'center', 
-                                border: '1px solid var(--border-color)',
-                                borderRadius: 'var(--radius-sm)',
-                                fontFamily: 'inherit'
-                              }}
-                            />
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--text-muted)', position: 'sticky', left: 0, backgroundColor: 'var(--bg-secondary)', zIndex: 2 }}>{index + 1}</td>
+                      <td style={{ fontWeight: 500, position: 'sticky', left: '60px', backgroundColor: 'var(--bg-secondary)', zIndex: 2 }}>{s.name}</td>
+                      
+                      {/* Unit Cells */}
+                      {displayUnits.map(unit => {
+                        const unitCols = classScoreColumns.filter(c => c.unitId === unit.id && c.type === 'collected');
+                        const uScore = getUnitScore(s.id, unit.id);
+                        studentViewTotal += uScore.scaled;
+                        
+                        const colsElements = unitCols.length > 0 ? unitCols.map(col => {
+                          const record = scores.find(r => r.studentId === s.id && r.columnId === col.id);
+                          return (
+                            <td key={col.id} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)' }}>
+                              <input 
+                                type="number"
+                                min="0"
+                                max={col.maxScore}
+                                value={record ? record.score : ''}
+                                onChange={(e) => handleScoreChange(s.id, col.id, e.target.value)}
+                                disabled={readOnly}
+                                style={{ width: '50px', padding: '4px', textAlign: 'center', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-sm)', fontFamily: 'inherit' }}
+                              />
+                            </td>
+                          );
+                        }) : [
+                          <td key={`empty-cell-${unit.id}`} style={{ borderLeft: '1px solid var(--border-color)' }}></td>
+                        ];
+
+                        return [
+                          ...colsElements,
+                          <td key={`total-cell-${unit.id}`} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)', backgroundColor: 'rgba(99, 102, 241, 0.05)', fontWeight: 600, color: 'var(--primary-color)' }}>
+                            <div title={`ดิบ: ${uScore.raw}/${uScore.maxRaw}`}>{Math.round(uScore.scaled)}</div>
                           </td>
-                        );
+                        ];
                       })}
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--text-primary)', borderLeft: '2px solid var(--border-color)' }}>
-                        {studentScores.rawCollected}
-                      </td>
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--text-primary)' }}>
-                        {studentScores.rawExam}
-                      </td>
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: '#4f46e5', backgroundColor: 'var(--bg-primary)', borderLeft: '2px solid var(--border-color)' }}>
-                        {studentScores.scaledCollected}
-                      </td>
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: '#f87171', backgroundColor: 'var(--bg-primary)' }}>
-                        {studentScores.scaledExam}
-                      </td>
-                      <td style={{ textAlign: 'center', fontWeight: 700, fontSize: '1.1rem', color: 'var(--primary-color)', backgroundColor: 'rgba(99, 102, 241, 0.1)' }}>
-                        {studentScores.totalScaled}
+
+                      {/* Midterm Cells */}
+                      {showMidterm && (() => {
+                        const examCols = classScoreColumns.filter(c => c.type === 'midterm');
+                        const mScore = getExamScore(s.id, 'midterm');
+                        studentViewTotal += mScore.scaled;
+
+                        const colsElements = examCols.length > 0 ? examCols.map(col => {
+                          const record = scores.find(r => r.studentId === s.id && r.columnId === col.id);
+                          return (
+                            <td key={col.id} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)' }}>
+                              <input 
+                                type="number"
+                                min="0"
+                                max={col.maxScore}
+                                value={record ? record.score : ''}
+                                onChange={(e) => handleScoreChange(s.id, col.id, e.target.value)}
+                                disabled={readOnly}
+                                style={{ width: '50px', padding: '4px', textAlign: 'center', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-sm)', fontFamily: 'inherit' }}
+                              />
+                            </td>
+                          );
+                        }) : [
+                          <td key="empty-midterm-cell" style={{ borderLeft: '1px solid var(--border-color)' }}></td>
+                        ];
+
+                        return [
+                          ...colsElements,
+                          <td key="total-midterm-cell" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)', backgroundColor: 'rgba(239, 68, 68, 0.05)', fontWeight: 600, color: '#ef4444' }}>
+                            <div title={`ดิบ: ${mScore.raw}/${mScore.maxRaw}`}>{Math.round(mScore.scaled)}</div>
+                          </td>
+                        ];
+                      })()}
+
+                      {/* Final Cells */}
+                      {showFinal && (() => {
+                        const examCols = classScoreColumns.filter(c => c.type === 'final');
+                        const fScore = getExamScore(s.id, 'final');
+                        studentViewTotal += fScore.scaled;
+
+                        const colsElements = examCols.length > 0 ? examCols.map(col => {
+                          const record = scores.find(r => r.studentId === s.id && r.columnId === col.id);
+                          return (
+                            <td key={col.id} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)' }}>
+                              <input 
+                                type="number"
+                                min="0"
+                                max={col.maxScore}
+                                value={record ? record.score : ''}
+                                onChange={(e) => handleScoreChange(s.id, col.id, e.target.value)}
+                                disabled={readOnly}
+                                style={{ width: '50px', padding: '4px', textAlign: 'center', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-sm)', fontFamily: 'inherit' }}
+                              />
+                            </td>
+                          );
+                        }) : [
+                          <td key="empty-final-cell" style={{ borderLeft: '1px solid var(--border-color)' }}></td>
+                        ];
+
+                        return [
+                          ...colsElements,
+                          <td key="total-final-cell" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)', backgroundColor: 'rgba(220, 38, 38, 0.05)', fontWeight: 600, color: '#dc2626' }}>
+                            <div title={`ดิบ: ${fScore.raw}/${fScore.maxRaw}`}>{Math.round(fScore.scaled)}</div>
+                          </td>
+                        ];
+                      })()}
+
+                      {/* Summary Cell */}
+                      <td style={{ textAlign: 'center', borderLeft: '2px solid var(--primary-color)', backgroundColor: 'rgba(99, 102, 241, 0.1)', fontWeight: 700, fontSize: '1.1rem', color: 'var(--primary-color)' }}>
+                        {Math.round(studentViewTotal)}
                       </td>
                     </tr>
                   )
@@ -339,57 +492,55 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                       checked={newColumnType === 'collected'}
                       onChange={() => setNewColumnType('collected')}
                     />
-                    คะแนนเก็บ
+                    คะแนนเก็บตามหน่วย
                   </label>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
                     <input 
                       type="radio" 
                       name="scoreType" 
-                      value="exam" 
-                      checked={newColumnType === 'exam'}
-                      onChange={() => setNewColumnType('exam')}
+                      value="midterm" 
+                      checked={newColumnType === 'midterm'}
+                      onChange={() => setNewColumnType('midterm')}
                     />
-                    คะแนนสอบ
+                    สอบกลางภาค
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                    <input 
+                      type="radio" 
+                      name="scoreType" 
+                      value="final" 
+                      checked={newColumnType === 'final'}
+                      onChange={() => setNewColumnType('final')}
+                    />
+                    สอบปลายภาค
                   </label>
                 </div>
               </div>
-              <div className="form-group">
-                <label className="form-label">ภาคเรียน</label>
-                <div style={{ display: 'flex', gap: '1rem' }}>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-                    <input 
-                      type="radio" 
-                      name="scoreTerm" 
-                      value="all" 
-                      checked={newColumnTerm === 'all'}
-                      onChange={() => setNewColumnTerm('all')}
-                    />
-                    ตลอดปี / ใช้ร่วมกัน
-                  </label>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-                    <input 
-                      type="radio" 
-                      name="scoreTerm" 
-                      value="1" 
-                      checked={newColumnTerm === '1'}
-                      onChange={() => setNewColumnTerm('1')}
-                    />
-                    เทอม 1
-                  </label>
-                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
-                    <input 
-                      type="radio" 
-                      name="scoreTerm" 
-                      value="2" 
-                      checked={newColumnTerm === '2'}
-                      onChange={() => setNewColumnTerm('2')}
-                    />
-                    เทอม 2
-                  </label>
+
+              {newColumnType === 'collected' && (
+                <div className="form-group">
+                  <label className="form-label">สังกัดหน่วยการเรียนรู้ (จำเป็น)</label>
+                  <select 
+                    className="form-select"
+                    value={newColumnUnitId}
+                    onChange={(e) => {
+                      setNewColumnUnitId(e.target.value);
+                      setNewColumnIndicatorId('');
+                    }}
+                    required
+                  >
+                    <option value="">-- เลือกหน่วยการเรียนรู้ --</option>
+                    {classUnits.map(unit => (
+                      <option key={unit.id} value={unit.id}>
+                        {unit.name} (น้ำหนัก {unit.weight})
+                      </option>
+                    ))}
+                  </select>
                 </div>
-              </div>
+              )}
+
               <div className="form-group">
-                <label className="form-label">ชื่อช่องคะแนน (เช่น สอบกลางภาค, ชิ้นงานที่ 1)</label>
+                <label className="form-label">ชื่อช่องคะแนน (เช่น ชิ้นงานที่ 1, สมุดประจำตัว)</label>
                 <input 
                   type="text" 
                   className="form-input" 
@@ -399,21 +550,25 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                   autoFocus
                 />
               </div>
-              <div className="form-group">
-                <label className="form-label">ผูกกับตัวชี้วัด (ไม่บังคับ)</label>
-                <select 
-                  className="form-select"
-                  value={newColumnIndicatorId}
-                  onChange={(e) => setNewColumnIndicatorId(e.target.value)}
-                >
-                  <option value="">-- ไม่ระบุตัวชี้วัด --</option>
-                  {allIndicatorsList.map(ind => (
-                    <option key={ind.id} value={ind.id}>
-                      {ind.code} ({ind.unitName})
-                    </option>
-                  ))}
-                </select>
-              </div>
+
+              {newColumnType === 'collected' && newColumnUnitId && (
+                <div className="form-group">
+                  <label className="form-label">ผูกกับตัวชี้วัดในหน่วย (ไม่บังคับ)</label>
+                  <select 
+                    className="form-select"
+                    value={newColumnIndicatorId}
+                    onChange={(e) => setNewColumnIndicatorId(e.target.value)}
+                  >
+                    <option value="">-- ไม่ระบุตัวชี้วัด --</option>
+                    {currentUnitIndicators.map(ind => (
+                      <option key={ind.id} value={ind.id}>
+                        {ind.code}
+                      </option>
+                    ))}
+                  </select>
+                </div>
+              )}
+
               <div className="form-group">
                 <label className="form-label">คะแนนเต็มดิบ (Raw Max Score)</label>
                 <input 
@@ -427,7 +582,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={() => setIsColumnModalOpen(false)}>ยกเลิก</button>
-                <button type="submit" className="btn btn-primary" disabled={!newColumnName.trim() || newColumnMax <= 0}>
+                <button type="submit" className="btn btn-primary" disabled={!newColumnName.trim() || newColumnMax <= 0 || (newColumnType === 'collected' && !newColumnUnitId)}>
                   {editingColumnId ? 'บันทึกการแก้ไข' : 'เพิ่มช่องคะแนน'}
                 </button>
               </div>

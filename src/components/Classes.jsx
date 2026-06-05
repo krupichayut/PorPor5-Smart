@@ -5,8 +5,8 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newClassName, setNewClassName] = useState('');
   const [newClassSubject, setNewClassSubject] = useState('');
-  const [newCollectedRatio, setNewCollectedRatio] = useState(80);
-  const [newExamRatio, setNewExamRatio] = useState(20);
+  const [newMidtermWeight, setNewMidtermWeight] = useState(10);
+  const [newFinalWeight, setNewFinalWeight] = useState(10);
   const [searchTerm, setSearchTerm] = useState('');
 
   const filteredClasses = classes.filter(c => 
@@ -17,8 +17,8 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
   const handleAddClass = (e) => {
     e.preventDefault();
     if (!newClassName.trim() || !newClassSubject.trim()) return;
-    if (Number(newCollectedRatio) + Number(newExamRatio) !== 100) {
-      alert('สัดส่วนคะแนนเก็บและคะแนนสอบรวมกันต้องเท่ากับ 100');
+    if (Number(newMidtermWeight) + Number(newFinalWeight) >= 100) {
+      alert('น้ำหนักคะแนนสอบรวมกันต้องไม่เกิน 100 (เผื่อน้ำหนักให้คะแนนเก็บด้วย)');
       return;
     }
 
@@ -26,16 +26,16 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
       id: Date.now().toString(),
       name: newClassName,
       subject: newClassSubject,
-      collectedRatio: Number(newCollectedRatio),
-      examRatio: Number(newExamRatio),
+      midtermWeight: Number(newMidtermWeight),
+      finalWeight: Number(newFinalWeight),
       studentCount: 0
     };
 
     setClasses([...classes, newClass]);
     setNewClassName('');
     setNewClassSubject('');
-    setNewCollectedRatio(80);
-    setNewExamRatio(20);
+    setNewMidtermWeight(10);
+    setNewFinalWeight(10);
     setIsModalOpen(false);
   };
 
@@ -107,7 +107,8 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
                 <tr>
                   <th>ห้องเรียน / ชั้น</th>
                   <th>รายวิชา</th>
-                  <th style={{ textAlign: 'center' }}>สัดส่วน (เก็บ : สอบ)</th>
+                  <th style={{ textAlign: 'center' }}>สอบกลางภาค</th>
+                  <th style={{ textAlign: 'center' }}>สอบปลายภาค</th>
                   <th>สถานะ</th>
                   <th style={{ textAlign: 'right' }}>จัดการ</th>
                 </tr>
@@ -118,8 +119,13 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
                     <td style={{ fontWeight: 500 }}>{c.name}</td>
                     <td>{c.subject}</td>
                     <td style={{ textAlign: 'center' }}>
-                      <span className="badge" style={{ backgroundColor: 'rgba(99, 102, 241, 0.2)', color: 'var(--primary-color)' }}>
-                        {c.collectedRatio || 80} : {c.examRatio || 20}
+                      <span className="badge" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>
+                        {c.midtermWeight || 10} คะแนน
+                      </span>
+                    </td>
+                    <td style={{ textAlign: 'center' }}>
+                      <span className="badge" style={{ backgroundColor: 'rgba(220, 38, 38, 0.1)', color: '#dc2626' }}>
+                        {c.finalWeight || 10} คะแนน
                       </span>
                     </td>
                     <td>
@@ -185,33 +191,25 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
               </div>
               
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1.5rem', padding: '1rem', backgroundColor: 'var(--bg-tertiary)', borderRadius: 'var(--radius-md)' }}>
-                <div style={{ gridColumn: 'span 2', fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)' }}>ตั้งค่าสัดส่วนคะแนน (ต้องรวมได้ 100)</div>
+                <div style={{ gridColumn: 'span 2', fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)' }}>ตั้งค่าน้ำหนักคะแนนสอบ (คะแนนเก็บจะคิดจากผลรวมของหน่วยการเรียนรู้)</div>
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label className="form-label">คะแนนเก็บ</label>
+                  <label className="form-label">น้ำหนักสอบกลางภาค</label>
                   <input 
                     type="number" 
                     className="form-input" 
-                    value={newCollectedRatio}
-                    onChange={(e) => {
-                      const val = Number(e.target.value);
-                      setNewCollectedRatio(val);
-                      setNewExamRatio(100 - val);
-                    }}
+                    value={newMidtermWeight}
+                    onChange={(e) => setNewMidtermWeight(Number(e.target.value))}
                     min="0"
                     max="100"
                   />
                 </div>
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label className="form-label">คะแนนสอบ</label>
+                  <label className="form-label">น้ำหนักสอบปลายภาค</label>
                   <input 
                     type="number" 
                     className="form-input" 
-                    value={newExamRatio}
-                    onChange={(e) => {
-                      const val = Number(e.target.value);
-                      setNewExamRatio(val);
-                      setNewCollectedRatio(100 - val);
-                    }}
+                    value={newFinalWeight}
+                    onChange={(e) => setNewFinalWeight(Number(e.target.value))}
                     min="0"
                     max="100"
                   />

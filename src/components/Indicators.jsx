@@ -12,6 +12,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
   const [newUnitName, setNewUnitName] = useState('');
   const [newUnitWeight, setNewUnitWeight] = useState(10);
   const [newUnitHours, setNewUnitHours] = useState(5);
+  const [newUnitTerm, setNewUnitTerm] = useState('1');
 
   const [newIndicatorCode, setNewIndicatorCode] = useState('');
   const [newIndicatorDesc, setNewIndicatorDesc] = useState('');
@@ -41,7 +42,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
 
     if (editingUnitId) {
       setIndicators(indicators.map(u => 
-        u.id === editingUnitId ? { ...u, name: newUnitName, weight: Number(newUnitWeight), hours: Number(newUnitHours) } : u
+        u.id === editingUnitId ? { ...u, name: newUnitName, weight: Number(newUnitWeight), hours: Number(newUnitHours), term: newUnitTerm } : u
       ));
     } else {
       const newUnit = {
@@ -50,6 +51,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
         name: newUnitName,
         weight: Number(newUnitWeight),
         hours: Number(newUnitHours),
+        term: newUnitTerm,
         items: []
       };
       setIndicators([...indicators, newUnit]);
@@ -59,6 +61,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
     setNewUnitName('');
     setNewUnitWeight(10);
     setNewUnitHours(5);
+    setNewUnitTerm('1');
     setEditingUnitId(null);
   };
 
@@ -67,6 +70,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
     setNewUnitName('');
     setNewUnitWeight(10);
     setNewUnitHours(5);
+    setNewUnitTerm('1');
     setIsUnitModalOpen(true);
   };
 
@@ -75,6 +79,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
     setNewUnitName(unit.name);
     setNewUnitWeight(unit.weight);
     setNewUnitHours(unit.hours);
+    setNewUnitTerm(unit.term || '1');
     setIsUnitModalOpen(true);
   };
 
@@ -212,6 +217,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
                   <th style={{ width: '80px', textAlign: 'center' }}>หน่วยที่</th>
                   <th style={{ width: '25%' }}>ชื่อหน่วยการเรียนรู้</th>
                   <th>ตัวชี้วัด/ผลการเรียนรู้</th>
+                  <th style={{ width: '80px', textAlign: 'center' }}>เทอม</th>
                   <th style={{ width: '100px', textAlign: 'center' }}>เวลา (ชม.)</th>
                   <th style={{ width: '120px', textAlign: 'center' }}>น้ำหนักคะแนน</th>
                   {!readOnly && <th style={{ width: '80px', textAlign: 'center' }}>จัดการ</th>}
@@ -263,6 +269,11 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
                         </button>
                       )}
                     </td>
+                    <td style={{ textAlign: 'center', paddingTop: '1rem' }}>
+                      <span className="badge" style={{ backgroundColor: 'rgba(99, 102, 241, 0.1)', color: 'var(--primary-color)' }}>
+                        {unit.term === '1' ? 'เทอม 1' : unit.term === '2' ? 'เทอม 2' : 'ตลอดปี'}
+                      </span>
+                    </td>
                     <td style={{ textAlign: 'center', paddingTop: '1rem' }}>{unit.hours}</td>
                     <td style={{ textAlign: 'center', paddingTop: '1rem' }}>{unit.weight}</td>
                     {!readOnly && (
@@ -278,7 +289,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
                   </tr>
                 ))}
                 <tr style={{ backgroundColor: 'var(--bg-tertiary)', fontWeight: 'bold' }}>
-                  <td colSpan={3} style={{ textAlign: 'right', paddingRight: '1rem' }}>รวมทั้งหมด:</td>
+                  <td colSpan={4} style={{ textAlign: 'right', paddingRight: '1rem' }}>รวมทั้งหมด:</td>
                   <td style={{ textAlign: 'center', color: expectedHours > 0 && totalHours !== expectedHours ? '#fbbf24' : 'var(--primary-color)' }}>{totalHours} {expectedHours > 0 ? `/ ${expectedHours}` : ''}</td>
                   <td style={{ textAlign: 'center', color: 'var(--primary-color)' }}>{totalWeight}</td>
                   <td></td>
@@ -308,6 +319,41 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
                   required
                   autoFocus
                 />
+              </div>
+              <div className="form-group">
+                <label className="form-label">ภาคเรียนที่จัดการเรียนการสอน</label>
+                <div style={{ display: 'flex', gap: '1rem' }}>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                    <input 
+                      type="radio" 
+                      name="unitTerm" 
+                      value="1" 
+                      checked={newUnitTerm === '1'}
+                      onChange={() => setNewUnitTerm('1')}
+                    />
+                    เทอม 1
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                    <input 
+                      type="radio" 
+                      name="unitTerm" 
+                      value="2" 
+                      checked={newUnitTerm === '2'}
+                      onChange={() => setNewUnitTerm('2')}
+                    />
+                    เทอม 2
+                  </label>
+                  <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
+                    <input 
+                      type="radio" 
+                      name="unitTerm" 
+                      value="all" 
+                      checked={newUnitTerm === 'all'}
+                      onChange={() => setNewUnitTerm('all')}
+                    />
+                    ตลอดปี
+                  </label>
+                </div>
               </div>
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem' }}>
                 <div className="form-group">
