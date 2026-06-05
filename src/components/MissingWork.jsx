@@ -1,15 +1,21 @@
 import { useState } from 'react';
-import { FileWarning, Search, CheckCircle, Users } from 'lucide-react';
+import { FileWarning, Search, CheckCircle, Users, Edit2, Trash2 } from 'lucide-react';
 
-export default function MissingWork({ students, activeClassId, classes, scores, setScores, scoreColumns, readOnly }) {
+export default function MissingWork({ students, activeClassId, classes, scores, setScores, scoreColumns, setScoreColumns, indicators, readOnly }) {
   const [activeTab, setActiveTab] = useState('byAssignment');
   const [selectedAssignmentId, setSelectedAssignmentId] = useState('');
   const [selectedStudentId, setSelectedStudentId] = useState('');
   const [tempScores, setTempScores] = useState({});
 
+  const [isEditModalOpen, setIsEditModalOpen] = useState(false);
+  const [editColName, setEditColName] = useState('');
+  const [editColMax, setEditColMax] = useState(10);
+  const [editColUnitId, setEditColUnitId] = useState('');
+
   const activeClass = classes.find(c => c.id === activeClassId);
   const classStudents = students.filter(s => s.classId === activeClassId).sort((a, b) => a.number - b.number);
-  const classScoreColumns = scoreColumns.filter(c => c.classId === activeClassId && c.type !== 'exam'); // เฉพาะคะแนนเก็บ (งาน)
+  const classScoreColumns = scoreColumns.filter(c => c.classId === activeClassId && c.type !== 'exam');
+  const classUnits = indicators ? indicators.filter(i => i.classId === activeClassId) : [];
 
   // -- By Assignment View --
   const selectedAssignment = classScoreColumns.find(c => c.id === selectedAssignmentId);
@@ -69,6 +75,34 @@ export default function MissingWork({ students, activeClassId, classes, scores, 
     setTempScores(newTempScores);
   };
 
+  const handleOpenEdit = () => {
+    if (!selectedAssignment) return;
+    setEditColName(selectedAssignment.name);
+    setEditColMax(selectedAssignment.maxScore);
+    setEditColUnitId(selectedAssignment.unitId || '');
+    setIsEditModalOpen(true);
+  };
+
+  const handleSaveEdit = (e) => {
+    e.preventDefault();
+    if (!editColName.trim() || editColMax <= 0 || !editColUnitId) return;
+    
+    setScoreColumns(scoreColumns.map(col => 
+      col.id === selectedAssignmentId 
+        ? { ...col, name: editColName, maxScore: Number(editColMax), unitId: editColUnitId }
+        : col
+    ));
+    setIsEditModalOpen(false);
+  };
+
+  const handleDeleteAssignment = () => {
+    if (confirm(`คุณแน่ใจหรือไม่ว่าต้องการลบชิ้นงาน "${selectedAssignment.name}" ? ข้อมูลคะแนนทั้งหมดในชิ้นงานนี้จะถูกลบไปด้วย`)) {
+      setScoreColumns(scoreColumns.filter(c => c.id !== selectedAssignmentId));
+      setScores(scores.filter(s => s.columnId !== selectedAssignmentId));
+      setSelectedAssignmentId('');
+    }
+  };
+
   if (!activeClassId) {
     return (
       <div className="animate-fade-in">
@@ -122,18 +156,30 @@ export default function MissingWork({ students, activeClassId, classes, scores, 
       ) : activeTab === 'byAssignment' ? (
         // BY ASSIGNMENT VIEW
         <div className="card">
-          <div className="form-group" style={{ marginBottom: '1.5rem' }}>
-            <label className="form-label">เลือกชิ้นงานที่ต้องการตรวจสอบ</label>
-            <select 
-              className="form-select"
-              value={selectedAssignmentId}
-              onChange={(e) => setSelectedAssignmentId(e.target.value)}
-            >
-              <option value="">-- เลือกชิ้นงาน --</option>
-              {classScoreColumns.map(col => (
-                <option key={col.id} value={col.id}>{col.name} (เต็ม {col.maxScore})</option>
-              ))}
-            </select>
+          <div className="form-group" style={{ marginBottom: '1.5rem', display: 'flex', gap: '1rem', alignItems: 'flex-end' }}>
+            <div style={{ flex: 1 }}>
+              <label className="form-label">เลือกชิ้นงานที่ต้องการตรวจสอบ</label>
+              <select 
+                className="form-select"
+                value={selectedAssignmentId}
+                onChange={(e) => setSelectedAssignmentId(e.target.value)}
+              >
+                <option value="">-- เลือกชิ้นงาน --</option>
+                {classScoreColumns.map(col => (
+                  <option key={col.id} value={col.id}>{col.name} (เต็ม {col.maxScore})</option>
+                ))}
+              </select>
+            </div>
+            {selectedAssignmentId && !readOnly && (
+              <div style={{ display: 'flex', gap: '0.5rem' }}>
+                <button className="btn btn-secondary" onClick={handleOpenEdit} title="แก้ไขชิ้นงานนี้">
+                  <Edit2 size={18} />
+                </button>
+                <button className="btn btn-secondary" onClick={handleDeleteAssignment} style={{ color: 'var(--danger-color)' }} title="ลบชิ้นงานนี้">
+                  <Trash2 size={18} />
+                </button>
+              </div>
+            )}
           </div>
 
           {selectedAssignmentId && (
@@ -320,6 +366,63 @@ export default function MissingWork({ students, activeClassId, classes, scores, 
                 )}
               </div>
             )}
+          </div>
+        </div>
+      )}
+
+      {isEditModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3 className="modal-title">แก้ไขชิ้นงาน</h3>
+              <button className="btn-icon" onClick={() => setIsEditModalOpen(false)}>×</button>
+            </div>
+            <form onSubmit={handleSaveEdit}>
+              <div className="form-group">
+                <label className="form-label">ชื่อชิ้นงาน</label>
+                <input 
+                  type="text" 
+                  className="form-input" 
+                  value={editColName}
+                  onChange={(e) => setEditColName(e.target.value)}
+                  required
+                  autoFocus
+                />
+              </div>
+              <div className="form-group">
+                <label className="form-label">สังกัดหน่วยการเรียนรู้</label>
+                <select 
+                  className="form-select"
+                  value={editColUnitId}
+                  onChange={(e) => setEditColUnitId(e.target.value)}
+                  required
+                >
+                  <option value="">-- เลือกหน่วยการเรียนรู้ --</option>
+                  {classUnits.map(unit => (
+                    <option key={unit.id} value={unit.id}>
+                      {unit.name} (น้ำหนัก {unit.weight})
+                    </option>
+                  ))}
+                </select>
+              </div>
+              <div className="form-group">
+                <label className="form-label">คะแนนเต็มดิบ</label>
+                <input 
+                  type="number" 
+                  className="form-input" 
+                  value={editColMax}
+                  onChange={(e) => setEditColMax(Number(e.target.value))}
+                  min="1"
+                  required
+                />
+              </div>
+              <div className="modal-footer">
+                <button type="button" className="btn btn-secondary" onClick={() => setIsEditModalOpen(false)}>ยกเลิก</button>
+                <button type="submit" className="btn btn-primary" disabled={!editColName.trim() || editColMax <= 0 || !editColUnitId}>
+                  บันทึกการแก้ไข
+                </button>
+              </div>
+            </form>
           </div>
         </div>
       )}
