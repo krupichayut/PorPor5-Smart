@@ -11,6 +11,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
   const [newColumnIndicatorId, setNewColumnIndicatorId] = useState('');
   
   const [viewTerm, setViewTerm] = useState('1'); // '1', '2', 'all'
+  const [viewUnit, setViewUnit] = useState('all'); // 'all', or unitId
 
   const activeClass = classes.find(c => c.id === activeClassId);
   const classStudents = students.filter(s => s.classId === activeClassId).sort((a, b) => a.number - b.number);
@@ -148,9 +149,18 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
   };
 
   // Build the view structure
-  const displayUnits = classUnits.filter(u => viewTerm === 'all' || u.term === viewTerm || u.term === 'all');
-  const showMidterm = viewTerm === '1' || viewTerm === 'all';
-  const showFinal = viewTerm === '2' || viewTerm === 'all';
+  const getUnitTerm = (u) => u.term || '1';
+  
+  let displayUnits = classUnits.filter(u => 
+    viewTerm === 'all' || getUnitTerm(u) === viewTerm || getUnitTerm(u) === 'all'
+  );
+  
+  if (viewUnit !== 'all') {
+    displayUnits = displayUnits.filter(u => u.id === viewUnit);
+  }
+
+  const showMidterm = (viewTerm === '1' || viewTerm === 'all') && viewUnit === 'all';
+  const showFinal = (viewTerm === '2' || viewTerm === 'all') && viewUnit === 'all';
 
   if (!activeClassId) {
     return (
@@ -199,17 +209,38 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
         <div className="card" style={{ padding: '0', display: 'flex' }}>
           <div style={{ flex: 1, padding: '1rem', borderRight: '1px solid var(--border-color)' }}>
             <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-              <Filter size={14} /> เลือกดูข้อมูล
+              <Filter size={14} /> เลือกภาคเรียน
             </div>
             <select 
               className="form-select" 
               value={viewTerm}
-              onChange={(e) => setViewTerm(e.target.value)}
+              onChange={(e) => {
+                setViewTerm(e.target.value);
+                setViewUnit('all'); // Reset unit filter when term changes
+              }}
               style={{ width: '100%' }}
             >
               <option value="1">เทอม 1 (หน่วย + กลางภาค)</option>
               <option value="2">เทอม 2 (หน่วย + ปลายภาค)</option>
               <option value="all">ทั้งปีการศึกษา</option>
+            </select>
+          </div>
+          <div style={{ flex: 1, padding: '1rem' }}>
+            <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+              <Filter size={14} /> เลือกแสดงผลระดับหน่วย
+            </div>
+            <select 
+              className="form-select" 
+              value={viewUnit}
+              onChange={(e) => setViewUnit(e.target.value)}
+              style={{ width: '100%' }}
+            >
+              <option value="all">แสดงทุกหน่วยในเทอมนี้ + สอบ</option>
+              {classUnits
+                .filter(u => viewTerm === 'all' || getUnitTerm(u) === viewTerm || getUnitTerm(u) === 'all')
+                .map(unit => (
+                  <option key={unit.id} value={unit.id}>{unit.name}</option>
+              ))}
             </select>
           </div>
         </div>
