@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
-import { BookOpen, Users, Calendar, Award, BarChart3, Settings, GraduationCap, Star, BookType, Brain, FileText, Key, LogOut, Menu, X, ClipboardList } from 'lucide-react';
+import { BookOpen, Users, Calendar, Award, BarChart3, Settings, GraduationCap, Star, BookType, Brain, FileText, Key, LogOut, Menu, X, ClipboardList, Paintbrush } from 'lucide-react';
 import { auth } from './firebase';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import './index.css';
@@ -24,6 +24,7 @@ import AssessmentsContainer from './components/AssessmentsContainer';
 import GradingContainer from './components/GradingContainer';
 import ReportsContainer from './components/ReportsContainer';
 import CoursePlanContainer from './components/CoursePlanContainer';
+import Rewards from './components/Rewards';
 
 function App() {
   const [user, setUser] = useState(null);
@@ -77,6 +78,9 @@ function App() {
   const [indicators, setIndicators, indInit] = useFirestoreData('appData', 'indicators', []);
   const [lessonPlans, setLessonPlans, lpInit] = useFirestoreData('appData', 'lessonPlans', []);
   
+  const [studentPoints, setStudentPoints, spInit] = useFirestoreData('appData', 'studentPoints', []);
+  const [rewards, setRewards, rwInit] = useFirestoreData('appData', 'rewards', []);
+
   const [appSettings, setAppSettings, settingsInit] = useFirestoreData('appData', 'settings', {
     schoolName: '',
     teacherName: '',
@@ -86,7 +90,7 @@ function App() {
     semester: ''
   });
 
-  const isDataLoaded = classesInit && studentsInit && attInit && scInit && scoresInit && attrInit && litInit && compInit && indInit && settingsInit && lpInit;
+  const isDataLoaded = classesInit && studentsInit && attInit && scInit && scoresInit && attrInit && litInit && compInit && indInit && settingsInit && lpInit && spInit && rwInit;
 
   const activeClass = classes ? classes.find(c => c.id === activeClassId) : null;
 
@@ -187,6 +191,11 @@ function App() {
               <span>บันทึกคะแนนและงานค้าง</span>
             </NavLink>
 
+            <NavLink to="/rewards" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
+              <Paintbrush style={{ color: '#fbbf24' }} />
+              <span>สะสมแต้มและของรางวัล</span>
+            </NavLink>
+
             <div style={{ margin: '1rem 0 0.5rem 1rem', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
               การประเมิน
             </div>
@@ -253,6 +262,7 @@ function App() {
             <Route path="/grading" element={<GradingContainer students={students} activeClassId={activeClassId} classes={classes} scores={scores} setScores={setScores} scoreColumns={scoreColumns} setScoreColumns={setScoreColumns} indicators={indicators} readOnly={readOnly} />} />
             <Route path="/reports" element={<ReportsContainer appSettings={appSettings} activeClassId={activeClassId} classes={classes} students={students} attendance={attendance} scoreColumns={scoreColumns} scores={scores} attributes={attributes} literacy={literacy} competencies={competencies} indicators={indicators} readOnly={readOnly} />} />
             <Route path="/assessments" element={<AssessmentsContainer students={students} activeClassId={activeClassId} classes={classes} attributes={attributes} setAttributes={setAttributes} literacy={literacy} setLiteracy={setLiteracy} competencies={competencies} setCompetencies={setCompetencies} readOnly={readOnly} />} />
+            <Route path="/rewards" element={<Rewards students={students} activeClassId={activeClassId} classes={classes} studentPoints={studentPoints} setStudentPoints={setStudentPoints} rewards={rewards} setRewards={setRewards} readOnly={readOnly} />} />
           </Routes>
         </main>
       </div>
