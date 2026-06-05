@@ -148,6 +148,31 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
     return { raw: examRaw, maxRaw: examMaxRaw, weight: examWeight, scaled: Number(scaled.toFixed(2)) };
   };
 
+  const getGrade = (score) => {
+    if (score >= 80) return '4.0';
+    if (score >= 75) return '3.5';
+    if (score >= 70) return '3.0';
+    if (score >= 65) return '2.5';
+    if (score >= 60) return '2.0';
+    if (score >= 55) return '1.5';
+    if (score >= 50) return '1.0';
+    return '0';
+  };
+
+  const getGradeColor = (grade) => {
+    switch(grade) {
+      case '4.0': return '#10b981';
+      case '3.5': return '#34d399';
+      case '3.0': return '#3b82f6';
+      case '2.5': return '#60a5fa';
+      case '2.0': return '#f59e0b';
+      case '1.5': return '#fbbf24';
+      case '1.0': return '#f97316';
+      case '0': return '#ef4444';
+      default: return 'inherit';
+    }
+  };
+
   // Build the view structure
   const getUnitTerm = (u) => u.term || '1';
   
@@ -293,6 +318,11 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                   <th rowSpan={2} style={{ textAlign: 'center', borderLeft: '2px solid var(--primary-color)', backgroundColor: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary-color)', verticalAlign: 'middle' }}>
                     รวมเทอม {viewTerm !== 'all' ? viewTerm : 'ทั้งหมด'}
                   </th>
+                  {viewTerm === 'all' && (
+                    <th rowSpan={2} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)', backgroundColor: 'var(--bg-tertiary)', verticalAlign: 'middle', width: '60px' }}>
+                      เกรด
+                    </th>
+                  )}
                 </tr>
                 <tr>
                   {/* Unit Columns */}
@@ -495,6 +525,11 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                       <td style={{ textAlign: 'center', borderLeft: '2px solid var(--primary-color)', backgroundColor: 'rgba(99, 102, 241, 0.1)', fontWeight: 700, fontSize: '1.1rem', color: 'var(--primary-color)' }}>
                         {Math.round(studentViewTotal)}
                       </td>
+                      {viewTerm === 'all' && (
+                        <td style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)', fontWeight: 'bold', fontSize: '1.1rem', color: getGradeColor(getGrade(Math.round(studentViewTotal))) }}>
+                          {getGrade(Math.round(studentViewTotal))}
+                        </td>
+                      )}
                     </tr>
                   )
                 })}
