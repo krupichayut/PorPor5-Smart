@@ -124,14 +124,14 @@ export default function Attributes({ students, activeClassId, classes, attribute
                                 borderRadius: 'var(--radius-sm)',
                                 fontFamily: 'inherit',
                                 backgroundColor: record ? 'var(--bg-primary)' : 'transparent',
-                                color: 'var(--text-primary)'
+                                color: '#ffffff'
                               }}
                             >
-                              <option value="" disabled>-</option>
-                              <option value="3">3</option>
-                              <option value="2">2</option>
-                              <option value="1">1</option>
-                              <option value="0">0</option>
+                              <option value="" disabled style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>-</option>
+                              <option value="3" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>3</option>
+                              <option value="2" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>2</option>
+                              <option value="1" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>1</option>
+                              <option value="0" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>0</option>
                             </select>
                           </td>
                         );
