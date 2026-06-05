@@ -255,11 +255,14 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                       </th>
                     );
                   })}
-                  <th colSpan={3} style={{ textAlign: 'center', backgroundColor: 'rgba(99, 102, 241, 0.2)', color: 'var(--primary-color)', borderBottom: '1px solid var(--border-color)' }}>คะแนนที่แปลงสัดส่วนแล้ว (Scaled)</th>
+                  <th colSpan={2} style={{ textAlign: 'center', backgroundColor: 'var(--bg-secondary)', borderBottom: '1px solid var(--border-color)', borderLeft: '2px solid var(--border-color)' }}>รวมคะแนนดิบ (Raw)</th>
+                  <th colSpan={3} style={{ textAlign: 'center', backgroundColor: 'rgba(99, 102, 241, 0.2)', color: 'var(--primary-color)', borderBottom: '1px solid var(--border-color)', borderLeft: '2px solid var(--border-color)' }}>แปลงสัดส่วน ({collectedRatio}:{examRatio})</th>
                 </tr>
                 <tr>
-                  <th style={{ textAlign: 'center', backgroundColor: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary-color)', fontSize: '0.875rem' }}>เก็บ ({collectedRatio})</th>
-                  <th style={{ textAlign: 'center', backgroundColor: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary-color)', fontSize: '0.875rem' }}>สอบ ({examRatio})</th>
+                  <th style={{ textAlign: 'center', backgroundColor: 'var(--bg-secondary)', fontSize: '0.875rem', borderLeft: '2px solid var(--border-color)' }}>เก็บ (เต็ม {totalMaxCollected})</th>
+                  <th style={{ textAlign: 'center', backgroundColor: 'var(--bg-secondary)', fontSize: '0.875rem' }}>สอบ (เต็ม {totalMaxExam})</th>
+                  <th style={{ textAlign: 'center', backgroundColor: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary-color)', fontSize: '0.875rem', borderLeft: '2px solid var(--border-color)' }}>เก็บ (เต็ม {collectedRatio})</th>
+                  <th style={{ textAlign: 'center', backgroundColor: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary-color)', fontSize: '0.875rem' }}>สอบ (เต็ม {examRatio})</th>
                   <th style={{ textAlign: 'center', backgroundColor: 'rgba(99, 102, 241, 0.25)', color: 'var(--primary-color)', fontSize: '0.875rem' }}>รวม 100</th>
                 </tr>
               </thead>
@@ -293,11 +296,17 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                           </td>
                         );
                       })}
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: '#4f46e5', backgroundColor: 'var(--bg-primary)' }}>
-                        <div title={`ดิบ: ${studentScores.rawCollected}/${totalMaxCollected}`}>{studentScores.scaledCollected}</div>
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--text-primary)', borderLeft: '2px solid var(--border-color)' }}>
+                        {studentScores.rawCollected}
+                      </td>
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--text-primary)' }}>
+                        {studentScores.rawExam}
+                      </td>
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: '#4f46e5', backgroundColor: 'var(--bg-primary)', borderLeft: '2px solid var(--border-color)' }}>
+                        {studentScores.scaledCollected}
                       </td>
                       <td style={{ textAlign: 'center', fontWeight: 600, color: '#f87171', backgroundColor: 'var(--bg-primary)' }}>
-                        <div title={`ดิบ: ${studentScores.rawExam}/${totalMaxExam}`}>{studentScores.scaledExam}</div>
+                        {studentScores.scaledExam}
                       </td>
                       <td style={{ textAlign: 'center', fontWeight: 700, fontSize: '1.1rem', color: 'var(--primary-color)', backgroundColor: 'rgba(99, 102, 241, 0.1)' }}>
                         {studentScores.totalScaled}
