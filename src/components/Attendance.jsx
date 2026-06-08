@@ -79,11 +79,11 @@ export default function Attendance({ students, activeClassId, classes, attendanc
     const note = record?.note || '';
     
     switch(status) {
-      case 'present': return <div className="badge badge-success"><Check size={14} style={{ marginRight: '4px' }}/> มา</div>;
-      case 'absent': return <div className="badge badge-danger"><X size={14} style={{ marginRight: '4px' }}/> ขาด</div>;
-      case 'late': return <div className="badge badge-warning"><Clock size={14} style={{ marginRight: '4px' }}/> สาย</div>;
-      case 'leave': return <div className="badge" style={{ backgroundColor: 'rgba(148, 163, 184, 0.15)', color: '#94a3b8' }}><FileText size={14} style={{ marginRight: '4px' }}/> ลา</div>;
-      case 'holiday': return <div className="badge" style={{ backgroundColor: 'rgba(234, 179, 8, 0.15)', color: '#facc15' }} title={note}><Star size={14} style={{ marginRight: '4px' }}/> วันหยุด</div>;
+      case 'present': return <div className="badge badge-present"><Check size={14} style={{ marginRight: '4px' }}/> มา</div>;
+      case 'absent': return <div className="badge badge-absent"><X size={14} style={{ marginRight: '4px' }}/> ขาด</div>;
+      case 'late': return <div className="badge badge-late"><Clock size={14} style={{ marginRight: '4px' }}/> สาย</div>;
+      case 'leave': return <div className="badge badge-leave"><FileText size={14} style={{ marginRight: '4px' }}/> ลา</div>;
+      case 'holiday': return <div className="badge badge-holiday" title={note}><Star size={14} style={{ marginRight: '4px' }}/> วันหยุด</div>;
       default: return null;
     }
   };
@@ -159,7 +159,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
                         <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
                           <span>{new Date(date).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })}</span>
                           {colNote && (
-                            <span style={{ fontSize: '0.7rem', color: '#facc15', backgroundColor: 'rgba(234, 179, 8, 0.15)', padding: '2px 4px', borderRadius: '4px', maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={colNote}>
+                            <span style={{ fontSize: '0.7rem', color: 'var(--badge-holiday-text)', backgroundColor: 'var(--badge-holiday-bg)', padding: '2px 4px', borderRadius: '4px', maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={colNote}>
                               {colNote}
                             </span>
                           )}
@@ -176,12 +176,12 @@ export default function Attendance({ students, activeClassId, classes, attendanc
                       </th>
                     );
                   })}
-                  <th style={{ textAlign: 'center', minWidth: '60px', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>เต็ม</th>
-                  <th style={{ textAlign: 'center', minWidth: '60px', color: '#6ee7b7', backgroundColor: 'rgba(52, 211, 153, 0.1)' }}>มา</th>
-                  <th style={{ textAlign: 'center', minWidth: '60px', color: '#cbd5e1', backgroundColor: 'rgba(148, 163, 184, 0.1)' }}>ลา</th>
-                  <th style={{ textAlign: 'center', minWidth: '60px', color: '#fca5a5', backgroundColor: 'rgba(248, 113, 113, 0.1)' }}>ขาด</th>
-                  <th style={{ textAlign: 'center', minWidth: '60px', color: '#fde047', backgroundColor: 'rgba(251, 191, 36, 0.1)' }}>สาย</th>
-                  <th style={{ textAlign: 'center', minWidth: '80px', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>ร้อยละ %</th>
+                  <th style={{ textAlign: 'center', minWidth: '60px', backgroundColor: 'var(--bg-tertiary)' }}>เต็ม</th>
+                  <th style={{ textAlign: 'center', minWidth: '60px', color: 'var(--badge-present-text)', backgroundColor: 'var(--badge-present-bg)' }}>มา</th>
+                  <th style={{ textAlign: 'center', minWidth: '60px', color: 'var(--badge-leave-text)', backgroundColor: 'var(--badge-leave-bg)' }}>ลา</th>
+                  <th style={{ textAlign: 'center', minWidth: '60px', color: 'var(--badge-absent-text)', backgroundColor: 'var(--badge-absent-bg)' }}>ขาด</th>
+                  <th style={{ textAlign: 'center', minWidth: '60px', color: 'var(--badge-late-text)', backgroundColor: 'var(--badge-late-bg)' }}>สาย</th>
+                  <th style={{ textAlign: 'center', minWidth: '80px', backgroundColor: 'var(--bg-tertiary)' }}>ร้อยละ %</th>
                 </tr>
               </thead>
               <tbody>
@@ -215,12 +215,12 @@ export default function Attendance({ students, activeClassId, classes, attendanc
                           </td>
                         );
                       })}
-                      <td style={{ textAlign: 'center', fontWeight: 600, backgroundColor: 'rgba(255, 255, 255, 0.02)' }}>{totalDays}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: '#34d399', backgroundColor: 'rgba(52, 211, 153, 0.05)' }} title={`มา ${presentCount} วัน, วันหยุด ${holidayCount} วัน`}>{presentCount + holidayCount}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: '#94a3b8', backgroundColor: 'rgba(148, 163, 184, 0.05)' }}>{leaveCount}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: '#f87171', backgroundColor: 'rgba(248, 113, 113, 0.05)' }}>{absentCount}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: '#fbbf24', backgroundColor: 'rgba(251, 191, 36, 0.05)' }}>{lateCount}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 700, color: percentage < 80 ? '#fca5a5' : 'var(--primary-color)', backgroundColor: 'rgba(255, 255, 255, 0.02)' }}>
+                      <td style={{ textAlign: 'center', fontWeight: 600, backgroundColor: 'var(--bg-tertiary)' }}>{totalDays}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--badge-present-text)', backgroundColor: 'var(--badge-present-bg)' }} title={`มา ${presentCount} วัน, วันหยุด ${holidayCount} วัน`}>{presentCount + holidayCount}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--badge-leave-text)', backgroundColor: 'var(--badge-leave-bg)' }}>{leaveCount}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--badge-absent-text)', backgroundColor: 'var(--badge-absent-bg)' }}>{absentCount}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--badge-late-text)', backgroundColor: 'var(--badge-late-bg)' }}>{lateCount}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 700, color: percentage < 80 ? 'var(--badge-absent-text)' : 'var(--primary-color)', backgroundColor: 'var(--bg-tertiary)' }}>
                         {percentage}%
                       </td>
                     </tr>

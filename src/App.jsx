@@ -64,6 +64,11 @@ function App() {
   const readOnly = !user;
 
   const [activeClassId, setActiveClassId] = useLocalStorage('porpor5_active_class', null);
+  const [theme, setTheme] = useLocalStorage('porpor5_theme', 'cosmic-indigo');
+
+  useEffect(() => {
+    document.documentElement.setAttribute('data-theme', theme);
+  }, [theme]);
 
   const [classes, setClasses, classesInit] = useFirestoreData('appData', 'classes', []);
   const [students, setStudents, studentsInit] = useFirestoreData('appData', 'students', []);
@@ -139,7 +144,7 @@ function App() {
           </div>
           
           {classes && classes.length > 0 && (
-            <div style={{ marginBottom: '1.5rem', padding: '0.75rem', backgroundColor: 'var(--bg-tertiary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+            <div style={{ marginBottom: '1rem', padding: '0.75rem', backgroundColor: 'var(--bg-tertiary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
               <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>สลับห้องเรียนปัจจุบัน:</div>
               <select 
                 className="form-input" 
@@ -154,6 +159,24 @@ function App() {
               </select>
             </div>
           )}
+
+          <div style={{ marginBottom: '1.5rem', padding: '0.75rem', backgroundColor: 'var(--bg-tertiary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
+            <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
+              <Paintbrush size={12} /> เลือกรูปแบบธีม:
+            </div>
+            <select 
+              className="form-input" 
+              style={{ padding: '0.4rem', fontSize: '0.9rem', width: '100%', cursor: 'pointer', appearance: 'auto', backgroundColor: 'var(--bg-primary)' }}
+              value={theme}
+              onChange={(e) => setTheme(e.target.value)}
+            >
+              <option value="cosmic-indigo">Cosmic Indigo 🌌</option>
+              <option value="ocean-breeze">Ocean Breeze 🌊</option>
+              <option value="sunset-glow">Sunset Glow 🌇</option>
+              <option value="forest-harmony">Forest Harmony 🌲</option>
+              <option value="midnight-cyberpunk">Cyberpunk ⚡</option>
+            </select>
+          </div>
           
           <nav className="sidebar-nav">
             <NavLink to="/" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu} end>
