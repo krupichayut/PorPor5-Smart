@@ -615,7 +615,7 @@ export default function Students({ students, setStudents, activeClassId, classes
                       </h4>
                       <div style={{ padding: '1rem', border: '1px dashed rgba(255, 255, 255, 0.2)', borderRadius: 'var(--radius-md)', textAlign: 'center', height: 'calc(100% - 2.5rem)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                         <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>การประเมินสามารถดูรายละเอียดเชิงลึก</p>
-                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>ได้ที่หน้ารายงาน ปพ.5 ฉบับสมบูรณ์</p>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>ได้ที่หน้ารายงาน PicthClass ฉบับสมบูรณ์</p>
                       </div>
                     </div>
                   </div>

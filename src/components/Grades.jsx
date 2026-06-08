@@ -136,7 +136,7 @@ export default function Grades({ students, activeClassId, classes, scores, score
         <div className="page-header">
           <div>
             <h2 className="page-title">สรุปผลการเรียน</h2>
-            <p className="page-subtitle">รายงาน ปพ.5 ฉบับสมบูรณ์ (พร้อมระบบแปลงสัดส่วนคะแนนตามหน่วย)</p>
+            <p className="page-subtitle">รายงาน PicthClass ฉบับสมบูรณ์ (พร้อมระบบแปลงสัดส่วนคะแนนตามหน่วย)</p>
           </div>
         </div>
         <div className="card" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
@@ -160,7 +160,7 @@ export default function Grades({ students, activeClassId, classes, scores, score
       <div className="page-header print-header">
         <div>
           <h2 className="page-title">
-            แบบบันทึกผลการพัฒนาคุณภาพผู้เรียน (ปพ.5) 
+            แบบบันทึกผลการพัฒนาคุณภาพผู้เรียน (PicthClass) 
             <span style={{ fontSize: '1.25rem', marginLeft: '0.5rem', color: 'var(--text-secondary)' }}>
               {selectedTerm === '1' ? '(ภาคเรียนที่ 1)' : selectedTerm === '2' ? '(ภาคเรียนที่ 2)' : '(รวมตลอดปี)'}
             </span>

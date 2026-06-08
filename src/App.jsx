@@ -64,11 +64,6 @@ function App() {
   const readOnly = !user;
 
   const [activeClassId, setActiveClassId] = useLocalStorage('porpor5_active_class', null);
-  const [theme, setTheme] = useLocalStorage('porpor5_theme', 'cosmic-indigo');
-
-  useEffect(() => {
-    document.documentElement.setAttribute('data-theme', theme);
-  }, [theme]);
 
   const [classes, setClasses, classesInit] = useFirestoreData('appData', 'classes', []);
   const [students, setStudents, studentsInit] = useFirestoreData('appData', 'students', []);
@@ -119,7 +114,7 @@ function App() {
             <div style={{ backgroundColor: 'var(--primary-light)', padding: '0.4rem', borderRadius: 'var(--radius-md)', color: 'var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <GraduationCap size={20} />
             </div>
-            <h1 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)' }}>ปพ.5 Smart</h1>
+            <h1 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)' }}>PicthClass</h1>
           </div>
           <button className="btn-icon" onClick={() => setIsMobileMenuOpen(true)}>
             <Menu size={24} />
@@ -137,7 +132,7 @@ function App() {
             <div style={{ backgroundColor: 'var(--primary-light)', padding: '0.5rem', borderRadius: 'var(--radius-md)', color: 'var(--primary-color)' }}>
               <GraduationCap size={24} />
             </div>
-            <h1>ปพ.5 Smart</h1>
+            <h1>PicthClass</h1>
             <button className="btn-icon mobile-close-btn" onClick={closeMobileMenu}>
               <X size={24} />
             </button>
@@ -160,23 +155,7 @@ function App() {
             </div>
           )}
 
-          <div style={{ marginBottom: '1.5rem', padding: '0.75rem', backgroundColor: 'var(--bg-tertiary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-            <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.4rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-              <Paintbrush size={12} /> เลือกรูปแบบธีม:
-            </div>
-            <select 
-              className="form-input" 
-              style={{ padding: '0.4rem', fontSize: '0.9rem', width: '100%', cursor: 'pointer', appearance: 'auto', backgroundColor: 'var(--bg-primary)' }}
-              value={theme}
-              onChange={(e) => setTheme(e.target.value)}
-            >
-              <option value="cosmic-indigo">Cosmic Indigo 🌌</option>
-              <option value="ocean-breeze">Ocean Breeze 🌊</option>
-              <option value="sunset-glow">Sunset Glow 🌇</option>
-              <option value="forest-harmony">Forest Harmony 🌲</option>
-              <option value="midnight-cyberpunk">Cyberpunk ⚡</option>
-            </select>
-          </div>
+
           
           <nav className="sidebar-nav">
             <NavLink to="/" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu} end>
@@ -233,14 +212,14 @@ function App() {
             </div>
             <NavLink to="/reports" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
               <FileText />
-              <span>พิมพ์รายงานและ ปพ.5</span>
+              <span>พิมพ์รายงานและ PicthClass</span>
             </NavLink>
           </nav>
           
           <div style={{ marginTop: 'auto', padding: '1rem', borderTop: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
             <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ marginBottom: '0.5rem' }} onClick={closeMobileMenu}>
               <Settings />
-              <span>ตั้งค่าระบบ (ปพ.5)</span>
+              <span>ตั้งค่าระบบ (PicthClass)</span>
             </NavLink>
             {user ? (
               <button className="btn btn-secondary" style={{ width: '100%', justifyContent: 'center' }} onClick={handleLogout}>
