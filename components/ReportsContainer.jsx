@@ -19,7 +19,7 @@ export default function ReportsContainer(props) {
           className={`tab-btn ${activeTab === 'grades' ? 'active' : ''}`}
           onClick={() => setActiveTab('grades')}
         >
-          <Printer size={16} style={{ display: 'inline', marginRight: '6px' }} /> พิมพ์รูปเล่ม ปพ.5
+          <Printer size={16} style={{ display: 'inline', marginRight: '6px' }} /> พิมพ์รูปเล่ม PicthClass
         </button>
       </div>
 

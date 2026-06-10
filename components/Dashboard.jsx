@@ -597,7 +597,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
           </div>
           <div style={{ textAlign: 'center', marginTop: '1rem' }}>
             <button className="btn btn-primary" onClick={() => navigate('/grades')} style={{ width: '100%', maxWidth: '400px' }}>
-              ดูสรุปผลการเรียนฉบับเต็ม (ปพ.5)
+              ดูสรุปผลการเรียนฉบับเต็ม (PicthClass)
             </button>
           </div>
         </div>

@@ -115,23 +115,23 @@ export default function Attributes({ students, activeClassId, classes, attribute
                         return (
                           <td key={c.id} style={{ textAlign: 'center' }}>
                             <select 
+                              className="form-select"
                               value={record ? record.score : ''}
                               onChange={(e) => handleScoreChange(s.id, c.id, e.target.value)}
                               disabled={readOnly}
                               style={{ 
                                 padding: '4px', 
+                                minHeight: '32px',
+                                backgroundColor: record ? 'var(--bg-primary)' : 'var(--bg-tertiary)',
                                 border: '1px solid var(--border-color)',
-                                borderRadius: 'var(--radius-sm)',
-                                fontFamily: 'inherit',
-                                backgroundColor: record ? 'var(--bg-primary)' : 'transparent',
-                                color: '#ffffff'
+                                borderRadius: 'var(--radius-sm)'
                               }}
                             >
-                              <option value="" disabled style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>-</option>
-                              <option value="3" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>3</option>
-                              <option value="2" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>2</option>
-                              <option value="1" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>1</option>
-                              <option value="0" style={{ color: '#ffffff', backgroundColor: '#0f172a' }}>0</option>
+                              <option value="" disabled style={{ color: 'var(--text-primary)', backgroundColor: 'var(--bg-secondary)' }}>-</option>
+                              <option value="3" style={{ color: 'var(--text-primary)', backgroundColor: 'var(--bg-secondary)' }}>3</option>
+                              <option value="2" style={{ color: 'var(--text-primary)', backgroundColor: 'var(--bg-secondary)' }}>2</option>
+                              <option value="1" style={{ color: 'var(--text-primary)', backgroundColor: 'var(--bg-secondary)' }}>1</option>
+                              <option value="0" style={{ color: 'var(--text-primary)', backgroundColor: 'var(--bg-secondary)' }}>0</option>
                             </select>
                           </td>
                         );
