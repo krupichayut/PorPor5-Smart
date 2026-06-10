@@ -276,13 +276,17 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
           <div style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
             <p>ยังไม่มีข้อมูลนักเรียนในห้องนี้ กรุณาเพิ่มนักเรียนก่อน</p>
           </div>
-        ) : classUnits.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
-            <Award size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-            <p>ยังไม่ได้สร้างหน่วยการเรียนรู้ กรุณาไปที่เมนู <strong>โครงสร้างรายวิชา</strong> ก่อน</p>
-          </div>
         ) : (
-          <div className="table-container">
+          <>
+            {classUnits.length === 0 && (
+              <div style={{ backgroundColor: 'rgba(245, 158, 11, 0.1)', border: '1px solid #f59e0b', color: '#f59e0b', padding: '1rem', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <Award size={24} />
+                <div>
+                  <strong>ยังไม่ได้สร้างหน่วยการเรียนรู้:</strong> หากต้องการเพิ่ม "ช่องคะแนนเก็บ" กรุณาไปสร้างหน่วยการเรียนรู้ที่เมนู <strong>โครงสร้างรายวิชา</strong> ก่อน
+                </div>
+              </div>
+            )}
+            <div className="table-container">
             <table className="table" style={{ whiteSpace: 'nowrap' }}>
               <thead>
                 <tr>
@@ -536,6 +540,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
               </tbody>
             </table>
           </div>
+          </>
         )}
       </div>
 
@@ -586,22 +591,28 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
               {newColumnType === 'collected' && (
                 <div className="form-group">
                   <label className="form-label">สังกัดหน่วยการเรียนรู้ (จำเป็น)</label>
-                  <select 
-                    className="form-select"
-                    value={newColumnUnitId}
-                    onChange={(e) => {
-                      setNewColumnUnitId(e.target.value);
-                      setNewColumnIndicatorId('');
-                    }}
-                    required
-                  >
-                    <option value="">-- เลือกหน่วยการเรียนรู้ --</option>
-                    {classUnits.map(unit => (
-                      <option key={unit.id} value={unit.id}>
-                        {unit.name} (น้ำหนัก {unit.weight})
-                      </option>
-                    ))}
-                  </select>
+                  {classUnits.length === 0 ? (
+                    <div style={{ color: '#ef4444', fontSize: '0.875rem', padding: '0.5rem', backgroundColor: 'rgba(239, 68, 68, 0.1)', borderRadius: 'var(--radius-sm)' }}>
+                      ❌ ยังไม่มีหน่วยการเรียนรู้: กรุณาไปที่เมนู โครงสร้างรายวิชา เพื่อสร้างหน่วยการเรียนรู้ก่อนเพิ่มคะแนนเก็บ
+                    </div>
+                  ) : (
+                    <select 
+                      className="form-select"
+                      value={newColumnUnitId}
+                      onChange={(e) => {
+                        setNewColumnUnitId(e.target.value);
+                        setNewColumnIndicatorId('');
+                      }}
+                      required
+                    >
+                      <option value="">-- เลือกหน่วยการเรียนรู้ --</option>
+                      {classUnits.map(unit => (
+                        <option key={unit.id} value={unit.id}>
+                          {unit.name} (น้ำหนัก {unit.weight})
+                        </option>
+                      ))}
+                    </select>
+                  )}
                 </div>
               )}
 
