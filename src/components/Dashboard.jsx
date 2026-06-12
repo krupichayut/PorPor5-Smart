@@ -1,6 +1,6 @@
-import { BarChart3, Users, Calendar, Award, FileWarning, TrendingUp, ChevronRight, BookOpen, CheckCircle } from 'lucide-react';
+import { BarChart3, Users, Calendar, Award, FileWarning, TrendingUp, ChevronRight, BookOpen, CheckCircle, Activity } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
-import { BarChart, Bar, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
 
 export default function Dashboard({ classes, students, activeClassId, setActiveClassId, attendance, scores, scoreColumns, indicators }) {
   const navigate = useNavigate();
@@ -131,100 +131,95 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
         ) : (
           <>
             <div className="bento-grid" style={{ marginBottom: '2.5rem' }}>
-              <div className="bento-item col-span-3" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', position: 'relative' }} onClick={() => navigate('/classes')}>
-                <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '100px', height: '100px', background: 'radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%)', borderRadius: '50%' }}></div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                  <div style={{ background: 'var(--grad-cyan-purple)', color: '#fff', padding: '0.75rem', borderRadius: '16px', boxShadow: 'var(--shadow-glow-cyan)' }}>
-                    <BookOpen size={24} />
-                  </div>
-                  <div style={{ backgroundColor: 'var(--bg-tertiary)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>ทั้งหมด</div>
-                </div>
+              {/* Top Row: Small Stats & Important Warning */}
+              <div className="bento-item col-span-3" style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.25rem 1.5rem' }} onClick={() => navigate('/classes')}>
                 <div>
-                  <h3 style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0 0 0.25rem 0', fontFamily: 'var(--font-game)', color: 'var(--text-primary)' }}>{totalClasses}</h3>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', margin: 0, fontFamily: 'var(--font-body)' }}>ห้องเรียน</p>
+                  <h3 style={{ fontSize: '1.75rem', fontWeight: 700, margin: 0, fontFamily: 'var(--font-game)' }}>{totalClasses}</h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0 }}>ห้องเรียน</p>
                 </div>
-              </div>
-              
-              <div className="bento-item col-span-3" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', position: 'relative' }} onClick={() => navigate('/students')}>
-                <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '100px', height: '100px', background: 'radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, transparent 70%)', borderRadius: '50%' }}></div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                  <div style={{ background: 'var(--grad-pink-magenta)', color: '#fff', padding: '0.75rem', borderRadius: '16px', boxShadow: 'var(--shadow-glow-pink)' }}>
-                    <Users size={24} />
-                  </div>
-                  <div style={{ backgroundColor: 'var(--bg-tertiary)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>รวมทุกห้อง</div>
-                </div>
-                <div>
-                  <h3 style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0 0 0.25rem 0', fontFamily: 'var(--font-game)', color: 'var(--text-primary)' }}>{totalStudents}</h3>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', margin: 0, fontFamily: 'var(--font-body)' }}>นักเรียน</p>
+                <div style={{ background: 'var(--grad-cyan-purple)', color: '#fff', padding: '0.75rem', borderRadius: '50%', boxShadow: 'var(--shadow-glow-cyan)' }}>
+                  <BookOpen size={20} />
                 </div>
               </div>
 
-              <div className="bento-item col-span-3" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', position: 'relative' }} onClick={() => navigate('/attendance')}>
-                <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '100px', height: '100px', background: 'radial-gradient(circle, rgba(52, 211, 153, 0.15) 0%, transparent 70%)', borderRadius: '50%' }}></div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                  <div style={{ background: 'var(--grad-orange-yellow)', color: '#fff', padding: '0.75rem', borderRadius: '16px', boxShadow: '0 0 15px rgba(248, 54, 0, 0.4)' }}>
-                    <TrendingUp size={24} />
-                  </div>
-                  <div style={{ backgroundColor: 'var(--bg-tertiary)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>ความสม่ำเสมอ</div>
-                </div>
+              <div className="bento-item col-span-3" style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.25rem 1.5rem' }} onClick={() => navigate('/students')}>
                 <div>
-                  <h3 style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0 0 0.25rem 0', fontFamily: 'var(--font-game)', color: 'var(--text-primary)' }}>{overallAttRate}<span style={{ fontSize: '1.25rem', color: 'var(--text-muted)' }}>%</span></h3>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', margin: 0, fontFamily: 'var(--font-body)' }}>อัตราการเข้าเรียนเฉลี่ย</p>
+                  <h3 style={{ fontSize: '1.75rem', fontWeight: 700, margin: 0, fontFamily: 'var(--font-game)' }}>{totalStudents}</h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0 }}>นักเรียนทั้งหมด</p>
+                </div>
+                <div style={{ background: 'var(--grad-pink-magenta)', color: '#fff', padding: '0.75rem', borderRadius: '50%', boxShadow: 'var(--shadow-glow-pink)' }}>
+                  <Users size={20} />
                 </div>
               </div>
 
-              <div className="bento-item col-span-3" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', position: 'relative' }} onClick={() => navigate('/grading')}>
-                <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '100px', height: '100px', background: 'radial-gradient(circle, rgba(239, 68, 68, 0.15) 0%, transparent 70%)', borderRadius: '50%' }}></div>
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
-                  <div style={{ background: 'var(--grad-purple-blue)', color: '#fff', padding: '0.75rem', borderRadius: '16px', boxShadow: '0 0 15px rgba(69, 104, 220, 0.4)' }}>
-                    <FileWarning size={24} />
-                  </div>
-                  <div style={{ backgroundColor: totalMissing > 0 ? 'rgba(224, 122, 95, 0.1)' : 'var(--bg-tertiary)', color: totalMissing > 0 ? 'var(--danger-color)' : 'var(--text-secondary)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem' }}>ต้องติดตาม</div>
+              <div className="bento-item col-span-6" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem', border: totalMissing > 0 ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid rgba(255,255,255,0.03)', background: totalMissing > 0 ? 'linear-gradient(to right, rgba(239, 68, 68, 0.1), rgba(34, 36, 54, 0.6))' : '' }} onClick={() => navigate('/grading')}>
+                <div style={{ background: totalMissing > 0 ? 'rgba(239, 68, 68, 0.2)' : 'var(--bg-tertiary)', color: totalMissing > 0 ? '#f87171' : 'var(--text-secondary)', padding: '1rem', borderRadius: '16px' }}>
+                  <FileWarning size={28} />
                 </div>
                 <div>
-                  <h3 style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0 0 0.25rem 0', fontFamily: 'var(--font-game)', color: totalMissing > 0 ? 'var(--danger-color)' : 'var(--text-primary)' }}>{totalMissing}</h3>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', margin: 0, fontFamily: 'var(--font-body)' }}>ปริมาณงานค้างรวม</p>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>งานค้างที่ต้องติดตาม</p>
+                  <h3 style={{ fontSize: '2rem', fontWeight: 700, margin: 0, fontFamily: 'var(--font-game)', color: totalMissing > 0 ? '#f87171' : 'var(--text-primary)' }}>{totalMissing} <span style={{ fontSize: '1rem', fontWeight: 'normal', color: 'var(--text-muted)' }}>ชิ้น</span></h3>
                 </div>
               </div>
 
-              <div className="bento-item col-span-6 row-span-2">
+              {/* Middle Row: Quick Actions & Attendance */}
+              <div className="bento-item col-span-6" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.25rem 1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                <p style={{ margin: '0 0 0.75rem 0', color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 500 }}>เมนูลัด (Quick Actions)</p>
+                <div style={{ display: 'flex', gap: '0.75rem' }}>
+                  <button className="btn btn-secondary" style={{ padding: '0.5rem 1rem', fontSize: '0.85rem', flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }} onClick={() => navigate('/classes')}>
+                    <BookOpen size={16} /> จัดการห้องเรียน
+                  </button>
+                  <button className="btn btn-secondary" style={{ padding: '0.5rem 1rem', fontSize: '0.85rem', flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }} onClick={() => navigate('/students')}>
+                    <Users size={16} /> ข้อมูลนักเรียน
+                  </button>
+                </div>
+              </div>
+
+              <div className="bento-item col-span-6" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem' }} onClick={() => navigate('/attendance')}>
+                <div style={{ background: 'rgba(52, 211, 153, 0.15)', color: '#34d399', padding: '1rem', borderRadius: '16px' }}>
+                  <TrendingUp size={28} />
+                </div>
+                <div>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>อัตราการเข้าเรียนเฉลี่ย</p>
+                  <h3 style={{ fontSize: '2rem', fontWeight: 700, margin: 0, fontFamily: 'var(--font-game)', color: '#34d399' }}>{overallAttRate}<span style={{ fontSize: '1.2rem', color: 'var(--text-muted)' }}>%</span></h3>
+                </div>
+              </div>
+
+              <div className="bento-item col-span-7 row-span-2">
                 <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', color: 'var(--text-primary)' }}>เปรียบเทียบอัตราเข้าเรียน</h3>
                 <div style={{ width: '100%', height: 300 }}>
                   {classes.length > 0 ? (
                     <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={classes.map(cls => ({
+                      <AreaChart data={classes.map(cls => ({
                         name: cls.name,
                         อัตราเข้าเรียน: calculateAttendanceRate(attendance.filter(a => a.classId === cls.id))
                       }))}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
-                        <XAxis dataKey="name" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} axisLine={{ stroke: 'var(--border-color)' }} tickLine={false} />
-                        <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} axisLine={false} tickLine={false} domain={[0, 100]} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
+                        <XAxis dataKey="name" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 12 }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={false} />
+                        <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 12 }} axisLine={false} tickLine={false} domain={[0, 100]} />
                         <Tooltip 
-                          contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '12px', boxShadow: 'var(--shadow-md)', color: 'var(--text-primary)' }} 
-                          cursor={{ fill: 'rgba(0,0,0,0.03)' }}
+                          contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', boxShadow: 'var(--shadow-md)', color: '#fff' }} 
                         />
-                        <Bar dataKey="อัตราเข้าเรียน" fill="url(#colorAttendance)" radius={[6, 6, 0, 0]}>
-                           {/* Using standard color if gradient fails, but gradient is nicer */}
-                        </Bar>
                         <defs>
-                          <linearGradient id="colorAttendance" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#00e5ff" stopOpacity={0.9}/>
-                            <stop offset="100%" stopColor="#4361ee" stopOpacity={0.3}/>
+                          <linearGradient id="colorAttendanceArea" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="#00e5ff" stopOpacity={0.5}/>
+                            <stop offset="95%" stopColor="#00e5ff" stopOpacity={0}/>
                           </linearGradient>
                         </defs>
-                      </BarChart>
+                        <Area type="monotone" dataKey="อัตราเข้าเรียน" stroke="#00e5ff" strokeWidth={3} fillOpacity={1} fill="url(#colorAttendanceArea)" />
+                      </AreaChart>
                     </ResponsiveContainer>
                   ) : (
                     <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>ไม่มีข้อมูลห้องเรียน</div>
                   )}
                 </div>
               </div>
-              <div className="bento-item col-span-6 row-span-2">
-                <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', color: 'var(--text-primary)' }}>ภาพรวมผลการเรียน (ตัดเกรดจำลอง)</h3>
+              <div className="bento-item col-span-5 row-span-2">
+                <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', color: 'var(--text-primary)' }}>ภาพรวมผลการเรียน</h3>
                 <div style={{ width: '100%', height: 300 }}>
                   {classes.length > 0 ? (
                     <ResponsiveContainer width="100%" height="100%">
-                      <BarChart data={(() => {
+                      <RadarChart cx="50%" cy="50%" outerRadius="75%" data={(() => {
                         const totalSummary = { '4.0': 0, '3.5': 0, '3.0': 0, '2.5': 0, '2.0': 0, '1.5': 0, '1.0': 0, '0': 0 };
                         classes.forEach(cls => {
                           const clsStudents = students.filter(s => s.classId === cls.id);
@@ -243,22 +238,15 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                           { grade: '0', value: totalSummary['0'] }
                         ];
                       })()}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
-                        <XAxis dataKey="grade" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} axisLine={{ stroke: 'var(--border-color)' }} tickLine={false} />
-                        <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} axisLine={false} tickLine={false} allowDecimals={false} />
+                        <PolarGrid stroke="rgba(255,255,255,0.1)" />
+                        <PolarAngleAxis dataKey="grade" tick={{ fill: 'var(--text-secondary)', fontSize: 12 }} />
+                        <PolarRadiusAxis angle={30} domain={[0, 'auto']} tick={false} axisLine={false} />
+                        <Radar name="นักเรียน" dataKey="value" stroke="#ff3366" fill="#ff3366" fillOpacity={0.4} />
                         <Tooltip 
-                          contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '12px', boxShadow: 'var(--shadow-md)', color: 'var(--text-primary)' }} 
-                          cursor={{ fill: 'rgba(0,0,0,0.03)' }}
+                          contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', boxShadow: 'var(--shadow-md)', color: '#fff' }} 
                           formatter={(value) => [`${value} คน`, 'จำนวนนักเรียน']}
                         />
-                        <Bar dataKey="value" fill="url(#colorTotalGrade)" radius={[6, 6, 0, 0]} />
-                        <defs>
-                          <linearGradient id="colorTotalGrade" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stopColor="#ff3366" stopOpacity={0.9}/>
-                            <stop offset="100%" stopColor="#ffb199" stopOpacity={0.3}/>
-                          </linearGradient>
-                        </defs>
-                      </BarChart>
+                      </RadarChart>
                     </ResponsiveContainer>
                   ) : (
                     <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>ไม่มีข้อมูลคะแนน</div>
@@ -452,48 +440,47 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
       </div>
       
       <div className="bento-grid" style={{ marginBottom: '2rem' }}>
-        <div className="bento-item col-span-3" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-          <div style={{ backgroundColor: 'rgba(99, 102, 241, 0.2)', color: 'var(--primary-color)', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
-            <Users size={32} />
-          </div>
+        {/* Class Hero Banner */}
+        <div className="bento-item col-span-12" style={{ background: 'linear-gradient(to right, rgba(99, 102, 241, 0.15), rgba(52, 211, 153, 0.1))', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '2rem' }}>
           <div>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 500 }}>นักเรียน</p>
-            <h3 style={{ fontSize: '1.875rem', fontWeight: 700, margin: 0 }}>{classStudents.length}</h3>
+            <h3 style={{ fontSize: '1.75rem', margin: '0 0 0.5rem 0', fontFamily: 'var(--font-game)', color: 'var(--text-primary)' }}>{activeClass?.name}</h3>
+            <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '1rem' }}>วิชา: {activeClass?.subject}</p>
+          </div>
+          <div style={{ display: 'flex', gap: '2rem' }}>
+            <div style={{ textAlign: 'center' }}>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: '0 0 0.25rem 0' }}>นักเรียน</p>
+              <h4 style={{ fontSize: '1.5rem', margin: 0, color: 'var(--primary-color)' }}>{classStudents.length}</h4>
+            </div>
+            <div style={{ textAlign: 'center' }}>
+              <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: '0 0 0.25rem 0' }}>ช่องให้คะแนน</p>
+              <h4 style={{ fontSize: '1.5rem', margin: 0, color: '#fbbf24' }}>{classColumns.length}</h4>
+            </div>
           </div>
         </div>
-        
-        <div className="bento-item col-span-3" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+
+        {/* Small Stats */}
+        <div className="bento-item col-span-6" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
           <div style={{ backgroundColor: 'rgba(52, 211, 153, 0.15)', color: '#34d399', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
             <Calendar size={32} />
           </div>
           <div>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 500 }}>อัตราเข้าเรียน (จาก {uniqueDates.length} ครั้ง)</p>
-            <h3 style={{ fontSize: '1.875rem', fontWeight: 700, margin: 0 }}>{classAttRate}<span style={{ fontSize: '1.2rem' }}>%</span></h3>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 500, margin: 0 }}>อัตราเข้าเรียน (จาก {uniqueDates.length} ครั้ง)</p>
+            <h3 style={{ fontSize: '1.875rem', fontWeight: 700, margin: 0, color: '#34d399' }}>{classAttRate}<span style={{ fontSize: '1.2rem' }}>%</span></h3>
           </div>
         </div>
 
-        <div className="bento-item col-span-3" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-          <div style={{ backgroundColor: 'rgba(251, 191, 36, 0.15)', color: '#fbbf24', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
-            <Award size={32} />
-          </div>
-          <div>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 500 }}>ช่องให้คะแนนรวม</p>
-            <h3 style={{ fontSize: '1.875rem', fontWeight: 700, margin: 0 }}>{classColumns.length}</h3>
-          </div>
-        </div>
-
-        <div className="bento-item col-span-3" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', border: totalMissingClass > 0 ? '1px solid rgba(239, 68, 68, 0.3)' : 'none' }}>
-          <div style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#f87171', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
+        <div className="bento-item col-span-6" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', border: totalMissingClass > 0 ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid rgba(255,255,255,0.03)' }}>
+          <div style={{ backgroundColor: totalMissingClass > 0 ? 'rgba(239, 68, 68, 0.15)' : 'var(--bg-tertiary)', color: totalMissingClass > 0 ? '#f87171' : 'var(--text-secondary)', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
             <FileWarning size={32} />
           </div>
           <div>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 500 }}>งานค้าง (ทั้งห้อง)</p>
-            <h3 style={{ fontSize: '1.875rem', fontWeight: 700, margin: 0, color: totalMissingClass > 0 ? '#f87171' : 'inherit' }}>
+            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 500, margin: 0 }}>งานค้างรวมทั้งห้อง</p>
+            <h3 style={{ fontSize: '1.875rem', fontWeight: 700, margin: 0, color: totalMissingClass > 0 ? '#f87171' : 'var(--text-primary)' }}>
               {totalMissingClass} <span style={{ fontSize: '1rem', fontWeight: 'normal', color: 'var(--text-muted)' }}>ชิ้น</span>
             </h3>
           </div>
         </div>
-        <div className="bento-item col-span-6" style={{ padding: 0, border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+        <div className="bento-item col-span-6 row-span-2" style={{ padding: 0, border: '1px solid rgba(239, 68, 68, 0.2)' }}>
           <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'rgba(239, 68, 68, 0.05)' }}>
             <h3 style={{ margin: 0, fontSize: '1.125rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#f87171' }}>
               <FileWarning size={20} /> นักเรียนที่งานค้างเยอะที่สุด (Top 5)
@@ -530,11 +517,11 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
           </div>
         </div>
 
-        <div className="bento-item col-span-6" style={{ padding: '1.5rem' }}>
+        <div className="bento-item col-span-6 row-span-2" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column' }}>
           <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.125rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--success-color)' }}>
             <Calendar size={20} /> สัดส่วนการมาเรียนรวม
           </h3>
-          <div style={{ width: '100%', height: 260 }}>
+          <div style={{ width: '100%', height: '100%', minHeight: 260, flex: 1 }}>
             {classAttendance.filter(r => r.status !== 'holiday').length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
                 <PieChart>
@@ -580,23 +567,16 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
           <div style={{ width: '100%', height: 300 }}>
             {classColumns.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={getGradeSummaryData(activeClassId, classStudents, classColumns, scores)}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="var(--border-color)" vertical={false} />
-                  <XAxis dataKey="grade" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} axisLine={{ stroke: 'var(--border-color)' }} tickLine={false} />
-                  <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} axisLine={false} tickLine={false} allowDecimals={false} />
+                <RadarChart cx="50%" cy="50%" outerRadius="75%" data={getGradeSummaryData(activeClassId, classStudents, classColumns, scores)}>
+                  <PolarGrid stroke="rgba(255,255,255,0.1)" />
+                  <PolarAngleAxis dataKey="grade" tick={{ fill: 'var(--text-secondary)', fontSize: 12 }} />
+                  <PolarRadiusAxis angle={30} domain={[0, 'auto']} tick={false} axisLine={false} />
+                  <Radar name="นักเรียน" dataKey="value" stroke="#34d399" fill="#34d399" fillOpacity={0.4} />
                   <Tooltip 
-                    contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#fff' }} 
-                    cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                    contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', boxShadow: 'var(--shadow-md)', color: '#fff' }} 
                     formatter={(value) => [`${value} คน`, 'จำนวนนักเรียน']}
                   />
-                  <Bar dataKey="value" fill="url(#colorGrade)" radius={[6, 6, 0, 0]} />
-                  <defs>
-                    <linearGradient id="colorGrade" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#34d399" stopOpacity={0.9}/>
-                      <stop offset="95%" stopColor="#10b981" stopOpacity={0.4}/>
-                    </linearGradient>
-                  </defs>
-                </BarChart>
+                </RadarChart>
               </ResponsiveContainer>
             ) : (
               <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
