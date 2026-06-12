@@ -220,21 +220,21 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
       </div>
 
       <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
-        <div className="card" style={{ padding: '1rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
-          <div style={{ padding: '0.75rem', backgroundColor: 'rgba(99, 102, 241, 0.2)', color: 'var(--primary-color)', borderRadius: 'var(--radius-md)' }}>
-            <Calculator size={24} />
+        <div className="card" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+          <div style={{ padding: '1rem', backgroundColor: 'var(--bg-tertiary)', color: 'var(--primary-color)', borderRadius: 'var(--radius-full)' }}>
+            <Calculator size={28} />
           </div>
           <div>
-            <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)' }}>น้ำหนักคะแนนรวม (ที่ตั้งค่าไว้)</div>
-            <div style={{ fontSize: '1.25rem', fontWeight: 600, color: totalClassWeight !== 100 ? '#f87171' : 'inherit' }}>
-              {totalClassWeight} คะแนน {totalClassWeight !== 100 && <span style={{ fontSize: '0.8rem', fontWeight: 'normal' }}>(ควรปรับโครงสร้างให้ครบ 100)</span>}
+            <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>น้ำหนักคะแนนรวม (ที่ตั้งค่าไว้)</div>
+            <div style={{ fontSize: '1.5rem', fontWeight: 600, color: totalClassWeight !== 100 ? 'var(--danger-color)' : 'var(--text-primary)' }}>
+              {totalClassWeight} <span style={{ fontSize: '1rem', fontWeight: 'normal', color: 'var(--text-secondary)' }}>คะแนน</span> {totalClassWeight !== 100 && <span style={{ fontSize: '0.85rem', fontWeight: 'normal', color: 'var(--danger-color)' }}>(ควรปรับให้ครบ 100)</span>}
             </div>
           </div>
         </div>
         <div className="card" style={{ padding: '0', display: 'flex' }}>
-          <div style={{ flex: 1, padding: '1rem', borderRight: '1px solid var(--border-color)' }}>
-            <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-              <Filter size={14} /> เลือกภาคเรียน
+          <div style={{ flex: 1, padding: '1.5rem', borderRight: '1px solid var(--border-color)' }}>
+            <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Filter size={16} /> เลือกภาคเรียน
             </div>
             <select 
               className="form-select" 
@@ -243,22 +243,20 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                 setViewTerm(e.target.value);
                 setViewUnit('all'); // Reset unit filter when term changes
               }}
-              style={{ width: '100%' }}
             >
               <option value="1">เทอม 1 (หน่วย + กลางภาค)</option>
               <option value="2">เทอม 2 (หน่วย + ปลายภาค)</option>
               <option value="all">ทั้งปีการศึกษา</option>
             </select>
           </div>
-          <div style={{ flex: 1, padding: '1rem' }}>
-            <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.5rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-              <Filter size={14} /> เลือกแสดงผลระดับหน่วย
+          <div style={{ flex: 1, padding: '1.5rem' }}>
+            <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+              <Filter size={16} /> เลือกแสดงผลระดับหน่วย
             </div>
             <select 
               className="form-select" 
               value={viewUnit}
               onChange={(e) => setViewUnit(e.target.value)}
-              style={{ width: '100%' }}
             >
               <option value="all">แสดงทุกหน่วยในเทอมนี้ + สอบ</option>
               {classUnits
@@ -279,7 +277,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
         ) : (
           <>
             {classUnits.length === 0 && (
-              <div style={{ backgroundColor: 'rgba(245, 158, 11, 0.1)', border: '1px solid #f59e0b', color: '#f59e0b', padding: '1rem', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div style={{ backgroundColor: 'var(--badge-warning-bg)', color: 'var(--warning-color)', padding: '1.25rem', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 <Award size={24} />
                 <div>
                   <strong>ยังไม่ได้สร้างหน่วยการเรียนรู้:</strong> หากต้องการเพิ่ม "ช่องคะแนนเก็บ" กรุณาไปสร้างหน่วยการเรียนรู้ที่เมนู <strong>โครงสร้างรายวิชา</strong> ก่อน
@@ -306,20 +304,20 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                   
                   {/* Exams Groups */}
                   {showMidterm && (
-                    <th colSpan={Math.max(1, classScoreColumns.filter(c => c.type === 'midterm').length) + 1} style={{ textAlign: 'center', borderLeft: '2px solid var(--border-color)', backgroundColor: 'rgba(239, 68, 68, 0.1)' }}>
-                      <div style={{ color: '#ef4444' }}>สอบกลางภาค</div>
+                    <th colSpan={Math.max(1, classScoreColumns.filter(c => c.type === 'midterm').length) + 1} style={{ textAlign: 'center', borderLeft: '2px solid var(--border-color)', backgroundColor: 'rgba(255, 23, 68, 0.15)' }}>
+                      <div style={{ color: 'var(--danger-color)' }}>สอบกลางภาค</div>
                       <div style={{ fontSize: '0.75rem', fontWeight: 'normal' }}>น้ำหนัก: {midtermWeight} คะแนน</div>
                     </th>
                   )}
                   {showFinal && (
-                    <th colSpan={Math.max(1, classScoreColumns.filter(c => c.type === 'final').length) + 1} style={{ textAlign: 'center', borderLeft: '2px solid var(--border-color)', backgroundColor: 'rgba(220, 38, 38, 0.1)' }}>
-                      <div style={{ color: '#dc2626' }}>สอบปลายภาค</div>
+                    <th colSpan={Math.max(1, classScoreColumns.filter(c => c.type === 'final').length) + 1} style={{ textAlign: 'center', borderLeft: '2px solid var(--border-color)', backgroundColor: 'rgba(255, 145, 0, 0.15)' }}>
+                      <div style={{ color: 'var(--warning-color)' }}>สอบปลายภาค</div>
                       <div style={{ fontSize: '0.75rem', fontWeight: 'normal' }}>น้ำหนัก: {finalWeight} คะแนน</div>
                     </th>
                   )}
                   
                   {/* Summary */}
-                  <th rowSpan={2} style={{ textAlign: 'center', borderLeft: '2px solid var(--primary-color)', backgroundColor: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary-color)', verticalAlign: 'middle' }}>
+                  <th rowSpan={2} style={{ textAlign: 'center', borderLeft: '2px solid var(--primary-color)', backgroundColor: 'rgba(0, 229, 255, 0.15)', color: 'var(--primary-color)', verticalAlign: 'middle' }}>
                     รวมเทอม {viewTerm !== 'all' ? viewTerm : 'ทั้งหมด'}
                   </th>
                   {viewTerm === 'all' && (

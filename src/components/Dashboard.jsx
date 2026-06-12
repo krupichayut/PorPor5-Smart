@@ -124,59 +124,71 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
         </div>
 
         {totalClasses === 0 ? (
-          <div className="card" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
+          <div className="bento-item col-span-12" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
             <BookOpen size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-            <p>ยังไม่มีข้อมูลห้องเรียน กรุณาเพิ่มห้องเรียนในเมนู <strong>ห้องเรียน / วิชา</strong></p>
+            <p>ยังไม่มีข้อมูลห้องเรียน กรุณาเพิ่มห้องเรียนในเมนู <strong>จัดการวิชา</strong></p>
           </div>
         ) : (
           <>
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-              <div className="card hover-card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', cursor: 'pointer' }} onClick={() => navigate('/classes')}>
-                <div style={{ backgroundColor: 'rgba(99, 102, 241, 0.2)', color: 'var(--primary-color)', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
-                  <BookOpen size={32} />
+            <div className="bento-grid" style={{ marginBottom: '2.5rem' }}>
+              <div className="bento-item col-span-3" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', position: 'relative' }} onClick={() => navigate('/classes')}>
+                <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '100px', height: '100px', background: 'radial-gradient(circle, rgba(99, 102, 241, 0.15) 0%, transparent 70%)', borderRadius: '50%' }}></div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                  <div style={{ background: 'var(--grad-cyan-purple)', color: '#fff', padding: '0.75rem', borderRadius: '16px', boxShadow: 'var(--shadow-glow-cyan)' }}>
+                    <BookOpen size={24} />
+                  </div>
+                  <div style={{ backgroundColor: 'var(--bg-tertiary)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>ทั้งหมด</div>
                 </div>
                 <div>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 500 }}>ห้องเรียนทั้งหมด</p>
-                  <h3 style={{ fontSize: '1.875rem', fontWeight: 700, margin: 0 }}>{totalClasses} <span style={{ fontSize: '1rem', fontWeight: 'normal', color: 'var(--text-muted)' }}>ห้อง</span></h3>
+                  <h3 style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0 0 0.25rem 0', fontFamily: 'var(--font-game)', color: 'var(--text-primary)' }}>{totalClasses}</h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', margin: 0, fontFamily: 'var(--font-body)' }}>ห้องเรียน</p>
                 </div>
               </div>
               
-              <div className="card hover-card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', cursor: 'pointer' }} onClick={() => navigate('/students')}>
-                <div style={{ backgroundColor: 'rgba(14, 165, 233, 0.15)', color: 'var(--accent-color)', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
-                  <Users size={32} />
+              <div className="bento-item col-span-3" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', position: 'relative' }} onClick={() => navigate('/students')}>
+                <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '100px', height: '100px', background: 'radial-gradient(circle, rgba(14, 165, 233, 0.15) 0%, transparent 70%)', borderRadius: '50%' }}></div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                  <div style={{ background: 'var(--grad-pink-magenta)', color: '#fff', padding: '0.75rem', borderRadius: '16px', boxShadow: 'var(--shadow-glow-pink)' }}>
+                    <Users size={24} />
+                  </div>
+                  <div style={{ backgroundColor: 'var(--bg-tertiary)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>รวมทุกห้อง</div>
                 </div>
                 <div>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 500 }}>นักเรียนรวม</p>
-                  <h3 style={{ fontSize: '1.875rem', fontWeight: 700, margin: 0 }}>{totalStudents} <span style={{ fontSize: '1rem', fontWeight: 'normal', color: 'var(--text-muted)' }}>คน</span></h3>
+                  <h3 style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0 0 0.25rem 0', fontFamily: 'var(--font-game)', color: 'var(--text-primary)' }}>{totalStudents}</h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', margin: 0, fontFamily: 'var(--font-body)' }}>นักเรียน</p>
                 </div>
               </div>
 
-              <div className="card hover-card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', cursor: 'pointer' }} onClick={() => navigate('/attendance')}>
-                <div style={{ backgroundColor: 'rgba(52, 211, 153, 0.15)', color: '#34d399', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
-                  <TrendingUp size={32} />
+              <div className="bento-item col-span-3" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', position: 'relative' }} onClick={() => navigate('/attendance')}>
+                <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '100px', height: '100px', background: 'radial-gradient(circle, rgba(52, 211, 153, 0.15) 0%, transparent 70%)', borderRadius: '50%' }}></div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                  <div style={{ background: 'var(--grad-orange-yellow)', color: '#fff', padding: '0.75rem', borderRadius: '16px', boxShadow: '0 0 15px rgba(248, 54, 0, 0.4)' }}>
+                    <TrendingUp size={24} />
+                  </div>
+                  <div style={{ backgroundColor: 'var(--bg-tertiary)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem', color: 'var(--text-secondary)' }}>ความสม่ำเสมอ</div>
                 </div>
                 <div>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 500 }}>อัตราเข้าเรียนเฉลี่ย</p>
-                  <h3 style={{ fontSize: '1.875rem', fontWeight: 700, margin: 0 }}>{overallAttRate}<span style={{ fontSize: '1.2rem' }}>%</span></h3>
+                  <h3 style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0 0 0.25rem 0', fontFamily: 'var(--font-game)', color: 'var(--text-primary)' }}>{overallAttRate}<span style={{ fontSize: '1.25rem', color: 'var(--text-muted)' }}>%</span></h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', margin: 0, fontFamily: 'var(--font-body)' }}>อัตราการเข้าเรียนเฉลี่ย</p>
                 </div>
               </div>
 
-              <div className="card hover-card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', border: totalMissing > 0 ? '1px solid rgba(239, 68, 68, 0.3)' : 'none', cursor: 'pointer' }} onClick={() => navigate('/missing-work')}>
-                <div style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#f87171', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
-                  <FileWarning size={32} />
+              <div className="bento-item col-span-3" style={{ cursor: 'pointer', display: 'flex', flexDirection: 'column', position: 'relative' }} onClick={() => navigate('/grading')}>
+                <div style={{ position: 'absolute', top: '-20px', right: '-20px', width: '100px', height: '100px', background: 'radial-gradient(circle, rgba(239, 68, 68, 0.15) 0%, transparent 70%)', borderRadius: '50%' }}></div>
+                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', marginBottom: '1rem' }}>
+                  <div style={{ background: 'var(--grad-purple-blue)', color: '#fff', padding: '0.75rem', borderRadius: '16px', boxShadow: '0 0 15px rgba(69, 104, 220, 0.4)' }}>
+                    <FileWarning size={24} />
+                  </div>
+                  <div style={{ backgroundColor: totalMissing > 0 ? 'rgba(224, 122, 95, 0.1)' : 'var(--bg-tertiary)', color: totalMissing > 0 ? 'var(--danger-color)' : 'var(--text-secondary)', padding: '4px 10px', borderRadius: '20px', fontSize: '0.75rem' }}>ต้องติดตาม</div>
                 </div>
                 <div>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 500 }}>ปริมาณงานค้างรวม</p>
-                  <h3 style={{ fontSize: '1.875rem', fontWeight: 700, margin: 0, color: totalMissing > 0 ? '#f87171' : 'inherit' }}>
-                    {totalMissing} <span style={{ fontSize: '1rem', fontWeight: 'normal', color: 'var(--text-muted)' }}>ชิ้น</span>
-                  </h3>
+                  <h3 style={{ fontSize: '2.5rem', fontWeight: 700, margin: '0 0 0.25rem 0', fontFamily: 'var(--font-game)', color: totalMissing > 0 ? 'var(--danger-color)' : 'var(--text-primary)' }}>{totalMissing}</h3>
+                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.95rem', margin: 0, fontFamily: 'var(--font-body)' }}>ปริมาณงานค้างรวม</p>
                 </div>
               </div>
-            </div>
 
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '2rem' }}>
-              <div className="card">
-                <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.125rem' }}>เปรียบเทียบอัตราเข้าเรียน</h3>
+              <div className="bento-item col-span-6 row-span-2">
+                <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', color: 'var(--text-primary)' }}>เปรียบเทียบอัตราเข้าเรียน</h3>
                 <div style={{ width: '100%', height: 300 }}>
                   {classes.length > 0 ? (
                     <ResponsiveContainer width="100%" height="100%">
@@ -188,16 +200,16 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                         <XAxis dataKey="name" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} axisLine={{ stroke: 'var(--border-color)' }} tickLine={false} />
                         <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} axisLine={false} tickLine={false} domain={[0, 100]} />
                         <Tooltip 
-                          contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.3)', color: '#fff' }} 
-                          cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                          contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '12px', boxShadow: 'var(--shadow-md)', color: 'var(--text-primary)' }} 
+                          cursor={{ fill: 'rgba(0,0,0,0.03)' }}
                         />
                         <Bar dataKey="อัตราเข้าเรียน" fill="url(#colorAttendance)" radius={[6, 6, 0, 0]}>
                            {/* Using standard color if gradient fails, but gradient is nicer */}
                         </Bar>
                         <defs>
                           <linearGradient id="colorAttendance" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#818cf8" stopOpacity={0.9}/>
-                            <stop offset="95%" stopColor="#6366f1" stopOpacity={0.4}/>
+                            <stop offset="0%" stopColor="#00e5ff" stopOpacity={0.9}/>
+                            <stop offset="100%" stopColor="#4361ee" stopOpacity={0.3}/>
                           </linearGradient>
                         </defs>
                       </BarChart>
@@ -207,8 +219,8 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                   )}
                 </div>
               </div>
-              <div className="card">
-                <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.125rem' }}>ภาพรวมผลการเรียน (ตัดเกรดจำลองทุกห้อง)</h3>
+              <div className="bento-item col-span-6 row-span-2">
+                <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', color: 'var(--text-primary)' }}>ภาพรวมผลการเรียน (ตัดเกรดจำลอง)</h3>
                 <div style={{ width: '100%', height: 300 }}>
                   {classes.length > 0 ? (
                     <ResponsiveContainer width="100%" height="100%">
@@ -235,15 +247,15 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                         <XAxis dataKey="grade" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} axisLine={{ stroke: 'var(--border-color)' }} tickLine={false} />
                         <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)' }} axisLine={false} tickLine={false} allowDecimals={false} />
                         <Tooltip 
-                          contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', boxShadow: '0 10px 25px -5px rgba(0,0,0,0.3)', color: '#fff' }} 
-                          cursor={{ fill: 'rgba(255,255,255,0.05)' }}
+                          contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: '12px', boxShadow: 'var(--shadow-md)', color: 'var(--text-primary)' }} 
+                          cursor={{ fill: 'rgba(0,0,0,0.03)' }}
                           formatter={(value) => [`${value} คน`, 'จำนวนนักเรียน']}
                         />
                         <Bar dataKey="value" fill="url(#colorTotalGrade)" radius={[6, 6, 0, 0]} />
                         <defs>
                           <linearGradient id="colorTotalGrade" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#34d399" stopOpacity={0.9}/>
-                            <stop offset="95%" stopColor="#10b981" stopOpacity={0.4}/>
+                            <stop offset="0%" stopColor="#ff3366" stopOpacity={0.9}/>
+                            <stop offset="100%" stopColor="#ffb199" stopOpacity={0.3}/>
                           </linearGradient>
                         </defs>
                       </BarChart>
@@ -255,9 +267,9 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
               </div>
             </div>
 
-            <div className="card" style={{ padding: '0' }}>
-              <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-color)' }}>
-                <h3 style={{ margin: 0, fontSize: '1.125rem' }}>เปรียบเทียบสถิติแต่ละห้องเรียน</h3>
+            <div className="bento-item col-span-12" style={{ padding: '0' }}>
+              <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--bg-tertiary)' }}>
+                <h3 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--text-primary)' }}>เปรียบเทียบสถิติแต่ละห้องเรียน</h3>
               </div>
               <div className="table-container">
                 <table className="table">
@@ -313,7 +325,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
               <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#f87171' }}>
                 <FileWarning size={24} /> งานค้างมากที่สุด (แยกตามห้อง)
               </h3>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '1.5rem' }}>
+              <div className="bento-grid">
                 {classes.map(cls => {
                   const clsStudents = students.filter(s => s.classId === cls.id);
                   const clsColumns = scoreColumns.filter(c => c.classId === cls.id);
@@ -334,7 +346,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
 
                   if (topMissing.length === 0) {
                     return (
-                      <div className="card" key={cls.id} style={{ padding: 0, border: '1px solid rgba(16, 185, 129, 0.2)' }}>
+                      <div className="bento-item col-span-4" key={cls.id} style={{ padding: 0, border: '1px solid rgba(16, 185, 129, 0.2)' }}>
                         <div style={{ padding: '1rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'rgba(16, 185, 129, 0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <h4 style={{ margin: 0, fontSize: '1rem', color: 'var(--text-primary)' }}>{cls.name}</h4>
                           <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{cls.subject}</span>
@@ -348,7 +360,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                   }
 
                   return (
-                    <div className="card" key={cls.id} style={{ padding: 0, border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+                    <div className="bento-item col-span-4" key={cls.id} style={{ padding: 0, border: '1px solid rgba(239, 68, 68, 0.2)' }}>
                       <div style={{ padding: '1rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'rgba(239, 68, 68, 0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <h4 style={{ margin: 0, fontSize: '1rem', color: 'var(--text-primary)' }}>{cls.name}</h4>
                         <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{cls.subject}</span>
@@ -439,8 +451,8 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
         </div>
       </div>
       
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-        <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+      <div className="bento-grid" style={{ marginBottom: '2rem' }}>
+        <div className="bento-item col-span-3" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
           <div style={{ backgroundColor: 'rgba(99, 102, 241, 0.2)', color: 'var(--primary-color)', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
             <Users size={32} />
           </div>
@@ -450,7 +462,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
           </div>
         </div>
         
-        <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+        <div className="bento-item col-span-3" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
           <div style={{ backgroundColor: 'rgba(52, 211, 153, 0.15)', color: '#34d399', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
             <Calendar size={32} />
           </div>
@@ -460,7 +472,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
           </div>
         </div>
 
-        <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+        <div className="bento-item col-span-3" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
           <div style={{ backgroundColor: 'rgba(251, 191, 36, 0.15)', color: '#fbbf24', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
             <Award size={32} />
           </div>
@@ -470,7 +482,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
           </div>
         </div>
 
-        <div className="card" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', border: totalMissingClass > 0 ? '1px solid rgba(239, 68, 68, 0.3)' : 'none' }}>
+        <div className="bento-item col-span-3" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', border: totalMissingClass > 0 ? '1px solid rgba(239, 68, 68, 0.3)' : 'none' }}>
           <div style={{ backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#f87171', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
             <FileWarning size={32} />
           </div>
@@ -481,10 +493,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
             </h3>
           </div>
         </div>
-      </div>
-
-      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem' }}>
-        <div className="card" style={{ padding: 0, border: '1px solid rgba(239, 68, 68, 0.2)' }}>
+        <div className="bento-item col-span-6" style={{ padding: 0, border: '1px solid rgba(239, 68, 68, 0.2)' }}>
           <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'rgba(239, 68, 68, 0.05)' }}>
             <h3 style={{ margin: 0, fontSize: '1.125rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#f87171' }}>
               <FileWarning size={20} /> นักเรียนที่งานค้างเยอะที่สุด (Top 5)
@@ -521,7 +530,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
           </div>
         </div>
 
-        <div className="card" style={{ padding: '1.5rem' }}>
+        <div className="bento-item col-span-6" style={{ padding: '1.5rem' }}>
           <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.125rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--success-color)' }}>
             <Calendar size={20} /> สัดส่วนการมาเรียนรวม
           </h3>
@@ -564,7 +573,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
           </div>
         </div>
         
-        <div className="card" style={{ padding: '1.5rem', gridColumn: '1 / -1' }}>
+        <div className="bento-item col-span-12 row-span-2" style={{ padding: '1.5rem' }}>
           <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.125rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--primary-color)' }}>
             <BarChart3 size={20} /> สรุปผลการเรียน (ตัดเกรดจำลอง)
           </h3>

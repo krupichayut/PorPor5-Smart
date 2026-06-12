@@ -3,6 +3,7 @@ import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-do
 import { BookOpen, Users, Calendar, Award, BarChart3, Settings, GraduationCap, Star, BookType, Brain, FileText, Key, LogOut, Menu, X, ClipboardList, Paintbrush } from 'lucide-react';
 import { auth } from './firebase';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
+import HeroWave from './components/DynamicWaveBackground';
 import './index.css';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { useFirestoreData } from './hooks/useFirestoreData';
@@ -106,134 +107,97 @@ function App() {
 
   return (
     <Router>
-      <div className="app-container">
+      <div className="app-container" style={{ position: 'relative', zIndex: 0 }}>
         
-        {/* Mobile Top Bar */}
-        <div className="mobile-top-bar">
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-            <div style={{ backgroundColor: 'var(--primary-light)', padding: '0.4rem', borderRadius: 'var(--radius-md)', color: 'var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <GraduationCap size={20} />
-            </div>
-            <h1 style={{ margin: 0, fontSize: '1.25rem', fontWeight: 700, color: 'var(--text-primary)' }}>PicthClass</h1>
-          </div>
-          <button className="btn-icon" onClick={() => setIsMobileMenuOpen(true)}>
-            <Menu size={24} />
-          </button>
+        {/* Animated Wave Canvas Background */}
+        <div style={{ position: 'fixed', inset: 0, zIndex: -10, opacity: 0.6 }}>
+          <HeroWave />
         </div>
 
-        {/* Mobile Overlay Background */}
-        {isMobileMenuOpen && (
-          <div className="mobile-overlay" onClick={closeMobileMenu}></div>
-        )}
-
-        {/* Sidebar */}
-        <aside className={`sidebar ${isMobileMenuOpen ? 'mobile-open' : ''}`}>
-          <div className="sidebar-header">
-            <div style={{ backgroundColor: 'var(--primary-light)', padding: '0.5rem', borderRadius: 'var(--radius-md)', color: 'var(--primary-color)' }}>
-              <GraduationCap size={24} />
+        {/* Floating Top Header */}
+        <div className="no-print" style={{ position: 'fixed', top: '1.5rem', left: '1.5rem', right: '1.5rem', zIndex: 40, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', pointerEvents: 'none' }}>
+          
+          {/* App Title (Left) */}
+          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', background: 'rgba(30, 32, 48, 0.7)', backdropFilter: 'blur(16px)', padding: '0.5rem 1rem 0.5rem 0.5rem', borderRadius: 'var(--radius-full)', border: '1px solid rgba(255,255,255,0.05)', boxShadow: 'var(--shadow-3d-outset)', pointerEvents: 'auto' }}>
+            <div style={{ backgroundColor: 'var(--primary-light)', padding: '0.4rem', borderRadius: 'var(--radius-full)', color: 'var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+              <GraduationCap size={20} />
             </div>
-            <h1>PicthClass</h1>
-            <button className="btn-icon mobile-close-btn" onClick={closeMobileMenu}>
-              <X size={24} />
-            </button>
+            <h1 style={{ margin: 0, fontSize: '1.25rem', fontFamily: 'var(--font-game)', fontWeight: 700, color: '#fff', letterSpacing: '1px', marginRight: '0.5rem' }}>PicthClass</h1>
           </div>
-          
-          {classes && classes.length > 0 && (
-            <div style={{ marginBottom: '1rem', padding: '0.75rem', backgroundColor: 'var(--bg-tertiary)', borderRadius: 'var(--radius-md)', border: '1px solid var(--border-color)' }}>
-              <div style={{ fontSize: '0.75rem', color: 'var(--text-secondary)', marginBottom: '0.4rem' }}>สลับห้องเรียนปัจจุบัน:</div>
-              <select 
-                className="form-input" 
-                style={{ padding: '0.4rem', fontSize: '0.9rem', width: '100%', cursor: 'pointer', appearance: 'auto' }}
-                value={activeClassId || ''}
-                onChange={(e) => setActiveClassId(e.target.value)}
-              >
-                <option value="" disabled>-- เลือกห้องเรียน --</option>
-                {classes.map(c => (
-                  <option key={c.id} value={c.id}>{c.name} - {c.subject}</option>
-                ))}
-              </select>
-            </div>
-          )}
 
+          {/* Controls (Right) */}
+          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', pointerEvents: 'auto' }}>
+            {classes && classes.length > 0 && (
+              <div style={{ background: 'rgba(30, 32, 48, 0.7)', backdropFilter: 'blur(16px)', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', border: '1px solid rgba(255,255,255,0.05)', boxShadow: 'var(--shadow-3d-outset)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+                <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>ห้องเรียน:</span>
+                <select 
+                  style={{ background: 'transparent', color: 'var(--text-primary)', border: 'none', outline: 'none', fontFamily: 'var(--font-game)', fontWeight: 600, fontSize: '1rem', cursor: 'pointer' }}
+                  value={activeClassId || ''}
+                  onChange={(e) => setActiveClassId(e.target.value)}
+                >
+                  <option value="" disabled>-- เลือกห้องเรียน --</option>
+                  {classes.map(c => (
+                    <option key={c.id} value={c.id} style={{ background: 'var(--bg-secondary)' }}>{c.name} - {c.subject}</option>
+                  ))}
+                </select>
+              </div>
+            )}
 
-          
-          <nav className="sidebar-nav">
-            <NavLink to="/" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu} end>
-              <BarChart3 />
-              <span>แดชบอร์ด</span>
-            </NavLink>
-            
-            <div style={{ margin: '1rem 0 0.5rem 1rem', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              ข้อมูลพื้นฐาน
-            </div>
-
-            <NavLink to="/classes" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
-              <BookOpen />
-              <span>จัดการห้องเรียน / วิชา</span>
-            </NavLink>
-            <NavLink to="/course-plan" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
-              <ClipboardList />
-              <span>โครงสร้างและแผนการสอน</span>
-            </NavLink>
-            <NavLink to="/students" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
-              <Users />
-              <span>รายชื่อนักเรียน</span>
-            </NavLink>
-            
-            <div style={{ margin: '1rem 0 0.5rem 1rem', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              ผลสัมฤทธิ์
-            </div>
-            
-            <NavLink to="/attendance" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
-              <Calendar />
-              <span>เช็คเวลาเรียน</span>
-            </NavLink>
-            <NavLink to="/grading" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
-              <Award />
-              <span>บันทึกคะแนนและงานค้าง</span>
-            </NavLink>
-
-            <NavLink to="/rewards" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
-              <Paintbrush style={{ color: '#fbbf24' }} />
-              <span>สะสมแต้มและของรางวัล</span>
-            </NavLink>
-
-            <div style={{ margin: '1rem 0 0.5rem 1rem', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              การประเมิน
-            </div>
-            
-            <NavLink to="/assessments" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
-              <Star />
-              <span>การประเมิน 3 หมวด</span>
-            </NavLink>
-            
-            <div style={{ margin: '1rem 0 0.5rem 1rem', fontSize: '0.75rem', fontWeight: 600, color: 'var(--text-muted)', textTransform: 'uppercase', letterSpacing: '0.05em' }}>
-              รายงาน
-            </div>
-            <NavLink to="/reports" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} onClick={closeMobileMenu}>
-              <FileText />
-              <span>พิมพ์รายงานและ PicthClass</span>
-            </NavLink>
-          </nav>
-          
-          <div style={{ marginTop: 'auto', padding: '1rem', borderTop: '1px solid var(--border-color)', display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
-            <NavLink to="/settings" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} style={{ marginBottom: '0.5rem' }} onClick={closeMobileMenu}>
-              <Settings />
-              <span>ตั้งค่าระบบ (PicthClass)</span>
-            </NavLink>
             {user ? (
-              <button className="btn btn-secondary" style={{ width: '100%', justifyContent: 'center' }} onClick={handleLogout}>
-                <LogOut size={18} style={{ marginRight: '0.5rem' }} />
-                ออกจากระบบ (ครู)
+              <button className="btn-icon" style={{ background: 'rgba(30, 32, 48, 0.7)', backdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.05)', width: 'auto', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', color: '#ff3366', boxShadow: 'var(--shadow-3d-outset)' }} onClick={handleLogout} title="ออกจากระบบ">
+                <LogOut size={18} style={{ marginRight: '0.5rem' }} /> ออก
               </button>
             ) : (
-              <button className="btn btn-primary" style={{ width: '100%', justifyContent: 'center' }} onClick={() => setIsLoginModalOpen(true)}>
-                <Key size={18} style={{ marginRight: '0.5rem' }} />
-                เข้าสู่ระบบครู
+              <button className="btn-icon" style={{ background: 'rgba(30, 32, 48, 0.7)', backdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.05)', width: 'auto', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', color: 'var(--primary-color)', boxShadow: 'var(--shadow-3d-outset)' }} onClick={() => setIsLoginModalOpen(true)} title="เข้าสู่ระบบ">
+                <Key size={18} style={{ marginRight: '0.5rem' }} /> เข้าสู่ระบบ
               </button>
             )}
           </div>
-        </aside>
+        </div>
+
+        {/* Floating Bottom Dock */}
+        <nav className="floating-dock no-print">
+          <NavLink to="/" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`} end>
+            <BarChart3 />
+            <span className="dock-tooltip">แดชบอร์ด</span>
+          </NavLink>
+          <NavLink to="/classes" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
+            <BookOpen />
+            <span className="dock-tooltip">จัดการวิชา</span>
+          </NavLink>
+          <NavLink to="/course-plan" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
+            <ClipboardList />
+            <span className="dock-tooltip">โครงสร้างวิชา</span>
+          </NavLink>
+          <NavLink to="/students" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
+            <Users />
+            <span className="dock-tooltip">นักเรียน</span>
+          </NavLink>
+          <NavLink to="/attendance" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
+            <Calendar />
+            <span className="dock-tooltip">เวลาเรียน</span>
+          </NavLink>
+          <NavLink to="/grading" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
+            <Award />
+            <span className="dock-tooltip">บันทึกคะแนน</span>
+          </NavLink>
+          <NavLink to="/rewards" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
+            <Paintbrush />
+            <span className="dock-tooltip">ของรางวัล</span>
+          </NavLink>
+          <NavLink to="/assessments" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
+            <Star />
+            <span className="dock-tooltip">การประเมิน</span>
+          </NavLink>
+          <NavLink to="/reports" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
+            <FileText />
+            <span className="dock-tooltip">รายงาน</span>
+          </NavLink>
+          <NavLink to="/settings" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
+            <Settings />
+            <span className="dock-tooltip">ตั้งค่าระบบ</span>
+          </NavLink>
+        </nav>
 
         {isLoginModalOpen && (
           <div className="modal-overlay">
