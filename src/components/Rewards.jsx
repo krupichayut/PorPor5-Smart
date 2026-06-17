@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Star, Gift, Plus, Minus, Edit2, Trash2, CheckCircle, Paintbrush } from 'lucide-react';
+import { Gift, Plus, Edit2, Trash2, CheckCircle, Paintbrush } from 'lucide-react';
 
 export default function Rewards({ students, activeClassId, classes, studentPoints, setStudentPoints, rewards, setRewards, readOnly }) {
   const [activeTab, setActiveTab] = useState('points'); // 'points' or 'catalog'
@@ -36,6 +36,7 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
       newStudentPoints[existingIndex] = { ...newStudentPoints[existingIndex], points: newPoints };
     } else {
       newStudentPoints.push({
+        // eslint-disable-next-line react-hooks/purity
         id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
         studentId,
         points: newPoints

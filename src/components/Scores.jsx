@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { Award, Plus, Trash2, Calculator, Edit2, Filter } from 'lucide-react';
 
-export default function Scores({ students, activeClassId, classes, scores, setScores, scoreColumns, setScoreColumns, indicators, readOnly }) {
+export default function Scores({ students, activeClassId, classes, scores, setScores, scoreColumns, setScoreColumns, indicators, readOnly, studentPoints, setStudentPoints }) {
   const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
   const [editingColumnId, setEditingColumnId] = useState(null);
   const [newColumnName, setNewColumnName] = useState('');
@@ -96,12 +96,42 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
 
     const existingIndex = scores.findIndex(s => s.studentId === studentId && s.columnId === columnId);
     
+    // --- Reward Points Calculation ---
+    const oldScoreRecord = existingIndex >= 0 ? scores[existingIndex] : null;
+    const oldAwardedPoints = oldScoreRecord?.awardedPoints || 0;
+    
+    let newAwardedPoints = 0;
+    if (numValue !== '') {
+      const percentage = (numValue / column.maxScore) * 100;
+      if (percentage >= 100) newAwardedPoints = 5;
+      else if (percentage >= 90) newAwardedPoints = 3;
+      else if (percentage >= 80) newAwardedPoints = 2;
+    }
+    
+    const pointsDiff = newAwardedPoints - oldAwardedPoints;
+    if (pointsDiff !== 0 && studentPoints && setStudentPoints) {
+      const spIndex = studentPoints.findIndex(sp => sp.studentId === studentId);
+      let newStudentPoints = [...studentPoints];
+      if (spIndex >= 0) {
+        newStudentPoints[spIndex] = { ...newStudentPoints[spIndex], points: Math.max(0, newStudentPoints[spIndex].points + pointsDiff) };
+      } else {
+        newStudentPoints.push({
+        // eslint-disable-next-line react-hooks/purity
+        id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
+          studentId,
+          points: Math.max(0, pointsDiff)
+        });
+      }
+      setStudentPoints(newStudentPoints);
+    }
+    // ---------------------------------
+
     let newScores = [...scores];
     if (existingIndex >= 0) {
       if (value === '') {
         newScores.splice(existingIndex, 1);
       } else {
-        newScores[existingIndex] = { ...newScores[existingIndex], score: numValue };
+        newScores[existingIndex] = { ...newScores[existingIndex], score: numValue, awardedPoints: newAwardedPoints };
       }
     } else if (value !== '') {
       newScores.push({
@@ -109,7 +139,8 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
         id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
         studentId,
         columnId,
-        score: numValue
+        score: numValue,
+        awardedPoints: newAwardedPoints
       });
     }
     
