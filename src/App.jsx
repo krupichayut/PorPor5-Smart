@@ -108,7 +108,7 @@ function App() {
         <div className="no-print" style={{ position: 'fixed', top: '1.5rem', left: '1.5rem', right: '1.5rem', zIndex: 40, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', pointerEvents: 'none' }}>
           
           {/* App Title (Left) */}
-          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', background: 'rgba(30, 32, 48, 0.7)', backdropFilter: 'blur(16px)', padding: '0.5rem 1rem 0.5rem 0.5rem', borderRadius: 'var(--radius-full)', border: '1px solid rgba(255,255,255,0.05)', boxShadow: 'var(--shadow-3d-outset)', pointerEvents: 'auto' }}>
+          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', background: 'rgba(24, 24, 27, 0.7)', backdropFilter: 'blur(16px)', padding: '0.5rem 1rem 0.5rem 0.5rem', borderRadius: 'var(--radius-full)', border: '1px solid rgba(255,255,255,0.05)', boxShadow: 'var(--shadow-3d-outset)', pointerEvents: 'auto' }}>
             <div style={{ backgroundColor: 'var(--primary-light)', padding: '0.4rem', borderRadius: 'var(--radius-full)', color: 'var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <GraduationCap size={20} />
             </div>
@@ -118,7 +118,7 @@ function App() {
           {/* Controls (Right) */}
           <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', pointerEvents: 'auto' }}>
             {classes && classes.length > 0 && (
-              <div style={{ background: 'rgba(30, 32, 48, 0.7)', backdropFilter: 'blur(16px)', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', border: '1px solid rgba(255,255,255,0.05)', boxShadow: 'var(--shadow-3d-outset)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div style={{ background: 'rgba(24, 24, 27, 0.7)', backdropFilter: 'blur(16px)', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', border: '1px solid rgba(255,255,255,0.05)', boxShadow: 'var(--shadow-3d-outset)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                 <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>ห้องเรียน:</span>
                 <select 
                   style={{ background: 'transparent', color: 'var(--text-primary)', border: 'none', outline: 'none', fontFamily: 'var(--font-game)', fontWeight: 600, fontSize: '1rem', cursor: 'pointer' }}
@@ -134,11 +134,11 @@ function App() {
             )}
 
             {user ? (
-              <button className="btn-icon" style={{ background: 'rgba(30, 32, 48, 0.7)', backdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.05)', width: 'auto', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', color: '#ff3366', boxShadow: 'var(--shadow-3d-outset)' }} onClick={handleLogout} title="ออกจากระบบ">
+              <button className="btn-icon" style={{ background: 'rgba(24, 24, 27, 0.7)', backdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.05)', width: 'auto', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', color: '#ff3366', boxShadow: 'var(--shadow-3d-outset)' }} onClick={handleLogout} title="ออกจากระบบ">
                 <LogOut size={18} style={{ marginRight: '0.5rem' }} /> ออก
               </button>
             ) : (
-              <button className="btn-icon" style={{ background: 'rgba(30, 32, 48, 0.7)', backdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.05)', width: 'auto', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', color: 'var(--primary-color)', boxShadow: 'var(--shadow-3d-outset)' }} onClick={() => setIsLoginModalOpen(true)} title="เข้าสู่ระบบ">
+              <button className="btn-icon" style={{ background: 'rgba(24, 24, 27, 0.7)', backdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.05)', width: 'auto', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', color: 'var(--primary-color)', boxShadow: 'var(--shadow-3d-outset)' }} onClick={() => setIsLoginModalOpen(true)} title="เข้าสู่ระบบ">
                 <Key size={18} style={{ marginRight: '0.5rem' }} /> เข้าสู่ระบบ
               </button>
             )}

@@ -4,12 +4,12 @@ import { getAuth } from "firebase/auth";
 
 // Your web app's Firebase configuration
 const firebaseConfig = {
-  apiKey: "AIzaSyDS6W0aZv03BYGzED0CEXDopof2BhFEkFE",
-  authDomain: "porpor5-smart-b96bc.firebaseapp.com",
-  projectId: "porpor5-smart-b96bc",
-  storageBucket: "porpor5-smart-b96bc.firebasestorage.app",
-  messagingSenderId: "982820702781",
-  appId: "1:982820702781:web:c10b01668587e40d517854"
+  apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
+  authDomain: import.meta.env.VITE_FIREBASE_AUTH_DOMAIN,
+  projectId: import.meta.env.VITE_FIREBASE_PROJECT_ID,
+  storageBucket: import.meta.env.VITE_FIREBASE_STORAGE_BUCKET,
+  messagingSenderId: import.meta.env.VITE_FIREBASE_MESSAGING_SENDER_ID,
+  appId: import.meta.env.VITE_FIREBASE_APP_ID
 };
 
 // Initialize Firebase

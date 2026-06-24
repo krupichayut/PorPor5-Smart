@@ -152,7 +152,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                 </div>
               </div>
 
-              <div className="bento-item col-span-6" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem', border: totalMissing > 0 ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid rgba(255,255,255,0.03)', background: totalMissing > 0 ? 'linear-gradient(to right, rgba(239, 68, 68, 0.1), rgba(34, 36, 54, 0.6))' : '' }} onClick={() => navigate('/grading')}>
+              <div className="bento-item col-span-6" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem', border: totalMissing > 0 ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid rgba(255, 255, 255, 0.08)', background: totalMissing > 0 ? 'linear-gradient(to right, rgba(239, 68, 68, 0.1), transparent)' : '' }} onClick={() => navigate('/grading')}>
                 <div style={{ background: totalMissing > 0 ? 'rgba(239, 68, 68, 0.2)' : 'var(--bg-tertiary)', color: totalMissing > 0 ? '#f87171' : 'var(--text-secondary)', padding: '1rem', borderRadius: '16px' }}>
                   <FileWarning size={28} />
                 </div>
@@ -441,7 +441,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
       
       <div className="bento-grid" style={{ marginBottom: '2rem' }}>
         {/* Class Hero Banner */}
-        <div className="bento-item col-span-12" style={{ background: 'linear-gradient(to right, rgba(99, 102, 241, 0.15), rgba(52, 211, 153, 0.1))', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '2rem' }}>
+        <div className="bento-item col-span-12" style={{ background: 'linear-gradient(to right, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.1))', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '2rem' }}>
           <div>
             <h3 style={{ fontSize: '1.75rem', margin: '0 0 0.5rem 0', fontFamily: 'var(--font-game)', color: 'var(--text-primary)' }}>{activeClass?.name}</h3>
             <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '1rem' }}>วิชา: {activeClass?.subject}</p>
@@ -469,7 +469,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
           </div>
         </div>
 
-        <div className="bento-item col-span-6" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', border: totalMissingClass > 0 ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid rgba(255,255,255,0.03)' }}>
+        <div className="bento-item col-span-6" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', border: totalMissingClass > 0 ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid rgba(255, 255, 255, 0.08)' }}>
           <div style={{ backgroundColor: totalMissingClass > 0 ? 'rgba(239, 68, 68, 0.15)' : 'var(--bg-tertiary)', color: totalMissingClass > 0 ? '#f87171' : 'var(--text-secondary)', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
             <FileWarning size={32} />
           </div>
