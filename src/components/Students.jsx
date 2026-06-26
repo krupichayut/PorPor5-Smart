@@ -1,8 +1,9 @@
 import { useState, useRef } from 'react';
-import { Users, Plus, Trash2, Edit, Download, Upload, Search, Printer, FileText, Award, Calendar, AlertCircle } from 'lucide-react';
-import * as XLSX from 'xlsx';
+import { Users, Plus, Trash2, Edit, Download, Upload, Search, Printer, Award, Calendar, AlertCircle } from 'lucide-react';
+import { downloadCsv, parseDelimitedText } from '../utils/fileExports';
+import { calculateStudentScores, getClassScoreContext } from '../utils/scoring';
 
-export default function Students({ students, setStudents, activeClassId, classes, readOnly, attendance, scores, scoreColumns, attributes, literacy, competencies, indicators }) {
+export default function Students({ students, setStudents, activeClassId, classes, readOnly, attendance, scores, scoreColumns, indicators }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [addMode, setAddMode] = useState('single');
   const [bulkData, setBulkData] = useState('');
@@ -39,47 +40,14 @@ export default function Students({ students, setStudents, activeClassId, classes
     const classCols = scoreColumns?.filter(c => c.classId === activeClassId) || [];
     classCols.forEach(col => {
       const record = scores?.find(s => s.studentId === studentId && s.columnId === col.id);
-      if (!record && col.type !== 'exam') {
+      if (!record && col.type === 'collected') {
         missingWorkCount++;
       }
     });
 
-    const classUnits = indicators ? indicators.filter(i => i.classId === activeClassId) : [];
-    let term1Collected = 0;
-    let term2Collected = 0;
-    
-    classUnits.forEach(unit => {
-      const unitCols = classCols.filter(c => c.unitId === unit.id && c.type === 'collected');
-      const unitMaxRaw = unitCols.reduce((sum, col) => sum + col.maxScore, 0);
-      const unitRaw = unitCols.reduce((sum, col) => {
-        const s = scores?.find(s => s.studentId === studentId && s.columnId === col.id);
-        return sum + (s ? s.score : 0);
-      }, 0);
-      const scaled = unitMaxRaw > 0 ? (unitRaw / unitMaxRaw) * unit.weight : 0;
-      if (unit.term === '1') term1Collected += scaled;
-      else if (unit.term === '2') term2Collected += scaled;
-      else term1Collected += scaled; 
-    });
-
-    const getExamScaled = (type, weight) => {
-      const cols = classCols.filter(c => c.type === type);
-      const maxRaw = cols.reduce((sum, col) => sum + col.maxScore, 0);
-      const raw = cols.reduce((sum, col) => {
-        const s = scores?.find(s => s.studentId === studentId && s.columnId === col.id);
-        return sum + (s ? s.score : 0);
-      }, 0);
-      return maxRaw > 0 ? (raw / maxRaw) * weight : 0;
-    };
-
-    const activeClassData = classes.find(c => c.id === activeClassId);
-    const midtermWeight = activeClassData?.midtermWeight || 10;
-    const finalWeight = activeClassData?.finalWeight || 10;
-
-    const midtermScaled = getExamScaled('midterm', midtermWeight);
-    const finalScaled = getExamScaled('final', finalWeight);
-
-    const totalScore = Math.round(term1Collected + term2Collected + midtermScaled + finalScaled);
-    const totalMax = classUnits.reduce((sum, u) => sum + u.weight, 0) + midtermWeight + finalWeight;
+    const scoreContext = getClassScoreContext(activeClassId, classes, scoreColumns || [], indicators);
+    const totalScore = calculateStudentScores(studentId, scoreContext, scores || []).totalScaled;
+    const totalMax = scoreContext.classUnits.reduce((sum, u) => sum + Number(u.weight || 0), 0) + scoreContext.midtermWeight + scoreContext.finalWeight;
 
     return { present, absent, late, leave, totalScore, totalMax, missingWorkCount };
   };
@@ -184,42 +152,38 @@ export default function Students({ students, setStudents, activeClassId, classes
     setEditingStudent(null);
   };
 
-  const handleExportExcel = () => {
+  const handleExportStudents = () => {
     if (classStudents.length === 0) {
       alert("ไม่มีข้อมูลนักเรียนให้ส่งออก");
       return;
     }
-    const wsData = classStudents.map(s => ({
-      'เลขที่': s.number,
-      'รหัสประจำตัว': s.studentId,
-      'ชื่อ - นามสกุล': s.name
+    const rows = classStudents.map(s => ({
+      number: s.number,
+      studentId: s.studentId,
+      name: s.name
     }));
-    const ws = XLSX.utils.json_to_sheet(wsData);
-    const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Students");
-    XLSX.writeFile(wb, `รายชื่อนักเรียน_${activeClass?.name || 'ห้องเรียน'}.xlsx`);
+    downloadCsv(`students_${activeClass?.name || "class"}.csv`, rows, [
+      { key: "number", label: "Number" },
+      { key: "studentId", label: "Student ID" },
+      { key: "name", label: "Name" }
+    ]);
   };
 
-  const handleImportExcel = (e) => {
+  const handleImportStudents = (e) => {
     const file = e.target.files[0];
     if (!file) return;
 
     const reader = new FileReader();
     reader.onload = (event) => {
       try {
-        const data = new Uint8Array(event.target.result);
-        const workbook = XLSX.read(data, { type: 'array' });
-        const firstSheetName = workbook.SheetNames[0];
-        const worksheet = workbook.Sheets[firstSheetName];
-        const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
-        
-        const rows = json.slice(1).filter(r => r.length > 0); // ข้ามแถว header
+        const parsedRows = parseDelimitedText(event.target.result);
+        const rows = parsedRows.slice(1).filter(r => r.length > 0);
         let currentNumber = classStudents.length > 0 ? Math.max(...classStudents.map(s => s.number)) + 1 : 1;
         const newStudents = [];
         const timestamp = Date.now();
 
         rows.forEach((row, idx) => {
-          const strRow = row.map(cell => cell ? String(cell).trim() : '');
+          const strRow = row.map(cell => cell ? String(cell).trim() : "");
           const validCells = strRow.filter(cell => cell.length > 0);
           
           let number, studentId, name;
@@ -252,17 +216,16 @@ export default function Students({ students, setStudents, activeClassId, classes
           setStudents([...students, ...newStudents]);
           alert(`นำเข้านักเรียนสำเร็จ ${newStudents.length} คน`);
         } else {
-          alert("ไม่พบข้อมูลนักเรียนในไฟล์ Excel หรือรูปแบบไม่ถูกต้อง");
+          alert("ไม่พบข้อมูลนักเรียนในไฟล์ CSV/TSV หรือรูปแบบไม่ถูกต้อง");
         }
       } catch (err) {
         console.error(err);
-        alert("เกิดข้อผิดพลาดในการอ่านไฟล์ Excel");
+        alert("เกิดข้อผิดพลาดในการอ่านไฟล์ CSV/TSV");
       }
       
-      // Reset input
-      if (fileInputRef.current) fileInputRef.current.value = '';
+      if (fileInputRef.current) fileInputRef.current.value = "";
     };
-    reader.readAsArrayBuffer(file);
+    reader.readAsText(file, "utf-8");
   };
 
   if (!activeClassId) {
@@ -294,16 +257,16 @@ export default function Students({ students, setStudents, activeClassId, classes
           <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
             <input 
               type="file" 
-              accept=".xlsx, .xls" 
+              accept=".csv, .tsv, .txt" 
               style={{ display: 'none' }} 
               ref={fileInputRef}
-              onChange={handleImportExcel}
+              onChange={handleImportStudents}
             />
             <button className="btn btn-secondary" onClick={() => fileInputRef.current?.click()} title="นำเข้าข้อมูลนักเรียนจาก Excel">
               <Upload size={18} />
               <span className="hide-on-mobile">นำเข้า Excel</span>
             </button>
-            <button className="btn btn-secondary" onClick={handleExportExcel} title="ส่งออกข้อมูลนักเรียนเป็น Excel">
+            <button className="btn btn-secondary" onClick={handleExportStudents} title="ส่งออกข้อมูลนักเรียนเป็น Excel">
               <Download size={18} />
               <span className="hide-on-mobile">ส่งออก Excel</span>
             </button>

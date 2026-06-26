@@ -1,23 +1,30 @@
-import { useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import Scores from './Scores';
 import MissingWork from './MissingWork';
 import { Award, FileText } from 'lucide-react';
 
 export default function GradingContainer(props) {
-  const [activeTab, setActiveTab] = useState('scores');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { tab } = useParams();
+  const activeTab = tab === 'missing' || location.state?.activeTab === 'missing' ? 'missing' : 'scores';
+
+  const switchTab = (nextTab) => {
+    navigate(nextTab === 'missing' ? '/grading/missing' : '/grading/scores', { replace: true });
+  };
 
   return (
     <div className="animate-fade-in">
       <div className="tabs-container">
         <button 
           className={`tab-btn ${activeTab === 'scores' ? 'active' : ''}`}
-          onClick={() => setActiveTab('scores')}
+          onClick={() => switchTab('scores')}
         >
           <Award size={16} style={{ display: 'inline', marginRight: '6px' }} /> บันทึกคะแนน
         </button>
         <button 
           className={`tab-btn ${activeTab === 'missing' ? 'active' : ''}`}
-          onClick={() => setActiveTab('missing')}
+          onClick={() => switchTab('missing')}
         >
           <FileText size={16} style={{ display: 'inline', marginRight: '6px' }} /> ติดตามงานค้าง
         </button>

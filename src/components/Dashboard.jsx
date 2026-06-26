@@ -1,6 +1,7 @@
-import { BarChart3, Users, Calendar, Award, FileWarning, TrendingUp, ChevronRight, BookOpen, CheckCircle, Activity } from 'lucide-react';
+import { BarChart3, Users, Calendar, FileWarning, TrendingUp, ChevronRight, BookOpen, CheckCircle } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
+import { calculateMissingWork, getClassScoreContext, getGradeSummaryData } from '../utils/scoring';
 
 export default function Dashboard({ classes, students, activeClassId, setActiveClassId, attendance, scores, scoreColumns, indicators }) {
   const navigate = useNavigate();
@@ -11,86 +12,6 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
     if (validRecords.length === 0) return 0;
     const presentCount = validRecords.filter(r => r.status === 'present' || r.status === 'late').length;
     return Math.round((presentCount / validRecords.length) * 100);
-  };
-
-  const calculateMissingWork = (clsId, clsStudents, clsColumns, clsScores) => {
-    let missingCount = 0;
-    clsStudents.forEach(student => {
-      clsColumns.forEach(col => {
-        const hasScore = clsScores.some(s => s.studentId === student.id && s.columnId === col.id && s.score !== null && s.score !== '');
-        if (!hasScore) {
-          missingCount++;
-        }
-      });
-    });
-    return missingCount;
-  };
-
-  const getGrade = (score) => {
-    if (score >= 80) return '4.0';
-    if (score >= 75) return '3.5';
-    if (score >= 70) return '3.0';
-    if (score >= 65) return '2.5';
-    if (score >= 60) return '2.0';
-    if (score >= 55) return '1.5';
-    if (score >= 50) return '1.0';
-    return '0';
-  };
-
-  const getGradeSummaryData = (clsId, clsStudents, clsColumns, clsScores) => {
-    const summary = { '4.0': 0, '3.5': 0, '3.0': 0, '2.5': 0, '2.0': 0, '1.5': 0, '1.0': 0, '0': 0 };
-    const activeClassData = classes.find(c => c.id === clsId);
-    if (!activeClassData) return [];
-    
-    const classUnits = indicators ? indicators.filter(i => i.classId === clsId) : [];
-    const midtermWeight = activeClassData?.midtermWeight || 10;
-    const finalWeight = activeClassData?.finalWeight || 10;
-
-    clsStudents.forEach(student => {
-      let term1Collected = 0;
-      let term2Collected = 0;
-      
-      classUnits.forEach(unit => {
-        const unitCols = clsColumns.filter(c => c.unitId === unit.id && c.type === 'collected');
-        const unitMaxRaw = unitCols.reduce((sum, col) => sum + col.maxScore, 0);
-        const unitRaw = unitCols.reduce((sum, col) => {
-          const s = clsScores.find(s => s.studentId === student.id && s.columnId === col.id);
-          return sum + (s ? s.score : 0);
-        }, 0);
-        const scaled = unitMaxRaw > 0 ? (unitRaw / unitMaxRaw) * unit.weight : 0;
-        if (unit.term === '1') term1Collected += scaled;
-        else if (unit.term === '2') term2Collected += scaled;
-        else term1Collected += scaled; 
-      });
-
-      const getExamScaled = (type, weight) => {
-        const cols = clsColumns.filter(c => c.type === type);
-        const maxRaw = cols.reduce((sum, col) => sum + col.maxScore, 0);
-        const raw = cols.reduce((sum, col) => {
-          const s = clsScores.find(s => s.studentId === student.id && s.columnId === col.id);
-          return sum + (s ? s.score : 0);
-        }, 0);
-        return maxRaw > 0 ? (raw / maxRaw) * weight : 0;
-      };
-
-      const midtermScaled = getExamScaled('midterm', midtermWeight);
-      const finalScaled = getExamScaled('final', finalWeight);
-
-      let totalScaled = Math.round(term1Collected + term2Collected + midtermScaled + finalScaled);
-
-      summary[getGrade(totalScaled)]++;
-    });
-
-    return [
-      { grade: '4.0', value: summary['4.0'] },
-      { grade: '3.5', value: summary['3.5'] },
-      { grade: '3.0', value: summary['3.0'] },
-      { grade: '2.5', value: summary['2.5'] },
-      { grade: '2.0', value: summary['2.0'] },
-      { grade: '1.5', value: summary['1.5'] },
-      { grade: '1.0', value: summary['1.0'] },
-      { grade: '0', value: summary['0'] }
-    ];
   };
 
   // ----- Global Overview Mode -----
@@ -106,8 +27,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
     classes.forEach(cls => {
       const clsStudents = students.filter(s => s.classId === cls.id);
       const clsColumns = scoreColumns.filter(c => c.classId === cls.id);
-      const clsScores = scores; // Assuming we can just pass all and it will filter by studentId
-      totalMissing += calculateMissingWork(cls.id, clsStudents, clsColumns, clsScores);
+      totalMissing += calculateMissingWork(clsStudents, clsColumns, scores);
     });
 
     const handleSelectClass = (id) => {
@@ -223,8 +143,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                         const totalSummary = { '4.0': 0, '3.5': 0, '3.0': 0, '2.5': 0, '2.0': 0, '1.5': 0, '1.0': 0, '0': 0 };
                         classes.forEach(cls => {
                           const clsStudents = students.filter(s => s.classId === cls.id);
-                          const clsColumns = scoreColumns.filter(c => c.classId === cls.id);
-                          const clsSummaryData = getGradeSummaryData(cls.id, clsStudents, clsColumns, scores);
+                          const clsSummaryData = getGradeSummaryData(clsStudents, getClassScoreContext(cls.id, classes, scoreColumns, indicators), scores);
                           clsSummaryData.forEach(d => { totalSummary[d.grade] += d.value; });
                         });
                         return [
@@ -277,7 +196,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                       const clsAtt = attendance.filter(a => a.classId === cls.id);
                       const clsRate = calculateAttendanceRate(clsAtt);
                       const clsColumns = scoreColumns.filter(c => c.classId === cls.id);
-                      const clsMissing = calculateMissingWork(cls.id, clsStudents, clsColumns, scores);
+                      const clsMissing = calculateMissingWork(clsStudents, clsColumns, scores);
                       
                       return (
                         <tr key={cls.id} style={{ cursor: 'pointer' }} onClick={() => handleSelectClass(cls.id)} className="hover-row">
@@ -370,7 +289,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                             </div>
                           ))}
                         </div>
-                        <button className="btn btn-secondary" style={{ width: '100%', marginTop: '1rem', fontSize: '0.8rem', padding: '0.5rem' }} onClick={() => { setActiveClassId(cls.id); navigate('/missing-work'); }}>
+                        <button className="btn btn-secondary" style={{ width: '100%', marginTop: '1rem', fontSize: '0.8rem', padding: '0.5rem' }} onClick={() => { setActiveClassId(cls.id); navigate('/grading/missing'); }}>
                           จัดการงานค้าง
                         </button>
                       </div>
@@ -406,7 +325,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
   const classColumns = scoreColumns.filter(c => c.classId === activeClassId);
   
   const classAttRate = calculateAttendanceRate(classAttendance);
-  const totalMissingClass = calculateMissingWork(activeClassId, classStudents, classColumns, scores);
+  const totalMissingClass = calculateMissingWork(classStudents, classColumns, scores);
 
   // Top Missing Students
   const missingByStudent = classStudents.map(student => {
@@ -506,7 +425,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
                       <div style={{ fontWeight: 700, color: '#f87171' }}>{s.missingCount} ชิ้น</div>
-                      <button className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }} onClick={() => navigate('/missing-work')}>
+                      <button className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }} onClick={() => navigate('/grading/missing')}>
                         ดูรายละเอียด
                       </button>
                     </div>
@@ -567,7 +486,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
           <div style={{ width: '100%', height: 300 }}>
             {classColumns.length > 0 ? (
               <ResponsiveContainer width="100%" height="100%">
-                <RadarChart cx="50%" cy="50%" outerRadius="75%" data={getGradeSummaryData(activeClassId, classStudents, classColumns, scores)}>
+                <RadarChart cx="50%" cy="50%" outerRadius="75%" data={getGradeSummaryData(classStudents, getClassScoreContext(activeClassId, classes, scoreColumns, indicators), scores)}>
                   <PolarGrid stroke="rgba(255,255,255,0.1)" />
                   <PolarAngleAxis dataKey="grade" tick={{ fill: 'var(--text-secondary)', fontSize: 12 }} />
                   <PolarRadiusAxis angle={30} domain={[0, 'auto']} tick={false} axisLine={false} />
@@ -585,7 +504,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
             )}
           </div>
           <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-            <button className="btn btn-primary" onClick={() => navigate('/grades')} style={{ width: '100%', maxWidth: '400px' }}>
+            <button className="btn btn-primary" onClick={() => navigate('/reports/grades')} style={{ width: '100%', maxWidth: '400px' }}>
               ดูสรุปผลการเรียนฉบับเต็ม (PicthClass)
             </button>
           </div>

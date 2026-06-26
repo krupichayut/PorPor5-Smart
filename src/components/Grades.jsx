@@ -1,109 +1,22 @@
 import { useState } from 'react';
 import { BarChart3, Download } from 'lucide-react';
+import { GRADE_ORDER, calculateStudentScores, getClassScoreContext, getGrade, getGradeColor, getUnitWeightSum } from '../utils/scoring';
 
 export default function Grades({ students, activeClassId, classes, scores, scoreColumns, attributes, literacy, competencies, indicators }) {
   const [selectedTerm, setSelectedTerm] = useState('all');
   const [reportType, setReportType] = useState('all'); // 'all', 'grades', 'evaluations'
 
-  const activeClass = classes.find(c => c.id === activeClassId);
+  const scoreContext = getClassScoreContext(activeClassId, classes, scoreColumns, indicators);
+  const { activeClass, classScoreColumns, classUnits, midtermWeight, finalWeight } = scoreContext;
   const classStudents = students.filter(s => s.classId === activeClassId).sort((a, b) => a.number - b.number);
   
-  const classScoreColumns = scoreColumns.filter(c => c.classId === activeClassId);
-  const classUnits = indicators ? indicators.filter(i => i.classId === activeClassId) : [];
-
-  const midtermWeight = activeClass?.midtermWeight || 10;
-  const finalWeight = activeClass?.finalWeight || 10;
-
-  const getUnitWeightSum = (term) => {
-    return classUnits
-      .filter(u => u.term === term || u.term === 'all')
-      .reduce((sum, u) => sum + u.weight, 0);
-  };
-  
-  const term1CollectedWeight = getUnitWeightSum('1');
-  const term2CollectedWeight = getUnitWeightSum('2');
-
-  const calculateStudentScores = (studentId) => {
-    let term1Collected = 0;
-    let term2Collected = 0;
-    
-    classUnits.forEach(unit => {
-      const unitCols = classScoreColumns.filter(c => c.unitId === unit.id && c.type === 'collected');
-      const unitMaxRaw = unitCols.reduce((sum, col) => sum + col.maxScore, 0);
-      const unitRaw = unitCols.reduce((sum, col) => {
-        const s = scores.find(s => s.studentId === studentId && s.columnId === col.id);
-        return sum + (s ? s.score : 0);
-      }, 0);
-      const scaled = unitMaxRaw > 0 ? (unitRaw / unitMaxRaw) * unit.weight : 0;
-      
-      if (unit.term === '1') term1Collected += scaled;
-      else if (unit.term === '2') term2Collected += scaled;
-      else {
-        // distribute 'all' term units evenly for display? or just add to term1. 
-        term1Collected += scaled; 
-      }
-    });
-
-    const getExamScaled = (type, weight) => {
-      const cols = classScoreColumns.filter(c => c.type === type);
-      const maxRaw = cols.reduce((sum, col) => sum + col.maxScore, 0);
-      const raw = cols.reduce((sum, col) => {
-        const s = scores.find(s => s.studentId === studentId && s.columnId === col.id);
-        return sum + (s ? s.score : 0);
-      }, 0);
-      return maxRaw > 0 ? (raw / maxRaw) * weight : 0;
-    };
-
-    const midtermScaled = getExamScaled('midterm', midtermWeight);
-    const finalScaled = getExamScaled('final', finalWeight);
-
-    let finalTotal = 0;
-    if (selectedTerm === '1') {
-      finalTotal = term1Collected + midtermScaled;
-    } else if (selectedTerm === '2') {
-      finalTotal = term2Collected + finalScaled;
-    } else {
-      finalTotal = term1Collected + term2Collected + midtermScaled + finalScaled;
-    }
-
-    return {
-      term1Collected: Number(term1Collected.toFixed(2)),
-      term2Collected: Number(term2Collected.toFixed(2)),
-      midtermScaled: Number(midtermScaled.toFixed(2)),
-      finalScaled: Number(finalScaled.toFixed(2)),
-      totalScaled: Math.round(finalTotal)
-    };
-  };
-
-  const getGrade = (score) => {
-    if (score >= 80) return '4.0';
-    if (score >= 75) return '3.5';
-    if (score >= 70) return '3.0';
-    if (score >= 65) return '2.5';
-    if (score >= 60) return '2.0';
-    if (score >= 55) return '1.5';
-    if (score >= 50) return '1.0';
-    return '0';
-  };
-
-  const getGradeColor = (grade) => {
-    switch(grade) {
-      case '4.0': return '#10b981';
-      case '3.5': return '#34d399';
-      case '3.0': return '#3b82f6';
-      case '2.5': return '#60a5fa';
-      case '2.0': return '#f59e0b';
-      case '1.5': return '#fbbf24';
-      case '1.0': return '#f97316';
-      case '0': return '#ef4444';
-      default: return '#94a3b8';
-    }
-  };
+  const term1CollectedWeight = getUnitWeightSum(classUnits, '1');
+  const term2CollectedWeight = getUnitWeightSum(classUnits, '2');
 
   const getGradeSummary = () => {
     const summary = { '4.0': 0, '3.5': 0, '3.0': 0, '2.5': 0, '2.0': 0, '1.5': 0, '1.0': 0, '0': 0 };
     classStudents.forEach(s => {
-      const { totalScaled } = calculateStudentScores(s.id);
+      const { totalScaled } = calculateStudentScores(s.id, scoreContext, scores, selectedTerm);
       const grade = getGrade(totalScaled);
       summary[grade]++;
     });
@@ -201,7 +114,7 @@ export default function Grades({ students, activeClassId, classes, scores, score
 
       {classStudents.length > 0 && classScoreColumns.length > 0 && (
         <div className="no-print" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-          {['4.0', '3.5', '3.0', '2.5', '2.0', '1.5', '1.0', '0'].map(grade => (
+          {GRADE_ORDER.map(grade => (
             <div key={grade} className="card" style={{ textAlign: 'center', padding: '1rem' }}>
               <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>เกรด {grade}</div>
               <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: getGradeColor(grade) }}>
@@ -264,7 +177,7 @@ export default function Grades({ students, activeClassId, classes, scores, score
               </thead>
               <tbody>
                 {classStudents.map((s, index) => {
-                  const studentScores = calculateStudentScores(s.id);
+                  const studentScores = calculateStudentScores(s.id, scoreContext, scores, selectedTerm);
                   const grade = getGrade(studentScores.totalScaled);
                   
                   const attrAvg = calculateEvaluationAverage(s.id, attributes, 8);

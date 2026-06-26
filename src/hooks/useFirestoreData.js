@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { doc, onSnapshot, setDoc } from 'firebase/firestore';
 import { db } from '../firebase';
 
 export function useFirestoreData(collectionName, documentId, initialValue) {
   const [data, setData] = useState(initialValue);
   const [initialized, setInitialized] = useState(false);
+  const initialValueRef = useRef(initialValue);
 
   useEffect(() => {
     const docRef = doc(db, collectionName, documentId);
@@ -13,11 +14,11 @@ export function useFirestoreData(collectionName, documentId, initialValue) {
     const unsubscribe = onSnapshot(docRef, (docSnap) => {
       if (docSnap.exists()) {
         const docData = docSnap.data().value;
-        setData(docData !== undefined ? docData : initialValue);
+        setData(docData !== undefined ? docData : initialValueRef.current);
       } else {
         // Document doesn't exist yet, we will initialize it on the first set()
         // But for local state, we can keep initialValue
-        setData(initialValue);
+        setData(initialValueRef.current);
       }
       setInitialized(true);
     }, (error) => {

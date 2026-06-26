@@ -88,7 +88,6 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
       const cols = row.split('\t');
       if (cols.length >= 2) {
         newPlans.push({
-          // eslint-disable-next-line react-hooks/purity
           id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
           classId: activeClassId,
           week: cols[0].trim(),

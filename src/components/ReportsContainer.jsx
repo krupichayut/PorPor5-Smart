@@ -1,23 +1,30 @@
-import { useState } from 'react';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 import MonthlyReport from './MonthlyReport';
 import Grades from './Grades';
 import { FileText, Printer } from 'lucide-react';
 
 export default function ReportsContainer(props) {
-  const [activeTab, setActiveTab] = useState('monthly');
+  const location = useLocation();
+  const navigate = useNavigate();
+  const { tab } = useParams();
+  const activeTab = tab === 'grades' || location.state?.activeTab === 'grades' ? 'grades' : 'monthly';
+
+  const switchTab = (nextTab) => {
+    navigate(nextTab === 'grades' ? '/reports/grades' : '/reports/monthly', { replace: true });
+  };
 
   return (
     <div className="animate-fade-in">
       <div className="tabs-container no-print">
         <button 
           className={`tab-btn ${activeTab === 'monthly' ? 'active' : ''}`}
-          onClick={() => setActiveTab('monthly')}
+          onClick={() => switchTab('monthly')}
         >
           <FileText size={16} style={{ display: 'inline', marginRight: '6px' }} /> รายงานประจำเดือน
         </button>
         <button 
           className={`tab-btn ${activeTab === 'grades' ? 'active' : ''}`}
-          onClick={() => setActiveTab('grades')}
+          onClick={() => switchTab('grades')}
         >
           <Printer size={16} style={{ display: 'inline', marginRight: '6px' }} /> พิมพ์รูปเล่ม PicthClass
         </button>

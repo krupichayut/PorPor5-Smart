@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { lazy, Suspense, useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
 import { BookOpen, Users, Calendar, Award, BarChart3, Settings, GraduationCap, Star, FileText, Key, LogOut, ClipboardList, Paintbrush } from 'lucide-react';
 import { auth } from './firebase';
@@ -7,18 +7,24 @@ import HeroWave from './components/DynamicWaveBackground';
 import './index.css';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import { useFirestoreData } from './hooks/useFirestoreData';
-import Classes from './components/Classes';
-import Students from './components/Students';
-import Attendance from './components/Attendance';
-import LessonPlans from './components/LessonPlans';
-import SettingsPage from './components/SettingsPage';
+const Classes = lazy(() => import('./components/Classes'));
+const Students = lazy(() => import('./components/Students'));
+const Attendance = lazy(() => import('./components/Attendance'));
+const SettingsPage = lazy(() => import('./components/SettingsPage'));
+const Dashboard = lazy(() => import('./components/Dashboard'));
+const AssessmentsContainer = lazy(() => import('./components/AssessmentsContainer'));
+const GradingContainer = lazy(() => import('./components/GradingContainer'));
+const ReportsContainer = lazy(() => import('./components/ReportsContainer'));
+const CoursePlanContainer = lazy(() => import('./components/CoursePlanContainer'));
+const Rewards = lazy(() => import('./components/Rewards'));
 
-import Dashboard from './components/Dashboard';
-import AssessmentsContainer from './components/AssessmentsContainer';
-import GradingContainer from './components/GradingContainer';
-import ReportsContainer from './components/ReportsContainer';
-import CoursePlanContainer from './components/CoursePlanContainer';
-import Rewards from './components/Rewards';
+function PageLoading() {
+  return (
+    <div className="card" style={{ minHeight: '220px', display: 'flex', alignItems: 'center', justifyContent: 'center', color: 'var(--text-secondary)' }}>
+      กำลังโหลดหน้า...
+    </div>
+  );
+}
 
 function App() {
   const [user, setUser] = useState(null);
@@ -100,7 +106,7 @@ function App() {
       <div className="app-container" style={{ position: 'relative', zIndex: 0 }}>
         
         {/* Animated Wave Canvas Background */}
-        <div style={{ position: 'fixed', inset: 0, zIndex: -10, opacity: 0.6 }}>
+        <div style={{ position: 'fixed', inset: 0, zIndex: -10, opacity: 0.18 }}>
           <HeroWave />
         </div>
 
@@ -208,18 +214,22 @@ function App() {
 
         {/* Main Content */}
         <main className="main-content">
-          <Routes>
-            <Route path="/" element={<Dashboard classes={classes} students={students} activeClassId={activeClassId} setActiveClassId={setActiveClassId} attendance={attendance} scores={scores} scoreColumns={scoreColumns} indicators={indicators} />} />
-            <Route path="/settings" element={<SettingsPage appSettings={appSettings} setAppSettings={setAppSettings} readOnly={readOnly} classes={classes} students={students} attendance={attendance} scores={scores} scoreColumns={scoreColumns} attributes={attributes} literacy={literacy} competencies={competencies} lessonPlans={lessonPlans} indicators={indicators} />} />
-            <Route path="/classes" element={<Classes classes={classes} setClasses={setClasses} activeClassId={activeClassId} setActiveClassId={setActiveClassId} readOnly={readOnly} />} />
-            <Route path="/course-plan" element={<CoursePlanContainer activeClassId={activeClassId} classes={classes} indicators={indicators} setIndicators={setIndicators} lessonPlans={lessonPlans} setLessonPlans={setLessonPlans} readOnly={readOnly} />} />
-            <Route path="/students" element={<Students students={students} setStudents={setStudents} classes={classes} activeClassId={activeClassId} readOnly={readOnly} attendance={attendance} scores={scores} scoreColumns={scoreColumns} attributes={attributes} literacy={literacy} competencies={competencies} indicators={indicators} />} />
-            <Route path="/attendance" element={<Attendance students={students} activeClassId={activeClassId} classes={classes} attendance={attendance} setAttendance={setAttendance} readOnly={readOnly} />} />
-            <Route path="/grading" element={<GradingContainer students={students} activeClassId={activeClassId} classes={classes} scores={scores} setScores={setScores} scoreColumns={scoreColumns} setScoreColumns={setScoreColumns} indicators={indicators} readOnly={readOnly} studentPoints={studentPoints} setStudentPoints={setStudentPoints} />} />
-            <Route path="/reports" element={<ReportsContainer appSettings={appSettings} activeClassId={activeClassId} classes={classes} students={students} attendance={attendance} scoreColumns={scoreColumns} scores={scores} attributes={attributes} literacy={literacy} competencies={competencies} indicators={indicators} readOnly={readOnly} />} />
-            <Route path="/assessments" element={<AssessmentsContainer students={students} activeClassId={activeClassId} classes={classes} attributes={attributes} setAttributes={setAttributes} literacy={literacy} setLiteracy={setLiteracy} competencies={competencies} setCompetencies={setCompetencies} readOnly={readOnly} />} />
-            <Route path="/rewards" element={<Rewards students={students} activeClassId={activeClassId} classes={classes} studentPoints={studentPoints} setStudentPoints={setStudentPoints} rewards={rewards} setRewards={setRewards} readOnly={readOnly} />} />
-          </Routes>
+          <Suspense fallback={<PageLoading />}>
+            <Routes>
+              <Route path="/" element={<Dashboard classes={classes} students={students} activeClassId={activeClassId} setActiveClassId={setActiveClassId} attendance={attendance} scores={scores} scoreColumns={scoreColumns} indicators={indicators} />} />
+              <Route path="/settings" element={<SettingsPage appSettings={appSettings} setAppSettings={setAppSettings} readOnly={readOnly} classes={classes} students={students} attendance={attendance} scores={scores} scoreColumns={scoreColumns} attributes={attributes} literacy={literacy} competencies={competencies} lessonPlans={lessonPlans} indicators={indicators} />} />
+              <Route path="/classes" element={<Classes classes={classes} setClasses={setClasses} activeClassId={activeClassId} setActiveClassId={setActiveClassId} readOnly={readOnly} />} />
+              <Route path="/course-plan" element={<CoursePlanContainer activeClassId={activeClassId} classes={classes} indicators={indicators} setIndicators={setIndicators} lessonPlans={lessonPlans} setLessonPlans={setLessonPlans} readOnly={readOnly} />} />
+              <Route path="/students" element={<Students students={students} setStudents={setStudents} classes={classes} activeClassId={activeClassId} readOnly={readOnly} attendance={attendance} scores={scores} scoreColumns={scoreColumns} attributes={attributes} literacy={literacy} competencies={competencies} indicators={indicators} />} />
+              <Route path="/attendance" element={<Attendance students={students} activeClassId={activeClassId} classes={classes} attendance={attendance} setAttendance={setAttendance} readOnly={readOnly} />} />
+              <Route path="/grading" element={<GradingContainer students={students} activeClassId={activeClassId} classes={classes} scores={scores} setScores={setScores} scoreColumns={scoreColumns} setScoreColumns={setScoreColumns} indicators={indicators} readOnly={readOnly} studentPoints={studentPoints} setStudentPoints={setStudentPoints} />} />
+              <Route path="/grading/:tab" element={<GradingContainer students={students} activeClassId={activeClassId} classes={classes} scores={scores} setScores={setScores} scoreColumns={scoreColumns} setScoreColumns={setScoreColumns} indicators={indicators} readOnly={readOnly} studentPoints={studentPoints} setStudentPoints={setStudentPoints} />} />
+              <Route path="/reports" element={<ReportsContainer appSettings={appSettings} activeClassId={activeClassId} classes={classes} students={students} attendance={attendance} scoreColumns={scoreColumns} scores={scores} attributes={attributes} literacy={literacy} competencies={competencies} indicators={indicators} readOnly={readOnly} />} />
+              <Route path="/reports/:tab" element={<ReportsContainer appSettings={appSettings} activeClassId={activeClassId} classes={classes} students={students} attendance={attendance} scoreColumns={scoreColumns} scores={scores} attributes={attributes} literacy={literacy} competencies={competencies} indicators={indicators} readOnly={readOnly} />} />
+              <Route path="/assessments" element={<AssessmentsContainer students={students} activeClassId={activeClassId} classes={classes} attributes={attributes} setAttributes={setAttributes} literacy={literacy} setLiteracy={setLiteracy} competencies={competencies} setCompetencies={setCompetencies} readOnly={readOnly} />} />
+              <Route path="/rewards" element={<Rewards students={students} activeClassId={activeClassId} classes={classes} studentPoints={studentPoints} setStudentPoints={setStudentPoints} rewards={rewards} setRewards={setRewards} readOnly={readOnly} />} />
+            </Routes>
+          </Suspense>
         </main>
       </div>
     </Router>

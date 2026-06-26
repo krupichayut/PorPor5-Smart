@@ -1,6 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Save, Download, Database } from 'lucide-react';
-import * as XLSX from 'xlsx';
+import { downloadJson } from '../utils/fileExports';
 
 export default function SettingsPage({ appSettings, setAppSettings, readOnly, classes, students, attendance, scores, scoreColumns, attributes, literacy, competencies, lessonPlans, indicators }) {
   const [formData, setFormData] = useState({
@@ -45,35 +45,25 @@ export default function SettingsPage({ appSettings, setAppSettings, readOnly, cl
   const handleBackup = () => {
     if (readOnly) return;
     try {
-      const wb = XLSX.utils.book_new();
-      
-      const appendSheet = (data, name) => {
-        if (data && data.length > 0) {
-          const ws = XLSX.utils.json_to_sheet(data);
-          XLSX.utils.book_append_sheet(wb, ws, name.substring(0, 31)); // Max sheet name length is 31
-        } else {
-          // Empty sheet fallback
-          const ws = XLSX.utils.json_to_sheet([{ info: 'No data available' }]);
-          XLSX.utils.book_append_sheet(wb, ws, name.substring(0, 31));
+      const backup = {
+        exportedAt: new Date().toISOString(),
+        version: 1,
+        data: {
+          classes,
+          students,
+          scoreColumns,
+          scores,
+          attendance,
+          attributes,
+          literacy,
+          competencies,
+          indicators,
+          lessonPlans,
+          settings: appSettings
         }
       };
-
-      appendSheet(classes, "Classes");
-      appendSheet(students, "Students");
-      appendSheet(scoreColumns, "Score_Columns");
-      appendSheet(scores, "Scores");
-      appendSheet(attendance, "Attendance");
-      appendSheet(attributes, "Attributes");
-      appendSheet(literacy, "Literacy");
-      appendSheet(competencies, "Competencies");
-      appendSheet(indicators, "Indicators");
-      appendSheet(lessonPlans, "LessonPlans");
-      
-      const settingsArray = [appSettings];
-      appendSheet(settingsArray, "Settings");
-
       const dateStr = new Date().toISOString().split('T')[0].replace(/-/g, '');
-      XLSX.writeFile(wb, `PorPor5_FullBackup_${dateStr}.xlsx`);
+      downloadJson(`PorPor5_FullBackup_${dateStr}.json`, backup);
     } catch (error) {
       console.error('Backup failed:', error);
       alert('เกิดข้อผิดพลาดในการสำรองข้อมูล');
