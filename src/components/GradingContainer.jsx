@@ -19,8 +19,8 @@ export default function GradingContainer(props) {
   }
 
   return (
-    <div className="animate-fade-in">
-      <div className="tabs-container">
+    <div className="animate-fade-in gradebook-workspace">
+      <div className="tabs-container gradebook-tabs">
         <button 
           className={`tab-btn ${activeTab === 'scores' ? 'active' : ''}`}
           onClick={() => switchTab('scores')}
@@ -35,7 +35,7 @@ export default function GradingContainer(props) {
         </button>
       </div>
 
-      <div>
+      <div className="gradebook-stage">
         {activeTab === 'scores' && <Scores {...props} />}
         {activeTab === 'missing' && <MissingWork {...props} />}
       </div>

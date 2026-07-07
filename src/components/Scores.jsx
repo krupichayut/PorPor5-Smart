@@ -236,7 +236,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
   }
 
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in gradebook-canvas">
       <div className="page-header">
         <div>
           <h2 className="page-title">บันทึกคะแนน: {activeClass?.name}</h2>
@@ -250,8 +250,8 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
         )}
       </div>
 
-      <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
-        <div className="card" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+      <div className="gradebook-tools" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+        <div className="card gradebook-weight-card" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
           <div style={{ padding: '1rem', backgroundColor: 'var(--bg-tertiary)', color: 'var(--primary-color)', borderRadius: 'var(--radius-full)' }}>
             <Calculator size={28} />
           </div>
@@ -262,7 +262,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
             </div>
           </div>
         </div>
-        <div className="card" style={{ padding: '0', display: 'flex' }}>
+        <div className="card gradebook-filter-card" style={{ padding: '0', display: 'flex' }}>
           <div style={{ flex: 1, padding: '1.5rem', borderRight: '1px solid var(--border-color)' }}>
             <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Filter size={16} /> เลือกภาคเรียน
@@ -300,7 +300,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
         </div>
       </div>
 
-      <div className="card">
+      <div className="card gradebook-table-card">
         {classStudents.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
             <p>ยังไม่มีข้อมูลนักเรียนในห้องนี้ กรุณาเพิ่มนักเรียนก่อน</p>
@@ -315,8 +315,8 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                 </div>
               </div>
             )}
-            <div className="table-container">
-            <table className="table" style={{ whiteSpace: 'nowrap' }}>
+            <div className="table-container gradebook-table-container">
+            <table className="table gradebook-table" style={{ whiteSpace: 'nowrap' }}>
               <thead>
                 <tr>
                   <th rowSpan={2} style={{ width: '60px', textAlign: 'center', position: 'sticky', left: 0, backgroundColor: 'var(--bg-tertiary)', zIndex: 3, verticalAlign: 'middle' }}>เลขที่</th>

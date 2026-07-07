@@ -69,7 +69,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
     };
 
     return (
-      <div className="animate-fade-in">
+      <div className="animate-fade-in studio-dashboard">
         <div className="page-header">
           <div>
             <h2 className="page-title">แดชบอร์ด: ภาพรวมทุกห้องเรียน</h2>
@@ -84,7 +84,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
           </div>
         ) : (
           <>
-            <div className="bento-grid" style={{ marginBottom: '2.5rem' }}>
+            <div className="bento-grid studio-action-gallery" style={{ marginBottom: '2.5rem' }}>
               {/* Top Row: Small Stats & Important Warning */}
               <div className="bento-item col-span-3" style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.25rem 1.5rem' }} onClick={() => navigate('/classes')}>
                 <div>
@@ -375,7 +375,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
   const uniqueDates = [...new Set(classAttendance.map(a => a.date))];
 
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in studio-dashboard studio-class-dashboard">
       <div className="page-header">
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
@@ -388,7 +388,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
         </div>
       </div>
       
-      <div className="bento-grid" style={{ marginBottom: '2rem' }}>
+      <div className="bento-grid studio-action-gallery" style={{ marginBottom: '2rem' }}>
         {/* Class Hero Banner */}
         <div className="bento-item col-span-12" style={{ background: 'linear-gradient(to right, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.1))', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '2rem' }}>
           <div>
