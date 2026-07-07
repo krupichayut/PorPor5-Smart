@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import Scores from './Scores';
 import MissingWork from './MissingWork';
 import { Award, FileText } from 'lucide-react';
@@ -7,11 +7,16 @@ export default function GradingContainer(props) {
   const location = useLocation();
   const navigate = useNavigate();
   const { tab } = useParams();
+  const isKnownTab = !tab || tab === 'scores' || tab === 'missing';
   const activeTab = tab === 'missing' || location.state?.activeTab === 'missing' ? 'missing' : 'scores';
 
   const switchTab = (nextTab) => {
     navigate(nextTab === 'missing' ? '/grading/missing' : '/grading/scores', { replace: true });
   };
+
+  if (!isKnownTab) {
+    return <Navigate to="/grading/scores" replace />;
+  }
 
   return (
     <div className="animate-fade-in">

@@ -29,8 +29,8 @@ export function getClassScoreContext(classId, classes, scoreColumns, indicators)
   const activeClass = classes.find(c => c.id === classId);
   const classScoreColumns = scoreColumns.filter(c => c.classId === classId);
   const classUnits = indicators ? indicators.filter(i => i.classId === classId) : [];
-  const midtermWeight = activeClass?.midtermWeight || 10;
-  const finalWeight = activeClass?.finalWeight || 10;
+  const midtermWeight = activeClass?.midtermWeight ?? 10;
+  const finalWeight = activeClass?.finalWeight ?? 10;
 
   return { activeClass, classScoreColumns, classUnits, midtermWeight, finalWeight };
 }
@@ -100,8 +100,9 @@ export function getGradeSummaryData(classStudents, context, scores) {
 
 export function calculateMissingWork(classStudents, classScoreColumns, scores) {
   let missingCount = 0;
+  const collectedColumns = classScoreColumns.filter(col => col.type === 'collected');
   classStudents.forEach(student => {
-    classScoreColumns.forEach(col => {
+    collectedColumns.forEach(col => {
       const hasScore = scores.some(s => s.studentId === student.id && s.columnId === col.id && s.score !== null && s.score !== '');
       if (!hasScore) missingCount++;
     });

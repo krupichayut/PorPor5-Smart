@@ -19,8 +19,8 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
   const classScoreColumns = scoreColumns.filter(c => c.classId === activeClassId);
   const classUnits = indicators ? indicators.filter(i => i.classId === activeClassId) : [];
   
-  const midtermWeight = activeClass?.midtermWeight || 10;
-  const finalWeight = activeClass?.finalWeight || 10;
+  const midtermWeight = activeClass?.midtermWeight ?? 10;
+  const finalWeight = activeClass?.finalWeight ?? 10;
   const totalUnitsWeight = classUnits.reduce((sum, u) => sum + u.weight, 0);
   const totalClassWeight = totalUnitsWeight + midtermWeight + finalWeight;
 

@@ -9,7 +9,7 @@ export default function MonthlyReport({ appSettings, activeClassId, classes, stu
 
   const activeClass = classes.find(c => c.id === activeClassId);
   const classStudents = students.filter(s => s.classId === activeClassId).sort((a, b) => a.number - b.number);
-  const classScoreColumns = scoreColumns.filter(c => c.classId === activeClassId && c.type !== 'exam');
+  const classScoreColumns = scoreColumns.filter(c => c.classId === activeClassId && c.type === 'collected');
 
   const monthObj = new Date(selectedMonth + '-01');
   const monthName = monthObj.toLocaleDateString('th-TH', { month: 'long', year: 'numeric' });

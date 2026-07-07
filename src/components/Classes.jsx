@@ -120,12 +120,12 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
                     <td>{c.subject}</td>
                     <td style={{ textAlign: 'center' }}>
                       <span className="badge" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>
-                        {c.midtermWeight || 10} คะแนน
+                        {c.midtermWeight ?? 10} คะแนน
                       </span>
                     </td>
                     <td style={{ textAlign: 'center' }}>
                       <span className="badge" style={{ backgroundColor: 'rgba(220, 38, 38, 0.1)', color: '#dc2626' }}>
-                        {c.finalWeight || 10} คะแนน
+                        {c.finalWeight ?? 10} คะแนน
                       </span>
                     </td>
                     <td>

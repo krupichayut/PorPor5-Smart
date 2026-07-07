@@ -1,5 +1,5 @@
 import { lazy, Suspense, useState, useEffect } from 'react';
-import { BrowserRouter as Router, Routes, Route, NavLink } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, NavLink, Navigate } from 'react-router-dom';
 import { BookOpen, Users, Calendar, Award, BarChart3, Settings, GraduationCap, Star, FileText, Key, LogOut, ClipboardList, Paintbrush } from 'lucide-react';
 import { auth } from './firebase';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
@@ -62,23 +62,23 @@ function App() {
 
   const [activeClassId, setActiveClassId] = useLocalStorage('porpor5_active_class', null);
 
-  const [classes, setClasses, classesInit] = useFirestoreData('appData', 'classes', []);
-  const [students, setStudents, studentsInit] = useFirestoreData('appData', 'students', []);
-  const [attendance, setAttendance, attInit] = useFirestoreData('appData', 'attendance', []);
-  const [scoreColumns, setScoreColumns, scInit] = useFirestoreData('appData', 'scoreColumns', []);
-  const [scores, setScores, scoresInit] = useFirestoreData('appData', 'scores', []);
+  const [classes, setClasses, classesInit, classesSaveError] = useFirestoreData('appData', 'classes', []);
+  const [students, setStudents, studentsInit, studentsSaveError] = useFirestoreData('appData', 'students', []);
+  const [attendance, setAttendance, attInit, attendanceSaveError] = useFirestoreData('appData', 'attendance', []);
+  const [scoreColumns, setScoreColumns, scInit, scoreColumnsSaveError] = useFirestoreData('appData', 'scoreColumns', []);
+  const [scores, setScores, scoresInit, scoresSaveError] = useFirestoreData('appData', 'scores', []);
   
-  const [attributes, setAttributes, attrInit] = useFirestoreData('appData', 'attributes', []);
-  const [literacy, setLiteracy, litInit] = useFirestoreData('appData', 'literacy', []);
-  const [competencies, setCompetencies, compInit] = useFirestoreData('appData', 'competencies', []);
+  const [attributes, setAttributes, attrInit, attributesSaveError] = useFirestoreData('appData', 'attributes', []);
+  const [literacy, setLiteracy, litInit, literacySaveError] = useFirestoreData('appData', 'literacy', []);
+  const [competencies, setCompetencies, compInit, competenciesSaveError] = useFirestoreData('appData', 'competencies', []);
   
-  const [indicators, setIndicators, indInit] = useFirestoreData('appData', 'indicators', []);
-  const [lessonPlans, setLessonPlans, lpInit] = useFirestoreData('appData', 'lessonPlans', []);
+  const [indicators, setIndicators, indInit, indicatorsSaveError] = useFirestoreData('appData', 'indicators', []);
+  const [lessonPlans, setLessonPlans, lpInit, lessonPlansSaveError] = useFirestoreData('appData', 'lessonPlans', []);
   
-  const [studentPoints, setStudentPoints, spInit] = useFirestoreData('appData', 'studentPoints', []);
-  const [rewards, setRewards, rwInit] = useFirestoreData('appData', 'rewards', []);
+  const [studentPoints, setStudentPoints, spInit, studentPointsSaveError] = useFirestoreData('appData', 'studentPoints', []);
+  const [rewards, setRewards, rwInit, rewardsSaveError] = useFirestoreData('appData', 'rewards', []);
 
-  const [appSettings, setAppSettings, settingsInit] = useFirestoreData('appData', 'settings', {
+  const [appSettings, setAppSettings, settingsInit, settingsSaveError] = useFirestoreData('appData', 'settings', {
     schoolName: '',
     teacherName: '',
     academicHeadName: '',
@@ -88,33 +88,38 @@ function App() {
   });
 
   const isDataLoaded = classesInit && studentsInit && attInit && scInit && scoresInit && attrInit && litInit && compInit && indInit && settingsInit && lpInit && spInit && rwInit;
+  const hasSaveError = [
+    classesSaveError,
+    studentsSaveError,
+    attendanceSaveError,
+    scoreColumnsSaveError,
+    scoresSaveError,
+    attributesSaveError,
+    literacySaveError,
+    competenciesSaveError,
+    indicatorsSaveError,
+    lessonPlansSaveError,
+    studentPointsSaveError,
+    rewardsSaveError,
+    settingsSaveError
+  ].some(Boolean);
 
 
-
-  if (!isDataLoaded) {
-    return (
-      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', height: '100vh', backgroundColor: 'var(--bg-secondary)', color: 'var(--primary-color)' }}>
-        <div style={{ animation: 'spin 1s linear infinite', border: '4px solid var(--primary-light)', borderTop: '4px solid var(--primary-color)', borderRadius: '50%', width: '48px', height: '48px', marginBottom: '1rem' }} />
-        <h2 style={{ fontFamily: 'var(--font-heading)' }}>กำลังซิงค์ฐานข้อมูล Firebase...</h2>
-        <style>{`@keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }`}</style>
-      </div>
-    );
-  }
 
   return (
     <Router>
       <div className="app-container" style={{ position: 'relative', zIndex: 0 }}>
         
         {/* Animated Wave Canvas Background */}
-        <div style={{ position: 'fixed', inset: 0, zIndex: -10, opacity: 0.18 }}>
+        <div style={{ position: 'fixed', inset: 0, zIndex: -10, opacity: 0.07 }}>
           <HeroWave />
         </div>
 
         {/* Floating Top Header */}
-        <div className="no-print" style={{ position: 'fixed', top: '1.5rem', left: '1.5rem', right: '1.5rem', zIndex: 40, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', pointerEvents: 'none' }}>
+        <div className="top-header no-print" style={{ position: 'fixed', top: '1.5rem', left: '1.5rem', right: '1.5rem', zIndex: 40, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', pointerEvents: 'none' }}>
           
           {/* App Title (Left) */}
-          <div style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', background: 'rgba(24, 24, 27, 0.7)', backdropFilter: 'blur(16px)', padding: '0.5rem 1rem 0.5rem 0.5rem', borderRadius: 'var(--radius-full)', border: '1px solid rgba(255,255,255,0.05)', boxShadow: 'var(--shadow-3d-outset)', pointerEvents: 'auto' }}>
+          <div className="top-brand" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', background: 'rgba(24, 24, 27, 0.7)', backdropFilter: 'blur(16px)', padding: '0.5rem 1rem 0.5rem 0.5rem', borderRadius: 'var(--radius-full)', border: '1px solid rgba(255,255,255,0.05)', boxShadow: 'var(--shadow-3d-outset)', pointerEvents: 'auto' }}>
             <div style={{ backgroundColor: 'var(--primary-light)', padding: '0.4rem', borderRadius: 'var(--radius-full)', color: 'var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
               <GraduationCap size={20} />
             </div>
@@ -122,9 +127,9 @@ function App() {
           </div>
 
           {/* Controls (Right) */}
-          <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', pointerEvents: 'auto' }}>
+          <div className="top-controls" style={{ display: 'flex', gap: '1rem', alignItems: 'center', pointerEvents: 'auto' }}>
             {classes && classes.length > 0 && (
-              <div style={{ background: 'rgba(24, 24, 27, 0.7)', backdropFilter: 'blur(16px)', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', border: '1px solid rgba(255,255,255,0.05)', boxShadow: 'var(--shadow-3d-outset)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div className="class-picker" style={{ background: 'rgba(24, 24, 27, 0.7)', backdropFilter: 'blur(16px)', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', border: '1px solid rgba(255,255,255,0.05)', boxShadow: 'var(--shadow-3d-outset)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                 <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>ห้องเรียน:</span>
                 <select 
                   style={{ background: 'transparent', color: 'var(--text-primary)', border: 'none', outline: 'none', fontFamily: 'var(--font-game)', fontWeight: 600, fontSize: '1rem', cursor: 'pointer' }}
@@ -153,43 +158,43 @@ function App() {
 
         {/* Floating Bottom Dock */}
         <nav className="floating-dock no-print">
-          <NavLink to="/" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`} end>
+          <NavLink to="/" aria-label="แดชบอร์ด" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`} end>
             <BarChart3 />
             <span className="dock-tooltip">แดชบอร์ด</span>
           </NavLink>
-          <NavLink to="/classes" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
+          <NavLink to="/classes" aria-label="จัดการวิชา" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
             <BookOpen />
             <span className="dock-tooltip">จัดการวิชา</span>
           </NavLink>
-          <NavLink to="/course-plan" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
+          <NavLink to="/course-plan" aria-label="โครงสร้างวิชา" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
             <ClipboardList />
             <span className="dock-tooltip">โครงสร้างวิชา</span>
           </NavLink>
-          <NavLink to="/students" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
+          <NavLink to="/students" aria-label="นักเรียน" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
             <Users />
             <span className="dock-tooltip">นักเรียน</span>
           </NavLink>
-          <NavLink to="/attendance" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
+          <NavLink to="/attendance" aria-label="เวลาเรียน" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
             <Calendar />
             <span className="dock-tooltip">เวลาเรียน</span>
           </NavLink>
-          <NavLink to="/grading" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
+          <NavLink to="/grading" aria-label="บันทึกคะแนน" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
             <Award />
             <span className="dock-tooltip">บันทึกคะแนน</span>
           </NavLink>
-          <NavLink to="/rewards" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
+          <NavLink to="/rewards" aria-label="ของรางวัล" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
             <Paintbrush />
             <span className="dock-tooltip">ของรางวัล</span>
           </NavLink>
-          <NavLink to="/assessments" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
+          <NavLink to="/assessments" aria-label="การประเมิน" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
             <Star />
             <span className="dock-tooltip">การประเมิน</span>
           </NavLink>
-          <NavLink to="/reports" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
+          <NavLink to="/reports" aria-label="รายงาน" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
             <FileText />
             <span className="dock-tooltip">รายงาน</span>
           </NavLink>
-          <NavLink to="/settings" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
+          <NavLink to="/settings" aria-label="ตั้งค่าระบบ" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
             <Settings />
             <span className="dock-tooltip">ตั้งค่าระบบ</span>
           </NavLink>
@@ -214,8 +219,14 @@ function App() {
 
         {/* Main Content */}
         <main className="main-content">
-          <Suspense fallback={<PageLoading />}>
-            <Routes>
+          {hasSaveError && (
+            <div className="save-error-banner" role="alert">
+              บันทึกข้อมูลไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ตหรือสิทธิ์ Firebase แล้วลองอีกครั้ง
+            </div>
+          )}
+          {isDataLoaded ? (
+            <Suspense fallback={<PageLoading />}>
+              <Routes>
               <Route path="/" element={<Dashboard classes={classes} students={students} activeClassId={activeClassId} setActiveClassId={setActiveClassId} attendance={attendance} scores={scores} scoreColumns={scoreColumns} indicators={indicators} />} />
               <Route path="/settings" element={<SettingsPage appSettings={appSettings} setAppSettings={setAppSettings} readOnly={readOnly} classes={classes} students={students} attendance={attendance} scores={scores} scoreColumns={scoreColumns} attributes={attributes} literacy={literacy} competencies={competencies} lessonPlans={lessonPlans} indicators={indicators} />} />
               <Route path="/classes" element={<Classes classes={classes} setClasses={setClasses} activeClassId={activeClassId} setActiveClassId={setActiveClassId} readOnly={readOnly} />} />
@@ -228,8 +239,12 @@ function App() {
               <Route path="/reports/:tab" element={<ReportsContainer appSettings={appSettings} activeClassId={activeClassId} classes={classes} students={students} attendance={attendance} scoreColumns={scoreColumns} scores={scores} attributes={attributes} literacy={literacy} competencies={competencies} indicators={indicators} readOnly={readOnly} />} />
               <Route path="/assessments" element={<AssessmentsContainer students={students} activeClassId={activeClassId} classes={classes} attributes={attributes} setAttributes={setAttributes} literacy={literacy} setLiteracy={setLiteracy} competencies={competencies} setCompetencies={setCompetencies} readOnly={readOnly} />} />
               <Route path="/rewards" element={<Rewards students={students} activeClassId={activeClassId} classes={classes} studentPoints={studentPoints} setStudentPoints={setStudentPoints} rewards={rewards} setRewards={setRewards} readOnly={readOnly} />} />
-            </Routes>
-          </Suspense>
+              <Route path="*" element={<Navigate to="/" replace />} />
+              </Routes>
+            </Suspense>
+          ) : (
+            <PageLoading />
+          )}
         </main>
       </div>
     </Router>

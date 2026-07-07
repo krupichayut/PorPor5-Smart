@@ -1,7 +1,41 @@
 import { BarChart3, Users, Calendar, FileWarning, TrendingUp, ChevronRight, BookOpen, CheckCircle } from 'lucide-react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
+import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell, Legend, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
 import { calculateMissingWork, getClassScoreContext, getGradeSummaryData } from '../utils/scoring';
+
+function ChartFrame({ children, style }) {
+  const frameRef = useRef(null);
+  const [size, setSize] = useState({ width: 0, height: 0 });
+
+  useEffect(() => {
+    const element = frameRef.current;
+    if (!element) return undefined;
+
+    const updateSize = () => {
+      const rect = element.getBoundingClientRect();
+      setSize({
+        width: Math.floor(rect.width),
+        height: Math.floor(rect.height)
+      });
+    };
+
+    updateSize();
+    const observer = new ResizeObserver(updateSize);
+    observer.observe(element);
+    return () => observer.disconnect();
+  }, []);
+
+  return (
+    <div ref={frameRef} style={{ width: '100%', minWidth: 0, ...style }}>
+      {size.width > 0 && size.height > 0 ? (typeof children === 'function' ? children(size) : children) : (
+        <div style={{ display: 'flex', height: '100%', minHeight: 180, alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
+          กำลังเตรียมกราฟ...
+        </div>
+      )}
+    </div>
+  );
+}
 
 export default function Dashboard({ classes, students, activeClassId, setActiveClassId, attendance, scores, scoreColumns, indicators }) {
   const navigate = useNavigate();
@@ -107,10 +141,9 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
 
               <div className="bento-item col-span-7 row-span-2">
                 <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', color: 'var(--text-primary)' }}>เปรียบเทียบอัตราเข้าเรียน</h3>
-                <div style={{ width: '100%', height: 300 }}>
-                  {classes.length > 0 ? (
-                    <ResponsiveContainer width="100%" height="100%">
-                      <AreaChart data={classes.map(cls => ({
+                <ChartFrame style={{ height: 300 }}>
+                  {({ width, height }) => classes.length > 0 ? (
+                      <AreaChart width={width} height={height} data={classes.map(cls => ({
                         name: cls.name,
                         อัตราเข้าเรียน: calculateAttendanceRate(attendance.filter(a => a.classId === cls.id))
                       }))}>
@@ -128,18 +161,16 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                         </defs>
                         <Area type="monotone" dataKey="อัตราเข้าเรียน" stroke="#00e5ff" strokeWidth={3} fillOpacity={1} fill="url(#colorAttendanceArea)" />
                       </AreaChart>
-                    </ResponsiveContainer>
                   ) : (
                     <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>ไม่มีข้อมูลห้องเรียน</div>
                   )}
-                </div>
+                </ChartFrame>
               </div>
               <div className="bento-item col-span-5 row-span-2">
                 <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', color: 'var(--text-primary)' }}>ภาพรวมผลการเรียน</h3>
-                <div style={{ width: '100%', height: 300 }}>
-                  {classes.length > 0 ? (
-                    <ResponsiveContainer width="100%" height="100%">
-                      <RadarChart cx="50%" cy="50%" outerRadius="75%" data={(() => {
+                <ChartFrame style={{ height: 300 }}>
+                  {({ width, height }) => classes.length > 0 ? (
+                      <RadarChart width={width} height={height} cx="50%" cy="50%" outerRadius="75%" data={(() => {
                         const totalSummary = { '4.0': 0, '3.5': 0, '3.0': 0, '2.5': 0, '2.0': 0, '1.5': 0, '1.0': 0, '0': 0 };
                         classes.forEach(cls => {
                           const clsStudents = students.filter(s => s.classId === cls.id);
@@ -166,11 +197,10 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                           formatter={(value) => [`${value} คน`, 'จำนวนนักเรียน']}
                         />
                       </RadarChart>
-                    </ResponsiveContainer>
                   ) : (
                     <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>ไม่มีข้อมูลคะแนน</div>
                   )}
-                </div>
+                </ChartFrame>
               </div>
             </div>
 
@@ -440,10 +470,9 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
           <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.125rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--success-color)' }}>
             <Calendar size={20} /> สัดส่วนการมาเรียนรวม
           </h3>
-          <div style={{ width: '100%', height: '100%', minHeight: 260, flex: 1 }}>
-            {classAttendance.filter(r => r.status !== 'holiday').length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
+          <ChartFrame style={{ height: '100%', minHeight: 260, flex: 1 }}>
+            {({ width, height }) => classAttendance.filter(r => r.status !== 'holiday').length > 0 ? (
+                <PieChart width={width} height={height}>
                   <Pie
                     data={[
                       { name: 'มาเรียน/สาย', value: classAttendance.filter(r => r.status === 'present' || r.status === 'late').length },
@@ -465,13 +494,12 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                   <Tooltip contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#fff' }} itemStyle={{ color: '#fff' }} />
                   <Legend verticalAlign="bottom" height={36} iconType="circle" />
                 </PieChart>
-              </ResponsiveContainer>
             ) : (
               <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
                 ไม่มีข้อมูลเช็คชื่อ
               </div>
             )}
-          </div>
+          </ChartFrame>
           <div style={{ textAlign: 'center', marginTop: '1rem' }}>
             <button className="btn btn-primary" onClick={() => navigate('/attendance')} style={{ width: '100%' }}>
               ดูรายละเอียดเวลาเรียน
@@ -483,10 +511,9 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
           <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.125rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--primary-color)' }}>
             <BarChart3 size={20} /> สรุปผลการเรียน (ตัดเกรดจำลอง)
           </h3>
-          <div style={{ width: '100%', height: 300 }}>
-            {classColumns.length > 0 ? (
-              <ResponsiveContainer width="100%" height="100%">
-                <RadarChart cx="50%" cy="50%" outerRadius="75%" data={getGradeSummaryData(classStudents, getClassScoreContext(activeClassId, classes, scoreColumns, indicators), scores)}>
+          <ChartFrame style={{ height: 300 }}>
+            {({ width, height }) => classColumns.length > 0 ? (
+                <RadarChart width={width} height={height} cx="50%" cy="50%" outerRadius="75%" data={getGradeSummaryData(classStudents, getClassScoreContext(activeClassId, classes, scoreColumns, indicators), scores)}>
                   <PolarGrid stroke="rgba(255,255,255,0.1)" />
                   <PolarAngleAxis dataKey="grade" tick={{ fill: 'var(--text-secondary)', fontSize: 12 }} />
                   <PolarRadiusAxis angle={30} domain={[0, 'auto']} tick={false} axisLine={false} />
@@ -496,13 +523,12 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                     formatter={(value) => [`${value} คน`, 'จำนวนนักเรียน']}
                   />
                 </RadarChart>
-              </ResponsiveContainer>
             ) : (
               <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
                 ไม่มีช่องคะแนนสำหรับประเมินผล
               </div>
             )}
-          </div>
+          </ChartFrame>
           <div style={{ textAlign: 'center', marginTop: '1rem' }}>
             <button className="btn btn-primary" onClick={() => navigate('/reports/grades')} style={{ width: '100%', maxWidth: '400px' }}>
               ดูสรุปผลการเรียนฉบับเต็ม (PicthClass)

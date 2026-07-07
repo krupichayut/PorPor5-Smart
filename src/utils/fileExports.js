@@ -34,10 +34,46 @@ export function downloadJson(filename, value) {
 }
 
 export function parseDelimitedText(text) {
-  const delimiter = text.includes('\t') ? '\t' : ',';
-  return text
-    .replace(/^\uFEFF/, '')
-    .split(/\r?\n/)
-    .filter(row => row.trim())
-    .map(row => row.split(delimiter).map(cell => cell.trim().replace(/^"|"$/g, '').replace(/""/g, '"')));
+  const source = text.replace(/^\uFEFF/, '');
+  const delimiter = source.includes('\t') ? '\t' : ',';
+  const rows = [];
+  let row = [];
+  let cell = '';
+  let inQuotes = false;
+
+  for (let i = 0; i < source.length; i++) {
+    const char = source[i];
+    const nextChar = source[i + 1];
+
+    if (char === '"') {
+      if (inQuotes && nextChar === '"') {
+        cell += '"';
+        i++;
+      } else {
+        inQuotes = !inQuotes;
+      }
+      continue;
+    }
+
+    if (char === delimiter && !inQuotes) {
+      row.push(cell.trim());
+      cell = '';
+      continue;
+    }
+
+    if ((char === '\n' || char === '\r') && !inQuotes) {
+      if (char === '\r' && nextChar === '\n') i++;
+      row.push(cell.trim());
+      if (row.some(value => value !== '')) rows.push(row);
+      row = [];
+      cell = '';
+      continue;
+    }
+
+    cell += char;
+  }
+
+  row.push(cell.trim());
+  if (row.some(value => value !== '')) rows.push(row);
+  return rows;
 }

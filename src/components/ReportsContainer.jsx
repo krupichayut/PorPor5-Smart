@@ -1,4 +1,4 @@
-import { useLocation, useNavigate, useParams } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate, useParams } from 'react-router-dom';
 import MonthlyReport from './MonthlyReport';
 import Grades from './Grades';
 import { FileText, Printer } from 'lucide-react';
@@ -7,11 +7,16 @@ export default function ReportsContainer(props) {
   const location = useLocation();
   const navigate = useNavigate();
   const { tab } = useParams();
+  const isKnownTab = !tab || tab === 'monthly' || tab === 'grades';
   const activeTab = tab === 'grades' || location.state?.activeTab === 'grades' ? 'grades' : 'monthly';
 
   const switchTab = (nextTab) => {
     navigate(nextTab === 'grades' ? '/reports/grades' : '/reports/monthly', { replace: true });
   };
+
+  if (!isKnownTab) {
+    return <Navigate to="/reports/monthly" replace />;
+  }
 
   return (
     <div className="animate-fade-in">

@@ -14,7 +14,7 @@ export default function MissingWork({ students, activeClassId, classes, scores, 
 
   const activeClass = classes.find(c => c.id === activeClassId);
   const classStudents = students.filter(s => s.classId === activeClassId).sort((a, b) => a.number - b.number);
-  const classScoreColumns = scoreColumns.filter(c => c.classId === activeClassId && c.type !== 'exam');
+  const classScoreColumns = scoreColumns.filter(c => c.classId === activeClassId && c.type === 'collected');
   const classUnits = indicators ? indicators.filter(i => i.classId === activeClassId) : [];
 
   // -- By Assignment View --
