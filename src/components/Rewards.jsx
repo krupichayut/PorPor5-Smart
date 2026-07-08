@@ -116,7 +116,7 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
 
   if (!activeClassId) {
     return (
-      <div className="animate-fade-in">
+      <div className="animate-fade-in rewards-studio">
         <div className="page-header">
           <div>
             <h2 className="page-title">สะสมแต้มและของรางวัล</h2>
@@ -132,7 +132,7 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
   }
 
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in rewards-studio">
       <div className="page-header">
         <div>
           <h2 className="page-title">สะสมแต้ม: {activeClass?.name}</h2>
@@ -145,7 +145,7 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
         )}
       </div>
 
-      <div className="tabs-container">
+      <div className="tabs-container studio-module-tabs">
         <button 
           className={`tab-btn ${activeTab === 'points' ? 'active' : ''}`}
           onClick={() => setActiveTab('points')}

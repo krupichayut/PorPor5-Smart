@@ -105,7 +105,7 @@ export default function MissingWork({ students, activeClassId, classes, scores, 
 
   if (!activeClassId) {
     return (
-      <div className="animate-fade-in">
+      <div className="animate-fade-in missing-work-studio">
         <div className="page-header">
           <div>
             <h2 className="page-title">ติดตามงานค้าง</h2>
@@ -121,7 +121,7 @@ export default function MissingWork({ students, activeClassId, classes, scores, 
   }
 
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in missing-work-studio">
       <div className="page-header">
         <div>
           <h2 className="page-title">ติดตามงานค้าง: {activeClass?.name}</h2>

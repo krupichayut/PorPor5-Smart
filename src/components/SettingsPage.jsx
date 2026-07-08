@@ -71,7 +71,7 @@ export default function SettingsPage({ appSettings, setAppSettings, readOnly, cl
   };
 
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in settings-studio">
       <div className="page-header">
         <div>
           <h2 className="page-title">ตั้งค่าข้อมูลโรงเรียน</h2>

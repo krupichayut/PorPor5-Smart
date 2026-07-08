@@ -7,8 +7,8 @@ export default function CoursePlanContainer(props) {
   const [activeTab, setActiveTab] = useState('indicators');
 
   return (
-    <div className="animate-fade-in">
-      <div className="tabs-container">
+    <div className="animate-fade-in curriculum-studio">
+      <div className="tabs-container studio-module-tabs">
         <button 
           className={`tab-btn ${activeTab === 'indicators' ? 'active' : ''}`}
           onClick={() => setActiveTab('indicators')}

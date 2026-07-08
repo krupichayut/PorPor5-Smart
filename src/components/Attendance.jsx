@@ -100,7 +100,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
 
   if (!activeClassId) {
     return (
-      <div className="animate-fade-in">
+      <div className="animate-fade-in attendance-studio">
         <div className="page-header">
           <div>
             <h2 className="page-title">เช็คเวลาเรียน</h2>
@@ -116,7 +116,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
   }
 
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in attendance-studio">
       <div className="page-header">
         <div>
           <h2 className="page-title">เช็คเวลาเรียน: {activeClass?.name}</h2>

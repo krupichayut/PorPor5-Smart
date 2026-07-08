@@ -8,8 +8,8 @@ export default function AssessmentsContainer(props) {
   const [activeTab, setActiveTab] = useState('attributes');
 
   return (
-    <div className="animate-fade-in">
-      <div className="tabs-container">
+    <div className="animate-fade-in assessment-studio">
+      <div className="tabs-container studio-module-tabs">
         <button 
           className={`tab-btn ${activeTab === 'attributes' ? 'active' : ''}`}
           onClick={() => setActiveTab('attributes')}
