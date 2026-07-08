@@ -101,8 +101,48 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
                 <p>ไม่มีห้องเรียนที่ตรงกับ "{searchTerm}"</p>
               </div>
             ) : (
-              <div className="table-container class-gallery-table">
-                <table className="table">
+              <>
+                <div className="class-mosaic-grid">
+                  {filteredClasses.map((c, index) => (
+                    <article
+                      className={`studio-class-card tone-${(index % 4) + 1} ${activeClassId === c.id ? 'is-active' : ''}`}
+                      key={`mosaic-${c.id}`}
+                    >
+                      <button
+                        type="button"
+                        className="studio-class-card-main"
+                        onClick={() => setActiveClassId(c.id)}
+                      >
+                        <span className="studio-card-kicker">Studio {String(index + 1).padStart(2, '0')}</span>
+                        <strong>{c.name}</strong>
+                        <span>{c.subject}</span>
+                      </button>
+                      <div className="studio-card-meta">
+                        <span>Mid {c.midtermWeight ?? 10}</span>
+                        <span>Final {c.finalWeight ?? 10}</span>
+                      </div>
+                      {activeClassId === c.id && (
+                        <div className="studio-card-status">
+                          <CheckCircle2 size={14} />
+                          Active class
+                        </div>
+                      )}
+                      {!readOnly && (
+                        <button
+                          type="button"
+                          className="studio-card-delete"
+                          onClick={() => handleDeleteClass(c.id)}
+                          aria-label="Delete class"
+                        >
+                          <Trash2 size={16} />
+                        </button>
+                      )}
+                    </article>
+                  ))}
+                </div>
+
+                <div className="table-container class-gallery-table">
+                  <table className="table">
               <thead>
                 <tr>
                   <th>ห้องเรียน / ชั้น</th>
@@ -153,8 +193,9 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
                   </tr>
                 ))}
               </tbody>
-            </table>
-          </div>
+                  </table>
+                </div>
+              </>
             )}
           </>
         )}

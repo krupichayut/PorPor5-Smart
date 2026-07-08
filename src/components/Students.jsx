@@ -246,6 +246,21 @@ export default function Students({ students, setStudents, activeClassId, classes
     );
   }
 
+  const rosterSummary = classStudents.reduce((summary, student) => {
+    const stats = getStudentStats(student.id);
+    const attended = stats.present + stats.late;
+    const recorded = stats.present + stats.absent + stats.late + stats.leave;
+    return {
+      missingWork: summary.missingWork + stats.missingWorkCount,
+      attended: summary.attended + attended,
+      recorded: summary.recorded + recorded
+    };
+  }, { missingWork: 0, attended: 0, recorded: 0 });
+  const attendanceRate = rosterSummary.recorded > 0
+    ? Math.round((rosterSummary.attended / rosterSummary.recorded) * 100)
+    : 0;
+  const rosterPreview = filteredStudents.slice(0, 6);
+
   return (
     <div className="animate-fade-in roster-board">
       <div className="page-header">
@@ -277,6 +292,46 @@ export default function Students({ students, setStudents, activeClassId, classes
           </div>
         )}
       </div>
+
+      <section className="roster-spotlight">
+        <div className="roster-hero-card">
+          <span className="studio-card-kicker">Active Roster</span>
+          <strong>{activeClass?.name}</strong>
+          <span>{activeClass?.subject}</span>
+        </div>
+        <div className="roster-stat-strip">
+          <div>
+            <Users size={18} />
+            <strong>{classStudents.length}</strong>
+            <span>Students</span>
+          </div>
+          <div>
+            <AlertCircle size={18} />
+            <strong>{rosterSummary.missingWork}</strong>
+            <span>Missing works</span>
+          </div>
+          <div>
+            <Calendar size={18} />
+            <strong>{attendanceRate}%</strong>
+            <span>Attendance</span>
+          </div>
+        </div>
+        <div className="roster-preview-rail">
+          {rosterPreview.map((student) => {
+            const firstChar = student.name.replace(/^(à¹€à¸”à¹‡à¸à¸Šà¸²à¸¢|à¹€à¸”à¹‡à¸à¸«à¸à¸´à¸‡|à¸”\.à¸Š\.|à¸”\.à¸\.)/i, '').trim().charAt(0) || student.name.charAt(0);
+            return (
+              <button
+                type="button"
+                key={`preview-${student.id}`}
+                onClick={() => setSelectedStudentProfile(student)}
+                title={student.name}
+              >
+                <span>{firstChar}</span>
+              </button>
+            );
+          })}
+        </div>
+      </section>
 
       <div className="card roster-shell">
         <div className="studio-list-toolbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
