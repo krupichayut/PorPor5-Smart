@@ -19,8 +19,8 @@ export default function ReportsContainer(props) {
   }
 
   return (
-    <div className="animate-fade-in">
-      <div className="tabs-container no-print">
+    <div className="animate-fade-in report-studio">
+      <div className="tabs-container report-tabs no-print">
         <button 
           className={`tab-btn ${activeTab === 'monthly' ? 'active' : ''}`}
           onClick={() => switchTab('monthly')}
@@ -35,7 +35,7 @@ export default function ReportsContainer(props) {
         </button>
       </div>
 
-      <div>
+      <div className="report-stage">
         {activeTab === 'monthly' && <MonthlyReport {...props} />}
         {activeTab === 'grades' && <Grades {...props} />}
       </div>

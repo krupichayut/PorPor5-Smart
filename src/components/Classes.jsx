@@ -49,7 +49,7 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
   };
 
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in class-gallery">
       <div className="page-header">
         <div>
           <h2 className="page-title">จัดการห้องเรียน</h2>
@@ -63,7 +63,7 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
         )}
       </div>
 
-      <div className="card">
+      <div className="card class-gallery-shell">
         {classes.length === 0 ? (
           <div className="empty-state">
             <BookOpen size={64} className="empty-state-icon" />
@@ -78,7 +78,7 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
           </div>
         ) : (
           <>
-            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+            <div className="studio-list-toolbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
               <div className="search-wrapper">
                 <Search size={18} className="search-icon" />
                 <input 
@@ -101,7 +101,7 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
                 <p>ไม่มีห้องเรียนที่ตรงกับ "{searchTerm}"</p>
               </div>
             ) : (
-              <div className="table-container">
+              <div className="table-container class-gallery-table">
                 <table className="table">
               <thead>
                 <tr>

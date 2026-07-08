@@ -1523,6 +1523,245 @@ body:has(.art-studio-os)::before {
   }
 }
 
+/* Art Learning Studio: module-specific experience */
+.art-studio-os .class-gallery,
+.art-studio-os .roster-board,
+.art-studio-os .report-studio {
+  display: grid;
+  gap: 1.1rem;
+}
+
+.art-studio-os .class-gallery .page-header,
+.art-studio-os .roster-board .page-header,
+.art-studio-os .report-studio .page-header,
+.art-studio-os .print-container .page-header {
+  min-height: 11rem;
+  border-radius: 26px;
+  color: #fffaf1;
+  background:
+    radial-gradient(circle at 84% 20%, rgba(255, 250, 241, 0.18), transparent 17rem),
+    linear-gradient(135deg, #17202a 0%, #26394e 54%, #0f9f95 100%) !important;
+}
+
+.art-studio-os .class-gallery .page-header::before,
+.art-studio-os .roster-board .page-header::before,
+.art-studio-os .report-studio .page-header::before,
+.art-studio-os .print-container .page-header::before {
+  width: 100%;
+  height: 5px;
+  inset: 0 0 auto 0;
+  background: var(--studio-wash);
+}
+
+.art-studio-os .class-gallery .page-title,
+.art-studio-os .class-gallery .page-subtitle,
+.art-studio-os .roster-board .page-title,
+.art-studio-os .roster-board .page-subtitle,
+.art-studio-os .report-studio .page-title,
+.art-studio-os .report-studio .page-subtitle,
+.art-studio-os .print-container .page-title,
+.art-studio-os .print-container .page-subtitle {
+  color: #fffaf1;
+}
+
+.art-studio-os .class-gallery-shell,
+.art-studio-os .roster-shell {
+  padding: 0;
+  border-radius: 24px;
+  overflow: hidden;
+  background:
+    linear-gradient(90deg, rgba(255, 255, 255, 0.9), rgba(255, 250, 241, 0.94) 58%, rgba(37, 99, 235, 0.06)),
+    #fffaf1 !important;
+}
+
+.art-studio-os .studio-list-toolbar {
+  margin: 0 !important;
+  padding: 1.1rem 1.25rem;
+  background:
+    linear-gradient(180deg, rgba(23, 32, 42, 0.94), rgba(23, 32, 42, 0.88));
+  border-bottom: 1px solid rgba(23, 32, 42, 0.12);
+}
+
+.art-studio-os .studio-list-toolbar .search-wrapper {
+  max-width: 28rem;
+}
+
+.art-studio-os .studio-list-toolbar .search-input {
+  min-height: 2.8rem;
+  background: rgba(255, 250, 241, 0.96);
+}
+
+.art-studio-os .studio-list-toolbar > div:last-child {
+  color: rgba(255, 250, 241, 0.75) !important;
+  font-weight: 700;
+}
+
+.art-studio-os .class-gallery-table,
+.art-studio-os .roster-table {
+  margin: 1.15rem;
+  width: calc(100% - 2.3rem);
+  border-radius: 20px;
+  box-shadow: none;
+}
+
+.art-studio-os .class-gallery-table table,
+.art-studio-os .roster-table table {
+  min-width: 760px;
+}
+
+.art-studio-os .class-gallery-table tbody tr,
+.art-studio-os .roster-table tbody tr {
+  position: relative;
+}
+
+.art-studio-os .class-gallery-table tbody tr td:first-child,
+.art-studio-os .roster-table tbody tr td:nth-child(3) {
+  font-size: 1rem;
+}
+
+.art-studio-os .class-gallery-table tbody tr:hover td,
+.art-studio-os .roster-table tbody tr:hover td {
+  background:
+    linear-gradient(90deg, rgba(37, 99, 235, 0.1), rgba(15, 159, 149, 0.05));
+}
+
+.art-studio-os .roster-table .avatar-circle {
+  width: 42px;
+  height: 42px;
+  margin-right: 0.85rem;
+  border: 3px solid rgba(255, 255, 255, 0.82);
+}
+
+.art-studio-os .report-studio {
+  grid-template-columns: minmax(12rem, 14rem) minmax(0, 1fr);
+  align-items: start;
+}
+
+.art-studio-os .report-tabs {
+  position: sticky;
+  top: 5.6rem;
+  width: 100%;
+  flex-direction: column;
+  gap: 0.55rem;
+  padding: 0.72rem;
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(23, 32, 42, 0.98), rgba(23, 32, 42, 0.92));
+  border: 1px solid rgba(23, 32, 42, 0.14);
+  box-shadow: 0 20px 42px rgba(23, 32, 42, 0.16);
+}
+
+.art-studio-os .report-tabs .tab-btn {
+  width: 100%;
+  min-height: 3.3rem;
+  justify-content: flex-start;
+  text-align: left;
+  color: rgba(255, 250, 241, 0.72);
+}
+
+.art-studio-os .report-tabs .tab-btn.active {
+  color: #fffaf1;
+  background:
+    linear-gradient(135deg, rgba(217, 144, 20, 0.95), rgba(224, 82, 109, 0.78));
+  border-color: rgba(255, 250, 241, 0.16);
+}
+
+.art-studio-os .report-stage {
+  min-width: 0;
+}
+
+.art-studio-os .print-container {
+  display: grid;
+  gap: 1rem;
+}
+
+.art-studio-os .print-container .card {
+  border-radius: 22px;
+}
+
+.art-studio-os .print-card {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.96), rgba(255, 250, 241, 0.98)),
+    #fffaf1 !important;
+}
+
+.art-studio-os .studio-dashboard .bento-grid:not(.studio-action-gallery) {
+  gap: 1rem;
+}
+
+.art-studio-os .studio-dashboard .bento-grid:not(.studio-action-gallery) > .bento-item {
+  border-radius: 20px;
+}
+
+.art-studio-os .studio-dashboard > div[style*="margin-top: 3rem"] {
+  margin-top: 1.1rem !important;
+  padding: 1rem;
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(23, 32, 42, 0.94), rgba(23, 32, 42, 0.86));
+  box-shadow: 0 20px 42px rgba(23, 32, 42, 0.14);
+}
+
+.art-studio-os .studio-dashboard > div[style*="margin-top: 3rem"] > h3 {
+  color: #fffaf1 !important;
+  padding: 0.25rem 0.35rem;
+}
+
+@media (min-width: 1181px) {
+  .art-studio-os .class-gallery .page-header,
+  .art-studio-os .roster-board .page-header {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto;
+  }
+
+  .art-studio-os .class-gallery-shell,
+  .art-studio-os .roster-shell {
+    min-height: calc(100vh - 18rem);
+  }
+}
+
+@media (max-width: 1180px) {
+  .art-studio-os .report-studio {
+    display: block;
+  }
+
+  .art-studio-os .report-tabs {
+    position: relative;
+    top: auto;
+    flex-direction: row;
+    margin-bottom: 1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .art-studio-os .class-gallery .page-header,
+  .art-studio-os .roster-board .page-header,
+  .art-studio-os .report-studio .page-header,
+  .art-studio-os .print-container .page-header {
+    min-height: 8rem;
+    border-radius: 18px;
+  }
+
+  .art-studio-os .studio-list-toolbar {
+    padding: 0.9rem;
+  }
+
+  .art-studio-os .class-gallery-table,
+  .art-studio-os .roster-table {
+    margin: 0.75rem;
+    width: calc(100% - 1.5rem);
+  }
+
+  .art-studio-os .report-tabs {
+    overflow-x: auto;
+  }
+
+  .art-studio-os .report-tabs .tab-btn {
+    flex: 1 0 auto;
+    white-space: nowrap;
+  }
+}
+
 @media print {
   .sidebar, .mobile-top-bar, .mobile-overlay, .no-print { display: none !important; }
   .main-content { padding: 0 !important; overflow: visible !important; }

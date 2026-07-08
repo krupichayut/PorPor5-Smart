@@ -230,7 +230,7 @@ export default function Students({ students, setStudents, activeClassId, classes
 
   if (!activeClassId) {
     return (
-      <div className="animate-fade-in">
+      <div className="animate-fade-in roster-board roster-empty">
         <div className="page-header">
           <div>
             <h2 className="page-title">จัดการนักเรียน</h2>
@@ -247,7 +247,7 @@ export default function Students({ students, setStudents, activeClassId, classes
   }
 
   return (
-    <div className="animate-fade-in">
+    <div className="animate-fade-in roster-board">
       <div className="page-header">
         <div>
           <h2 className="page-title">จัดการนักเรียน: {activeClass?.name}</h2>
@@ -278,8 +278,8 @@ export default function Students({ students, setStudents, activeClassId, classes
         )}
       </div>
 
-      <div className="card">
-        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
+      <div className="card roster-shell">
+        <div className="studio-list-toolbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
           <div className="search-wrapper">
             <Search size={18} className="search-icon" />
             <input 
@@ -314,7 +314,7 @@ export default function Students({ students, setStudents, activeClassId, classes
             <p>ไม่มีนักเรียนที่ตรงกับ "{searchTerm}" ลองค้นหาด้วยคำอื่นดูอีกครั้ง</p>
           </div>
         ) : (
-          <div className="table-container">
+          <div className="table-container roster-table">
             <table className="table">
               <thead>
                 <tr>
