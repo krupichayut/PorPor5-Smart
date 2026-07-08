@@ -104,11 +104,19 @@ function App() {
     settingsSaveError
   ].some(Boolean);
 
+  const activeClass = classes.find(c => c.id === activeClassId);
+  const activeClassStudents = students.filter(s => s.classId === activeClassId);
+  const activeClassScoreColumns = scoreColumns.filter(c => c.classId === activeClassId);
+  const activeClassAttendanceDates = new Set(
+    attendance
+      .filter(a => a.classId === activeClassId)
+      .map(a => a.date)
+  );
 
 
   return (
     <Router>
-      <div className="app-container art-studio-os" style={{ position: 'relative', zIndex: 0 }}>
+      <div className="app-container art-studio-os atelier-webapp" style={{ position: 'relative', zIndex: 0 }}>
         
         {/* Animated Wave Canvas Background */}
         <div style={{ position: 'fixed', inset: 0, zIndex: -10, opacity: 0.07 }}>
@@ -199,6 +207,39 @@ function App() {
             <span className="dock-tooltip">ตั้งค่าระบบ</span>
           </NavLink>
         </nav>
+
+        <aside className="studio-context-panel no-print" aria-label="Studio context">
+          <div className="studio-context-mark">
+            <span>PC</span>
+          </div>
+          <div className="studio-context-copy">
+            <span className="studio-context-kicker">Studio Desk</span>
+            <strong>{activeClass?.name || 'All Classes'}</strong>
+            <span>{activeClass?.subject || `${classes.length} classes in workspace`}</span>
+          </div>
+          <div className="studio-context-stats">
+            <div>
+              <Users size={16} />
+              <strong>{activeClass ? activeClassStudents.length : students.length}</strong>
+              <span>Roster</span>
+            </div>
+            <div>
+              <Award size={16} />
+              <strong>{activeClass ? activeClassScoreColumns.length : scoreColumns.length}</strong>
+              <span>Score fields</span>
+            </div>
+            <div>
+              <Calendar size={16} />
+              <strong>{activeClass ? activeClassAttendanceDates.size : classes.length}</strong>
+              <span>{activeClass ? 'Sessions' : 'Classes'}</span>
+            </div>
+          </div>
+          <div className="studio-context-links">
+            <NavLink to="/students">Roster</NavLink>
+            <NavLink to="/grading">Grades</NavLink>
+            <NavLink to="/reports">Reports</NavLink>
+          </div>
+        </aside>
 
         {isLoginModalOpen && (
           <div className="modal-overlay">

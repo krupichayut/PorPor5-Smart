@@ -2602,6 +2602,494 @@ body:has(.art-studio-os) {
   }
 }
 
+/* Atelier Webapp Direction: a custom art-teacher product, not a generic dashboard */
+body:has(.atelier-webapp) {
+  background:
+    linear-gradient(90deg, rgba(16, 19, 26, 0.052) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(16, 19, 26, 0.045) 1px, transparent 1px),
+    repeating-linear-gradient(135deg, transparent 0 18px, rgba(16, 19, 26, 0.022) 18px 19px),
+    linear-gradient(125deg, #f7f1e7 0%, #efe8dc 42%, #edf3ee 100%) !important;
+  background-size: 56px 56px, 56px 56px, auto, auto !important;
+}
+
+.atelier-webapp {
+  --atelier-ink: #111722;
+  --atelier-paper: #fffaf1;
+  --atelier-paper-deep: #f2eadc;
+  --atelier-blue: #1f4ed8;
+  --atelier-teal: #0f9f95;
+  --atelier-rose: #d94461;
+  --atelier-gold: #c98613;
+  --atelier-line: rgba(17, 23, 34, 0.13);
+  --atelier-shadow: 0 24px 70px rgba(17, 23, 34, 0.16);
+}
+
+.atelier-webapp::before {
+  background:
+    linear-gradient(180deg, rgba(17, 23, 34, 0.98), rgba(17, 23, 34, 0.86)),
+    repeating-linear-gradient(180deg, rgba(255, 250, 241, 0.06) 0 1px, transparent 1px 18px) !important;
+  clip-path: polygon(0 0, 86% 0, 100% 100%, 0 100%) !important;
+  width: 21.5rem !important;
+}
+
+.atelier-webapp .top-header {
+  top: 1rem !important;
+  left: 1rem !important;
+  right: 1rem !important;
+  align-items: flex-start !important;
+}
+
+@media (min-width: 1181px) {
+  .atelier-webapp .top-brand {
+    width: 16.5rem !important;
+    min-height: 6rem !important;
+    padding: 1.15rem 1.2rem !important;
+    border-radius: 0 28px 28px 28px !important;
+    background:
+      linear-gradient(145deg, rgba(255, 250, 241, 0.98), rgba(240, 231, 215, 0.93)) !important;
+    border: 1px solid rgba(255, 250, 241, 0.72) !important;
+    color: var(--atelier-ink) !important;
+    box-shadow: 0 24px 56px rgba(17, 23, 34, 0.2) !important;
+  }
+
+  .atelier-webapp .top-brand h1 {
+    color: var(--atelier-ink) !important;
+    font-size: 1.72rem !important;
+  }
+
+  .atelier-webapp .top-brand::before {
+    content: '';
+    position: absolute;
+    left: 1.15rem;
+    right: 1.15rem;
+    bottom: 0.82rem;
+    height: 6px;
+    border-radius: 99px;
+    background: linear-gradient(90deg, var(--atelier-blue), var(--atelier-teal), var(--atelier-gold), var(--atelier-rose));
+  }
+
+  .atelier-webapp .top-brand::after {
+    content: 'CLASSROOM ATELIER';
+    margin-top: 0.15rem;
+    color: rgba(17, 23, 34, 0.54);
+    font-size: 0.7rem;
+    font-weight: 950;
+    letter-spacing: 0.15em;
+  }
+
+  .atelier-webapp .floating-dock {
+    top: 8rem !important;
+    left: 1rem !important;
+    bottom: 1rem !important;
+    width: 16.5rem !important;
+    padding: 0.95rem !important;
+    border-radius: 28px 28px 0 28px !important;
+    background:
+      linear-gradient(180deg, rgba(255, 250, 241, 0.97), rgba(242, 234, 220, 0.93)) !important;
+    border: 1px solid rgba(255, 250, 241, 0.72) !important;
+    box-shadow: 0 30px 70px rgba(17, 23, 34, 0.22) !important;
+  }
+
+  .atelier-webapp .floating-dock::before {
+    content: 'WORKBENCH';
+    padding: 0.2rem 0.75rem 0.72rem;
+    color: rgba(17, 23, 34, 0.48);
+    font-size: 0.72rem;
+    font-weight: 950;
+    letter-spacing: 0.16em;
+  }
+
+  .atelier-webapp .dock-item {
+    min-height: 3.48rem;
+    padding: 0 0.9rem;
+    border-radius: 0 18px 18px 18px !important;
+    color: rgba(17, 23, 34, 0.72) !important;
+    background: transparent !important;
+  }
+
+  .atelier-webapp .dock-item svg {
+    width: 1.15rem;
+    height: 1.15rem;
+  }
+
+  .atelier-webapp .dock-item.active {
+    color: #fffaf1 !important;
+    background:
+      linear-gradient(135deg, var(--atelier-ink) 0%, var(--atelier-blue) 58%, var(--atelier-teal) 100%) !important;
+    box-shadow: 0 18px 34px rgba(31, 78, 216, 0.22);
+  }
+
+  .atelier-webapp .dock-item.active::after {
+    left: auto;
+    right: 0.65rem;
+    top: 0.72rem;
+    bottom: 0.72rem;
+    width: 3px;
+    height: auto;
+    background: #fffaf1;
+  }
+
+  .atelier-webapp .top-controls > *,
+  .atelier-webapp .class-picker {
+    min-height: 3.8rem !important;
+    border-radius: 18px 18px 18px 0 !important;
+    background: rgba(17, 23, 34, 0.96) !important;
+  }
+
+  .atelier-webapp .main-content {
+    position: relative;
+    max-width: none;
+    min-height: 100vh;
+    margin: 0 17.4rem 0 19.25rem !important;
+    padding: 7.6rem 1.4rem 2.8rem 0.25rem !important;
+  }
+
+  .atelier-webapp .main-content::before {
+    content: '';
+    position: fixed;
+    left: 18.55rem;
+    right: 16.75rem;
+    top: 6.78rem;
+    bottom: 1.1rem;
+    pointer-events: none;
+    border-radius: 34px;
+    border: 1px solid rgba(17, 23, 34, 0.08);
+    background:
+      linear-gradient(90deg, rgba(17, 23, 34, 0.045) 1px, transparent 1px),
+      linear-gradient(180deg, rgba(17, 23, 34, 0.038) 1px, transparent 1px),
+      rgba(255, 250, 241, 0.36);
+    background-size: 32px 32px;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.7);
+    z-index: -1;
+  }
+
+  .atelier-webapp .studio-context-panel {
+    position: fixed;
+    top: 7.6rem;
+    right: 1rem;
+    bottom: 1rem;
+    width: 15.2rem;
+    z-index: 35;
+    display: grid;
+    grid-template-rows: auto auto auto 1fr;
+    gap: 0.95rem;
+    padding: 1rem;
+    border-radius: 28px 0 28px 28px;
+    color: #fffaf1;
+    background:
+      linear-gradient(180deg, rgba(17, 23, 34, 0.98), rgba(17, 23, 34, 0.88)),
+      repeating-linear-gradient(135deg, rgba(255, 250, 241, 0.05) 0 1px, transparent 1px 14px);
+    border: 1px solid rgba(255, 250, 241, 0.16);
+    box-shadow: 0 30px 70px rgba(17, 23, 34, 0.22);
+  }
+}
+
+.studio-context-panel {
+  display: none;
+}
+
+.studio-context-mark {
+  width: 4.2rem;
+  height: 4.2rem;
+  display: grid;
+  place-items: center;
+  border-radius: 1.4rem 1.4rem 1.4rem 0;
+  background:
+    conic-gradient(from 160deg, var(--atelier-blue), var(--atelier-teal), var(--atelier-gold), var(--atelier-rose), var(--atelier-blue));
+  box-shadow: inset 0 0 0 8px rgba(255, 250, 241, 0.1);
+}
+
+.studio-context-mark span {
+  width: 2.6rem;
+  height: 2.6rem;
+  display: grid;
+  place-items: center;
+  border-radius: 0.85rem;
+  color: var(--atelier-ink);
+  background: #fffaf1;
+  font-weight: 950;
+}
+
+.studio-context-copy {
+  display: grid;
+  gap: 0.15rem;
+}
+
+.studio-context-kicker {
+  color: rgba(255, 250, 241, 0.58);
+  font-size: 0.72rem;
+  font-weight: 950;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.studio-context-copy strong {
+  color: #fffaf1;
+  font-size: 1.55rem;
+  line-height: 1.05;
+}
+
+.studio-context-copy > span:last-child {
+  color: rgba(255, 250, 241, 0.66);
+  font-size: 0.84rem;
+  font-weight: 750;
+}
+
+.studio-context-stats {
+  display: grid;
+  gap: 0.62rem;
+}
+
+.studio-context-stats > div {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  align-items: center;
+  gap: 0.35rem 0.65rem;
+  padding: 0.72rem;
+  border-radius: 16px;
+  background: rgba(255, 250, 241, 0.075);
+  border: 1px solid rgba(255, 250, 241, 0.08);
+}
+
+.studio-context-stats svg {
+  color: #8dd7ff;
+}
+
+.studio-context-stats strong {
+  color: #fffaf1;
+  font-size: 1.3rem;
+  line-height: 1;
+}
+
+.studio-context-stats span {
+  grid-column: 2;
+  color: rgba(255, 250, 241, 0.56);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.09em;
+  text-transform: uppercase;
+}
+
+.studio-context-links {
+  align-self: end;
+  display: grid;
+  gap: 0.5rem;
+}
+
+.studio-context-links a {
+  min-height: 2.55rem;
+  display: flex;
+  align-items: center;
+  padding: 0 0.75rem;
+  border-radius: 14px;
+  color: rgba(255, 250, 241, 0.74);
+  text-decoration: none;
+  font-size: 0.82rem;
+  font-weight: 850;
+  background: rgba(255, 250, 241, 0.07);
+  border: 1px solid rgba(255, 250, 241, 0.08);
+}
+
+.studio-context-links a:hover,
+.studio-context-links a.active {
+  color: #fffaf1;
+  background: rgba(255, 250, 241, 0.14);
+}
+
+.atelier-webapp .page-header {
+  min-height: 15rem !important;
+  align-items: flex-end;
+  padding: 2rem 2.15rem !important;
+  border: 0 !important;
+  border-radius: 34px 34px 34px 0 !important;
+  background:
+    linear-gradient(90deg, rgba(255, 250, 241, 0.11) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 250, 241, 0.08) 1px, transparent 1px),
+    linear-gradient(135deg, var(--atelier-ink) 0%, #1d2b3b 42%, var(--atelier-blue) 70%, var(--atelier-teal) 100%) !important;
+  background-size: 36px 36px, 36px 36px, auto !important;
+  color: #fffaf1;
+  box-shadow: 0 34px 90px rgba(17, 23, 34, 0.24);
+}
+
+.atelier-webapp .page-header::before {
+  width: auto !important;
+  height: 8px !important;
+  inset: 0 0 auto 0 !important;
+  background: linear-gradient(90deg, var(--atelier-blue), var(--atelier-teal), var(--atelier-gold), var(--atelier-rose)) !important;
+}
+
+.atelier-webapp .page-header::after {
+  width: clamp(9rem, 18vw, 16rem) !important;
+  height: clamp(9rem, 18vw, 16rem) !important;
+  right: 2rem !important;
+  top: 50% !important;
+  bottom: auto !important;
+  transform: translateY(-50%) rotate(-10deg) !important;
+  border-radius: 2.2rem 2.2rem 2.2rem 0 !important;
+  background:
+    linear-gradient(135deg, rgba(255, 250, 241, 0.18), rgba(255, 250, 241, 0.03)),
+    repeating-linear-gradient(45deg, rgba(255, 250, 241, 0.13) 0 1px, transparent 1px 13px) !important;
+}
+
+.atelier-webapp .page-title {
+  color: #fffaf1 !important;
+  font-size: clamp(2.35rem, 1.32rem + 3vw, 4.8rem) !important;
+  line-height: 0.98 !important;
+  max-width: 54rem;
+}
+
+.atelier-webapp .page-subtitle {
+  color: rgba(255, 250, 241, 0.76) !important;
+  max-width: 48rem;
+  font-size: 1.02rem;
+}
+
+.atelier-webapp .card,
+.atelier-webapp .bento-item,
+.atelier-webapp .empty-state {
+  border-radius: 26px 26px 26px 0 !important;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(255, 250, 241, 0.93)) !important;
+  border: 1px solid rgba(17, 23, 34, 0.105) !important;
+  box-shadow:
+    0 1px 0 rgba(255, 255, 255, 0.82) inset,
+    var(--atelier-shadow) !important;
+}
+
+.atelier-webapp .card::before,
+.atelier-webapp .bento-item::before {
+  height: 0 !important;
+}
+
+.atelier-webapp .card::after,
+.atelier-webapp .bento-item::after {
+  content: '';
+  position: absolute;
+  left: 1rem;
+  top: 0;
+  width: 4.6rem;
+  height: 0.42rem;
+  border-radius: 0 0 99px 99px;
+  background: linear-gradient(90deg, var(--atelier-blue), var(--atelier-teal));
+  opacity: 0.72;
+  pointer-events: none;
+}
+
+.atelier-webapp .studio-action-gallery {
+  gap: 1.25rem !important;
+}
+
+.atelier-webapp .studio-action-gallery > .bento-item:nth-child(1),
+.atelier-webapp .studio-action-gallery > .bento-item:nth-child(2) {
+  min-height: 15rem !important;
+}
+
+.atelier-webapp .studio-action-gallery > .bento-item:nth-child(1) {
+  border-radius: 34px 34px 34px 0 !important;
+  background:
+    linear-gradient(135deg, rgba(17, 23, 34, 0.96), rgba(31, 78, 216, 0.86)) !important;
+  color: #fffaf1 !important;
+}
+
+.atelier-webapp .studio-action-gallery > .bento-item:nth-child(1) h3,
+.atelier-webapp .studio-action-gallery > .bento-item:nth-child(1) p {
+  color: #fffaf1 !important;
+}
+
+.atelier-webapp .table-container {
+  border-radius: 24px 24px 24px 0 !important;
+  background: var(--atelier-ink) !important;
+  border: 1px solid rgba(17, 23, 34, 0.18) !important;
+  box-shadow: 0 20px 52px rgba(17, 23, 34, 0.14);
+}
+
+.atelier-webapp .table th {
+  background: var(--atelier-ink) !important;
+  color: #fffaf1 !important;
+}
+
+.atelier-webapp .table td {
+  background: #fffaf1 !important;
+  color: var(--atelier-ink) !important;
+}
+
+.atelier-webapp .table tbody tr:nth-child(even) td {
+  background: #f8f1e6 !important;
+}
+
+.atelier-webapp .tabs-container,
+.atelier-webapp .studio-module-tabs,
+.atelier-webapp .gradebook-tabs,
+.atelier-webapp .report-tabs {
+  border-radius: 24px 24px 24px 0 !important;
+}
+
+.atelier-webapp .btn,
+.atelier-webapp .form-input,
+.atelier-webapp .form-select,
+.atelier-webapp .search-input {
+  border-radius: 14px 14px 14px 0 !important;
+}
+
+.atelier-webapp .class-mosaic-grid {
+  grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+}
+
+.atelier-webapp .studio-class-card {
+  min-height: 15rem;
+  border-radius: 28px 28px 28px 0;
+}
+
+.atelier-webapp .roster-spotlight {
+  grid-template-columns: minmax(16rem, 0.9fr) minmax(18rem, 1.35fr) minmax(13rem, 0.75fr);
+}
+
+.atelier-webapp .roster-hero-card,
+.atelier-webapp .roster-stat-strip,
+.atelier-webapp .roster-preview-rail {
+  border-radius: 28px 28px 28px 0;
+}
+
+@media (max-width: 1180px) {
+  .atelier-webapp .studio-context-panel {
+    display: none !important;
+  }
+
+  .atelier-webapp .main-content {
+    padding-top: 6rem !important;
+  }
+
+  .atelier-webapp .page-header {
+    min-height: 12rem !important;
+    border-radius: 24px 24px 24px 0 !important;
+  }
+
+  .atelier-webapp .page-header::after {
+    opacity: 0.42;
+  }
+}
+
+@media (max-width: 768px) {
+  .atelier-webapp .top-header {
+    top: 0.75rem !important;
+    left: 0.75rem !important;
+    right: 0.75rem !important;
+  }
+
+  .atelier-webapp .main-content {
+    padding: 5.8rem 0.8rem 7rem !important;
+  }
+
+  .atelier-webapp .page-header {
+    min-height: 10.5rem !important;
+    padding: 1.25rem !important;
+  }
+
+  .atelier-webapp .page-title {
+    font-size: clamp(2rem, 1.2rem + 5vw, 3rem) !important;
+  }
+}
+
 @media print {
   .sidebar, .mobile-top-bar, .mobile-overlay, .no-print { display: none !important; }
   .main-content { padding: 0 !important; overflow: visible !important; }
