@@ -1170,6 +1170,359 @@ body:has(.art-studio-os)::before {
   }
 }
 
+/* Studio Layout Refresh: structural redesign, not just a theme */
+@media (min-width: 1181px) {
+  .art-studio-os .top-header {
+    left: 1.15rem !important;
+    right: 1.5rem !important;
+    top: 1.15rem !important;
+    align-items: stretch !important;
+  }
+
+  .art-studio-os .top-brand {
+    width: 14.75rem;
+    min-height: 3.5rem;
+    border-radius: 20px !important;
+    justify-content: flex-start;
+  }
+
+  .art-studio-os .top-controls {
+    margin-left: auto;
+  }
+
+  .art-studio-os .top-controls > *,
+  .art-studio-os .class-picker {
+    min-height: 3.5rem;
+    border-radius: 16px !important;
+  }
+
+  .art-studio-os .floating-dock {
+    top: 5.45rem;
+    left: 1.15rem;
+    bottom: 1.15rem;
+    width: 14.75rem;
+    height: auto;
+    transform: none;
+    flex-direction: column;
+    align-items: stretch;
+    justify-content: flex-start;
+    gap: 0.28rem;
+    padding: 0.85rem;
+    border-radius: 24px;
+  }
+
+  .art-studio-os .dock-item {
+    width: 100%;
+    height: 3.08rem;
+    justify-content: flex-start;
+    gap: 0.78rem;
+    padding: 0 0.88rem;
+    min-width: 0;
+  }
+
+  .art-studio-os .dock-item svg {
+    width: 1.18rem;
+    height: 1.18rem;
+  }
+
+  .art-studio-os .dock-tooltip {
+    display: inline;
+    font-size: 0.86rem;
+    font-weight: 700;
+  }
+
+  .art-studio-os .dock-item.active::after {
+    left: auto;
+    right: 0.58rem;
+    top: 0.65rem;
+    bottom: 0.65rem;
+    width: 3px;
+    height: auto;
+  }
+
+  .art-studio-os .main-content {
+    max-width: none;
+    width: auto !important;
+    margin: 0 1.5rem 0 16.7rem !important;
+    padding: 5.55rem 1.5rem 2.5rem 0.35rem;
+  }
+}
+
+.art-studio-os .studio-dashboard {
+  display: grid;
+  gap: 1.15rem;
+}
+
+.art-studio-os .studio-dashboard .page-header {
+  min-height: 12.5rem;
+  align-items: flex-end;
+  padding: 1.65rem 1.75rem;
+  color: #fffaf1;
+  background:
+    linear-gradient(135deg, rgba(23, 32, 42, 0.98), rgba(27, 41, 58, 0.96) 48%, rgba(31, 78, 216, 0.82)),
+    linear-gradient(90deg, rgba(15, 159, 149, 0.32), transparent 42%),
+    #17202a;
+  border: 1px solid rgba(23, 32, 42, 0.18);
+  border-radius: 26px;
+  box-shadow: 0 24px 60px rgba(23, 32, 42, 0.2);
+}
+
+.art-studio-os .studio-dashboard .page-header::before {
+  width: 100%;
+  height: 5px;
+  inset: 0 0 auto 0;
+  background: var(--studio-wash);
+}
+
+.art-studio-os .studio-dashboard .page-header::after {
+  right: 2rem;
+  bottom: 1.55rem;
+  width: 22rem;
+  height: 7.8rem;
+  border: 1px solid rgba(255, 250, 241, 0.12);
+  border-radius: 999px 999px 18px 999px;
+  background:
+    linear-gradient(90deg, rgba(255, 250, 241, 0.12), transparent),
+    repeating-linear-gradient(90deg, rgba(255, 250, 241, 0.16) 0 1px, transparent 1px 18px);
+  opacity: 0.9;
+}
+
+.art-studio-os .studio-dashboard .page-title {
+  color: #fffaf1;
+  max-width: 54rem;
+  font-size: clamp(2rem, 1.35rem + 2.1vw, 3.35rem);
+  letter-spacing: 0;
+}
+
+.art-studio-os .studio-dashboard .page-subtitle {
+  color: rgba(255, 250, 241, 0.76);
+  max-width: 44rem;
+  font-size: 1.05rem;
+}
+
+.art-studio-os .studio-action-gallery {
+  grid-template-columns: repeat(12, minmax(0, 1fr));
+  grid-auto-rows: minmax(128px, auto);
+  gap: 1.15rem;
+}
+
+.art-studio-os .studio-action-gallery > .bento-item {
+  border-radius: 22px;
+  border-left-width: 0;
+  overflow: hidden;
+}
+
+.art-studio-os .studio-action-gallery > .bento-item::before {
+  height: 5px;
+}
+
+.art-studio-os .studio-action-gallery > .bento-item:nth-child(1) {
+  min-height: 11.5rem;
+  background:
+    linear-gradient(135deg, rgba(37, 99, 235, 0.16), rgba(255, 255, 255, 0.8)),
+    #fffaf1 !important;
+}
+
+.art-studio-os .studio-action-gallery > .bento-item:nth-child(3),
+.art-studio-os .studio-action-gallery > .bento-item:nth-child(4) {
+  background:
+    linear-gradient(135deg, rgba(224, 82, 109, 0.12), rgba(255, 250, 241, 0.88)),
+    #fffaf1 !important;
+}
+
+.art-studio-os .studio-class-dashboard .studio-action-gallery > .bento-item:first-child {
+  display: grid !important;
+  grid-template-columns: 1.2fr auto;
+  align-items: end !important;
+  min-height: 16rem;
+  padding: 2rem !important;
+  color: #fffaf1;
+  background:
+    radial-gradient(circle at 85% 20%, rgba(124, 92, 255, 0.38), transparent 20rem),
+    linear-gradient(135deg, #17202a 0%, #1f4ed8 58%, #0f9f95 100%) !important;
+  border-color: rgba(23, 32, 42, 0.2);
+  box-shadow: 0 28px 60px rgba(23, 32, 42, 0.22);
+}
+
+.art-studio-os .studio-class-dashboard .studio-action-gallery > .bento-item:first-child h3,
+.art-studio-os .studio-class-dashboard .studio-action-gallery > .bento-item:first-child p,
+.art-studio-os .studio-class-dashboard .studio-action-gallery > .bento-item:first-child h4 {
+  color: #fffaf1 !important;
+}
+
+.art-studio-os .studio-class-dashboard .studio-action-gallery > .bento-item:first-child::after {
+  content: '';
+  position: absolute;
+  right: 2rem;
+  top: 2rem;
+  width: 13rem;
+  height: 13rem;
+  border: 1px solid rgba(255, 250, 241, 0.2);
+  border-radius: 50%;
+  background:
+    linear-gradient(90deg, transparent 48%, rgba(255, 250, 241, 0.18) 49% 51%, transparent 52%),
+    linear-gradient(0deg, transparent 48%, rgba(255, 250, 241, 0.16) 49% 51%, transparent 52%);
+  opacity: 0.55;
+}
+
+.art-studio-os .gradebook-workspace {
+  display: grid;
+  grid-template-columns: minmax(11rem, 13rem) minmax(0, 1fr);
+  gap: 1.05rem;
+  align-items: start;
+}
+
+.art-studio-os .gradebook-tabs {
+  position: sticky;
+  top: 5.6rem;
+  width: 100%;
+  flex-direction: column;
+  gap: 0.48rem;
+  padding: 0.72rem;
+  border-radius: 22px;
+  background:
+    linear-gradient(180deg, rgba(23, 32, 42, 0.98), rgba(23, 32, 42, 0.92));
+  border: 1px solid rgba(23, 32, 42, 0.14);
+  box-shadow: 0 20px 42px rgba(23, 32, 42, 0.16);
+}
+
+.art-studio-os .gradebook-tabs .tab-btn {
+  width: 100%;
+  min-height: 3.15rem;
+  justify-content: flex-start;
+  color: rgba(255, 250, 241, 0.72);
+  text-align: left;
+}
+
+.art-studio-os .gradebook-tabs .tab-btn.active {
+  color: #fffaf1;
+  background:
+    linear-gradient(135deg, rgba(37, 99, 235, 0.95), rgba(15, 159, 149, 0.78));
+  border-color: rgba(255, 250, 241, 0.16);
+}
+
+.art-studio-os .gradebook-stage {
+  min-width: 0;
+}
+
+.art-studio-os .gradebook-canvas {
+  display: grid;
+  gap: 1rem;
+}
+
+.art-studio-os .gradebook-canvas .page-header {
+  min-height: 10rem;
+  border-radius: 24px;
+  color: #fffaf1;
+  background:
+    radial-gradient(circle at 88% 22%, rgba(217, 144, 20, 0.36), transparent 18rem),
+    linear-gradient(135deg, #17202a 0%, #26394e 50%, #1f4ed8 100%) !important;
+}
+
+.art-studio-os .gradebook-canvas .page-title,
+.art-studio-os .gradebook-canvas .page-subtitle {
+  color: #fffaf1;
+}
+
+.art-studio-os .gradebook-tools {
+  grid-template-columns: 0.74fr 1.26fr !important;
+  gap: 1rem !important;
+  margin-bottom: 0 !important;
+}
+
+.art-studio-os .gradebook-weight-card,
+.art-studio-os .gradebook-filter-card,
+.art-studio-os .gradebook-table-card {
+  border-radius: 22px;
+}
+
+.art-studio-os .gradebook-weight-card {
+  min-height: 10rem;
+  background:
+    linear-gradient(135deg, rgba(217, 144, 20, 0.16), rgba(255, 250, 241, 0.9)),
+    #fffaf1 !important;
+}
+
+.art-studio-os .gradebook-filter-card {
+  min-height: 10rem;
+  background:
+    linear-gradient(135deg, rgba(15, 159, 149, 0.11), rgba(255, 250, 241, 0.94)),
+    #fffaf1 !important;
+}
+
+.art-studio-os .gradebook-table-card {
+  padding: 1rem;
+  border-radius: 24px;
+  background:
+    linear-gradient(180deg, rgba(23, 32, 42, 0.96), rgba(23, 32, 42, 0.9)) !important;
+  border-color: rgba(23, 32, 42, 0.16);
+}
+
+.art-studio-os .gradebook-table-container {
+  border-radius: 18px;
+  max-height: calc(100vh - 17rem);
+  min-height: 28rem;
+  border-color: rgba(255, 250, 241, 0.16);
+}
+
+.art-studio-os .gradebook-table th {
+  color: #fffaf1;
+  background:
+    linear-gradient(180deg, #0f1720, #17202a) !important;
+}
+
+.art-studio-os .gradebook-table td {
+  background-color: rgba(255, 250, 241, 0.94);
+}
+
+.art-studio-os .gradebook-table tbody tr:nth-child(even) td {
+  background-color: #ffffff;
+}
+
+.art-studio-os .gradebook-table input[type="number"] {
+  min-height: 2.2rem;
+  border-radius: 10px !important;
+}
+
+@media (max-width: 1180px) {
+  .art-studio-os .gradebook-workspace {
+    display: block;
+  }
+
+  .art-studio-os .gradebook-tabs {
+    position: relative;
+    top: auto;
+    flex-direction: row;
+  }
+}
+
+@media (max-width: 768px) {
+  .art-studio-os .studio-dashboard .page-header,
+  .art-studio-os .gradebook-canvas .page-header {
+    min-height: 8rem;
+    border-radius: 18px;
+  }
+
+  .art-studio-os .studio-dashboard .page-header::after,
+  .art-studio-os .studio-class-dashboard .studio-action-gallery > .bento-item:first-child::after {
+    display: none;
+  }
+
+  .art-studio-os .studio-class-dashboard .studio-action-gallery > .bento-item:first-child {
+    grid-template-columns: 1fr;
+    min-height: 12rem;
+  }
+
+  .art-studio-os .gradebook-tools {
+    grid-template-columns: 1fr !important;
+  }
+
+  .art-studio-os .gradebook-table-container {
+    max-height: none;
+    min-height: 0;
+  }
+}
+
 @media print {
   .sidebar, .mobile-top-bar, .mobile-overlay, .no-print { display: none !important; }
   .main-content { padding: 0 !important; overflow: visible !important; }
