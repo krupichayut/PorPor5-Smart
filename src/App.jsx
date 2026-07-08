@@ -108,7 +108,7 @@ function App() {
 
   return (
     <Router>
-      <div className="app-container" style={{ position: 'relative', zIndex: 0 }}>
+      <div className="app-container art-studio-os" style={{ position: 'relative', zIndex: 0 }}>
         
         {/* Animated Wave Canvas Background */}
         <div style={{ position: 'fixed', inset: 0, zIndex: -10, opacity: 0.07 }}>
