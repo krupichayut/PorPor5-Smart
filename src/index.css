@@ -3090,6 +3090,480 @@ body:has(.atelier-webapp) {
   }
 }
 
+/* Studio Experience Layer: world-class app inspiration translated for daily art teaching */
+.atelier-webapp {
+  --studio-black: #10151f;
+  --studio-charcoal: #17202a;
+  --studio-paper: #fffaf1;
+  --studio-paper-2: #f7efe2;
+  --studio-paper-3: #edf4ef;
+  --studio-blueprint: #1f4ed8;
+  --studio-lagoon: #0f9f95;
+  --studio-vermillion: #d94461;
+  --studio-saffron: #c98613;
+  --studio-pencil: rgba(16, 21, 31, 0.14);
+  --studio-soft-shadow: 0 22px 60px rgba(16, 21, 31, 0.14);
+  --studio-deep-shadow: 0 36px 90px rgba(16, 21, 31, 0.22);
+}
+
+body:has(.atelier-webapp)::before {
+  opacity: 0.18;
+  background:
+    repeating-linear-gradient(0deg, rgba(16, 21, 31, 0.08) 0 1px, transparent 1px 18px),
+    repeating-linear-gradient(90deg, rgba(16, 21, 31, 0.06) 0 1px, transparent 1px 18px);
+}
+
+.atelier-webapp .main-content {
+  gap: 1.35rem;
+}
+
+.studio-command-strip {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(18rem, 1.2fr) minmax(15rem, 0.72fr) minmax(18rem, 1fr);
+  gap: 1rem;
+  align-items: stretch;
+  min-height: 7.2rem;
+  padding: 0.72rem;
+  border-radius: 32px 32px 32px 0;
+  color: var(--studio-paper);
+  background:
+    linear-gradient(90deg, rgba(255, 250, 241, 0.075) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 250, 241, 0.06) 1px, transparent 1px),
+    linear-gradient(135deg, var(--studio-black), #1d2b3b 46%, #173b57);
+  background-size: 28px 28px, 28px 28px, auto;
+  border: 1px solid rgba(255, 250, 241, 0.16);
+  box-shadow: var(--studio-deep-shadow);
+  overflow: hidden;
+}
+
+.studio-command-strip::before {
+  content: '';
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: 0;
+  height: 7px;
+  background: linear-gradient(90deg, var(--studio-blueprint), var(--studio-lagoon), var(--studio-saffron), var(--studio-vermillion));
+}
+
+.studio-command-strip::after {
+  content: '';
+  position: absolute;
+  right: 1rem;
+  bottom: 1rem;
+  width: 8rem;
+  height: 8rem;
+  border: 1px solid rgba(255, 250, 241, 0.18);
+  border-radius: 28px 28px 28px 0;
+  transform: rotate(-8deg);
+  background:
+    repeating-linear-gradient(45deg, rgba(255, 250, 241, 0.12) 0 1px, transparent 1px 11px);
+  pointer-events: none;
+}
+
+.studio-command-copy,
+.studio-command-metrics,
+.studio-command-actions {
+  position: relative;
+  z-index: 1;
+}
+
+.studio-command-copy {
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 0.22rem;
+  padding: 1rem 1.1rem;
+}
+
+.studio-command-copy span {
+  color: rgba(255, 250, 241, 0.58);
+  font-size: 0.72rem;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.studio-command-copy strong {
+  color: var(--studio-paper);
+  font-size: 1.8rem;
+  line-height: 1.02;
+}
+
+.studio-command-copy p {
+  max-width: 38rem;
+  margin: 0.15rem 0 0;
+  color: rgba(255, 250, 241, 0.7);
+  font-size: 0.92rem;
+}
+
+.studio-command-metrics {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 0.58rem;
+}
+
+.studio-command-metrics > div {
+  display: grid;
+  align-content: center;
+  gap: 0.18rem;
+  min-height: 5.65rem;
+  padding: 0.82rem;
+  border-radius: 22px 22px 22px 0;
+  background: rgba(255, 250, 241, 0.1);
+  border: 1px solid rgba(255, 250, 241, 0.12);
+}
+
+.studio-command-metrics strong {
+  color: var(--studio-paper);
+  font-size: 1.55rem;
+  line-height: 1;
+}
+
+.studio-command-metrics span {
+  color: rgba(255, 250, 241, 0.58);
+  font-size: 0.72rem;
+  font-weight: 850;
+  text-transform: uppercase;
+}
+
+.studio-command-actions {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0.58rem;
+}
+
+.studio-command-actions a {
+  min-height: 2.6rem;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.6rem;
+  padding: 0.68rem 0.76rem;
+  border-radius: 16px 16px 16px 0;
+  color: rgba(255, 250, 241, 0.78);
+  text-decoration: none;
+  font-weight: 850;
+  background: rgba(255, 250, 241, 0.085);
+  border: 1px solid rgba(255, 250, 241, 0.1);
+  transition: transform var(--transition-fast), background var(--transition-fast), color var(--transition-fast);
+}
+
+.studio-command-actions a:hover,
+.studio-command-actions a.active {
+  color: var(--studio-paper);
+  background: rgba(255, 250, 241, 0.16);
+}
+
+.studio-command-actions a:active {
+  transform: translateY(1px);
+}
+
+@media (min-width: 1181px) {
+  .atelier-webapp .floating-dock {
+    counter-reset: studio-nav;
+  }
+
+  .atelier-webapp .dock-item {
+    position: relative;
+    justify-content: flex-start;
+    overflow: hidden;
+  }
+
+  .atelier-webapp .dock-item::before {
+    counter-increment: studio-nav;
+    content: '0' counter(studio-nav);
+    width: 1.8rem;
+    flex: 0 0 1.8rem;
+    color: rgba(17, 23, 34, 0.42);
+    font-size: 0.7rem;
+    font-weight: 950;
+  }
+
+  .atelier-webapp .dock-item.active::before {
+    color: rgba(255, 250, 241, 0.7);
+  }
+
+  .atelier-webapp .top-brand {
+    display: grid !important;
+    grid-template-columns: auto 1fr;
+    align-content: start !important;
+    row-gap: 0.2rem !important;
+  }
+
+  .atelier-webapp .top-brand h1 {
+    align-self: center;
+  }
+}
+
+.atelier-webapp .page-header {
+  isolation: isolate;
+}
+
+.atelier-webapp .page-header > div,
+.atelier-webapp .page-header > button,
+.atelier-webapp .page-header > div + div {
+  position: relative;
+  z-index: 2;
+}
+
+.atelier-webapp .page-header .btn-primary,
+.atelier-webapp .page-header .btn-secondary {
+  box-shadow: none;
+}
+
+.atelier-webapp .card,
+.atelier-webapp .bento-item {
+  color: var(--studio-charcoal);
+}
+
+.atelier-webapp .card h3,
+.atelier-webapp .card h4,
+.atelier-webapp .bento-item h3,
+.atelier-webapp .bento-item h4,
+.atelier-webapp .empty-state h3 {
+  color: var(--studio-charcoal) !important;
+}
+
+.atelier-webapp .card p,
+.atelier-webapp .bento-item p {
+  color: rgba(23, 32, 42, 0.64) !important;
+}
+
+.atelier-webapp .studio-action-gallery {
+  grid-auto-rows: minmax(9.5rem, auto);
+}
+
+.atelier-webapp .studio-action-gallery > .bento-item {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  min-height: 9.5rem;
+  padding: 1.15rem !important;
+  overflow: hidden;
+}
+
+.atelier-webapp .studio-action-gallery > .bento-item:nth-child(4n + 1)::after {
+  background: linear-gradient(90deg, var(--studio-blueprint), var(--studio-lagoon));
+}
+
+.atelier-webapp .studio-action-gallery > .bento-item:nth-child(4n + 2)::after {
+  background: linear-gradient(90deg, var(--studio-vermillion), var(--studio-saffron));
+}
+
+.atelier-webapp .studio-action-gallery > .bento-item:nth-child(4n + 3)::after {
+  background: linear-gradient(90deg, #6d5bd0, var(--studio-vermillion));
+}
+
+.atelier-webapp .studio-action-gallery > .bento-item:nth-child(4n + 4)::after {
+  background: linear-gradient(90deg, var(--studio-lagoon), #3f7f52);
+}
+
+.atelier-webapp .studio-action-gallery > .bento-item:nth-child(1) {
+  min-height: 16rem !important;
+  background:
+    linear-gradient(90deg, rgba(255, 250, 241, 0.08) 1px, transparent 1px),
+    linear-gradient(180deg, rgba(255, 250, 241, 0.06) 1px, transparent 1px),
+    linear-gradient(135deg, var(--studio-black) 0%, #18314f 56%, var(--studio-blueprint) 100%) !important;
+  background-size: 30px 30px, 30px 30px, auto !important;
+}
+
+.atelier-webapp .studio-action-gallery > .bento-item:nth-child(1)::after {
+  width: 8rem;
+  background: linear-gradient(90deg, var(--studio-lagoon), var(--studio-saffron), var(--studio-vermillion));
+}
+
+.atelier-webapp .studio-action-gallery > .bento-item:nth-child(1) * {
+  color: var(--studio-paper) !important;
+}
+
+.atelier-webapp .studio-data-board {
+  border-radius: 30px 30px 30px 0 !important;
+  background:
+    linear-gradient(145deg, rgba(255, 250, 241, 0.98), rgba(237, 244, 239, 0.94)) !important;
+}
+
+.atelier-webapp .studio-data-board > div:first-child {
+  border-radius: 29px 29px 0 0;
+  background:
+    linear-gradient(135deg, var(--studio-charcoal), #203348) !important;
+}
+
+.atelier-webapp .studio-data-board > div:first-child h3 {
+  color: var(--studio-paper) !important;
+}
+
+.atelier-webapp .studio-followup-zone {
+  padding: 1.1rem;
+  border-radius: 32px 32px 32px 0;
+  background:
+    repeating-linear-gradient(90deg, rgba(16, 21, 31, 0.045) 0 1px, transparent 1px 34px),
+    rgba(255, 250, 241, 0.32);
+  border: 1px solid rgba(16, 21, 31, 0.08);
+}
+
+.atelier-webapp .studio-followup-zone > h3 {
+  margin-left: 0.25rem !important;
+  padding: 0.15rem 0 0.75rem;
+  color: var(--studio-vermillion) !important;
+}
+
+.atelier-webapp .class-gallery-shell,
+.atelier-webapp .roster-shell {
+  padding: clamp(1rem, 2vw, 1.4rem) !important;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.98), rgba(237, 244, 239, 0.95)) !important;
+}
+
+.atelier-webapp .class-mosaic-grid {
+  display: grid;
+  gap: 1rem;
+  margin-bottom: 1rem;
+}
+
+.atelier-webapp .studio-class-card {
+  position: relative;
+  overflow: hidden;
+  box-shadow: var(--studio-soft-shadow);
+}
+
+.atelier-webapp .studio-class-card::before {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background:
+    repeating-linear-gradient(135deg, rgba(255, 250, 241, 0.12) 0 1px, transparent 1px 13px);
+  pointer-events: none;
+}
+
+.atelier-webapp .studio-class-card-main,
+.atelier-webapp .studio-class-card > * {
+  position: relative;
+  z-index: 1;
+}
+
+.atelier-webapp .roster-spotlight {
+  gap: 1rem;
+  margin-bottom: 1.2rem;
+}
+
+.atelier-webapp .roster-stat-strip > div,
+.atelier-webapp .roster-preview-rail button {
+  box-shadow: 0 12px 32px rgba(16, 21, 31, 0.1);
+}
+
+.atelier-webapp .gradebook-tabs,
+.atelier-webapp .report-tabs,
+.atelier-webapp .studio-module-tabs,
+.atelier-webapp .tabs-container {
+  width: fit-content;
+  max-width: 100%;
+  overflow-x: auto;
+  background:
+    linear-gradient(145deg, rgba(255, 255, 255, 0.96), rgba(247, 239, 226, 0.92)) !important;
+  border: 1px solid rgba(16, 21, 31, 0.1) !important;
+  box-shadow: var(--studio-soft-shadow) !important;
+}
+
+.atelier-webapp .tab-btn {
+  color: rgba(23, 32, 42, 0.68) !important;
+}
+
+.atelier-webapp .tab-btn.active {
+  color: var(--studio-paper) !important;
+  background:
+    linear-gradient(135deg, var(--studio-charcoal), var(--studio-blueprint) 62%, var(--studio-lagoon)) !important;
+}
+
+.atelier-webapp .table-container {
+  padding: 0.55rem;
+}
+
+.atelier-webapp .table {
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+.atelier-webapp .table th:first-child {
+  border-top-left-radius: 16px;
+}
+
+.atelier-webapp .table th:last-child {
+  border-top-right-radius: 16px;
+}
+
+.atelier-webapp .table td {
+  border-bottom: 1px solid rgba(16, 21, 31, 0.08) !important;
+}
+
+.atelier-webapp .table tbody tr:hover td {
+  background: #edf4ef !important;
+}
+
+.atelier-webapp .btn-primary {
+  background:
+    linear-gradient(135deg, var(--studio-charcoal), var(--studio-blueprint) 58%, var(--studio-lagoon)) !important;
+}
+
+.atelier-webapp .btn-secondary {
+  background: rgba(255, 250, 241, 0.82) !important;
+}
+
+.atelier-webapp .form-input,
+.atelier-webapp .form-select,
+.atelier-webapp .search-input,
+.atelier-webapp textarea.form-input {
+  background:
+    linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(255, 250, 241, 0.94)) !important;
+}
+
+@media (max-width: 1180px) {
+  .studio-command-strip {
+    grid-template-columns: 1fr;
+  }
+
+  .studio-command-actions {
+    grid-template-columns: repeat(4, minmax(8rem, 1fr));
+    overflow-x: auto;
+    padding-bottom: 0.1rem;
+  }
+}
+
+@media (max-width: 768px) {
+  .studio-command-strip {
+    min-height: 0;
+    padding: 0.7rem;
+    border-radius: 22px 22px 22px 0;
+  }
+
+  .studio-command-copy {
+    padding: 0.8rem;
+  }
+
+  .studio-command-copy strong {
+    font-size: 1.35rem;
+  }
+
+  .studio-command-metrics {
+    grid-template-columns: repeat(3, minmax(5.5rem, 1fr));
+    overflow-x: auto;
+  }
+
+  .studio-command-actions {
+    grid-template-columns: repeat(4, minmax(8rem, 1fr));
+  }
+
+  .studio-command-actions a {
+    justify-content: center;
+  }
+
+  .atelier-webapp .studio-action-gallery > .bento-item:nth-child(1),
+  .atelier-webapp .studio-action-gallery > .bento-item:nth-child(2) {
+    min-height: 10.5rem !important;
+  }
+}
+
 @media print {
   .sidebar, .mobile-top-bar, .mobile-overlay, .no-print { display: none !important; }
   .main-content { padding: 0 !important; overflow: visible !important; }

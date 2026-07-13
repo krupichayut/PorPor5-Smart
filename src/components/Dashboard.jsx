@@ -204,7 +204,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
               </div>
             </div>
 
-            <div className="bento-item col-span-12" style={{ padding: '0' }}>
+            <div className="bento-item col-span-12 studio-data-board" style={{ padding: '0' }}>
               <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--bg-tertiary)' }}>
                 <h3 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--text-primary)' }}>เปรียบเทียบสถิติแต่ละห้องเรียน</h3>
               </div>
@@ -258,7 +258,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
               </div>
             </div>
             
-            <div style={{ marginTop: '3rem' }}>
+            <div className="studio-followup-zone" style={{ marginTop: '3rem' }}>
               <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#f87171' }}>
                 <FileWarning size={24} /> งานค้างมากที่สุด (แยกตามห้อง)
               </h3>

@@ -260,6 +260,45 @@ function App() {
 
         {/* Main Content */}
         <main className="main-content">
+          <section className="studio-command-strip no-print" aria-label="Studio quick commands">
+            <div className="studio-command-copy">
+              <span>Art Teacher Studio OS</span>
+              <strong>{activeClass?.name || 'All-class workspace'}</strong>
+              <p>{activeClass?.subject || 'Daily class data, grading, attendance, and reports in one designed workbench.'}</p>
+            </div>
+            <div className="studio-command-metrics" aria-label="Workspace summary">
+              <div>
+                <strong>{classes.length}</strong>
+                <span>Classes</span>
+              </div>
+              <div>
+                <strong>{activeClass ? activeClassStudents.length : students.length}</strong>
+                <span>Students</span>
+              </div>
+              <div>
+                <strong>{activeClass ? activeClassScoreColumns.length : scoreColumns.length}</strong>
+                <span>Score fields</span>
+              </div>
+            </div>
+            <div className="studio-command-actions">
+              <NavLink to="/classes">
+                <BookOpen size={16} />
+                <span>Classes</span>
+              </NavLink>
+              <NavLink to="/students">
+                <Users size={16} />
+                <span>Roster</span>
+              </NavLink>
+              <NavLink to="/grading">
+                <Award size={16} />
+                <span>Gradebook</span>
+              </NavLink>
+              <NavLink to="/reports">
+                <FileText size={16} />
+                <span>Reports</span>
+              </NavLink>
+            </div>
+          </section>
           {hasSaveError && (
             <div className="save-error-banner" role="alert">
               บันทึกข้อมูลไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ตหรือสิทธิ์ Firebase แล้วลองอีกครั้ง
