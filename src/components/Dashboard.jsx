@@ -151,7 +151,8 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                         <XAxis dataKey="name" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 12 }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={false} />
                         <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 12 }} axisLine={false} tickLine={false} domain={[0, 100]} />
                         <Tooltip 
-                          contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', boxShadow: 'var(--shadow-md)', color: '#fff' }} 
+                          contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-3d-outset)', color: 'var(--text-primary)' }} 
+                          itemStyle={{ color: 'var(--text-primary)' }}
                         />
                         <defs>
                           <linearGradient id="colorAttendanceArea" x1="0" y1="0" x2="0" y2="1">
@@ -193,7 +194,8 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                         <PolarRadiusAxis angle={30} domain={[0, 'auto']} tick={false} axisLine={false} />
                         <Radar name="นักเรียน" dataKey="value" stroke="#ff3366" fill="#ff3366" fillOpacity={0.4} />
                         <Tooltip 
-                          contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', boxShadow: 'var(--shadow-md)', color: '#fff' }} 
+                          contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-3d-outset)', color: 'var(--text-primary)' }} 
+                          itemStyle={{ color: 'var(--text-primary)' }}
                           formatter={(value) => [`${value} คน`, 'จำนวนนักเรียน']}
                         />
                       </RadarChart>
@@ -491,7 +493,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                     <Cell fill="#fbbf24" />
                     <Cell fill="#f87171" />
                   </Pie>
-                  <Tooltip contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', color: '#fff' }} itemStyle={{ color: '#fff' }} />
+                  <Tooltip contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', color: 'var(--text-primary)' }} itemStyle={{ color: 'var(--text-primary)' }} />
                   <Legend verticalAlign="bottom" height={36} iconType="circle" />
                 </PieChart>
             ) : (
@@ -519,7 +521,8 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                   <PolarRadiusAxis angle={30} domain={[0, 'auto']} tick={false} axisLine={false} />
                   <Radar name="นักเรียน" dataKey="value" stroke="#34d399" fill="#34d399" fillOpacity={0.4} />
                   <Tooltip 
-                    contentStyle={{ backgroundColor: 'rgba(15, 23, 42, 0.9)', border: '1px solid rgba(255,255,255,0.1)', borderRadius: '12px', boxShadow: 'var(--shadow-md)', color: '#fff' }} 
+                    contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-3d-outset)', color: 'var(--text-primary)' }} 
+                    itemStyle={{ color: 'var(--text-primary)' }}
                     formatter={(value) => [`${value} คน`, 'จำนวนนักเรียน']}
                   />
                 </RadarChart>

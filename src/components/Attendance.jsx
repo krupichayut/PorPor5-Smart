@@ -107,9 +107,10 @@ export default function Attendance({ students, activeClassId, classes, attendanc
             <p className="page-subtitle">บันทึกการ มา ขาด ลา สาย</p>
           </div>
         </div>
-        <div className="card" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
-          <Calendar size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-          <p>กรุณาเลือกห้องเรียนจากเมนู <strong>ห้องเรียน / วิชา</strong> ก่อน</p>
+        <div className="empty-state">
+          <Calendar size={48} />
+          <h3>ไม่มีการเลือกห้องเรียน</h3>
+          <p>กรุณาเลือกห้องเรียนจากเมนู <strong>ห้องเรียน / วิชา</strong> ด้านบนก่อน</p>
         </div>
       </div>
     );
@@ -135,13 +136,16 @@ export default function Attendance({ students, activeClassId, classes, attendanc
 
       <div className="card">
         {classStudents.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
+          <div className="empty-state">
+            <Users size={48} />
+            <h3>ไม่พบข้อมูลนักเรียน</h3>
             <p>ยังไม่มีข้อมูลนักเรียนในห้องนี้ กรุณาเพิ่มนักเรียนก่อนทำการเช็คชื่อ</p>
           </div>
         ) : dates.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
-            <Calendar size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-            <p>ยังไม่มีการเช็คชื่อ{!readOnly && ' กรุณากดปุ่ม "เพิ่มวันเช็คชื่อ"'}</p>
+          <div className="empty-state">
+            <Calendar size={48} />
+            <h3>ยังไม่มีประวัติการเช็คชื่อ</h3>
+            <p>ยังไม่มีการเช็คชื่อ{!readOnly && ' กรุณากดปุ่ม "เพิ่มวันเช็คชื่อ" เพื่อเริ่มต้น'}</p>
           </div>
         ) : (
           <div className="table-container">

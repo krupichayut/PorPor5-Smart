@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { Award, Plus, Trash2, Calculator, Edit2, Filter } from 'lucide-react';
+import { Award, Plus, Trash2, Calculator, Edit2, Filter, Users } from 'lucide-react';
 
 export default function Scores({ students, activeClassId, classes, scores, setScores, scoreColumns, setScoreColumns, indicators, readOnly, studentPoints, setStudentPoints }) {
   const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
@@ -227,9 +227,10 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
             <p className="page-subtitle">บันทึกคะแนนตามโครงสร้างหน่วยการเรียนรู้</p>
           </div>
         </div>
-        <div className="card" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
-          <Award size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-          <p>กรุณาเลือกห้องเรียนจากเมนู <strong>ห้องเรียน / วิชา</strong> ก่อน</p>
+        <div className="empty-state">
+          <Award size={48} />
+          <h3>ไม่มีการเลือกห้องเรียน</h3>
+          <p>กรุณาเลือกห้องเรียนจากเมนู <strong>ห้องเรียน / วิชา</strong> ด้านบนก่อน</p>
         </div>
       </div>
     );
@@ -302,8 +303,10 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
 
       <div className="card gradebook-table-card">
         {classStudents.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
-            <p>ยังไม่มีข้อมูลนักเรียนในห้องนี้ กรุณาเพิ่มนักเรียนก่อน</p>
+          <div className="empty-state">
+            <Users size={48} />
+            <h3>ไม่พบข้อมูลนักเรียน</h3>
+            <p>ยังไม่มีข้อมูลนักเรียนในห้องนี้ กรุณาเพิ่มนักเรียนก่อนทำการบันทึกคะแนน</p>
           </div>
         ) : (
           <>

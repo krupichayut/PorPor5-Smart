@@ -123,6 +123,15 @@ h1, h2, h3, h4, h5, h6, .page-title, .counter, .stats-number {
 /* Layout */
 .app-container { display: flex; flex-direction: column; min-height: 100vh; overflow: hidden; position: relative; }
 
+@keyframes pageFadeIn {
+  from { opacity: 0; transform: translateY(8px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+
+.page-transition {
+  animation: pageFadeIn 0.4s cubic-bezier(0.25, 0.1, 0.25, 1) forwards;
+}
+
 /* Floating Dock Navigation */
 .floating-dock {
   position: fixed; bottom: 1.25rem; left: 50%; transform: translateX(-50%);
