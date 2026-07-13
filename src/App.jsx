@@ -1,6 +1,6 @@
 import { lazy, Suspense, useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, Navigate } from 'react-router-dom';
-import { BookOpen, Users, Calendar, Award, BarChart3, Settings, GraduationCap, Star, FileText, Key, LogOut, ClipboardList, Paintbrush } from 'lucide-react';
+import { BookOpen, Users, Calendar, Award, BarChart3, Settings, Star, FileText, Key, LogOut, ClipboardList, Paintbrush } from 'lucide-react';
 import { auth } from './firebase';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import HeroWave from './components/DynamicWaveBackground';
@@ -116,7 +116,7 @@ function App() {
 
   return (
     <Router>
-      <div className="app-container art-studio-os atelier-webapp" style={{ position: 'relative', zIndex: 0 }}>
+      <div className="app-container art-studio-os atelier-webapp gallery-redesign" style={{ position: 'relative', zIndex: 0 }}>
         
         {/* Animated Wave Canvas Background */}
         <div style={{ position: 'fixed', inset: 0, zIndex: -10, opacity: 0.07 }}>
@@ -129,9 +129,9 @@ function App() {
           {/* App Title (Left) */}
           <div className="top-brand" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', background: 'rgba(24, 24, 27, 0.7)', backdropFilter: 'blur(16px)', padding: '0.5rem 1rem 0.5rem 0.5rem', borderRadius: 'var(--radius-full)', border: '1px solid rgba(255,255,255,0.05)', boxShadow: 'var(--shadow-3d-outset)', pointerEvents: 'auto' }}>
             <div style={{ backgroundColor: 'var(--primary-light)', padding: '0.4rem', borderRadius: 'var(--radius-full)', color: 'var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-              <GraduationCap size={20} />
+              <Paintbrush size={20} />
             </div>
-            <h1 style={{ margin: 0, fontSize: '1.25rem', fontFamily: 'var(--font-game)', fontWeight: 700, color: '#fff', letterSpacing: '1px', marginRight: '0.5rem' }}>PicthClass</h1>
+            <h1 style={{ margin: 0, fontSize: '1.25rem', fontFamily: 'var(--font-game)', fontWeight: 700, color: '#fff', letterSpacing: '1px', marginRight: '0.5rem' }}>PicthClass Studio</h1>
           </div>
 
           {/* Controls (Right) */}
@@ -262,9 +262,9 @@ function App() {
         <main className="main-content">
           <section className="studio-command-strip no-print" aria-label="Studio quick commands">
             <div className="studio-command-copy">
-              <span>Art Teacher Studio OS</span>
+              <span>Gallery Console</span>
               <strong>{activeClass?.name || 'All-class workspace'}</strong>
-              <p>{activeClass?.subject || 'Daily class data, grading, attendance, and reports in one designed workbench.'}</p>
+              <p>{activeClass?.subject || 'Designed for art-class routines: roster, attendance, grading, rewards, and print-ready reports.'}</p>
             </div>
             <div className="studio-command-metrics" aria-label="Workspace summary">
               <div>
