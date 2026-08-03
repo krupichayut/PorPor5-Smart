@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Calendar, Plus, Check, X, Clock, FileText, Trash2, Star } from 'lucide-react';
 
 export default function Attendance({ students, activeClassId, classes, attendance, setAttendance, readOnly }) {
@@ -12,6 +12,19 @@ export default function Attendance({ students, activeClassId, classes, attendanc
   
   // Filter attendance records for current class
   const classAttendance = attendance.filter(a => a.classId === activeClassId);
+
+  const attendanceStats = useMemo(() => {
+    const stats = {};
+    classStudents.forEach(s => {
+      stats[s.id] = { present: 0, leave: 0, absent: 0, late: 0, holiday: 0 };
+    });
+    classAttendance.forEach(a => {
+      if (stats[a.studentId] && stats[a.studentId][a.status] !== undefined) {
+        stats[a.studentId][a.status]++;
+      }
+    });
+    return stats;
+  }, [classAttendance, classStudents]);
   
   // Get unique dates
   const dates = [...new Set(classAttendance.map(a => a.date))].sort();
@@ -190,11 +203,8 @@ export default function Attendance({ students, activeClassId, classes, attendanc
               </thead>
               <tbody>
                 {classStudents.map((s, index) => {
-                  const presentCount = classAttendance.filter(a => a.studentId === s.id && a.status === 'present').length;
-                  const leaveCount = classAttendance.filter(a => a.studentId === s.id && a.status === 'leave').length;
-                  const absentCount = classAttendance.filter(a => a.studentId === s.id && a.status === 'absent').length;
-                  const lateCount = classAttendance.filter(a => a.studentId === s.id && a.status === 'late').length;
-                  const holidayCount = classAttendance.filter(a => a.studentId === s.id && a.status === 'holiday').length;
+                  const counts = attendanceStats[s.id] || { present: 0, leave: 0, absent: 0, late: 0, holiday: 0 };
+                  const { present: presentCount, leave: leaveCount, absent: absentCount, late: lateCount, holiday: holidayCount } = counts;
                   
                   const totalDays = Math.max(expectedHours, dates.length);
                   // In Thai schools, late and holidays are counted as present for the final attended count

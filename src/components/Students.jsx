@@ -318,7 +318,7 @@ export default function Students({ students, setStudents, activeClassId, classes
         </div>
         <div className="roster-preview-rail">
           {rosterPreview.map((student) => {
-            const firstChar = student.name.replace(/^(à¹€à¸”à¹‡à¸à¸Šà¸²à¸¢|à¹€à¸”à¹‡à¸à¸«à¸à¸´à¸‡|à¸”\.à¸Š\.|à¸”\.à¸\.)/i, '').trim().charAt(0) || student.name.charAt(0);
+            const firstChar = student.name.replace(/^(เด็กชาย|เด็กหญิง|ด\.ช\.|ด\.ญ\.)/i, '').trim().charAt(0) || student.name.charAt(0);
             return (
               <button
                 type="button"

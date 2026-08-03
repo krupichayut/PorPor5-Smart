@@ -1,5 +1,5 @@
 import { BarChart3, Users, Calendar, FileWarning, TrendingUp, ChevronRight, BookOpen, CheckCircle } from 'lucide-react';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useRef, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell, Legend, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
 import { calculateMissingWork, getClassScoreContext, getGradeSummaryData } from '../utils/scoring';
@@ -57,12 +57,34 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
     const overallAttRate = calculateAttendanceRate(attendance);
 
     // Overall Missing Work
-    let totalMissing = 0;
-    classes.forEach(cls => {
-      const clsStudents = students.filter(s => s.classId === cls.id);
-      const clsColumns = scoreColumns.filter(c => c.classId === cls.id);
-      totalMissing += calculateMissingWork(clsStudents, clsColumns, scores);
-    });
+    const totalMissing = useMemo(() => {
+      let missing = 0;
+      classes.forEach(cls => {
+        const clsStudents = students.filter(s => s.classId === cls.id);
+        const clsColumns = scoreColumns.filter(c => c.classId === cls.id);
+        missing += calculateMissingWork(clsStudents, clsColumns, scores);
+      });
+      return missing;
+    }, [classes, students, scoreColumns, scores]);
+
+    const radarChartData = useMemo(() => {
+      const totalSummary = { '4.0': 0, '3.5': 0, '3.0': 0, '2.5': 0, '2.0': 0, '1.5': 0, '1.0': 0, '0': 0 };
+      classes.forEach(cls => {
+        const clsStudents = students.filter(s => s.classId === cls.id);
+        const clsSummaryData = getGradeSummaryData(clsStudents, getClassScoreContext(cls.id, classes, scoreColumns, indicators), scores);
+        clsSummaryData.forEach(d => { totalSummary[d.grade] += d.value; });
+      });
+      return [
+        { grade: '4.0', value: totalSummary['4.0'] },
+        { grade: '3.5', value: totalSummary['3.5'] },
+        { grade: '3.0', value: totalSummary['3.0'] },
+        { grade: '2.5', value: totalSummary['2.5'] },
+        { grade: '2.0', value: totalSummary['2.0'] },
+        { grade: '1.5', value: totalSummary['1.5'] },
+        { grade: '1.0', value: totalSummary['1.0'] },
+        { grade: '0', value: totalSummary['0'] }
+      ];
+    }, [classes, students, scoreColumns, indicators, scores]);
 
     const handleSelectClass = (id) => {
       setActiveClassId(id);
@@ -160,7 +182,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                             <stop offset="95%" stopColor="#00e5ff" stopOpacity={0}/>
                           </linearGradient>
                         </defs>
-                        <Area type="monotone" dataKey="อัตราเข้าเรียน" stroke="#00e5ff" strokeWidth={3} fillOpacity={1} fill="url(#colorAttendanceArea)" />
+                        <Area type="monotone" dataKey="อัตราเข้าเรียน" stroke="var(--studio-teal)" strokeWidth={3} fillOpacity={1} fill="url(#colorAttendanceArea)" />
                       </AreaChart>
                   ) : (
                     <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>ไม่มีข้อมูลห้องเรียน</div>
@@ -171,28 +193,11 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                 <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', color: 'var(--text-primary)' }}>ภาพรวมผลการเรียน</h3>
                 <ChartFrame style={{ height: 300 }}>
                   {({ width, height }) => classes.length > 0 ? (
-                      <RadarChart width={width} height={height} cx="50%" cy="50%" outerRadius="75%" data={(() => {
-                        const totalSummary = { '4.0': 0, '3.5': 0, '3.0': 0, '2.5': 0, '2.0': 0, '1.5': 0, '1.0': 0, '0': 0 };
-                        classes.forEach(cls => {
-                          const clsStudents = students.filter(s => s.classId === cls.id);
-                          const clsSummaryData = getGradeSummaryData(clsStudents, getClassScoreContext(cls.id, classes, scoreColumns, indicators), scores);
-                          clsSummaryData.forEach(d => { totalSummary[d.grade] += d.value; });
-                        });
-                        return [
-                          { grade: '4.0', value: totalSummary['4.0'] },
-                          { grade: '3.5', value: totalSummary['3.5'] },
-                          { grade: '3.0', value: totalSummary['3.0'] },
-                          { grade: '2.5', value: totalSummary['2.5'] },
-                          { grade: '2.0', value: totalSummary['2.0'] },
-                          { grade: '1.5', value: totalSummary['1.5'] },
-                          { grade: '1.0', value: totalSummary['1.0'] },
-                          { grade: '0', value: totalSummary['0'] }
-                        ];
-                      })()}>
+                      <RadarChart width={width} height={height} cx="50%" cy="50%" outerRadius="75%" data={radarChartData}>
                         <PolarGrid stroke="rgba(255,255,255,0.1)" />
                         <PolarAngleAxis dataKey="grade" tick={{ fill: 'var(--text-secondary)', fontSize: 12 }} />
                         <PolarRadiusAxis angle={30} domain={[0, 'auto']} tick={false} axisLine={false} />
-                        <Radar name="นักเรียน" dataKey="value" stroke="#ff3366" fill="#ff3366" fillOpacity={0.4} />
+                        <Radar name="นักเรียน" dataKey="value" stroke="var(--studio-coral)" fill="var(--studio-coral)" fillOpacity={0.4} />
                         <Tooltip 
                           contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-3d-outset)', color: 'var(--text-primary)' }} 
                           itemStyle={{ color: 'var(--text-primary)' }}
@@ -331,19 +336,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
               </div>
             </div>
 
-            <style>{`
-              .hover-row:hover {
-                background-color: var(--bg-secondary);
-              }
-              .hover-card {
-                transition: transform 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease;
-              }
-              .hover-card:hover {
-                transform: translateY(-2px);
-                box-shadow: 0 10px 25px -5px rgba(0, 0, 0, 0.3);
-                background-color: var(--bg-secondary);
-              }
-            `}</style>
+
           </>
         )}
       </div>

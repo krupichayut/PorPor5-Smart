@@ -1,4 +1,4 @@
-import { lazy, Suspense, useState, useEffect } from 'react';
+import { lazy, Suspense, useState, useEffect, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, Navigate, useLocation } from 'react-router-dom';
 import { BookOpen, Users, Calendar, Award, BarChart3, Settings, Star, FileText, Key, LogOut, ClipboardList, Paintbrush } from 'lucide-react';
 import { auth } from './firebase';
@@ -115,14 +115,14 @@ function App() {
     settingsSaveError
   ].some(Boolean);
 
-  const activeClass = classes.find(c => c.id === activeClassId);
-  const activeClassStudents = students.filter(s => s.classId === activeClassId);
-  const activeClassScoreColumns = scoreColumns.filter(c => c.classId === activeClassId);
-  const activeClassAttendanceDates = new Set(
+  const activeClass = useMemo(() => classes.find(c => c.id === activeClassId), [classes, activeClassId]);
+  const activeClassStudents = useMemo(() => students.filter(s => s.classId === activeClassId), [students, activeClassId]);
+  const activeClassScoreColumns = useMemo(() => scoreColumns.filter(c => c.classId === activeClassId), [scoreColumns, activeClassId]);
+  const activeClassAttendanceDates = useMemo(() => new Set(
     attendance
       .filter(a => a.classId === activeClassId)
       .map(a => a.date)
-  );
+  ), [attendance, activeClassId]);
 
 
   return (
@@ -164,11 +164,11 @@ function App() {
             )}
 
             {user ? (
-              <button className="btn-icon" style={{ background: 'rgba(24, 24, 27, 0.7)', backdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.05)', width: 'auto', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', color: '#ff3366', boxShadow: 'var(--shadow-3d-outset)' }} onClick={handleLogout} title="ออกจากระบบ">
+              <button className="btn-icon" style={{ background: 'rgba(24, 24, 27, 0.7)', backdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.05)', width: 'auto', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', color: '#ff3366', boxShadow: 'var(--shadow-3d-outset)' }} onClick={handleLogout} title="ออกจากระบบ" aria-label="ออกจากระบบ">
                 <LogOut size={18} style={{ marginRight: '0.5rem' }} /> ออก
               </button>
             ) : (
-              <button className="btn-icon" style={{ background: 'rgba(24, 24, 27, 0.7)', backdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.05)', width: 'auto', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', color: 'var(--primary-color)', boxShadow: 'var(--shadow-3d-outset)' }} onClick={() => setIsLoginModalOpen(true)} title="เข้าสู่ระบบ">
+              <button className="btn-icon" style={{ background: 'rgba(24, 24, 27, 0.7)', backdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.05)', width: 'auto', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', color: 'var(--primary-color)', boxShadow: 'var(--shadow-3d-outset)' }} onClick={() => setIsLoginModalOpen(true)} title="เข้าสู่ระบบ" aria-label="เข้าสู่ระบบ">
                 <Key size={18} style={{ marginRight: '0.5rem' }} /> เข้าสู่ระบบ
               </button>
             )}
@@ -254,12 +254,16 @@ function App() {
 
         {isLoginModalOpen && (
           <div className="modal-overlay">
-            <div className="modal-content" style={{ maxWidth: '400px' }}>
-              <h2>เข้าสู่ระบบสำหรับครู</h2>
-              {loginError && <p style={{ color: 'red' }}>{loginError}</p>}
+            <div className="modal-content" style={{ maxWidth: '400px' }} role="dialog" aria-labelledby="login-modal-title" aria-modal="true">
+              <h2 id="login-modal-title">เข้าสู่ระบบสำหรับครู</h2>
+              {loginError && <p style={{ color: 'red' }} role="alert">{loginError}</p>}
               <form onSubmit={handleLogin}>
-                <input type="email" placeholder="อีเมล" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} style={{ width: '100%', marginBottom: '10px' }} required />
-                <input type="password" placeholder="รหัสผ่าน" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} style={{ width: '100%', marginBottom: '10px' }} required />
+                <label htmlFor="login-email" className="sr-only">อีเมล</label>
+                <input id="login-email" type="email" placeholder="อีเมล" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} style={{ width: '100%', marginBottom: '10px' }} required aria-required="true" />
+                
+                <label htmlFor="login-password" className="sr-only">รหัสผ่าน</label>
+                <input id="login-password" type="password" placeholder="รหัสผ่าน" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} style={{ width: '100%', marginBottom: '10px' }} required aria-required="true" />
+                
                 <div style={{ display: 'flex', gap: '10px' }}>
                   <button type="submit" className="btn btn-primary">เข้าสู่ระบบ</button>
                   <button type="button" className="btn btn-secondary" onClick={() => setIsLoginModalOpen(false)}>ยกเลิก</button>

@@ -1,5 +1,6 @@
-import { useState } from 'react';
+import { useState, useMemo } from 'react';
 import { Award, Plus, Trash2, Calculator, Edit2, Filter, Users } from 'lucide-react';
+import { getGradeColor } from '../utils/scoring';
 
 export default function Scores({ students, activeClassId, classes, scores, setScores, scoreColumns, setScoreColumns, indicators, readOnly, studentPoints, setStudentPoints }) {
   const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
@@ -155,12 +156,14 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
   };
 
   // ----- Calculation Functions -----
+  const scoreMap = useMemo(() => new Map(scores.map(s => [`${s.studentId}_${s.columnId}`, s.score])), [scores]);
+
   const getUnitScore = (studentId, unitId) => {
     const unitCols = classScoreColumns.filter(c => c.unitId === unitId && c.type === 'collected');
     const unitMaxRaw = unitCols.reduce((sum, col) => sum + col.maxScore, 0);
     const unitRaw = unitCols.reduce((sum, col) => {
-      const s = scores.find(s => s.studentId === studentId && s.columnId === col.id);
-      return sum + (s ? s.score : 0);
+      const scoreVal = scoreMap.get(`${studentId}_${col.id}`);
+      return sum + (scoreVal !== undefined && scoreVal !== null ? Number(scoreVal) : 0);
     }, 0);
     const unitWeight = classUnits.find(u => u.id === unitId)?.weight || 0;
     const scaled = unitMaxRaw > 0 ? (unitRaw / unitMaxRaw) * unitWeight : 0;
@@ -171,8 +174,8 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
     const examCols = classScoreColumns.filter(c => c.type === type);
     const examMaxRaw = examCols.reduce((sum, col) => sum + col.maxScore, 0);
     const examRaw = examCols.reduce((sum, col) => {
-      const s = scores.find(s => s.studentId === studentId && s.columnId === col.id);
-      return sum + (s ? s.score : 0);
+      const scoreVal = scoreMap.get(`${studentId}_${col.id}`);
+      return sum + (scoreVal !== undefined && scoreVal !== null ? Number(scoreVal) : 0);
     }, 0);
     const examWeight = type === 'midterm' ? midtermWeight : finalWeight;
     const scaled = examMaxRaw > 0 ? (examRaw / examMaxRaw) * examWeight : 0;
@@ -190,19 +193,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
     return '0';
   };
 
-  const getGradeColor = (grade) => {
-    switch(grade) {
-      case '4.0': return '#10b981';
-      case '3.5': return '#34d399';
-      case '3.0': return '#3b82f6';
-      case '2.5': return '#60a5fa';
-      case '2.0': return '#f59e0b';
-      case '1.5': return '#fbbf24';
-      case '1.0': return '#f97316';
-      case '0': return '#ef4444';
-      default: return 'inherit';
-    }
-  };
+
 
   // Build the view structure
   const getUnitTerm = (u) => u.term || '1';

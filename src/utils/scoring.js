@@ -13,15 +13,15 @@ export function getGrade(score) {
 
 export function getGradeColor(grade) {
   switch (grade) {
-    case '4.0': return '#10b981';
-    case '3.5': return '#34d399';
-    case '3.0': return '#3b82f6';
-    case '2.5': return '#60a5fa';
-    case '2.0': return '#f59e0b';
-    case '1.5': return '#fbbf24';
-    case '1.0': return '#f97316';
-    case '0': return '#ef4444';
-    default: return '#94a3b8';
+    case '4.0': return 'var(--success-color)';
+    case '3.5': return 'var(--studio-teal)';
+    case '3.0': return 'var(--studio-blue)';
+    case '2.5': return 'var(--studio-blue)';
+    case '2.0': return 'var(--warning-color)';
+    case '1.5': return 'var(--studio-amber)';
+    case '1.0': return 'var(--danger-color)';
+    case '0': return 'var(--danger-color)';
+    default: return 'var(--text-secondary)';
   }
 }
 
@@ -41,8 +41,9 @@ export function getUnitWeightSum(classUnits, term) {
     .reduce((sum, unit) => sum + Number(unit.weight || 0), 0);
 }
 
-export function calculateStudentScores(studentId, context, scores, selectedTerm = 'all') {
+export function calculateStudentScores(studentId, context, scores, selectedTerm = 'all', providedMap = null) {
   const { classScoreColumns, classUnits, midtermWeight, finalWeight } = context;
+  const scoreMap = providedMap || new Map(scores.map(s => [`${s.studentId}_${s.columnId}`, s.score]));
   let term1Collected = 0;
   let term2Collected = 0;
 
@@ -50,8 +51,8 @@ export function calculateStudentScores(studentId, context, scores, selectedTerm 
     const unitCols = classScoreColumns.filter(c => c.unitId === unit.id && c.type === 'collected');
     const unitMaxRaw = unitCols.reduce((sum, col) => sum + Number(col.maxScore || 0), 0);
     const unitRaw = unitCols.reduce((sum, col) => {
-      const score = scores.find(s => s.studentId === studentId && s.columnId === col.id);
-      return sum + (score ? Number(score.score || 0) : 0);
+      const scoreVal = scoreMap.get(`${studentId}_${col.id}`);
+      return sum + (scoreVal !== undefined && scoreVal !== null ? Number(scoreVal) : 0);
     }, 0);
     const scaled = unitMaxRaw > 0 ? (unitRaw / unitMaxRaw) * Number(unit.weight || 0) : 0;
 
@@ -63,8 +64,8 @@ export function calculateStudentScores(studentId, context, scores, selectedTerm 
     const cols = classScoreColumns.filter(c => c.type === type);
     const maxRaw = cols.reduce((sum, col) => sum + Number(col.maxScore || 0), 0);
     const raw = cols.reduce((sum, col) => {
-      const score = scores.find(s => s.studentId === studentId && s.columnId === col.id);
-      return sum + (score ? Number(score.score || 0) : 0);
+      const scoreVal = scoreMap.get(`${studentId}_${col.id}`);
+      return sum + (scoreVal !== undefined && scoreVal !== null ? Number(scoreVal) : 0);
     }, 0);
     return maxRaw > 0 ? (raw / maxRaw) * weight : 0;
   };
@@ -89,9 +90,10 @@ export function calculateStudentScores(studentId, context, scores, selectedTerm 
 
 export function getGradeSummaryData(classStudents, context, scores) {
   const summary = Object.fromEntries(GRADE_ORDER.map(grade => [grade, 0]));
+  const scoreMap = new Map(scores.map(s => [`${s.studentId}_${s.columnId}`, s.score]));
 
   classStudents.forEach(student => {
-    const { totalScaled } = calculateStudentScores(student.id, context, scores);
+    const { totalScaled } = calculateStudentScores(student.id, context, scores, 'all', scoreMap);
     summary[getGrade(totalScaled)]++;
   });
 
@@ -101,9 +103,12 @@ export function getGradeSummaryData(classStudents, context, scores) {
 export function calculateMissingWork(classStudents, classScoreColumns, scores) {
   let missingCount = 0;
   const collectedColumns = classScoreColumns.filter(col => col.type === 'collected');
+  const scoreMap = new Map(scores.map(s => [`${s.studentId}_${s.columnId}`, s.score]));
+
   classStudents.forEach(student => {
     collectedColumns.forEach(col => {
-      const hasScore = scores.some(s => s.studentId === student.id && s.columnId === col.id && s.score !== null && s.score !== '');
+      const scoreVal = scoreMap.get(`${student.id}_${col.id}`);
+      const hasScore = scoreVal !== undefined && scoreVal !== null && scoreVal !== '';
       if (!hasScore) missingCount++;
     });
   });

@@ -23,15 +23,15 @@ export function useLocalStorage(key, initialValue) {
   // ... persists the new value to localStorage.
   const setValue = (value) => {
     try {
-      // Allow value to be a function so we have same API as useState
-      const valueToStore =
-        value instanceof Function ? value(storedValue) : value;
-      // Save state
-      setStoredValue(valueToStore);
-      // Save to local storage
-      if (typeof window !== "undefined") {
-        window.localStorage.setItem(key, JSON.stringify(valueToStore));
-      }
+      setStoredValue(prevValue => {
+        // Allow value to be a function so we have same API as useState
+        const valueToStore = value instanceof Function ? value(prevValue) : value;
+        // Save to local storage
+        if (typeof window !== "undefined") {
+          window.localStorage.setItem(key, JSON.stringify(valueToStore));
+        }
+        return valueToStore;
+      });
     } catch (error) {
       // A more advanced implementation would handle the error case
       console.log(error);

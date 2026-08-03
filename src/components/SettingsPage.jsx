@@ -181,7 +181,7 @@ export default function SettingsPage({ appSettings, setAppSettings, readOnly, cl
           <Database size={20} className="text-primary" /> ระบบสำรองข้อมูล (Backup)
         </h3>
         <p style={{ color: 'var(--text-muted)', marginBottom: '1.5rem', fontSize: '0.95rem', lineHeight: 1.5 }}>
-          คุณสามารถดาวน์โหลดข้อมูลทั้งหมดในระบบ (ห้องเรียน, รายชื่อนักเรียน, คะแนน, เวลาเรียน และอื่นๆ) ออกมาเป็นไฟล์ Excel (รวมหลาย Sheet) 
+          คุณสามารถดาวน์โหลดข้อมูลทั้งหมดในระบบ (ห้องเรียน, รายชื่อนักเรียน, คะแนน, เวลาเรียน และอื่นๆ) ออกมาเป็นไฟล์ JSON 
           เพื่อเก็บสำรองไว้ในเครื่องคอมพิวเตอร์ของคุณเองได้ตลอดเวลา
         </p>
         <button 
@@ -191,7 +191,7 @@ export default function SettingsPage({ appSettings, setAppSettings, readOnly, cl
           style={{ width: '100%', maxWidth: '300px', display: 'flex', justifyContent: 'center' }}
         >
           <Download size={18} style={{ marginRight: '0.5rem' }} />
-          ดาวน์โหลดข้อมูลสำรอง (Excel)
+          ดาวน์โหลดข้อมูลสำรอง (JSON)
         </button>
       </div>
     </div>
