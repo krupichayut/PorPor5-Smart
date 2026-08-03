@@ -19,7 +19,7 @@ export default function GradingContainer(props) {
   }
 
   return (
-    <div className="animate-fade-in gradebook-workspace">
+    <div className="animate-fade-in hairline-grid">
       <div className="tabs-container gradebook-tabs">
         <button 
           className={`tab-btn ${activeTab === 'scores' ? 'active' : ''}`}

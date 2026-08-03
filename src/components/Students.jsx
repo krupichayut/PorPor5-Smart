@@ -333,7 +333,7 @@ export default function Students({ students, setStudents, activeClassId, classes
         </div>
       </section>
 
-      <div className="card roster-shell">
+      <div className="hairline-cell">
         <div className="studio-list-toolbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
           <div className="search-wrapper">
             <Search size={18} className="search-icon" />
@@ -369,8 +369,8 @@ export default function Students({ students, setStudents, activeClassId, classes
             <p>ไม่มีนักเรียนที่ตรงกับ "{searchTerm}" ลองค้นหาด้วยคำอื่นดูอีกครั้ง</p>
           </div>
         ) : (
-          <div className="table-container roster-table">
-            <table className="table">
+          <div>
+            <table className="data-table">
               <thead>
                 <tr>
                   <th style={{ width: '80px', textAlign: 'center' }}>เลขที่</th>
@@ -454,7 +454,7 @@ export default function Students({ students, setStudents, activeClassId, classes
                   <label className="form-label">เลขประจำตัวนักเรียน</label>
                   <input 
                     type="text" 
-                    className="form-input" 
+                    className="form-control" 
                     value={newStudentId}
                     onChange={(e) => setNewStudentId(e.target.value)}
                     placeholder="เช่น 12345"
@@ -465,7 +465,7 @@ export default function Students({ students, setStudents, activeClassId, classes
                   <label className="form-label">ชื่อ - นามสกุล</label>
                   <input 
                     type="text" 
-                    className="form-input" 
+                    className="form-control" 
                     value={newStudentName}
                     onChange={(e) => setNewStudentName(e.target.value)}
                     placeholder="เช่น เด็กชายรักเรียน ขยันยิ่ง"
@@ -484,7 +484,7 @@ export default function Students({ students, setStudents, activeClassId, classes
                     * รูปแบบ: <strong>รหัสประจำตัว</strong> [ช่องว่าง/Tab] <strong>ชื่อ-นามสกุล</strong> (ถ้ามีแต่ชื่อ ระบบจะสร้างรหัสชั่วคราวให้)
                   </div>
                   <textarea 
-                    className="form-input" 
+                    className="form-control" 
                     value={bulkData}
                     onChange={(e) => setBulkData(e.target.value)}
                     placeholder="12345    เด็กชายเอ รักเรียน&#10;12346    เด็กหญิงบี ขยัน"
@@ -514,7 +514,7 @@ export default function Students({ students, setStudents, activeClassId, classes
                 <label className="form-label">เลขที่</label>
                 <input 
                   type="number" 
-                  className="form-input" 
+                  className="form-control" 
                   value={editNumber}
                   onChange={(e) => setEditNumber(e.target.value)}
                   min="1"
@@ -525,7 +525,7 @@ export default function Students({ students, setStudents, activeClassId, classes
                 <label className="form-label">รหัสประจำตัวนักเรียน</label>
                 <input 
                   type="text" 
-                  className="form-input" 
+                  className="form-control" 
                   value={editStudentId}
                   onChange={(e) => setEditStudentId(e.target.value)}
                   required
@@ -535,7 +535,7 @@ export default function Students({ students, setStudents, activeClassId, classes
                 <label className="form-label">ชื่อ - นามสกุล</label>
                 <input 
                   type="text" 
-                  className="form-input" 
+                  className="form-control" 
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
                   required
@@ -574,7 +574,7 @@ export default function Students({ students, setStudents, activeClassId, classes
               return (
                 <div style={{ padding: '1rem 0' }}>
                   <div style={{ display: 'flex', alignItems: 'center', marginBottom: '2rem', gap: '1.5rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1.5rem' }}>
-                    <div className={`avatar-circle c${colorIndex}`} style={{ width: '80px', height: '80px', fontSize: '2.5rem', margin: 0, boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}>
+                    <div className={`avatar-circle c${colorIndex}`} style={{ width: '80px', height: '80px', fontSize: '2.5rem', margin: 0 }}>
                       {firstChar}
                     </div>
                     <div>

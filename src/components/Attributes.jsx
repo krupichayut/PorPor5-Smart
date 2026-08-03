@@ -84,7 +84,7 @@ export default function Attributes({ students, activeClassId, classes, attribute
         </div>
       </div>
 
-      <div className="card">
+      <div className="hairline-cell">
         {classStudents.length === 0 ? (
           <div className="empty-state">
             <Users size={48} />
@@ -92,8 +92,7 @@ export default function Attributes({ students, activeClassId, classes, attribute
             <p>ยังไม่มีข้อมูลนักเรียนในห้องนี้ กรุณาเพิ่มนักเรียนก่อนทำการประเมิน</p>
           </div>
         ) : (
-          <div className="table-container">
-            <table className="table" style={{ whiteSpace: 'nowrap' }}>
+            <table className="data-table" style={{ whiteSpace: 'nowrap' }}>
               <thead>
                 <tr>
                   <th style={{ width: '60px', textAlign: 'center', position: 'sticky', left: 0, backgroundColor: 'var(--bg-tertiary)', zIndex: 1 }}>เลขที่</th>
@@ -140,7 +139,6 @@ export default function Attributes({ students, activeClassId, classes, attribute
                 })}
               </tbody>
             </table>
-          </div>
         )}
       </div>
     </div>

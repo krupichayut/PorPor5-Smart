@@ -105,14 +105,14 @@ export default function MissingWork({ students, activeClassId, classes, scores, 
 
   if (!activeClassId) {
     return (
-      <div className="animate-fade-in missing-work-studio">
+      <div className="animate-fade-in hairline-grid">
         <div className="page-header">
           <div>
             <h2 className="page-title">ติดตามงานค้าง</h2>
             <p className="page-subtitle">ตรวจสอบรายชื่อนักเรียนที่ยังไม่ส่งงานและกรอกคะแนนย้อนหลัง</p>
           </div>
         </div>
-        <div className="card" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
+        <div className="hairline-cell" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
           <FileWarning size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
           <p>กรุณาเลือกห้องเรียนจากเมนู <strong>ห้องเรียน / วิชา</strong> ก่อน</p>
         </div>
@@ -121,7 +121,7 @@ export default function MissingWork({ students, activeClassId, classes, scores, 
   }
 
   return (
-    <div className="animate-fade-in missing-work-studio">
+    <div className="animate-fade-in hairline-grid">
       <div className="page-header">
         <div>
           <h2 className="page-title">ติดตามงานค้าง: {activeClass?.name}</h2>
@@ -149,18 +149,18 @@ export default function MissingWork({ students, activeClassId, classes, scores, 
       </div>
 
       {classScoreColumns.length === 0 ? (
-        <div className="card" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
+        <div className="hairline-cell" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
           <CheckCircle size={48} style={{ margin: '0 auto 1rem', opacity: 0.5, color: '#10b981' }} />
           <p>ยังไม่มีการสร้างช่องคะแนนเก็บในห้องนี้</p>
         </div>
       ) : activeTab === 'byAssignment' ? (
         // BY ASSIGNMENT VIEW
-        <div className="card">
+        <div className="hairline-cell">
           <div className="form-group" style={{ marginBottom: '1.5rem', display: 'flex', gap: '1rem', alignItems: 'flex-end' }}>
             <div style={{ flex: 1 }}>
               <label className="form-label">เลือกชิ้นงานที่ต้องการตรวจสอบ</label>
               <select 
-                className="form-select"
+                className="form-control"
                 value={selectedAssignmentId}
                 onChange={(e) => setSelectedAssignmentId(e.target.value)}
               >
@@ -199,8 +199,8 @@ export default function MissingWork({ students, activeClassId, classes, scores, 
                   <p style={{ fontWeight: 600 }}>ยอดเยี่ยม! นักเรียนส่งงานชิ้นนี้ครบทุกคนแล้ว</p>
                 </div>
               ) : (
-                <div className="table-container">
-                  <table className="table">
+                <div className="data-table-container">
+                  <table className="data-table">
                     <thead>
                       <tr>
                         <th style={{ width: '80px', textAlign: 'center' }}>เลขที่</th>
@@ -254,7 +254,7 @@ export default function MissingWork({ students, activeClassId, classes, scores, 
         </div>
       ) : (
         // BY STUDENT VIEW
-        <div className="card" style={{ display: 'flex', gap: '1.5rem' }}>
+        <div className="hairline-cell" style={{ display: 'flex', gap: '1.5rem' }}>
           <div style={{ width: '300px', borderRight: '1px solid var(--border-color)', paddingRight: '1.5rem' }}>
             <h3 style={{ margin: '0 0 1rem 0', fontSize: '1rem', color: 'var(--text-secondary)' }}>รายชื่อนักเรียน</h3>
             <div style={{ display: 'flex', flexDirection: 'column', gap: '0.25rem', maxHeight: '500px', overflowY: 'auto', paddingRight: '0.5rem' }}>
@@ -311,8 +311,8 @@ export default function MissingWork({ students, activeClassId, classes, scores, 
                     <p style={{ fontWeight: 600 }}>ยอดเยี่ยม! นักเรียนคนนี้ส่งงานครบทุกชิ้นแล้ว</p>
                   </div>
                 ) : (
-                  <div className="table-container">
-                    <table className="table">
+                  <div className="data-table-container">
+                    <table className="data-table">
                       <thead>
                         <tr>
                           <th>ชิ้นงานที่ค้าง</th>
@@ -382,7 +382,7 @@ export default function MissingWork({ students, activeClassId, classes, scores, 
                 <label className="form-label">ชื่อชิ้นงาน</label>
                 <input 
                   type="text" 
-                  className="form-input" 
+                  className="form-control" 
                   value={editColName}
                   onChange={(e) => setEditColName(e.target.value)}
                   required
@@ -392,7 +392,7 @@ export default function MissingWork({ students, activeClassId, classes, scores, 
               <div className="form-group">
                 <label className="form-label">สังกัดหน่วยการเรียนรู้</label>
                 <select 
-                  className="form-select"
+                  className="form-control"
                   value={editColUnitId}
                   onChange={(e) => setEditColUnitId(e.target.value)}
                   required
@@ -409,7 +409,7 @@ export default function MissingWork({ students, activeClassId, classes, scores, 
                 <label className="form-label">คะแนนเต็มดิบ</label>
                 <input 
                   type="number" 
-                  className="form-input" 
+                  className="form-control" 
                   value={editColMax}
                   onChange={(e) => setEditColMax(Number(e.target.value))}
                   min="1"

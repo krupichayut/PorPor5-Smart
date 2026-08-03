@@ -204,7 +204,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
         )}
       </div>
 
-      <div className="card">
+      <div className="hairline-cell">
         {classUnits.length === 0 ? (
           <div className="empty-state">
             <FileText size={48} />
@@ -212,8 +212,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
             <p>{!readOnly ? 'กรุณากด "เพิ่มหน่วยการเรียนรู้"' : 'ยังไม่มีข้อมูล'}</p>
           </div>
         ) : (
-          <div className="table-container">
-            <table className="table">
+            <table className="data-table">
               <thead>
                 <tr>
                   <th style={{ width: '80px', textAlign: 'center' }}>หน่วยที่</th>
@@ -300,7 +299,6 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
                 </tr>
               </tbody>
             </table>
-          </div>
         )}
       </div>
 
@@ -317,7 +315,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
                 <label className="form-label">ชื่อหน่วยการเรียนรู้ (เช่น จำนวนนับ, ระบบนิเวศ)</label>
                 <input 
                   type="text" 
-                  className="form-input" 
+                  className="form-control" 
                   value={newUnitName}
                   onChange={(e) => setNewUnitName(e.target.value)}
                   required
@@ -364,7 +362,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
                   <label className="form-label">น้ำหนักคะแนน (คะแนนเต็ม)</label>
                   <input 
                     type="number" 
-                    className="form-input" 
+                    className="form-control" 
                     value={newUnitWeight}
                     onChange={(e) => setNewUnitWeight(e.target.value)}
                     min="1"
@@ -375,7 +373,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
                   <label className="form-label">เวลาเรียน (ชั่วโมง)</label>
                   <input 
                     type="number" 
-                    className="form-input" 
+                    className="form-control" 
                     value={newUnitHours}
                     onChange={(e) => setNewUnitHours(e.target.value)}
                     min="1"
@@ -405,7 +403,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
                 <label className="form-label">รหัสตัวชี้วัด (เช่น ว 1.1 ป.5/1, ผลที่ 1)</label>
                 <input 
                   type="text" 
-                  className="form-input" 
+                  className="form-control" 
                   value={newIndicatorCode}
                   onChange={(e) => setNewIndicatorCode(e.target.value)}
                   required
@@ -415,7 +413,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
               <div className="form-group">
                 <label className="form-label">ประเภทตัวชี้วัด</label>
                 <select 
-                  className="form-select"
+                  className="form-control"
                   value={newIndicatorType}
                   onChange={(e) => setNewIndicatorType(e.target.value)}
                 >
@@ -427,7 +425,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
               <div className="form-group">
                 <label className="form-label">คำอธิบายตัวชี้วัด</label>
                 <textarea 
-                  className="form-input" 
+                  className="form-control" 
                   value={newIndicatorDesc}
                   onChange={(e) => setNewIndicatorDesc(e.target.value)}
                   rows="3"

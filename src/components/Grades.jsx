@@ -52,7 +52,7 @@ export default function Grades({ students, activeClassId, classes, scores, score
             <p className="page-subtitle">รายงาน PicthClass ฉบับสมบูรณ์ (พร้อมระบบแปลงสัดส่วนคะแนนตามหน่วย)</p>
           </div>
         </div>
-        <div className="card" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
+        <div className="hairline-cell" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
           <BarChart3 size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
           <p>กรุณาเลือกห้องเรียนจากเมนู <strong>ห้องเรียน / วิชา</strong> ก่อน</p>
         </div>
@@ -86,7 +86,7 @@ export default function Grades({ students, activeClassId, classes, scores, score
         </div>
         <div style={{ display: 'flex', gap: '1rem', alignItems: 'center', flexWrap: 'wrap', justifyContent: 'flex-end' }} className="no-print">
           <select 
-            className="form-select" 
+            className="form-control" 
             value={reportType}
             onChange={(e) => setReportType(e.target.value)}
             style={{ width: '180px', margin: 0 }}
@@ -96,7 +96,7 @@ export default function Grades({ students, activeClassId, classes, scores, score
             <option value="evaluations">เฉพาะการประเมิน</option>
           </select>
           <select 
-            className="form-select" 
+            className="form-control" 
             value={selectedTerm}
             onChange={(e) => setSelectedTerm(e.target.value)}
             style={{ width: '220px', margin: 0 }}
@@ -105,7 +105,7 @@ export default function Grades({ students, activeClassId, classes, scores, score
             <option value="1">แสดงเฉพาะภาคเรียนที่ 1</option>
             <option value="2">แสดงเฉพาะภาคเรียนที่ 2</option>
           </select>
-          <button className="btn btn-secondary" onClick={() => window.print()}>
+          <button className="btn btn-outline" onClick={() => window.print()}>
             <Download size={18} />
             พิมพ์รายงาน
           </button>
@@ -115,7 +115,7 @@ export default function Grades({ students, activeClassId, classes, scores, score
       {classStudents.length > 0 && classScoreColumns.length > 0 && (
         <div className="no-print" style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(100px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
           {GRADE_ORDER.map(grade => (
-            <div key={grade} className="card" style={{ textAlign: 'center', padding: '1rem' }}>
+            <div key={grade} className="hairline-cell" style={{ textAlign: 'center', padding: '1rem' }}>
               <div style={{ fontSize: '0.875rem', color: 'var(--text-secondary)', marginBottom: '0.5rem' }}>เกรด {grade}</div>
               <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: getGradeColor(grade) }}>
                 {gradeSummary[grade]} <span style={{ fontSize: '0.875rem', fontWeight: 'normal', color: 'var(--text-muted)' }}>คน</span>
@@ -125,14 +125,13 @@ export default function Grades({ students, activeClassId, classes, scores, score
         </div>
       )}
 
-      <div className="card print-card">
+      <div className="hairline-cell print-card">
         {classStudents.length === 0 ? (
           <div style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
             <p>ยังไม่มีข้อมูลนักเรียนในห้องนี้</p>
           </div>
         ) : (
-          <div className="table-container print-table-container">
-            <table className="table print-table" style={{ whiteSpace: 'nowrap' }}>
+          <table className="data-table print-table" style={{ whiteSpace: 'nowrap' }}>
               <thead>
                 <tr>
                   <th rowSpan={2} style={{ width: '50px', textAlign: 'center', verticalAlign: 'middle' }}>เลขที่</th>
@@ -219,7 +218,6 @@ export default function Grades({ students, activeClassId, classes, scores, score
                 })}
               </tbody>
             </table>
-          </div>
         )}
       </div>
 
@@ -268,8 +266,6 @@ export default function Grades({ students, activeClassId, classes, scores, score
           .app-container { display: block; height: auto; overflow: visible; }
           .main-content { padding: 0 !important; margin: 0 !important; overflow: visible; background: white !important; }
           body { background: white !important; color: black !important; }
-          .card { box-shadow: none !important; border: none !important; padding: 0 !important; background: transparent !important; }
-          .table-container { overflow: visible !important; }
           
           .print-header { border-bottom: 2px solid black; padding-bottom: 1rem; margin-bottom: 1.5rem; display: block !important; text-align: center; color: black !important; }
           .print-header .page-title { font-size: 18pt !important; text-align: center; color: black !important; margin-bottom: 0.5rem; }

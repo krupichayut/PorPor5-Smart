@@ -30,7 +30,7 @@ function ChartFrame({ children, style }) {
     <div ref={frameRef} style={{ width: '100%', minWidth: 0, ...style }}>
       {size.width > 0 && size.height > 0 ? (typeof children === 'function' ? children(size) : children) : (
         <div style={{ display: 'flex', height: '100%', minHeight: 180, alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
-          กำลังเตรียมกราฟ...
+          Preparing Chart...
         </div>
       )}
     </div>
@@ -53,10 +53,8 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
     const totalClasses = classes.length;
     const totalStudents = students.length;
     
-    // Overall Attendance
     const overallAttRate = calculateAttendanceRate(attendance);
 
-    // Overall Missing Work
     const totalMissing = useMemo(() => {
       let missing = 0;
       classes.forEach(cls => {
@@ -91,251 +89,144 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
     };
 
     return (
-      <div className="animate-fade-in studio-dashboard">
+      <div className="animate-fade-in">
         <div className="page-header">
-          <div>
-            <h2 className="page-title">แดชบอร์ด: ภาพรวมทุกห้องเรียน</h2>
-            <p className="page-subtitle">สรุปข้อมูลสถิติของทุกรายวิชาที่คุณครูรับผิดชอบ</p>
-          </div>
+          <h2 className="page-title">Command Center</h2>
+          <p className="page-subtitle">Global Overview & Statistics</p>
         </div>
 
         {totalClasses === 0 ? (
-          <div className="bento-item col-span-12" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
-            <BookOpen size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-            <p>ยังไม่มีข้อมูลห้องเรียน กรุณาเพิ่มห้องเรียนในเมนู <strong>จัดการวิชา</strong></p>
+          <div className="hairline-grid">
+            <div className="hairline-cell" style={{ textAlign: 'center', padding: '4rem 1rem' }}>
+              <BookOpen size={48} style={{ margin: '0 auto 1rem', color: 'var(--text-muted)' }} />
+              <p style={{ color: 'var(--text-secondary)' }}>No active classes found. Please add a class to begin.</p>
+            </div>
           </div>
         ) : (
           <>
-            <div className="bento-grid studio-action-gallery" style={{ marginBottom: '2.5rem' }}>
-              {/* Top Row: Small Stats & Important Warning */}
-              <div className="bento-item col-span-3" style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', }} onClick={() => navigate('/classes')}>
-                <div>
-                  <h3 style={{ fontSize: '1.75rem', fontWeight: 700, margin: 0, fontFamily: 'var(--font-game)' }}>{totalClasses}</h3>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0 }}>ห้องเรียน</p>
-                </div>
-                <div style={{ background: 'var(--grad-cyan-purple)', color: 'var(--text-primary)', padding: '0.75rem', borderRadius: '50%', boxShadow: 'var(--shadow-glow-cyan)' }}>
-                  <BookOpen size={20} />
-                </div>
+            <div className="hairline-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', marginBottom: '2rem' }}>
+              <div className="hairline-cell" style={{ cursor: 'pointer' }} onClick={() => navigate('/classes')}>
+                <div className="stat-label">Total Classes</div>
+                <div className="stat-value text-cyan">{totalClasses}</div>
               </div>
-
-              <div className="bento-item col-span-3" style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', }} onClick={() => navigate('/students')}>
-                <div>
-                  <h3 style={{ fontSize: '1.75rem', fontWeight: 700, margin: 0, fontFamily: 'var(--font-game)' }}>{totalStudents}</h3>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0 }}>นักเรียนทั้งหมด</p>
-                </div>
-                <div style={{ background: 'var(--grad-pink-magenta)', color: 'var(--text-primary)', padding: '0.75rem', borderRadius: '50%', boxShadow: 'var(--shadow-glow-pink)' }}>
-                  <Users size={20} />
-                </div>
+              <div className="hairline-cell" style={{ cursor: 'pointer' }} onClick={() => navigate('/students')}>
+                <div className="stat-label">Total Students</div>
+                <div className="stat-value">{totalStudents}</div>
               </div>
-
-              <div className="bento-item col-span-6" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem', border: totalMissing > 0 ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid rgba(255, 255, 255, 0.08)', background: totalMissing > 0 ? 'linear-gradient(to right, rgba(239, 68, 68, 0.1), transparent)' : '' }} onClick={() => navigate('/grading')}>
-                <div style={{ background: totalMissing > 0 ? 'rgba(239, 68, 68, 0.2)' : 'var(--bg-tertiary)', color: totalMissing > 0 ? 'var(--danger-color)' : 'var(--text-secondary)', padding: '1rem', borderRadius: '16px' }}>
-                  <FileWarning size={28} />
-                </div>
-                <div>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>งานค้างที่ต้องติดตาม</p>
-                  <h3 style={{ fontSize: '2rem', fontWeight: 700, margin: 0, fontFamily: 'var(--font-game)', color: totalMissing > 0 ? 'var(--danger-color)' : 'var(--text-primary)' }}>{totalMissing} <span style={{ fontSize: '1rem', fontWeight: 'normal', color: 'var(--text-muted)' }}>ชิ้น</span></h3>
-                </div>
+              <div className="hairline-cell" style={{ cursor: 'pointer' }} onClick={() => navigate('/attendance')}>
+                <div className="stat-label">Global Attendance</div>
+                <div className="stat-value text-success">{overallAttRate}%</div>
               </div>
-
-              {/* Middle Row: Quick Actions & Attendance */}
-              <div className="bento-item col-span-6" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
-                <p style={{ margin: '0 0 0.75rem 0', color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 500 }}>เมนูลัด (Quick Actions)</p>
-                <div style={{ display: 'flex', gap: '0.75rem' }}>
-                  <button className="btn btn-secondary" style={{ padding: '0.5rem 1rem', fontSize: '0.85rem', flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }} onClick={() => navigate('/classes')}>
-                    <BookOpen size={16} /> จัดการห้องเรียน
-                  </button>
-                  <button className="btn btn-secondary" style={{ padding: '0.5rem 1rem', fontSize: '0.85rem', flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }} onClick={() => navigate('/students')}>
-                    <Users size={16} /> ข้อมูลนักเรียน
-                  </button>
-                </div>
+              <div className="hairline-cell" style={{ cursor: 'pointer' }} onClick={() => navigate('/grading')}>
+                <div className="stat-label">Total Missing Work</div>
+                <div className={`stat-value ${totalMissing > 0 ? 'text-danger' : 'text-primary'}`}>{totalMissing}</div>
               </div>
+            </div>
 
-              <div className="bento-item col-span-6" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem' }} onClick={() => navigate('/attendance')}>
-                <div style={{ background: 'var(--bg-tertiary)', color: 'var(--success-color)', padding: '1rem', borderRadius: '16px' }}>
-                  <TrendingUp size={28} />
+            <div className="hairline-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(400px, 1fr))', marginBottom: '2rem' }}>
+              <div className="hairline-cell">
+                <div className="stat-label" style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <TrendingUp size={16} /> Attendance Trends
                 </div>
-                <div>
-                  <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>อัตราการเข้าเรียนเฉลี่ย</p>
-                  <h3 style={{ fontSize: '2rem', fontWeight: 700, margin: 0, fontFamily: 'var(--font-game)', color: 'var(--success-color)' }}>{overallAttRate}<span style={{ fontSize: '1.2rem', color: 'var(--text-muted)' }}>%</span></h3>
-                </div>
-              </div>
-
-              <div className="bento-item col-span-7 row-span-2">
-                <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', color: 'var(--text-primary)' }}>เปรียบเทียบอัตราเข้าเรียน</h3>
-                <ChartFrame style={{ height: 300 }}>
+                <ChartFrame style={{ height: 280 }}>
                   {({ width, height }) => classes.length > 0 ? (
                       <AreaChart width={width} height={height} data={classes.map(cls => ({
                         name: cls.name,
-                        อัตราเข้าเรียน: calculateAttendanceRate(attendance.filter(a => a.classId === cls.id))
+                        rate: calculateAttendanceRate(attendance.filter(a => a.classId === cls.id))
                       }))}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="rgba(255,255,255,0.05)" vertical={false} />
-                        <XAxis dataKey="name" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 12 }} axisLine={{ stroke: 'rgba(255,255,255,0.1)' }} tickLine={false} />
+                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
+                        <XAxis dataKey="name" stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 12 }} axisLine={false} tickLine={false} />
                         <YAxis stroke="var(--text-secondary)" tick={{ fill: 'var(--text-secondary)', fontSize: 12 }} axisLine={false} tickLine={false} domain={[0, 100]} />
                         <Tooltip 
-                          contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-3d-outset)', color: 'var(--text-primary)' }} 
-                          itemStyle={{ color: 'var(--text-primary)' }}
+                          contentStyle={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-strong)', color: 'var(--text-primary)' }} 
+                          itemStyle={{ color: 'var(--accent-cyan)' }}
                         />
                         <defs>
-                          <linearGradient id="colorAttendanceArea" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#00e5ff" stopOpacity={0.5}/>
-                            <stop offset="95%" stopColor="#00e5ff" stopOpacity={0}/>
+                          <linearGradient id="colorAtt" x1="0" y1="0" x2="0" y2="1">
+                            <stop offset="5%" stopColor="var(--accent-cyan)" stopOpacity={0.4}/>
+                            <stop offset="95%" stopColor="var(--accent-cyan)" stopOpacity={0}/>
                           </linearGradient>
                         </defs>
-                        <Area type="monotone" dataKey="อัตราเข้าเรียน" stroke="var(--studio-teal)" strokeWidth={3} fillOpacity={1} fill="url(#colorAttendanceArea)" />
+                        <Area type="monotone" dataKey="rate" className="chart-line" fill="url(#colorAtt)" />
                       </AreaChart>
                   ) : (
-                    <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>ไม่มีข้อมูลห้องเรียน</div>
+                    <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>No Data</div>
                   )}
                 </ChartFrame>
               </div>
-              <div className="bento-item col-span-5 row-span-2">
-                <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', color: 'var(--text-primary)' }}>ภาพรวมผลการเรียน</h3>
-                <ChartFrame style={{ height: 300 }}>
+
+              <div className="hairline-cell">
+                <div className="stat-label" style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <BarChart3 size={16} /> Academic Performance (Radar)
+                </div>
+                <ChartFrame style={{ height: 280 }}>
                   {({ width, height }) => classes.length > 0 ? (
-                      <RadarChart width={width} height={height} cx="50%" cy="50%" outerRadius="75%" data={radarChartData}>
-                        <PolarGrid stroke="rgba(255,255,255,0.1)" />
+                      <RadarChart width={width} height={height} cx="50%" cy="50%" outerRadius="70%" data={radarChartData}>
+                        <PolarGrid stroke="var(--border-subtle)" />
                         <PolarAngleAxis dataKey="grade" tick={{ fill: 'var(--text-secondary)', fontSize: 12 }} />
                         <PolarRadiusAxis angle={30} domain={[0, 'auto']} tick={false} axisLine={false} />
-                        <Radar name="นักเรียน" dataKey="value" stroke="var(--studio-coral)" fill="var(--studio-coral)" fillOpacity={0.4} />
+                        <Radar name="Students" dataKey="value" stroke="var(--accent-purple)" fill="var(--accent-purple)" fillOpacity={0.3} className="chart-glow" />
                         <Tooltip 
-                          contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-3d-outset)', color: 'var(--text-primary)' }} 
-                          itemStyle={{ color: 'var(--text-primary)' }}
-                          formatter={(value) => [`${value} คน`, 'จำนวนนักเรียน']}
+                          contentStyle={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-strong)', color: 'var(--text-primary)' }} 
+                          itemStyle={{ color: 'var(--accent-purple)' }}
                         />
                       </RadarChart>
                   ) : (
-                    <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>ไม่มีข้อมูลคะแนน</div>
+                    <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>No Data</div>
                   )}
                 </ChartFrame>
               </div>
             </div>
 
-            <div className="bento-item col-span-12 studio-data-board" >
-              <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--bg-tertiary)' }}>
-                <h3 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--text-primary)' }}>เปรียบเทียบสถิติแต่ละห้องเรียน</h3>
-              </div>
-              <div className="table-container">
-                <table className="table">
-                  <thead>
-                    <tr>
-                      <th>ชื่อห้องเรียน</th>
-                      <th>วิชา</th>
-                      <th style={{ textAlign: 'center' }}>จำนวนนักเรียน</th>
-                      <th style={{ textAlign: 'center' }}>อัตราเข้าเรียน</th>
-                      <th style={{ textAlign: 'center' }}>งานค้าง (ชิ้น)</th>
-                      <th style={{ textAlign: 'center' }}>จัดการ</th>
-                    </tr>
-                  </thead>
-                  <tbody>
-                    {classes.map(cls => {
-                      const clsStudents = students.filter(s => s.classId === cls.id);
-                      const clsAtt = attendance.filter(a => a.classId === cls.id);
-                      const clsRate = calculateAttendanceRate(clsAtt);
-                      const clsColumns = scoreColumns.filter(c => c.classId === cls.id);
-                      const clsMissing = calculateMissingWork(clsStudents, clsColumns, scores);
-                      
-                      return (
-                        <tr key={cls.id} style={{ cursor: 'pointer' }} onClick={() => handleSelectClass(cls.id)} className="hover-row">
-                          <td style={{ fontWeight: 600, color: 'var(--primary-color)' }}>{cls.name}</td>
-                          <td>{cls.subject}</td>
-                          <td style={{ textAlign: 'center' }}>{clsStudents.length}</td>
-                          <td style={{ textAlign: 'center' }}>
-                            <span className={`badge ${clsRate >= 80 ? 'badge-primary' : clsRate >= 60 ? 'badge-warning' : 'badge-danger'}`}>
-                              {clsRate}%
-                            </span>
-                          </td>
-                          <td style={{ textAlign: 'center' }}>
-                            {clsMissing > 0 ? (
-                              <span style={{ color: 'var(--danger-color)', fontWeight: 600 }}>{clsMissing}</span>
-                            ) : (
-                              <span style={{ color: 'var(--text-muted)' }}>0</span>
-                            )}
-                          </td>
-                          <td style={{ textAlign: 'center' }}>
-                            <button className="btn-icon" aria-label="View details" style={{ color: 'var(--text-muted)' }}>
-                              <ChevronRight size={18} />
-                            </button>
-                          </td>
-                        </tr>
-                      );
-                    })}
-                  </tbody>
-                </table>
+            <div className="hairline-grid">
+              <div className="hairline-cell" style={{ padding: 0 }}>
+                <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-subtle)' }}>
+                  <div className="stat-label">Class Comparison</div>
+                </div>
+                <div style={{ overflowX: 'auto' }}>
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>Class Name</th>
+                        <th>Subject</th>
+                        <th style={{ textAlign: 'center' }}>Students</th>
+                        <th style={{ textAlign: 'center' }}>Attendance</th>
+                        <th style={{ textAlign: 'center' }}>Missing Work</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {classes.map(cls => {
+                        const clsStudents = students.filter(s => s.classId === cls.id);
+                        const clsAtt = attendance.filter(a => a.classId === cls.id);
+                        const clsRate = calculateAttendanceRate(clsAtt);
+                        const clsColumns = scoreColumns.filter(c => c.classId === cls.id);
+                        const clsMissing = calculateMissingWork(clsStudents, clsColumns, scores);
+                        
+                        return (
+                          <tr key={cls.id} style={{ cursor: 'pointer' }} onClick={() => handleSelectClass(cls.id)}>
+                            <td style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{cls.name}</td>
+                            <td>{cls.subject}</td>
+                            <td style={{ textAlign: 'center' }}>{clsStudents.length}</td>
+                            <td style={{ textAlign: 'center' }}>
+                              <span className={`badge ${clsRate >= 80 ? 'badge-success' : clsRate >= 60 ? 'badge-warning' : 'badge-danger'}`}>
+                                {clsRate}%
+                              </span>
+                            </td>
+                            <td style={{ textAlign: 'center' }}>
+                              {clsMissing > 0 ? (
+                                <span className="text-danger font-medium">{clsMissing}</span>
+                              ) : (
+                                <span className="text-muted">0</span>
+                              )}
+                            </td>
+                          </tr>
+                        );
+                      })}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
-            
-            <div className="studio-followup-zone" style={{ marginTop: '3rem' }}>
-              <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--danger-color)' }}>
-                <FileWarning size={24} /> งานค้างมากที่สุด (แยกตามห้อง)
-              </h3>
-              <div className="bento-grid">
-                {classes.map(cls => {
-                  const clsStudents = students.filter(s => s.classId === cls.id);
-                  const clsColumns = scoreColumns.filter(c => c.classId === cls.id);
-                  
-                  const missingByStudent = clsStudents.map(student => {
-                    let missingCount = 0;
-                    clsColumns.forEach(col => {
-                      const hasScore = scores.some(s => s.studentId === student.id && s.columnId === col.id && s.score !== null && s.score !== '');
-                      if (!hasScore) missingCount++;
-                    });
-                    return { ...student, missingCount };
-                  });
-
-                  const topMissing = missingByStudent
-                    .filter(s => s.missingCount > 0)
-                    .sort((a, b) => b.missingCount - a.missingCount)
-                    .slice(0, 3);
-
-                  if (topMissing.length === 0) {
-                    return (
-                      <div className="bento-item col-span-4" key={cls.id} style={{ padding: 0, }}>
-                        <div style={{ padding: '1rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--bg-tertiary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                          <h4 style={{ margin: 0, fontSize: '1rem', color: 'var(--text-primary)' }}>{cls.name}</h4>
-                          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{cls.subject}</span>
-                        </div>
-                        <div style={{ padding: '2rem 1rem', textAlign: 'center', color: 'var(--success-color)' }}>
-                          <CheckCircle size={32} style={{ margin: '0 auto 0.5rem', opacity: 0.5 }} />
-                          <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>ไม่มีงานค้าง</div>
-                        </div>
-                      </div>
-                    );
-                  }
-
-                  return (
-                    <div className="bento-item col-span-4" key={cls.id} style={{ padding: 0, }}>
-                      <div style={{ padding: '1rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--bg-tertiary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-                        <h4 style={{ margin: 0, fontSize: '1rem', color: 'var(--text-primary)' }}>{cls.name}</h4>
-                        <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{cls.subject}</span>
-                      </div>
-                      <div style={{ padding: '1rem' }}>
-                        <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
-                          {topMissing.map((s, idx) => (
-                            <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '0.5rem', borderBottom: idx !== topMissing.length - 1 ? '1px solid var(--border-color)' : 'none' }}>
-                              <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: 'var(--bg-tertiary)', color: 'var(--danger-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.8rem' }}>
-                                  {idx + 1}
-                                </div>
-                                <div>
-                                  <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>{s.name}</div>
-                                  <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>เลขที่ {s.number}</div>
-                                </div>
-                              </div>
-                              <div style={{ fontWeight: 700, color: 'var(--danger-color)', fontSize: '0.9rem' }}>{s.missingCount} ชิ้น</div>
-                            </div>
-                          ))}
-                        </div>
-                        <button className="btn btn-secondary" style={{ width: '100%', marginTop: '1rem', fontSize: '0.8rem', padding: '0.5rem' }} onClick={() => { setActiveClassId(cls.id); navigate('/grading/missing'); }}>
-                          จัดการงานค้าง
-                        </button>
-                      </div>
-                    </div>
-                  );
-                })}
-              </div>
-            </div>
-
 
           </>
         )}
@@ -352,7 +243,6 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
   const classAttRate = calculateAttendanceRate(classAttendance);
   const totalMissingClass = calculateMissingWork(classStudents, classColumns, scores);
 
-  // Top Missing Students
   const missingByStudent = classStudents.map(student => {
     let missingCount = 0;
     classColumns.forEach(col => {
@@ -370,168 +260,120 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
   const uniqueDates = [...new Set(classAttendance.map(a => a.date))];
 
   return (
-    <div className="animate-fade-in studio-dashboard studio-class-dashboard">
-      <div className="page-header">
+    <div className="animate-fade-in">
+      <div className="page-header" style={{ display: 'flex', alignItems: 'flex-start', gap: '1rem' }}>
+        <button className="btn-icon" onClick={() => setActiveClassId(null)} title="Back to Overview">
+          <ChevronRight size={24} style={{ transform: 'rotate(180deg)' }} />
+        </button>
         <div>
-          <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-            <button className="btn-icon" onClick={() => setActiveClassId(null)} title="กลับไปดูภาพรวมทุกห้อง" aria-label="Back to overview" style={{ padding: '4px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-sm)' }}>
-              <ChevronRight size={18} style={{ transform: 'rotate(180deg)' }} />
-            </button>
-            <h2 className="page-title" style={{ margin: 0 }}>แดชบอร์ด: {activeClass?.name}</h2>
-          </div>
-          <p className="page-subtitle">วิชา {activeClass?.subject} • จำนวนนักเรียน {classStudents.length} คน</p>
+          <h2 className="page-title">{activeClass?.name}</h2>
+          <p className="page-subtitle">{activeClass?.subject} • {classStudents.length} Students</p>
         </div>
       </div>
       
-      <div className="bento-grid studio-action-gallery" style={{ marginBottom: '2rem' }}>
-        {/* Class Hero Banner */}
-        <div className="bento-item col-span-12" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', }}>
-          <div>
-            <h3 style={{ fontSize: '1.75rem', margin: '0 0 0.5rem 0', fontFamily: 'var(--font-game)', color: 'var(--text-primary)' }}>{activeClass?.name}</h3>
-            <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '1rem' }}>วิชา: {activeClass?.subject}</p>
-          </div>
-          <div style={{ display: 'flex', gap: '2rem' }}>
-            <div style={{ textAlign: 'center' }}>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: '0 0 0.25rem 0' }}>นักเรียน</p>
-              <h4 style={{ fontSize: '1.5rem', margin: 0, color: 'var(--primary-color)' }}>{classStudents.length}</h4>
-            </div>
-            <div style={{ textAlign: 'center' }}>
-              <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: '0 0 0.25rem 0' }}>ช่องให้คะแนน</p>
-              <h4 style={{ fontSize: '1.5rem', margin: 0, color: 'var(--warning-color)' }}>{classColumns.length}</h4>
-            </div>
-          </div>
+      <div className="hairline-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', marginBottom: '2rem' }}>
+        <div className="hairline-cell">
+          <div className="stat-label">Students</div>
+          <div className="stat-value text-cyan">{classStudents.length}</div>
         </div>
+        <div className="hairline-cell">
+          <div className="stat-label">Score Fields</div>
+          <div className="stat-value text-purple">{classColumns.length}</div>
+        </div>
+        <div className="hairline-cell">
+          <div className="stat-label">Attendance Rate ({uniqueDates.length} Days)</div>
+          <div className="stat-value text-success">{classAttRate}%</div>
+        </div>
+        <div className="hairline-cell">
+          <div className="stat-label">Missing Work (Class)</div>
+          <div className={`stat-value ${totalMissingClass > 0 ? 'text-danger' : 'text-primary'}`}>{totalMissingClass}</div>
+        </div>
+      </div>
 
-        {/* Small Stats */}
-        <div className="bento-item col-span-6" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-          <div style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--success-color)', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
-            <Calendar size={32} />
+      <div className="hairline-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', marginBottom: '2rem' }}>
+        <div className="hairline-cell">
+          <div className="stat-label" style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <Calendar size={16} /> Attendance Distribution
           </div>
-          <div>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 500, margin: 0 }}>อัตราเข้าเรียน (จาก {uniqueDates.length} ครั้ง)</p>
-            <h3 style={{ fontSize: '1.875rem', fontWeight: 700, margin: 0, color: 'var(--success-color)' }}>{classAttRate}<span style={{ fontSize: '1.2rem' }}>%</span></h3>
-          </div>
-        </div>
-
-        <div className="bento-item col-span-6" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', border: totalMissingClass > 0 ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid rgba(255, 255, 255, 0.08)' }}>
-          <div style={{ backgroundColor: totalMissingClass > 0 ? 'rgba(239, 68, 68, 0.15)' : 'var(--bg-tertiary)', color: totalMissingClass > 0 ? 'var(--danger-color)' : 'var(--text-secondary)', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
-            <FileWarning size={32} />
-          </div>
-          <div>
-            <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 500, margin: 0 }}>งานค้างรวมทั้งห้อง</p>
-            <h3 style={{ fontSize: '1.875rem', fontWeight: 700, margin: 0, color: totalMissingClass > 0 ? 'var(--danger-color)' : 'var(--text-primary)' }}>
-              {totalMissingClass} <span style={{ fontSize: '1rem', fontWeight: 'normal', color: 'var(--text-muted)' }}>ชิ้น</span>
-            </h3>
-          </div>
-        </div>
-        <div className="bento-item col-span-6 row-span-2" style={{ padding: 0, }}>
-          <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--bg-tertiary)' }}>
-            <h3 style={{ margin: 0, fontSize: '1.125rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--danger-color)' }}>
-              <FileWarning size={20} /> นักเรียนที่งานค้างเยอะที่สุด (Top 5)
-            </h3>
-          </div>
-          <div style={{ padding: '1rem' }}>
-            {topMissingStudents.length === 0 ? (
-              <div style={{ textAlign: 'center', padding: '2rem 0', color: 'var(--text-muted)' }}>
-                <p>ไม่มีงานค้างเลย! ยอดเยี่ยมมาก 🎉</p>
-              </div>
-            ) : (
-              <div style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                {topMissingStudents.map((s, idx) => (
-                  <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '0.75rem', borderBottom: idx !== topMissingStudents.length - 1 ? '1px solid var(--border-color)' : 'none' }}>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: 'var(--bg-tertiary)', color: 'var(--danger-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.875rem' }}>
-                        {idx + 1}
-                      </div>
-                      <div>
-                        <div style={{ fontWeight: 600 }}>{s.name}</div>
-                        <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>เลขที่ {s.number} | รหัส {s.studentId}</div>
-                      </div>
-                    </div>
-                    <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <div style={{ fontWeight: 700, color: 'var(--danger-color)' }}>{s.missingCount} ชิ้น</div>
-                      <button className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }} onClick={() => navigate('/grading/missing')}>
-                        ดูรายละเอียด
-                      </button>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            )}
-          </div>
-        </div>
-
-        <div className="bento-item col-span-6 row-span-2" style={{ display: 'flex', flexDirection: 'column' }}>
-          <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.125rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--success-color)' }}>
-            <Calendar size={20} /> สัดส่วนการมาเรียนรวม
-          </h3>
-          <ChartFrame style={{ height: '100%', minHeight: 260, flex: 1 }}>
+          <ChartFrame style={{ height: 260 }}>
             {({ width, height }) => classAttendance.filter(r => r.status !== 'holiday').length > 0 ? (
                 <PieChart width={width} height={height}>
                   <Pie
                     data={[
-                      { name: 'มาเรียน/สาย', value: classAttendance.filter(r => r.status === 'present' || r.status === 'late').length },
-                      { name: 'ลา', value: classAttendance.filter(r => r.status === 'leave').length },
-                      { name: 'ขาด', value: classAttendance.filter(r => r.status === 'absent').length }
+                      { name: 'Present/Late', value: classAttendance.filter(r => r.status === 'present' || r.status === 'late').length },
+                      { name: 'Leave', value: classAttendance.filter(r => r.status === 'leave').length },
+                      { name: 'Absent', value: classAttendance.filter(r => r.status === 'absent').length }
                     ]}
                     cx="50%"
-                    cy="45%"
+                    cy="50%"
                     innerRadius={70}
                     outerRadius={90}
-                    paddingAngle={5}
+                    paddingAngle={2}
                     dataKey="value"
                     stroke="none"
                   >
-                    <Cell fill="#34d399" />
-                    <Cell fill="#fbbf24" />
-                    <Cell fill="#f87171" />
+                    <Cell fill="var(--success)" />
+                    <Cell fill="var(--warning)" />
+                    <Cell fill="var(--danger)" />
                   </Pie>
-                  <Tooltip contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', color: 'var(--text-primary)' }} itemStyle={{ color: 'var(--text-primary)' }} />
+                  <Tooltip contentStyle={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-strong)', color: 'var(--text-primary)' }} />
                   <Legend verticalAlign="bottom" height={36} iconType="circle" />
                 </PieChart>
             ) : (
-              <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
-                ไม่มีข้อมูลเช็คชื่อ
-              </div>
+              <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>No Data</div>
             )}
           </ChartFrame>
-          <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-            <button className="btn btn-primary" onClick={() => navigate('/attendance')} style={{ width: '100%' }}>
-              ดูรายละเอียดเวลาเรียน
-            </button>
-          </div>
         </div>
         
-        <div className="bento-item col-span-12 row-span-2" >
-          <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.125rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--primary-color)' }}>
-            <BarChart3 size={20} /> สรุปผลการเรียน (ตัดเกรดจำลอง)
-          </h3>
-          <ChartFrame style={{ height: 300 }}>
+        <div className="hairline-cell">
+          <div className="stat-label" style={{ marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+            <BarChart3 size={16} /> Simulated Grades
+          </div>
+          <ChartFrame style={{ height: 260 }}>
             {({ width, height }) => classColumns.length > 0 ? (
-                <RadarChart width={width} height={height} cx="50%" cy="50%" outerRadius="75%" data={getGradeSummaryData(classStudents, getClassScoreContext(activeClassId, classes, scoreColumns, indicators), scores)}>
-                  <PolarGrid stroke="rgba(255,255,255,0.1)" />
+                <RadarChart width={width} height={height} cx="50%" cy="50%" outerRadius="70%" data={getGradeSummaryData(classStudents, getClassScoreContext(activeClassId, classes, scoreColumns, indicators), scores)}>
+                  <PolarGrid stroke="var(--border-subtle)" />
                   <PolarAngleAxis dataKey="grade" tick={{ fill: 'var(--text-secondary)', fontSize: 12 }} />
                   <PolarRadiusAxis angle={30} domain={[0, 'auto']} tick={false} axisLine={false} />
-                  <Radar name="นักเรียน" dataKey="value" stroke="#34d399" fill="#34d399" fillOpacity={0.4} />
+                  <Radar name="Students" dataKey="value" stroke="var(--success)" fill="var(--success)" fillOpacity={0.3} className="chart-glow" />
                   <Tooltip 
-                    contentStyle={{ backgroundColor: 'var(--bg-secondary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', boxShadow: 'var(--shadow-3d-outset)', color: 'var(--text-primary)' }} 
-                    itemStyle={{ color: 'var(--text-primary)' }}
-                    formatter={(value) => [`${value} คน`, 'จำนวนนักเรียน']}
+                    contentStyle={{ backgroundColor: 'var(--bg-surface)', border: '1px solid var(--border-strong)', color: 'var(--text-primary)' }} 
                   />
                 </RadarChart>
             ) : (
-              <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>
-                ไม่มีช่องคะแนนสำหรับประเมินผล
-              </div>
+              <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>No Data</div>
             )}
           </ChartFrame>
-          <div style={{ textAlign: 'center', marginTop: '1rem' }}>
-            <button className="btn btn-primary" onClick={() => navigate('/reports/grades')} style={{ width: '100%', maxWidth: '400px' }}>
-              ดูสรุปผลการเรียนฉบับเต็ม (PicthClass)
-            </button>
-          </div>
         </div>
       </div>
+
+      {topMissingStudents.length > 0 && (
+        <div className="hairline-grid">
+          <div className="hairline-cell" style={{ padding: 0 }}>
+            <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+              <div className="stat-label" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--danger)' }}>
+                <FileWarning size={16} /> Top Missing Work (Action Required)
+              </div>
+            </div>
+            <div style={{ padding: '0.5rem' }}>
+              <table className="data-table">
+                <tbody>
+                  {topMissingStudents.map((s, idx) => (
+                    <tr key={s.id}>
+                      <td style={{ width: '40px', color: 'var(--text-muted)', fontWeight: 600 }}>#{idx + 1}</td>
+                      <td>
+                        <div style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{s.name}</div>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>No. {s.number} | ID {s.studentId}</div>
+                      </td>
+                      <td style={{ textAlign: 'right', fontWeight: 600, color: 'var(--danger)' }}>{s.missingCount} Missing</td>
+                    </tr>
+                  ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 }

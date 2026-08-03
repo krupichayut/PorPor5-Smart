@@ -127,191 +127,139 @@ function App() {
 
   return (
     <Router>
-      <div className="app-container" style={{ position: 'relative', zIndex: 0 }}>
+      <div className="app-layout">
         
-        {/* Animated Wave Canvas Background */}
-        <div style={{ position: 'fixed', inset: 0, zIndex: -10, opacity: 0.07 }}>
-          <HeroWave />
-        </div>
-
-        {/* Floating Top Header */}
-        <div className="top-header no-print" style={{ position: 'fixed', top: '1.5rem', left: '1.5rem', right: '1.5rem', zIndex: 40, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', pointerEvents: 'none' }}>
-          
-          {/* App Title (Left) */}
-          <div className="top-brand card" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', padding: '0.5rem 1rem 0.5rem 0.5rem', borderRadius: 'var(--radius-full)', pointerEvents: 'auto' }}>
-            <div style={{ backgroundColor: 'var(--primary-light)', padding: '0.4rem', borderRadius: 'var(--radius-full)', color: 'var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-glow-cyan)' }}>
-              <Paintbrush size={20} />
-            </div>
-            <h1 style={{ margin: 0, fontSize: '1.25rem', fontFamily: 'var(--font-game)', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '1px', marginRight: '0.5rem' }}>PicthClass Studio</h1>
+        {/* Sidebar */}
+        <aside className="sidebar no-print">
+          <div className="sidebar-brand">
+            <Paintbrush size={24} /> PicthClass
           </div>
+          <nav className="nav-menu">
+            <NavLink to="/" aria-label="แดชบอร์ด" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} end>
+              <BarChart3 size={18} /> แดชบอร์ด
+            </NavLink>
+            <NavLink to="/classes" aria-label="จัดการวิชา" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <BookOpen size={18} /> จัดการวิชา
+            </NavLink>
+            <NavLink to="/course-plan" aria-label="โครงสร้างวิชา" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <ClipboardList size={18} /> โครงสร้างวิชา
+            </NavLink>
+            <NavLink to="/students" aria-label="นักเรียน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Users size={18} /> นักเรียน
+            </NavLink>
+            <NavLink to="/attendance" aria-label="เวลาเรียน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Calendar size={18} /> เวลาเรียน
+            </NavLink>
+            <NavLink to="/grading" aria-label="บันทึกคะแนน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Award size={18} /> บันทึกคะแนน
+            </NavLink>
+            <NavLink to="/rewards" aria-label="ของรางวัล" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Paintbrush size={18} /> ของรางวัล
+            </NavLink>
+            <NavLink to="/assessments" aria-label="การประเมิน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Star size={18} /> การประเมิน
+            </NavLink>
+            <NavLink to="/reports" aria-label="รายงาน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <FileText size={18} /> รายงาน
+            </NavLink>
+            <NavLink to="/settings" aria-label="ตั้งค่าระบบ" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Settings size={18} /> ตั้งค่าระบบ
+            </NavLink>
+          </nav>
+        </aside>
 
-          {/* Controls (Right) */}
-          <div className="top-controls" style={{ display: 'flex', gap: '1rem', alignItems: 'center', pointerEvents: 'auto' }}>
-            {classes && classes.length > 0 && (
-              <div className="class-picker card" style={{ padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>ห้องเรียน:</span>
+        {/* Main Wrapper */}
+        <div className="main-wrapper">
+          
+          {/* Top Header */}
+          <header className="top-header no-print">
+            <div className="header-title">
+              {activeClass ? `${activeClass.name} - ${activeClass.subject}` : 'ภาพรวมระบบ'}
+            </div>
+            <div className="header-controls">
+              {classes && classes.length > 0 && (
                 <select 
-                  style={{ background: 'transparent', color: 'var(--text-primary)', border: 'none', outline: 'none', fontFamily: 'var(--font-game)', fontWeight: 600, fontSize: '1rem', cursor: 'pointer' }}
+                  className="form-control"
+                  style={{ width: '250px' }}
                   value={activeClassId || ''}
                   onChange={(e) => setActiveClassId(e.target.value)}
                   aria-label="เลือกห้องเรียน"
                 >
-                  <option value="" disabled style={{ background: 'var(--bg-primary)' }}>-- เลือกห้องเรียน --</option>
+                  <option value="" disabled>-- เลือกห้องเรียน --</option>
                   {classes.map(c => (
-                    <option key={c.id} value={c.id} style={{ background: 'var(--bg-secondary)' }}>{c.name} - {c.subject}</option>
+                    <option key={c.id} value={c.id}>{c.name} - {c.subject}</option>
                   ))}
                 </select>
+              )}
+
+              {user ? (
+                <button className="btn btn-outline text-danger" onClick={handleLogout} title="ออกจากระบบ" aria-label="ออกจากระบบ">
+                  <LogOut size={16} /> ออกจากระบบ
+                </button>
+              ) : (
+                <button className="btn btn-primary" onClick={() => setIsLoginModalOpen(true)} title="เข้าสู่ระบบ" aria-label="เข้าสู่ระบบ">
+                  <Key size={16} /> เข้าสู่ระบบ
+                </button>
+              )}
+            </div>
+          </header>
+
+          {/* Modal Overlay */}
+          {isLoginModalOpen && (
+            <div className="modal-overlay">
+              <div className="modal-content" role="dialog" aria-labelledby="login-modal-title" aria-modal="true">
+                <h2 id="login-modal-title" style={{ color: 'var(--text-primary)', marginBottom: '1.5rem', fontFamily: 'var(--font-sans)' }}>เข้าสู่ระบบสำหรับครู</h2>
+                {loginError && <p className="text-danger" role="alert" style={{ marginBottom: '1rem' }}>{loginError}</p>}
+                <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                  <div>
+                    <label htmlFor="login-email" className="sr-only">อีเมล</label>
+                    <input id="login-email" type="email" className="form-control" placeholder="อีเมล" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required aria-required="true" />
+                  </div>
+                  <div>
+                    <label htmlFor="login-password" className="sr-only">รหัสผ่าน</label>
+                    <input id="login-password" type="password" className="form-control" placeholder="รหัสผ่าน" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} required aria-required="true" />
+                  </div>
+                  <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
+                    <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>เข้าสู่ระบบ</button>
+                    <button type="button" className="btn btn-outline" style={{ flex: 1 }} onClick={() => setIsLoginModalOpen(false)}>ยกเลิก</button>
+                  </div>
+                </form>
+              </div>
+            </div>
+          )}
+
+          {/* Main Content Area */}
+          <main className="content-area">
+            {hasSaveError && (
+              <div className="badge badge-danger" style={{ width: '100%', marginBottom: '1rem', padding: '1rem' }} role="alert">
+                บันทึกข้อมูลไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ตหรือสิทธิ์ Firebase แล้วลองอีกครั้ง
               </div>
             )}
-
-            {user ? (
-              <button className="btn-icon card hover-scale" style={{ width: 'auto', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', color: 'var(--danger-color)' }} onClick={handleLogout} title="ออกจากระบบ" aria-label="ออกจากระบบ">
-                <LogOut size={18} style={{ marginRight: '0.5rem' }} /> ออก
-              </button>
+            
+            {isDataLoaded ? (
+              <Suspense fallback={<PageLoading />}>
+                <AnimatedRoutes>
+                  <Route path="/" element={<Dashboard classes={classes} students={students} activeClassId={activeClassId} setActiveClassId={setActiveClassId} attendance={attendance} scores={scores} scoreColumns={scoreColumns} indicators={indicators} />} />
+                  <Route path="/settings" element={<SettingsPage appSettings={appSettings} setAppSettings={setAppSettings} readOnly={readOnly} classes={classes} students={students} attendance={attendance} scores={scores} scoreColumns={scoreColumns} attributes={attributes} literacy={literacy} competencies={competencies} lessonPlans={lessonPlans} indicators={indicators} />} />
+                  <Route path="/classes" element={<Classes classes={classes} setClasses={setClasses} activeClassId={activeClassId} setActiveClassId={setActiveClassId} readOnly={readOnly} />} />
+                  <Route path="/course-plan" element={<CoursePlanContainer activeClassId={activeClassId} classes={classes} indicators={indicators} setIndicators={setIndicators} lessonPlans={lessonPlans} setLessonPlans={setLessonPlans} readOnly={readOnly} />} />
+                  <Route path="/students" element={<Students students={students} setStudents={setStudents} classes={classes} activeClassId={activeClassId} readOnly={readOnly} attendance={attendance} scores={scores} scoreColumns={scoreColumns} attributes={attributes} literacy={literacy} competencies={competencies} indicators={indicators} />} />
+                  <Route path="/attendance" element={<Attendance students={students} activeClassId={activeClassId} classes={classes} attendance={attendance} setAttendance={setAttendance} readOnly={readOnly} />} />
+                  <Route path="/grading" element={<GradingContainer students={students} activeClassId={activeClassId} classes={classes} scores={scores} setScores={setScores} scoreColumns={scoreColumns} setScoreColumns={setScoreColumns} indicators={indicators} readOnly={readOnly} studentPoints={studentPoints} setStudentPoints={setStudentPoints} />} />
+                  <Route path="/grading/:tab" element={<GradingContainer students={students} activeClassId={activeClassId} classes={classes} scores={scores} setScores={setScores} scoreColumns={scoreColumns} setScoreColumns={setScoreColumns} indicators={indicators} readOnly={readOnly} studentPoints={studentPoints} setStudentPoints={setStudentPoints} />} />
+                  <Route path="/reports" element={<ReportsContainer appSettings={appSettings} activeClassId={activeClassId} classes={classes} students={students} attendance={attendance} scoreColumns={scoreColumns} scores={scores} attributes={attributes} literacy={literacy} competencies={competencies} indicators={indicators} readOnly={readOnly} />} />
+                  <Route path="/reports/:tab" element={<ReportsContainer appSettings={appSettings} activeClassId={activeClassId} classes={classes} students={students} attendance={attendance} scoreColumns={scoreColumns} scores={scores} attributes={attributes} literacy={literacy} competencies={competencies} indicators={indicators} readOnly={readOnly} />} />
+                  <Route path="/assessments" element={<AssessmentsContainer students={students} activeClassId={activeClassId} classes={classes} attributes={attributes} setAttributes={setAttributes} literacy={literacy} setLiteracy={setLiteracy} competencies={competencies} setCompetencies={setCompetencies} readOnly={readOnly} />} />
+                  <Route path="/rewards" element={<Rewards students={students} activeClassId={activeClassId} classes={classes} studentPoints={studentPoints} setStudentPoints={setStudentPoints} rewards={rewards} setRewards={setRewards} readOnly={readOnly} />} />
+                  <Route path="*" element={<Navigate to="/" replace />} />
+                </AnimatedRoutes>
+              </Suspense>
             ) : (
-              <button className="btn-icon card hover-scale" style={{ width: 'auto', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', color: 'var(--primary-color)' }} onClick={() => setIsLoginModalOpen(true)} title="เข้าสู่ระบบ" aria-label="เข้าสู่ระบบ">
-                <Key size={18} style={{ marginRight: '0.5rem' }} /> เข้าสู่ระบบ
-              </button>
+              <PageLoading />
             )}
-          </div>
+          </main>
+
         </div>
-
-        {/* Floating Bottom Dock */}
-        <nav className="floating-dock no-print">
-          <NavLink to="/" aria-label="แดชบอร์ด" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`} end>
-            <BarChart3 />
-            <span className="dock-tooltip">แดชบอร์ด</span>
-          </NavLink>
-          <NavLink to="/classes" aria-label="จัดการวิชา" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
-            <BookOpen />
-            <span className="dock-tooltip">จัดการวิชา</span>
-          </NavLink>
-          <NavLink to="/course-plan" aria-label="โครงสร้างวิชา" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
-            <ClipboardList />
-            <span className="dock-tooltip">โครงสร้างวิชา</span>
-          </NavLink>
-          <NavLink to="/students" aria-label="นักเรียน" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
-            <Users />
-            <span className="dock-tooltip">นักเรียน</span>
-          </NavLink>
-          <NavLink to="/attendance" aria-label="เวลาเรียน" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
-            <Calendar />
-            <span className="dock-tooltip">เวลาเรียน</span>
-          </NavLink>
-          <NavLink to="/grading" aria-label="บันทึกคะแนน" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
-            <Award />
-            <span className="dock-tooltip">บันทึกคะแนน</span>
-          </NavLink>
-          <NavLink to="/rewards" aria-label="ของรางวัล" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
-            <Paintbrush />
-            <span className="dock-tooltip">ของรางวัล</span>
-          </NavLink>
-          <NavLink to="/assessments" aria-label="การประเมิน" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
-            <Star />
-            <span className="dock-tooltip">การประเมิน</span>
-          </NavLink>
-          <NavLink to="/reports" aria-label="รายงาน" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
-            <FileText />
-            <span className="dock-tooltip">รายงาน</span>
-          </NavLink>
-          <NavLink to="/settings" aria-label="ตั้งค่าระบบ" className={({ isActive }) => `dock-item ${isActive ? 'active' : ''}`}>
-            <Settings />
-            <span className="dock-tooltip">ตั้งค่าระบบ</span>
-          </NavLink>
-        </nav>
-
-        {isLoginModalOpen && (
-          <div className="modal-overlay">
-            <div className="modal-content" style={{ maxWidth: '400px' }} role="dialog" aria-labelledby="login-modal-title" aria-modal="true">
-              <h2 id="login-modal-title">เข้าสู่ระบบสำหรับครู</h2>
-              {loginError && <p style={{ color: 'var(--danger-color)' }} role="alert">{loginError}</p>}
-              <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
-                <div>
-                  <label htmlFor="login-email" className="sr-only">อีเมล</label>
-                  <input id="login-email" type="email" className="form-control" placeholder="อีเมล" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required aria-required="true" />
-                </div>
-                <div>
-                  <label htmlFor="login-password" className="sr-only">รหัสผ่าน</label>
-                  <input id="login-password" type="password" className="form-control" placeholder="รหัสผ่าน" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} required aria-required="true" />
-                </div>
-                
-                <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
-                  <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>เข้าสู่ระบบ</button>
-                  <button type="button" className="btn btn-secondary" style={{ flex: 1 }} onClick={() => setIsLoginModalOpen(false)}>ยกเลิก</button>
-                </div>
-              </form>
-            </div>
-          </div>
-        )}
-
-        {/* Main Content */}
-        <main className="main-content">
-          <section className="studio-command-strip no-print" aria-label="Studio quick commands">
-            <div className="studio-command-copy">
-              <span>Gallery Console</span>
-              <strong>{activeClass?.name || 'All-class workspace'}</strong>
-              <p>{activeClass?.subject || 'Designed for art-class routines: roster, attendance, grading, rewards, and print-ready reports.'}</p>
-            </div>
-            <div className="studio-command-metrics" aria-label="Workspace summary">
-              <div>
-                <strong>{classes.length}</strong>
-                <span>Classes</span>
-              </div>
-              <div>
-                <strong>{activeClass ? activeClassStudents.length : students.length}</strong>
-                <span>Students</span>
-              </div>
-              <div>
-                <strong>{activeClass ? activeClassScoreColumns.length : scoreColumns.length}</strong>
-                <span>Score fields</span>
-              </div>
-            </div>
-            <div className="studio-command-actions">
-              <NavLink to="/classes">
-                <BookOpen size={16} />
-                <span>Classes</span>
-              </NavLink>
-              <NavLink to="/students">
-                <Users size={16} />
-                <span>Roster</span>
-              </NavLink>
-              <NavLink to="/grading">
-                <Award size={16} />
-                <span>Gradebook</span>
-              </NavLink>
-              <NavLink to="/reports">
-                <FileText size={16} />
-                <span>Reports</span>
-              </NavLink>
-            </div>
-          </section>
-          {hasSaveError && (
-            <div className="save-error-banner" role="alert">
-              บันทึกข้อมูลไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ตหรือสิทธิ์ Firebase แล้วลองอีกครั้ง
-            </div>
-          )}
-          {isDataLoaded ? (
-            <Suspense fallback={<PageLoading />}>
-              <AnimatedRoutes>
-                <Route path="/" element={<Dashboard classes={classes} students={students} activeClassId={activeClassId} setActiveClassId={setActiveClassId} attendance={attendance} scores={scores} scoreColumns={scoreColumns} indicators={indicators} />} />
-                <Route path="/settings" element={<SettingsPage appSettings={appSettings} setAppSettings={setAppSettings} readOnly={readOnly} classes={classes} students={students} attendance={attendance} scores={scores} scoreColumns={scoreColumns} attributes={attributes} literacy={literacy} competencies={competencies} lessonPlans={lessonPlans} indicators={indicators} />} />
-                <Route path="/classes" element={<Classes classes={classes} setClasses={setClasses} activeClassId={activeClassId} setActiveClassId={setActiveClassId} readOnly={readOnly} />} />
-                <Route path="/course-plan" element={<CoursePlanContainer activeClassId={activeClassId} classes={classes} indicators={indicators} setIndicators={setIndicators} lessonPlans={lessonPlans} setLessonPlans={setLessonPlans} readOnly={readOnly} />} />
-                <Route path="/students" element={<Students students={students} setStudents={setStudents} classes={classes} activeClassId={activeClassId} readOnly={readOnly} attendance={attendance} scores={scores} scoreColumns={scoreColumns} attributes={attributes} literacy={literacy} competencies={competencies} indicators={indicators} />} />
-                <Route path="/attendance" element={<Attendance students={students} activeClassId={activeClassId} classes={classes} attendance={attendance} setAttendance={setAttendance} readOnly={readOnly} />} />
-                <Route path="/grading" element={<GradingContainer students={students} activeClassId={activeClassId} classes={classes} scores={scores} setScores={setScores} scoreColumns={scoreColumns} setScoreColumns={setScoreColumns} indicators={indicators} readOnly={readOnly} studentPoints={studentPoints} setStudentPoints={setStudentPoints} />} />
-                <Route path="/grading/:tab" element={<GradingContainer students={students} activeClassId={activeClassId} classes={classes} scores={scores} setScores={setScores} scoreColumns={scoreColumns} setScoreColumns={setScoreColumns} indicators={indicators} readOnly={readOnly} studentPoints={studentPoints} setStudentPoints={setStudentPoints} />} />
-                <Route path="/reports" element={<ReportsContainer appSettings={appSettings} activeClassId={activeClassId} classes={classes} students={students} attendance={attendance} scoreColumns={scoreColumns} scores={scores} attributes={attributes} literacy={literacy} competencies={competencies} indicators={indicators} readOnly={readOnly} />} />
-                <Route path="/reports/:tab" element={<ReportsContainer appSettings={appSettings} activeClassId={activeClassId} classes={classes} students={students} attendance={attendance} scoreColumns={scoreColumns} scores={scores} attributes={attributes} literacy={literacy} competencies={competencies} indicators={indicators} readOnly={readOnly} />} />
-                <Route path="/assessments" element={<AssessmentsContainer students={students} activeClassId={activeClassId} classes={classes} attributes={attributes} setAttributes={setAttributes} literacy={literacy} setLiteracy={setLiteracy} competencies={competencies} setCompetencies={setCompetencies} readOnly={readOnly} />} />
-                <Route path="/rewards" element={<Rewards students={students} activeClassId={activeClassId} classes={classes} studentPoints={studentPoints} setStudentPoints={setStudentPoints} rewards={rewards} setRewards={setRewards} readOnly={readOnly} />} />
-                <Route path="*" element={<Navigate to="/" replace />} />
-              </AnimatedRoutes>
-            </Suspense>
-          ) : (
-            <PageLoading />
-          )}
-        </main>
       </div>
     </Router>
   );

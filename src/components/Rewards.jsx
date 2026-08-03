@@ -123,7 +123,7 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
             <p className="page-subtitle">จัดการแต้มความประพฤติและแลกของรางวัลอุปกรณ์ศิลปะ</p>
           </div>
         </div>
-        <div className="card" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
+        <div className="hairline-cell" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
           <Paintbrush size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
           <p>กรุณาเลือกห้องเรียนจากเมนู <strong>ห้องเรียน / วิชา</strong> ก่อน</p>
         </div>
@@ -139,7 +139,7 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
           <p className="page-subtitle">จัดการแต้มความประพฤติและแลกของรางวัล</p>
         </div>
         {notification && (
-          <div style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--success-color)', padding: '0.5rem 1rem', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold' }}>
+          <div style={{ color: 'var(--success-color)', padding: '0.5rem 1rem', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold' }}>
             <CheckCircle size={18} /> {notification}
           </div>
         )}
@@ -161,14 +161,14 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
       </div>
 
       {activeTab === 'points' && (
-        <div className="card">
+        <div className="hairline-cell">
           {classStudents.length === 0 ? (
             <div style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
               <p>ยังไม่มีข้อมูลนักเรียนในห้องนี้ กรุณาเพิ่มนักเรียนก่อน</p>
             </div>
           ) : (
             <div className="table-container">
-              <table className="table" style={{ whiteSpace: 'nowrap' }}>
+              <table className="data-table" style={{ whiteSpace: 'nowrap' }}>
                 <thead>
                   <tr>
                     <th style={{ width: '60px', textAlign: 'center' }}>เลขที่</th>
@@ -185,7 +185,7 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
                         <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--text-muted)' }}>{index + 1}</td>
                         <td style={{ fontWeight: 500 }}>{s.name}</td>
                         <td style={{ textAlign: 'center' }}>
-                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', backgroundColor: 'var(--bg-secondary)', padding: '0.25rem 0.75rem', borderRadius: 'var(--radius-full)', color: 'var(--warning-color)', fontWeight: 'bold', fontSize: '1.1rem' }}>
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', backgroundColor: 'var(--bg-secondary)', padding: '0.25rem 0.75rem', color: 'var(--warning-color)', fontWeight: 'bold', fontSize: '1.1rem' }}>
                             <Paintbrush size={16} fill="currentColor" /> {points}
                           </div>
                         </td>
@@ -242,14 +242,14 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
           </div>
           
           {rewards.length === 0 ? (
-            <div className="card" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
+            <div className="hairline-cell" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
               <Gift size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
               <p>ยังไม่มีรายการของรางวัล กรุณาเพิ่มของรางวัล</p>
             </div>
           ) : (
-            <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1.5rem' }}>
+            <div className="hairline-grid" style={{ gridTemplateColumns: 'repeat(auto-fill, minmax(250px, 1fr))', gap: '1.5rem' }}>
               {rewards.map(reward => (
-                <div key={reward.id} className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem 1.5rem', position: 'relative' }}>
+                <div key={reward.id} className="hairline-cell" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem 1.5rem', position: 'relative' }}>
                   {!readOnly && (
                     <div style={{ position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '0.25rem' }}>
                       <button className="btn-icon" aria-label="แก้ไข" style={{ padding: '4px' }} onClick={() => handleOpenRewardModal(reward)}><Edit2 size={14} /></button>
@@ -294,7 +294,7 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
                 <label className="form-label">ชื่อของรางวัล (เช่น สีไม้, สีน้ำ, สมุดวาดรูป)</label>
                 <input 
                   type="text" 
-                  className="form-input" 
+                  className="form-control" 
                   value={rewardForm.name}
                   onChange={(e) => setRewardForm({...rewardForm, name: e.target.value})}
                   required
@@ -304,7 +304,7 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
                 <label className="form-label">แต้มที่ใช้แลก (Points)</label>
                 <input 
                   type="number" 
-                  className="form-input" 
+                  className="form-control" 
                   value={rewardForm.points}
                   onChange={(e) => setRewardForm({...rewardForm, points: Number(e.target.value)})}
                   min="1"
@@ -324,7 +324,6 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
                         padding: '0.5rem', 
                         background: rewardForm.icon === emoji ? 'var(--primary-light)' : 'transparent',
                         border: `1px solid ${rewardForm.icon === emoji ? 'var(--primary-color)' : 'var(--border-color)'}`,
-                        borderRadius: 'var(--radius-sm)',
                         cursor: 'pointer'
                       }}
                     >
@@ -334,7 +333,7 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
                 </div>
                 <input 
                   type="text" 
-                  className="form-input" 
+                  className="form-control" 
                   value={rewardForm.icon}
                   onChange={(e) => setRewardForm({...rewardForm, icon: e.target.value})}
                   placeholder="หรือพิมพ์ Emoji อื่นๆ"
@@ -357,7 +356,7 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
               <h3 className="modal-title">ยืนยันการแลกรางวัล</h3>
               <button className="btn-icon" aria-label="ปิด" onClick={() => setIsRedeemModalOpen(false)}>×</button>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', backgroundColor: 'var(--bg-secondary)', marginBottom: '1.5rem' }}>
               <div style={{ fontSize: '3rem' }}>{redeemReward.icon}</div>
               <div>
                 <h4 style={{ fontSize: '1.1rem', margin: 0 }}>{redeemReward.name}</h4>
@@ -369,7 +368,7 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
               <div className="form-group">
                 <label className="form-label">เลือกนักเรียนที่ต้องการแลกรางวัล</label>
                 <select 
-                  className="form-select" 
+                  className="form-control" 
                   value={redeemStudentId}
                   onChange={(e) => setRedeemStudentId(e.target.value)}
                   required

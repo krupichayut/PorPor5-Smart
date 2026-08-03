@@ -113,7 +113,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
 
   if (!activeClassId) {
     return (
-      <div className="animate-fade-in attendance-studio">
+      <div className="animate-fade-in hairline-grid">
         <div className="page-header">
           <div>
             <h2 className="page-title">เช็คเวลาเรียน</h2>
@@ -130,7 +130,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
   }
 
   return (
-    <div className="animate-fade-in attendance-studio">
+    <div className="animate-fade-in hairline-grid">
       <div className="page-header">
         <div>
           <h2 className="page-title">เช็คเวลาเรียน: {activeClass?.name}</h2>
@@ -147,7 +147,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
         )}
       </div>
 
-      <div className="card">
+      <div className="hairline-cell">
         {classStudents.length === 0 ? (
           <div className="empty-state">
             <Users size={48} />
@@ -161,8 +161,8 @@ export default function Attendance({ students, activeClassId, classes, attendanc
             <p>ยังไม่มีการเช็คชื่อ{!readOnly && ' กรุณากดปุ่ม "เพิ่มวันเช็คชื่อ" เพื่อเริ่มต้น'}</p>
           </div>
         ) : (
-          <div className="table-container">
-            <table className="table" style={{ whiteSpace: 'nowrap' }}>
+          <div className="data-table-container">
+            <table className="data-table" style={{ whiteSpace: 'nowrap' }}>
               <thead>
                 <tr>
                   <th style={{ width: '60px', textAlign: 'center', position: 'sticky', left: 0, backgroundColor: 'var(--bg-tertiary)', zIndex: 2 }}>เลขที่</th>
@@ -183,7 +183,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
                           {!readOnly && (
                             <button 
                               onClick={() => handleDeleteDate(date)}
-                              style={{ background: 'none', border: 'none', color: 'var(--danger-color)', cursor: 'pointer', opacity: 0.7, padding: '2px' }}
+                              className="btn-icon" style={{ color: 'var(--danger-color)' }}
                               title="ลบวันที่นี้"
                               aria-label="ลบวันที่นี้"
                             >
@@ -222,7 +222,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
                           <td key={date} style={{ textAlign: 'center', padding: '0.25rem' }}>
                             <button 
                               aria-label="เปลี่ยนสถานะ"
-                              style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'inline-flex', justifyContent: 'center', padding: '0.25rem 0.5rem', borderRadius: '4px' }}
+                              className="btn-icon"
                               onClick={() => handleUpdateStatus(s.id, date, cycleStatus(record?.status || 'present'))}
                               title="คลิกเพื่อเปลี่ยนสถานะ"
                             >
@@ -260,7 +260,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
                 <label className="form-label">วันที่</label>
                 <input 
                   type="date" 
-                  className="form-input" 
+                  className="form-control" 
                   value={newDate}
                   onChange={(e) => setNewDate(e.target.value)}
                   required
@@ -283,7 +283,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
                 {isHoliday && (
                   <input 
                     type="text" 
-                    className="form-input" 
+                    className="form-control" 
                     placeholder="ระบุชื่อวันหยุด เช่น วันแม่แห่งชาติ, กีฬาสี" 
                     value={holidayName}
                     onChange={(e) => setHolidayName(e.target.value)}

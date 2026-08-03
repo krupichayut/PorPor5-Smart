@@ -228,7 +228,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
   }
 
   return (
-    <div className="animate-fade-in gradebook-canvas">
+    <div className="animate-fade-in hairline-grid">
       <div className="page-header">
         <div>
           <h2 className="page-title">บันทึกคะแนน: {activeClass?.name}</h2>
@@ -243,8 +243,8 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
       </div>
 
       <div className="gradebook-tools" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
-        <div className="card gradebook-weight-card" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-          <div style={{ padding: '1rem', backgroundColor: 'var(--bg-tertiary)', color: 'var(--primary-color)', borderRadius: 'var(--radius-full)' }}>
+        <div className="hairline-cell gradebook-weight-card" style={{ padding: '1.5rem', display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
+          <div style={{ padding: '1rem', backgroundColor: 'var(--bg-tertiary)', color: 'var(--primary-color)' }}>
             <Calculator size={28} />
           </div>
           <div>
@@ -254,13 +254,13 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
             </div>
           </div>
         </div>
-        <div className="card gradebook-filter-card" style={{ padding: '0', display: 'flex' }}>
+        <div className="hairline-cell gradebook-filter-card" style={{ padding: '0', display: 'flex' }}>
           <div style={{ flex: 1, padding: '1.5rem', borderRight: '1px solid var(--border-color)' }}>
             <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
               <Filter size={16} /> เลือกภาคเรียน
             </div>
             <select 
-              className="form-select" 
+              className="form-control" 
               value={viewTerm}
               onChange={(e) => {
                 setViewTerm(e.target.value);
@@ -277,7 +277,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
               <Filter size={16} /> เลือกแสดงผลระดับหน่วย
             </div>
             <select 
-              className="form-select" 
+              className="form-control" 
               value={viewUnit}
               onChange={(e) => setViewUnit(e.target.value)}
             >
@@ -292,7 +292,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
         </div>
       </div>
 
-      <div className="card gradebook-table-card">
+      <div className="hairline-cell gradebook-table-card">
         {classStudents.length === 0 ? (
           <div className="empty-state">
             <Users size={48} />
@@ -302,7 +302,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
         ) : (
           <>
             {classUnits.length === 0 && (
-              <div style={{ backgroundColor: 'var(--badge-warning-bg)', color: 'var(--warning-color)', padding: '1.25rem', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <div style={{ color: 'var(--warning-color)', padding: '1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 <Award size={24} />
                 <div>
                   <strong>ยังไม่ได้สร้างหน่วยการเรียนรู้:</strong> หากต้องการเพิ่ม "ช่องคะแนนเก็บ" กรุณาไปสร้างหน่วยการเรียนรู้ที่เมนู <strong>โครงสร้างรายวิชา</strong> ก่อน
@@ -310,7 +310,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
               </div>
             )}
             <div className="table-container gradebook-table-container">
-            <table className="table gradebook-table" style={{ whiteSpace: 'nowrap' }}>
+            <table className="data-table gradebook-table" style={{ whiteSpace: 'nowrap' }}>
               <thead>
                 <tr>
                   <th rowSpan={2} style={{ width: '60px', textAlign: 'center', position: 'sticky', left: 0, backgroundColor: 'var(--bg-tertiary)', zIndex: 3, verticalAlign: 'middle' }}>เลขที่</th>
@@ -466,7 +466,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                                 value={record ? record.score : ''}
                                 onChange={(e) => handleScoreChange(s.id, col.id, e.target.value)}
                                 disabled={readOnly}
-                                style={{ width: '50px', padding: '4px', textAlign: 'center', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-sm)', fontFamily: 'inherit' }}
+                                style={{ width: '50px', padding: '4px', textAlign: 'center', border: '1px solid var(--border-color)', fontFamily: 'inherit' }}
                               />
                             </td>
                           );
@@ -499,7 +499,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                                 value={record ? record.score : ''}
                                 onChange={(e) => handleScoreChange(s.id, col.id, e.target.value)}
                                 disabled={readOnly}
-                                style={{ width: '50px', padding: '4px', textAlign: 'center', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-sm)', fontFamily: 'inherit' }}
+                                style={{ width: '50px', padding: '4px', textAlign: 'center', border: '1px solid var(--border-color)', fontFamily: 'inherit' }}
                               />
                             </td>
                           );
@@ -532,7 +532,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                                 value={record ? record.score : ''}
                                 onChange={(e) => handleScoreChange(s.id, col.id, e.target.value)}
                                 disabled={readOnly}
-                                style={{ width: '50px', padding: '4px', textAlign: 'center', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-sm)', fontFamily: 'inherit' }}
+                                style={{ width: '50px', padding: '4px', textAlign: 'center', border: '1px solid var(--border-color)', fontFamily: 'inherit' }}
                               />
                             </td>
                           );
@@ -615,12 +615,12 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                 <div className="form-group">
                   <label className="form-label">สังกัดหน่วยการเรียนรู้ (จำเป็น)</label>
                   {classUnits.length === 0 ? (
-                    <div style={{ color: 'var(--danger-color)', fontSize: '0.875rem', padding: '0.5rem', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-sm)' }}>
+                    <div style={{ color: 'var(--danger-color)', fontSize: '0.875rem', padding: '0.5rem', backgroundColor: 'var(--bg-secondary)' }}>
                       ❌ ยังไม่มีหน่วยการเรียนรู้: กรุณาไปที่เมนู โครงสร้างรายวิชา เพื่อสร้างหน่วยการเรียนรู้ก่อนเพิ่มคะแนนเก็บ
                     </div>
                   ) : (
                     <select 
-                      className="form-select"
+                      className="form-control"
                       value={newColumnUnitId}
                       onChange={(e) => {
                         setNewColumnUnitId(e.target.value);
@@ -643,7 +643,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                 <label className="form-label">ชื่อช่องคะแนน (เช่น ชิ้นงานที่ 1, สมุดประจำตัว)</label>
                 <input 
                   type="text" 
-                  className="form-input" 
+                  className="form-control" 
                   value={newColumnName}
                   onChange={(e) => setNewColumnName(e.target.value)}
                   required
@@ -655,7 +655,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                 <div className="form-group">
                   <label className="form-label">ผูกกับตัวชี้วัดในหน่วย (ไม่บังคับ)</label>
                   <select 
-                    className="form-select"
+                    className="form-control"
                     value={newColumnIndicatorId}
                     onChange={(e) => setNewColumnIndicatorId(e.target.value)}
                   >
@@ -673,7 +673,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                 <label className="form-label">คะแนนเต็มดิบ (Raw Max Score)</label>
                 <input 
                   type="number" 
-                  className="form-input" 
+                  className="form-control" 
                   value={newColumnMax}
                   onChange={(e) => setNewColumnMax(Number(e.target.value))}
                   min="1"

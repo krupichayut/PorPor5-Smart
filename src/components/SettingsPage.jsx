@@ -79,15 +79,15 @@ export default function SettingsPage({ appSettings, setAppSettings, readOnly, cl
         </div>
       </div>
 
-      <div className="card" style={{ maxWidth: '800px' }}>
+      <div className="hairline-cell" style={{ maxWidth: '800px' }}>
         <form onSubmit={handleSubmit}>
           
-          <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
+          <div className="hairline-grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '1.5rem', marginBottom: '1.5rem' }}>
             <div className="form-group">
               <label className="form-label">ปีการศึกษา</label>
               <input 
                 type="text" 
-                className="form-input" 
+                className="form-control" 
                 name="academicYear"
                 value={formData.academicYear}
                 onChange={handleChange}
@@ -99,7 +99,7 @@ export default function SettingsPage({ appSettings, setAppSettings, readOnly, cl
               <label className="form-label">ภาคเรียนที่</label>
               <input 
                 type="text" 
-                className="form-input" 
+                className="form-control" 
                 name="semester"
                 value={formData.semester}
                 onChange={handleChange}
@@ -113,7 +113,7 @@ export default function SettingsPage({ appSettings, setAppSettings, readOnly, cl
             <label className="form-label">ชื่อสถานศึกษา / โรงเรียน</label>
             <input 
               type="text" 
-              className="form-input" 
+              className="form-control" 
               name="schoolName"
               value={formData.schoolName}
               onChange={handleChange}
@@ -129,7 +129,7 @@ export default function SettingsPage({ appSettings, setAppSettings, readOnly, cl
             <label className="form-label">ชื่อ-นามสกุล ครูผู้สอน</label>
             <input 
               type="text" 
-              className="form-input" 
+              className="form-control" 
               name="teacherName"
               value={formData.teacherName}
               onChange={handleChange}
@@ -142,7 +142,7 @@ export default function SettingsPage({ appSettings, setAppSettings, readOnly, cl
             <label className="form-label">ชื่อ-นามสกุล หัวหน้าฝ่ายวิชาการ (หรือหัวหน้ากลุ่มสาระฯ)</label>
             <input 
               type="text" 
-              className="form-input" 
+              className="form-control" 
               name="academicHeadName"
               value={formData.academicHeadName}
               onChange={handleChange}
@@ -155,7 +155,7 @@ export default function SettingsPage({ appSettings, setAppSettings, readOnly, cl
             <label className="form-label">ชื่อ-นามสกุล ผู้อำนวยการสถานศึกษา</label>
             <input 
               type="text" 
-              className="form-input" 
+              className="form-control" 
               name="principalName"
               value={formData.principalName}
               onChange={handleChange}
@@ -176,7 +176,7 @@ export default function SettingsPage({ appSettings, setAppSettings, readOnly, cl
         </form>
       </div>
 
-      <div className="card" style={{ maxWidth: '800px', marginTop: '1.5rem', backgroundColor: 'var(--bg-secondary)' }}>
+      <div className="hairline-cell" style={{ maxWidth: '800px', marginTop: '1.5rem' }}>
         <h3 style={{ margin: '0 0 1rem 0', color: 'var(--text-primary)', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <Database size={20} className="text-primary" /> ระบบสำรองข้อมูล (Backup)
         </h3>

@@ -63,7 +63,7 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
         )}
       </div>
 
-      <div className="card class-gallery-shell">
+      <div className="hairline-cell">
         {classes.length === 0 ? (
           <div className="empty-state">
             <BookOpen size={64} className="empty-state-icon" />
@@ -102,10 +102,10 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
               </div>
             ) : (
               <>
-                <div className="class-mosaic-grid">
+                <div className="hairline-grid">
                   {filteredClasses.map((c, index) => (
                     <article
-                      className={`studio-class-card tone-${(index % 4) + 1} ${activeClassId === c.id ? 'is-active' : ''}`}
+                      className={`hairline-cell ${activeClassId === c.id ? 'is-active' : ''}`}
                       key={`mosaic-${c.id}`}
                     >
                       <button
@@ -141,8 +141,8 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
                   ))}
                 </div>
 
-                <div className="table-container class-gallery-table">
-                  <table className="table">
+                <div>
+                  <table className="data-table">
               <thead>
                 <tr>
                   <th>ห้องเรียน / ชั้น</th>
@@ -213,7 +213,7 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
                 <label className="form-label">ชื่อห้องเรียน / ชั้น (เช่น ม.4/1, ป.5/2)</label>
                 <input 
                   type="text" 
-                  className="form-input" 
+                  className="form-control" 
                   value={newClassName}
                   onChange={(e) => setNewClassName(e.target.value)}
                   placeholder="เช่น ม.4/1"
@@ -224,20 +224,20 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
                 <label className="form-label">รายวิชา (เช่น คณิตศาสตร์เพิ่มเติม, วิทยาศาสตร์)</label>
                 <input 
                   type="text" 
-                  className="form-input" 
+                  className="form-control" 
                   value={newClassSubject}
                   onChange={(e) => setNewClassSubject(e.target.value)}
                   placeholder="เช่น คณิตศาสตร์เพิ่มเติม"
                 />
               </div>
               
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1.5rem', padding: '1rem', backgroundColor: 'var(--bg-tertiary)', borderRadius: 'var(--radius-md)' }}>
+              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1.5rem', padding: '1rem' }}>
                 <div style={{ gridColumn: 'span 2', fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)' }}>ตั้งค่าน้ำหนักคะแนนสอบ (คะแนนเก็บจะคิดจากผลรวมของหน่วยการเรียนรู้)</div>
                 <div className="form-group" style={{ marginBottom: 0 }}>
                   <label className="form-label">น้ำหนักสอบกลางภาค</label>
                   <input 
                     type="number" 
-                    className="form-input" 
+                    className="form-control" 
                     value={newMidtermWeight}
                     onChange={(e) => setNewMidtermWeight(Number(e.target.value))}
                     min="0"
@@ -248,7 +248,7 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
                   <label className="form-label">น้ำหนักสอบปลายภาค</label>
                   <input 
                     type="number" 
-                    className="form-input" 
+                    className="form-control" 
                     value={newFinalWeight}
                     onChange={(e) => setNewFinalWeight(Number(e.target.value))}
                     min="0"

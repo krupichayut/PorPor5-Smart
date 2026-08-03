@@ -19,7 +19,7 @@ export default function ReportsContainer(props) {
   }
 
   return (
-    <div className="animate-fade-in report-studio">
+    <div className="animate-fade-in hairline-grid">
       <div className="tabs-container report-tabs no-print">
         <button 
           className={`tab-btn ${activeTab === 'monthly' ? 'active' : ''}`}

@@ -33,7 +33,7 @@ export default function MonthlyReport({ appSettings, activeClassId, classes, stu
             <p className="page-subtitle">พิมพ์รายงานสรุปผลการเรียนและเวลาเรียนรูปแบบทางการ</p>
           </div>
         </div>
-        <div className="card" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
+        <div className="hairline-cell" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
           <FileText size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
           <p>กรุณาเลือกห้องเรียนจากเมนู <strong>ห้องเรียน / วิชา</strong> ก่อน</p>
         </div>
@@ -99,12 +99,12 @@ export default function MonthlyReport({ appSettings, activeClassId, classes, stu
         </button>
       </div>
 
-      <div className="card no-print" style={{ marginBottom: '2rem', display: 'flex', alignItems: 'flex-end', gap: '1rem' }}>
+      <div className="hairline-cell no-print" style={{ marginBottom: '2rem', display: 'flex', alignItems: 'flex-end', gap: '1rem' }}>
         <div className="form-group" style={{ flex: 1, margin: 0 }}>
           <label className="form-label">เลือกเดือนที่ต้องการรายงาน</label>
           <input 
             type="month" 
-            className="form-input" 
+            className="form-control" 
             value={selectedMonth}
             onChange={(e) => setSelectedMonth(e.target.value)}
           />
@@ -115,7 +115,7 @@ export default function MonthlyReport({ appSettings, activeClassId, classes, stu
       </div>
 
       {/* A4 Printable Area */}
-      <div className="card print-a4 official-font" style={{ margin: '0 auto', maxWidth: '210mm', backgroundColor: 'white', color: 'black' }}>
+      <div className="hairline-cell print-a4 official-font" style={{ margin: '0 auto', maxWidth: '210mm', backgroundColor: 'white', color: 'black' }}>
         
         <div style={{ textAlign: 'center', marginBottom: '30px', lineHeight: '1.4' }}>
           <div style={{ fontSize: '20pt', fontWeight: 'bold' }}>แบบรายงานผลการจัดการเรียนการสอนและสถิติเวลาเรียน</div>
@@ -139,7 +139,7 @@ export default function MonthlyReport({ appSettings, activeClassId, classes, stu
             (ไม่มีข้อมูลการเช็คชื่อในเดือนนี้)
           </div>
         ) : (
-          <table className="table print-table" style={{ width: '100%', borderCollapse: 'collapse', fontSize: '14pt', marginBottom: '20px' }}>
+          <table className="data-table print-table" style={{ width: '100%', fontSize: '14pt', marginBottom: '20px' }}>
             <thead>
               <tr>
                 <th style={{ width: '50px', textAlign: 'center' }}>เลขที่</th>

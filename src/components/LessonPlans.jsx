@@ -164,7 +164,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
         )}
       </div>
 
-      <div className="card">
+      <div className="hairline-cell">
         {classPlans.length === 0 ? (
           <div className="empty-state">
             <ClipboardList size={48} />
@@ -172,8 +172,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
             <p>{!readOnly ? 'กรุณากด "เพิ่มแผนการสอน" หรือ "นำเข้าจาก Excel"' : 'ยังไม่มีข้อมูล'}</p>
           </div>
         ) : (
-          <div className="table-container">
-            <table className="table">
+            <table className="data-table">
               <thead>
                 <tr>
                   <th style={{ width: '80px', textAlign: 'center' }}>สอนแล้ว</th>
@@ -225,7 +224,6 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
                 ))}
               </tbody>
             </table>
-          </div>
         )}
       </div>
 
@@ -242,7 +240,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
                 <label className="form-label">สัปดาห์ที่ (เช่น 1, 1-2)</label>
                 <input 
                   type="text" 
-                  className="form-input" 
+                  className="form-control" 
                   value={week}
                   onChange={(e) => setWeek(e.target.value)}
                   required
@@ -253,7 +251,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
                 <label className="form-label">เนื้อหา / หัวข้อที่สอน</label>
                 <input 
                   type="text" 
-                  className="form-input" 
+                  className="form-control" 
                   value={topic}
                   onChange={(e) => setTopic(e.target.value)}
                   required
@@ -263,7 +261,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
                 <label className="form-label">จำนวนชั่วโมง</label>
                 <input 
                   type="number" 
-                  className="form-input" 
+                  className="form-control" 
                   value={hours}
                   onChange={(e) => setHours(e.target.value)}
                   min="1"
@@ -293,7 +291,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
                   คัดลอกข้อมูล 3 คอลัมน์จาก Excel (สัปดาห์ที่, เนื้อหา, จำนวนชั่วโมง) มาวางที่นี่
                 </label>
                 <textarea 
-                  className="form-input" 
+                  className="form-control" 
                   value={importText}
                   onChange={(e) => setImportText(e.target.value)}
                   rows="8"
@@ -326,7 +324,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
               <div className="form-group">
                 <label className="form-label">บันทึกผลการจัดการเรียนรู้ ปัญหา/อุปสรรค และแนวทางแก้ไข</label>
                 <textarea 
-                  className="form-input" 
+                  className="form-control" 
                   value={postRecord}
                   onChange={(e) => setPostRecord(e.target.value)}
                   rows="10"
