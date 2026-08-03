@@ -220,39 +220,6 @@ function App() {
           </NavLink>
         </nav>
 
-        <aside className="studio-context-panel no-print" aria-label="Studio context">
-          <div className="studio-context-mark">
-            <span>PC</span>
-          </div>
-          <div className="studio-context-copy">
-            <span className="studio-context-kicker">Studio Desk</span>
-            <strong>{activeClass?.name || 'All Classes'}</strong>
-            <span>{activeClass?.subject || `${classes.length} classes in workspace`}</span>
-          </div>
-          <div className="studio-context-stats">
-            <div>
-              <Users size={16} />
-              <strong>{activeClass ? activeClassStudents.length : students.length}</strong>
-              <span>Roster</span>
-            </div>
-            <div>
-              <Award size={16} />
-              <strong>{activeClass ? activeClassScoreColumns.length : scoreColumns.length}</strong>
-              <span>Score fields</span>
-            </div>
-            <div>
-              <Calendar size={16} />
-              <strong>{activeClass ? activeClassAttendanceDates.size : classes.length}</strong>
-              <span>{activeClass ? 'Sessions' : 'Classes'}</span>
-            </div>
-          </div>
-          <div className="studio-context-links">
-            <NavLink to="/students">Roster</NavLink>
-            <NavLink to="/grading">Grades</NavLink>
-            <NavLink to="/reports">Reports</NavLink>
-          </div>
-        </aside>
-
         {isLoginModalOpen && (
           <div className="modal-overlay">
             <div className="modal-content" style={{ maxWidth: '400px' }} role="dialog" aria-labelledby="login-modal-title" aria-modal="true">
