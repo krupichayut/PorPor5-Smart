@@ -175,8 +175,9 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
             <p className="page-subtitle">จัดการหน่วยการเรียนรู้และตัวชี้วัด/ผลการเรียนรู้</p>
           </div>
         </div>
-        <div className="card" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
-          <FileText size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
+        <div className="empty-state">
+          <FileText size={48} />
+          <h3>ไม่มีการเลือกห้องเรียน</h3>
           <p>กรุณาเลือกห้องเรียนจากเมนู <strong>ห้องเรียน / วิชา</strong> ก่อน</p>
         </div>
       </div>
@@ -191,7 +192,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
           <p className="page-subtitle">
             ชั้น {activeClass?.name} • รวม {totalWeight} คะแนน • {totalHours} {expectedHours > 0 ? `/ ${expectedHours}` : ''} ชั่วโมง
             {expectedHours > 0 && totalHours !== expectedHours && (
-              <span style={{ color: '#fbbf24', marginLeft: '8px', fontWeight: 500 }}>(ควรจัดให้ได้ {expectedHours} ชั่วโมง/ปี)</span>
+              <span style={{ color: 'var(--warning-color)', marginLeft: '8px', fontWeight: 500 }}>(ควรจัดให้ได้ {expectedHours} ชั่วโมง/ปี)</span>
             )}
           </p>
         </div>
@@ -205,9 +206,10 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
 
       <div className="card">
         {classUnits.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
-            <FileText size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-            <p>ยังไม่มีข้อมูลโครงสร้างรายวิชา {!readOnly && 'กรุณากด "เพิ่มหน่วยการเรียนรู้"'}</p>
+          <div className="empty-state">
+            <FileText size={48} />
+            <h3>ไม่มีข้อมูลโครงสร้างรายวิชา</h3>
+            <p>{!readOnly ? 'กรุณากด "เพิ่มหน่วยการเรียนรู้"' : 'ยังไม่มีข้อมูล'}</p>
           </div>
         ) : (
           <div className="table-container">
@@ -236,8 +238,8 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
                           {unit.items.map(item => (
                             <li key={item.id} style={{ marginBottom: '0.5rem', lineHeight: '1.4' }}>
                               <strong style={{ color: 'var(--primary-color)' }}>{item.code}</strong> 
-                              {item.type === 'between' && <span style={{ marginLeft: '6px', backgroundColor: 'rgba(251, 191, 36, 0.2)', color: '#fde047', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600 }}>ระหว่างทาง</span>}
-                              {item.type === 'end' && <span style={{ marginLeft: '6px', backgroundColor: 'rgba(99, 102, 241, 0.2)', color: 'var(--primary-color)', padding: '2px 6px', borderRadius: '4px', fontSize: '0.7rem', fontWeight: 600 }}>ปลายทาง</span>}
+                              {item.type === 'between' && <span className="badge" style={{ marginLeft: '6px', backgroundColor: 'var(--bg-tertiary)', color: 'var(--warning-color)' }}>ระหว่างทาง</span>}
+                              {item.type === 'end' && <span className="badge" style={{ marginLeft: '6px', backgroundColor: 'var(--bg-primary)', color: 'var(--primary-color)' }}>ปลายทาง</span>}
                               {' '}{item.description}
                               {!readOnly && (
                                 <>
@@ -246,6 +248,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
                                     style={{ display: 'inline-flex', padding: '0 4px', color: 'var(--primary-color)', opacity: 0.8, verticalAlign: 'middle', marginLeft: '8px' }} 
                                     onClick={() => openEditIndicatorModal(unit.id, item)}
                                     title="แก้ไขตัวชี้วัดนี้"
+                                    aria-label="แก้ไขตัวชี้วัดนี้"
                                   >
                                     <Pencil size={12} />
                                   </button>
@@ -254,6 +257,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
                                     style={{ display: 'inline-flex', padding: '0 4px', color: 'var(--danger-color)', opacity: 0.6, verticalAlign: 'middle' }} 
                                     onClick={() => handleDeleteIndicator(unit.id, item.id)}
                                     title="ลบตัวชี้วัดนี้"
+                                    aria-label="ลบตัวชี้วัดนี้"
                                   >
                                     <Trash2 size={12} />
                                   </button>
@@ -270,7 +274,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
                       )}
                     </td>
                     <td style={{ textAlign: 'center', paddingTop: '1rem' }}>
-                      <span className="badge" style={{ backgroundColor: 'rgba(99, 102, 241, 0.1)', color: 'var(--primary-color)' }}>
+                      <span className="badge" style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--primary-color)' }}>
                         {unit.term === '1' ? 'เทอม 1' : unit.term === '2' ? 'เทอม 2' : 'ตลอดปี'}
                       </span>
                     </td>
@@ -278,10 +282,10 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
                     <td style={{ textAlign: 'center', paddingTop: '1rem' }}>{unit.weight}</td>
                     {!readOnly && (
                       <td style={{ textAlign: 'center', paddingTop: '1rem', display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
-                        <button className="btn-icon" style={{ color: 'var(--primary-color)' }} onClick={() => openEditUnitModal(unit)} title="แก้ไขหน่วยการเรียนรู้นี้">
+                        <button className="btn-icon" style={{ color: 'var(--primary-color)' }} onClick={() => openEditUnitModal(unit)} title="แก้ไขหน่วยการเรียนรู้นี้" aria-label="แก้ไขหน่วยการเรียนรู้นี้">
                           <Pencil size={16} />
                         </button>
-                        <button className="btn-icon" style={{ color: 'var(--danger-color)' }} onClick={() => handleDeleteUnit(unit.id)} title="ลบหน่วยการเรียนรู้นี้">
+                        <button className="btn-icon" style={{ color: 'var(--danger-color)' }} onClick={() => handleDeleteUnit(unit.id)} title="ลบหน่วยการเรียนรู้นี้" aria-label="ลบหน่วยการเรียนรู้นี้">
                           <Trash2 size={16} />
                         </button>
                       </td>
@@ -290,7 +294,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
                 ))}
                 <tr style={{ backgroundColor: 'var(--bg-tertiary)', fontWeight: 'bold' }}>
                   <td colSpan={4} style={{ textAlign: 'right', paddingRight: '1rem' }}>รวมทั้งหมด:</td>
-                  <td style={{ textAlign: 'center', color: expectedHours > 0 && totalHours !== expectedHours ? '#fbbf24' : 'var(--primary-color)' }}>{totalHours} {expectedHours > 0 ? `/ ${expectedHours}` : ''}</td>
+                  <td style={{ textAlign: 'center', color: expectedHours > 0 && totalHours !== expectedHours ? 'var(--warning-color)' : 'var(--primary-color)' }}>{totalHours} {expectedHours > 0 ? `/ ${expectedHours}` : ''}</td>
                   <td style={{ textAlign: 'center', color: 'var(--primary-color)' }}>{totalWeight}</td>
                   <td></td>
                 </tr>
@@ -306,7 +310,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
           <div className="modal-content">
             <div className="modal-header">
               <h3 className="modal-title">{editingUnitId ? 'แก้ไขหน่วยการเรียนรู้' : 'เพิ่มหน่วยการเรียนรู้'}</h3>
-              <button className="btn-icon" onClick={() => setIsUnitModalOpen(false)}>×</button>
+              <button type="button" className="btn-icon" onClick={() => setIsUnitModalOpen(false)} aria-label="ปิด">×</button>
             </div>
             <form onSubmit={handleAddUnit}>
               <div className="form-group">
@@ -394,7 +398,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
           <div className="modal-content">
             <div className="modal-header">
               <h3 className="modal-title">{editingIndicatorId ? 'แก้ไขตัวชี้วัด / ผลการเรียนรู้' : 'เพิ่มตัวชี้วัด / ผลการเรียนรู้'}</h3>
-              <button className="btn-icon" onClick={() => setIsIndicatorModalOpen(false)}>×</button>
+              <button type="button" className="btn-icon" onClick={() => setIsIndicatorModalOpen(false)} aria-label="ปิด">×</button>
             </div>
             <form onSubmit={handleAddIndicator}>
               <div className="form-group">

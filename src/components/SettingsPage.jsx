@@ -170,13 +170,13 @@ export default function SettingsPage({ appSettings, setAppSettings, readOnly, cl
                 <Save size={18} style={{ marginRight: '0.5rem' }} />
                 บันทึกข้อมูล
               </button>
-              {isSaved && <span style={{ color: '#10b981', fontWeight: 500 }}>บันทึกข้อมูลเรียบร้อยแล้ว!</span>}
+              {isSaved && <span style={{ color: 'var(--success-color)', fontWeight: 500 }}>บันทึกข้อมูลเรียบร้อยแล้ว!</span>}
             </div>
           )}
         </form>
       </div>
 
-      <div className="card" style={{ maxWidth: '800px', marginTop: '1.5rem', backgroundColor: 'rgba(15, 23, 42, 0.4)' }}>
+      <div className="card" style={{ maxWidth: '800px', marginTop: '1.5rem', backgroundColor: 'var(--bg-secondary)' }}>
         <h3 style={{ margin: '0 0 1rem 0', color: 'var(--text-primary)', fontSize: '1.1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
           <Database size={20} className="text-primary" /> ระบบสำรองข้อมูล (Backup)
         </h3>

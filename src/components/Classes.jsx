@@ -159,12 +159,12 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
                     <td style={{ fontWeight: 500 }}>{c.name}</td>
                     <td>{c.subject}</td>
                     <td style={{ textAlign: 'center' }}>
-                      <span className="badge" style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444' }}>
+                      <span className="badge" className="badge badge-danger">
                         {c.midtermWeight ?? 10} คะแนน
                       </span>
                     </td>
                     <td style={{ textAlign: 'center' }}>
-                      <span className="badge" style={{ backgroundColor: 'rgba(220, 38, 38, 0.1)', color: '#dc2626' }}>
+                      <span className="badge" className="badge badge-danger">
                         {c.finalWeight ?? 10} คะแนน
                       </span>
                     </td>
@@ -185,7 +185,7 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
                     </td>
                     <td style={{ textAlign: 'right' }}>
                       {!readOnly && (
-                        <button className="btn-icon" onClick={() => handleDeleteClass(c.id)} style={{ color: 'var(--danger-color)' }}>
+                        <button className="btn-icon" aria-label="Delete class" onClick={() => handleDeleteClass(c.id)} style={{ color: 'var(--danger-color)' }}>
                           <Trash2 size={18} />
                         </button>
                       )}
@@ -206,7 +206,7 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
           <div className="modal-content">
             <div className="modal-header">
               <h3 className="modal-title">เพิ่มห้องเรียนใหม่</h3>
-              <button className="btn-icon" onClick={() => setIsModalOpen(false)}>×</button>
+              <button className="btn-icon" aria-label="Close modal" onClick={() => setIsModalOpen(false)}>×</button>
             </div>
             <form onSubmit={handleAddClass}>
               <div className="form-group">

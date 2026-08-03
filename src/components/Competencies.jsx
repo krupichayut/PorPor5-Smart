@@ -63,8 +63,9 @@ export default function Competencies({ students, activeClassId, classes, compete
             <p className="page-subtitle">ประเมินความสามารถ 5 ด้านตามหลักสูตรแกนกลาง</p>
           </div>
         </div>
-        <div className="card" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
-          <Brain size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
+        <div className="empty-state">
+          <Brain size={48} />
+          <h3>ไม่มีการเลือกห้องเรียน</h3>
           <p>กรุณาเลือกห้องเรียนจากเมนู <strong>ห้องเรียน / วิชา</strong> ก่อน</p>
         </div>
       </div>
@@ -82,7 +83,9 @@ export default function Competencies({ students, activeClassId, classes, compete
 
       <div className="card">
         {classStudents.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
+          <div className="empty-state">
+            <Brain size={48} />
+            <h3>ไม่พบข้อมูลนักเรียน</h3>
             <p>ยังไม่มีข้อมูลนักเรียนในห้องนี้ กรุณาเพิ่มนักเรียนก่อน</p>
           </div>
         ) : (
@@ -112,23 +115,16 @@ export default function Competencies({ students, activeClassId, classes, compete
                         return (
                           <td key={c.id} style={{ textAlign: 'center' }}>
                             <select 
-                              className="form-select"
+                              className={`form-control ${record ? 'active-record' : ''}`}
                               value={record ? record.score : ''}
                               onChange={(e) => handleScoreChange(s.id, c.id, e.target.value)}
                               disabled={readOnly}
-                              style={{ 
-                                padding: '4px', 
-                                minHeight: '32px',
-                                backgroundColor: record ? 'var(--bg-primary)' : 'var(--bg-tertiary)',
-                                border: '1px solid var(--border-color)',
-                                borderRadius: 'var(--radius-sm)'
-                              }}
                             >
-                              <option value="" disabled style={{ color: 'var(--text-primary)', backgroundColor: 'var(--bg-secondary)' }}>-</option>
-                              <option value="3" style={{ color: 'var(--text-primary)', backgroundColor: 'var(--bg-secondary)' }}>3</option>
-                              <option value="2" style={{ color: 'var(--text-primary)', backgroundColor: 'var(--bg-secondary)' }}>2</option>
-                              <option value="1" style={{ color: 'var(--text-primary)', backgroundColor: 'var(--bg-secondary)' }}>1</option>
-                              <option value="0" style={{ color: 'var(--text-primary)', backgroundColor: 'var(--bg-secondary)' }}>0</option>
+                              <option value="" disabled>-</option>
+                              <option value="3">3</option>
+                              <option value="2">2</option>
+                              <option value="1">1</option>
+                              <option value="0">0</option>
                             </select>
                           </td>
                         );

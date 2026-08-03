@@ -405,10 +405,10 @@ export default function Students({ students, setStudents, activeClassId, classes
                     <td style={{ textAlign: 'right' }}>
                       {!readOnly && (
                         <>
-                          <button className="btn-icon" onClick={() => handleEditClick(s)} style={{ color: 'var(--primary-color)', marginRight: '0.5rem' }}>
+                          <button className="btn-icon" aria-label="แก้ไขนักเรียน" onClick={() => handleEditClick(s)} style={{ color: 'var(--primary-color)', marginRight: '0.5rem' }}>
                             <Edit size={18} />
                           </button>
-                          <button className="btn-icon" onClick={() => handleDeleteStudent(s.id)} style={{ color: 'var(--danger-color)' }}>
+                          <button className="btn-icon" aria-label="ลบนักเรียน" onClick={() => handleDeleteStudent(s.id)} style={{ color: 'var(--danger-color)' }}>
                             <Trash2 size={18} />
                           </button>
                         </>
@@ -428,7 +428,7 @@ export default function Students({ students, setStudents, activeClassId, classes
           <div className="modal-content" style={{ maxWidth: '600px' }}>
             <div className="modal-header">
               <h3 className="modal-title">เพิ่มรายชื่อนักเรียน</h3>
-              <button className="btn-icon" onClick={() => setIsModalOpen(false)}>×</button>
+              <button className="btn-icon" aria-label="ปิด" onClick={() => setIsModalOpen(false)}>×</button>
             </div>
             
             <div style={{ display: 'flex', borderBottom: '1px solid var(--border-color)', marginBottom: '1.5rem' }}>
@@ -507,7 +507,7 @@ export default function Students({ students, setStudents, activeClassId, classes
           <div className="modal-content">
             <div className="modal-header">
               <h3 className="modal-title">แก้ไขข้อมูลนักเรียน</h3>
-              <button className="btn-icon" onClick={() => setIsEditModalOpen(false)}>×</button>
+              <button className="btn-icon" aria-label="ปิด" onClick={() => setIsEditModalOpen(false)}>×</button>
             </div>
             <form onSubmit={handleSaveEdit}>
               <div className="form-group">
@@ -559,7 +559,7 @@ export default function Students({ students, setStudents, activeClassId, classes
                 <button className="btn btn-secondary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem' }} onClick={() => window.print()}>
                   <Printer size={16} style={{ marginRight: '0.5rem' }} /> พิมพ์รายงาน
                 </button>
-                <button className="btn-icon" onClick={() => setSelectedStudentProfile(null)}>×</button>
+                <button className="btn-icon" aria-label="ปิด" onClick={() => setSelectedStudentProfile(null)}>×</button>
               </div>
             </div>
             
@@ -589,17 +589,17 @@ export default function Students({ students, setStudents, activeClassId, classes
                     <Award size={18} /> สรุปผลการเรียน
                   </h4>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
-                    <div style={{ backgroundColor: 'rgba(15, 23, 42, 0.4)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1.25rem', textAlign: 'center' }}>
+                    <div style={{ backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1.25rem', textAlign: 'center' }}>
                       <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>คะแนนสะสม</div>
                       <div style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--primary-color)' }}>{stats.totalScore} <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 400 }}>/ {stats.totalMax}</span></div>
                     </div>
-                    <div style={{ backgroundColor: 'rgba(15, 23, 42, 0.4)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1.25rem', textAlign: 'center' }}>
+                    <div style={{ backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1.25rem', textAlign: 'center' }}>
                       <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>งานที่ค้างส่ง</div>
-                      <div style={{ fontSize: '1.75rem', fontWeight: 700, color: stats.missingWorkCount > 0 ? '#ef4444' : '#10b981' }}>{stats.missingWorkCount} <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 400 }}>ชิ้น</span></div>
+                      <div style={{ fontSize: '1.75rem', fontWeight: 700, color: stats.missingWorkCount > 0 ? 'var(--danger-color)' : 'var(--success-color)' }}>{stats.missingWorkCount} <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 400 }}>ชิ้น</span></div>
                     </div>
-                    <div style={{ backgroundColor: 'rgba(15, 23, 42, 0.4)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1.25rem', textAlign: 'center' }}>
+                    <div style={{ backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1.25rem', textAlign: 'center' }}>
                       <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>เวลาเรียน</div>
-                      <div style={{ fontSize: '1.75rem', fontWeight: 700, color: attPercent >= 80 ? '#10b981' : '#f59e0b' }}>{attPercent}%</div>
+                      <div style={{ fontSize: '1.75rem', fontWeight: 700, color: attPercent >= 80 ? 'var(--success-color)' : 'var(--warning-color)' }}>{attPercent}%</div>
                     </div>
                   </div>
 
@@ -610,19 +610,19 @@ export default function Students({ students, setStudents, activeClassId, classes
                       </h4>
                       <ul style={{ listStyle: 'none', padding: 0, margin: 0, border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)' }}>
                         <li style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 1rem', borderBottom: '1px solid var(--border-color)' }}>
-                          <span style={{ color: '#10b981' }}>มาเรียนปกติ</span>
+                          <span style={{ color: 'var(--success-color)' }}>มาเรียนปกติ</span>
                           <span style={{ fontWeight: 600 }}>{stats.present} วัน</span>
                         </li>
                         <li style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 1rem', borderBottom: '1px solid var(--border-color)' }}>
-                          <span style={{ color: '#f59e0b' }}>มาสาย</span>
+                          <span style={{ color: 'var(--warning-color)' }}>มาสาย</span>
                           <span style={{ fontWeight: 600 }}>{stats.late} วัน</span>
                         </li>
                         <li style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 1rem', borderBottom: '1px solid var(--border-color)' }}>
-                          <span style={{ color: '#3b82f6' }}>ลาป่วย/ลากิจ</span>
+                          <span style={{ color: 'var(--studio-blue)' }}>ลาป่วย/ลากิจ</span>
                           <span style={{ fontWeight: 600 }}>{stats.leave} วัน</span>
                         </li>
                         <li style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 1rem' }}>
-                          <span style={{ color: '#ef4444' }}>ขาดเรียน</span>
+                          <span style={{ color: 'var(--danger-color)' }}>ขาดเรียน</span>
                           <span style={{ fontWeight: 600 }}>{stats.absent} วัน</span>
                         </li>
                       </ul>
@@ -631,7 +631,7 @@ export default function Students({ students, setStudents, activeClassId, classes
                       <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--primary-light)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                         <AlertCircle size={18} /> สถานะการประเมิน 3 หมวด
                       </h4>
-                      <div style={{ padding: '1rem', border: '1px dashed rgba(255, 255, 255, 0.2)', borderRadius: 'var(--radius-md)', textAlign: 'center', height: 'calc(100% - 2.5rem)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                      <div style={{ padding: '1rem', border: '1px dashed var(--border-color)', borderRadius: 'var(--radius-md)', textAlign: 'center', height: 'calc(100% - 2.5rem)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                         <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>การประเมินสามารถดูรายละเอียดเชิงลึก</p>
                         <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>ได้ที่หน้ารายงาน PicthClass ฉบับสมบูรณ์</p>
                       </div>

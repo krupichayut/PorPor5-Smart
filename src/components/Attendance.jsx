@@ -185,6 +185,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
                               onClick={() => handleDeleteDate(date)}
                               style={{ background: 'none', border: 'none', color: 'var(--danger-color)', cursor: 'pointer', opacity: 0.7, padding: '2px' }}
                               title="ลบวันที่นี้"
+                              aria-label="ลบวันที่นี้"
                             >
                               <Trash2 size={14} />
                             </button>
@@ -194,10 +195,10 @@ export default function Attendance({ students, activeClassId, classes, attendanc
                     );
                   })}
                   <th style={{ textAlign: 'center', minWidth: '60px', backgroundColor: 'var(--bg-tertiary)' }}>เต็ม</th>
-                  <th style={{ textAlign: 'center', minWidth: '60px', color: 'var(--badge-present-text)', backgroundColor: 'var(--badge-present-bg)' }}>มา</th>
-                  <th style={{ textAlign: 'center', minWidth: '60px', color: 'var(--badge-leave-text)', backgroundColor: 'var(--badge-leave-bg)' }}>ลา</th>
-                  <th style={{ textAlign: 'center', minWidth: '60px', color: 'var(--badge-absent-text)', backgroundColor: 'var(--badge-absent-bg)' }}>ขาด</th>
-                  <th style={{ textAlign: 'center', minWidth: '60px', color: 'var(--badge-late-text)', backgroundColor: 'var(--badge-late-bg)' }}>สาย</th>
+                  <th style={{ textAlign: 'center', minWidth: '60px', backgroundColor: 'var(--bg-tertiary)' }}>มา</th>
+                  <th style={{ textAlign: 'center', minWidth: '60px', backgroundColor: 'var(--bg-tertiary)' }}>ลา</th>
+                  <th style={{ textAlign: 'center', minWidth: '60px', backgroundColor: 'var(--bg-tertiary)' }}>ขาด</th>
+                  <th style={{ textAlign: 'center', minWidth: '60px', backgroundColor: 'var(--bg-tertiary)' }}>สาย</th>
                   <th style={{ textAlign: 'center', minWidth: '80px', backgroundColor: 'var(--bg-tertiary)' }}>ร้อยละ %</th>
                 </tr>
               </thead>
@@ -220,6 +221,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
                         return (
                           <td key={date} style={{ textAlign: 'center', padding: '0.25rem' }}>
                             <button 
+                              aria-label="เปลี่ยนสถานะ"
                               style={{ background: 'none', border: 'none', cursor: 'pointer', display: 'inline-flex', justifyContent: 'center', padding: '0.25rem 0.5rem', borderRadius: '4px' }}
                               onClick={() => handleUpdateStatus(s.id, date, cycleStatus(record?.status || 'present'))}
                               title="คลิกเพื่อเปลี่ยนสถานะ"
@@ -229,12 +231,12 @@ export default function Attendance({ students, activeClassId, classes, attendanc
                           </td>
                         );
                       })}
-                      <td style={{ textAlign: 'center', fontWeight: 600, backgroundColor: 'var(--bg-tertiary)' }}>{totalDays}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--badge-present-text)', backgroundColor: 'var(--badge-present-bg)' }} title={`มา ${presentCount} วัน, วันหยุด ${holidayCount} วัน`}>{presentCount + holidayCount}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--badge-leave-text)', backgroundColor: 'var(--badge-leave-bg)' }}>{leaveCount}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--badge-absent-text)', backgroundColor: 'var(--badge-absent-bg)' }}>{absentCount}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--badge-late-text)', backgroundColor: 'var(--badge-late-bg)' }}>{lateCount}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 700, color: percentage < 80 ? 'var(--badge-absent-text)' : 'var(--primary-color)', backgroundColor: 'var(--bg-tertiary)' }}>
+                      <td style={{ textAlign: 'center', fontWeight: 600 }}>{totalDays}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--badge-present-text)' }} title={`มา ${presentCount} วัน, วันหยุด ${holidayCount} วัน`}>{presentCount + holidayCount}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--badge-leave-text)' }}>{leaveCount}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--badge-absent-text)' }}>{absentCount}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--badge-late-text)' }}>{lateCount}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 700, color: percentage < 80 ? 'var(--badge-absent-text)' : 'var(--primary-color)' }}>
                         {percentage}%
                       </td>
                     </tr>
@@ -251,7 +253,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
           <div className="modal-content">
             <div className="modal-header">
               <h3 className="modal-title">เพิ่มวันเช็คชื่อ</h3>
-              <button className="btn-icon" onClick={() => setIsModalOpen(false)}>×</button>
+              <button className="btn-icon" aria-label="ปิด" onClick={() => setIsModalOpen(false)}>×</button>
             </div>
             <form onSubmit={handleAddDate}>
               <div className="form-group">

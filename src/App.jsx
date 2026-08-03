@@ -138,24 +138,25 @@ function App() {
         <div className="top-header no-print" style={{ position: 'fixed', top: '1.5rem', left: '1.5rem', right: '1.5rem', zIndex: 40, display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start', pointerEvents: 'none' }}>
           
           {/* App Title (Left) */}
-          <div className="top-brand" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', background: 'rgba(24, 24, 27, 0.7)', backdropFilter: 'blur(16px)', padding: '0.5rem 1rem 0.5rem 0.5rem', borderRadius: 'var(--radius-full)', border: '1px solid rgba(255,255,255,0.05)', boxShadow: 'var(--shadow-3d-outset)', pointerEvents: 'auto' }}>
-            <div style={{ backgroundColor: 'var(--primary-light)', padding: '0.4rem', borderRadius: 'var(--radius-full)', color: 'var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
+          <div className="top-brand card" style={{ display: 'flex', gap: '0.75rem', alignItems: 'center', padding: '0.5rem 1rem 0.5rem 0.5rem', borderRadius: 'var(--radius-full)', pointerEvents: 'auto' }}>
+            <div style={{ backgroundColor: 'var(--primary-light)', padding: '0.4rem', borderRadius: 'var(--radius-full)', color: 'var(--primary-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', boxShadow: 'var(--shadow-glow-cyan)' }}>
               <Paintbrush size={20} />
             </div>
-            <h1 style={{ margin: 0, fontSize: '1.25rem', fontFamily: 'var(--font-game)', fontWeight: 700, color: '#fff', letterSpacing: '1px', marginRight: '0.5rem' }}>PicthClass Studio</h1>
+            <h1 style={{ margin: 0, fontSize: '1.25rem', fontFamily: 'var(--font-game)', fontWeight: 700, color: 'var(--text-primary)', letterSpacing: '1px', marginRight: '0.5rem' }}>PicthClass Studio</h1>
           </div>
 
           {/* Controls (Right) */}
           <div className="top-controls" style={{ display: 'flex', gap: '1rem', alignItems: 'center', pointerEvents: 'auto' }}>
             {classes && classes.length > 0 && (
-              <div className="class-picker" style={{ background: 'rgba(24, 24, 27, 0.7)', backdropFilter: 'blur(16px)', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', border: '1px solid rgba(255,255,255,0.05)', boxShadow: 'var(--shadow-3d-outset)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
+              <div className="class-picker card" style={{ padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
                 <span style={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }}>ห้องเรียน:</span>
                 <select 
                   style={{ background: 'transparent', color: 'var(--text-primary)', border: 'none', outline: 'none', fontFamily: 'var(--font-game)', fontWeight: 600, fontSize: '1rem', cursor: 'pointer' }}
                   value={activeClassId || ''}
                   onChange={(e) => setActiveClassId(e.target.value)}
+                  aria-label="เลือกห้องเรียน"
                 >
-                  <option value="" disabled>-- เลือกห้องเรียน --</option>
+                  <option value="" disabled style={{ background: 'var(--bg-primary)' }}>-- เลือกห้องเรียน --</option>
                   {classes.map(c => (
                     <option key={c.id} value={c.id} style={{ background: 'var(--bg-secondary)' }}>{c.name} - {c.subject}</option>
                   ))}
@@ -164,11 +165,11 @@ function App() {
             )}
 
             {user ? (
-              <button className="btn-icon" style={{ background: 'rgba(24, 24, 27, 0.7)', backdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.05)', width: 'auto', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', color: '#ff3366', boxShadow: 'var(--shadow-3d-outset)' }} onClick={handleLogout} title="ออกจากระบบ" aria-label="ออกจากระบบ">
+              <button className="btn-icon card hover-scale" style={{ width: 'auto', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', color: 'var(--danger-color)' }} onClick={handleLogout} title="ออกจากระบบ" aria-label="ออกจากระบบ">
                 <LogOut size={18} style={{ marginRight: '0.5rem' }} /> ออก
               </button>
             ) : (
-              <button className="btn-icon" style={{ background: 'rgba(24, 24, 27, 0.7)', backdropFilter: 'blur(16px)', border: '1px solid rgba(255,255,255,0.05)', width: 'auto', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', color: 'var(--primary-color)', boxShadow: 'var(--shadow-3d-outset)' }} onClick={() => setIsLoginModalOpen(true)} title="เข้าสู่ระบบ" aria-label="เข้าสู่ระบบ">
+              <button className="btn-icon card hover-scale" style={{ width: 'auto', padding: '0.5rem 1rem', borderRadius: 'var(--radius-full)', color: 'var(--primary-color)' }} onClick={() => setIsLoginModalOpen(true)} title="เข้าสู่ระบบ" aria-label="เข้าสู่ระบบ">
                 <Key size={18} style={{ marginRight: '0.5rem' }} /> เข้าสู่ระบบ
               </button>
             )}
@@ -256,17 +257,20 @@ function App() {
           <div className="modal-overlay">
             <div className="modal-content" style={{ maxWidth: '400px' }} role="dialog" aria-labelledby="login-modal-title" aria-modal="true">
               <h2 id="login-modal-title">เข้าสู่ระบบสำหรับครู</h2>
-              {loginError && <p style={{ color: 'red' }} role="alert">{loginError}</p>}
-              <form onSubmit={handleLogin}>
-                <label htmlFor="login-email" className="sr-only">อีเมล</label>
-                <input id="login-email" type="email" placeholder="อีเมล" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} style={{ width: '100%', marginBottom: '10px' }} required aria-required="true" />
+              {loginError && <p style={{ color: 'var(--danger-color)' }} role="alert">{loginError}</p>}
+              <form onSubmit={handleLogin} style={{ display: 'flex', flexDirection: 'column', gap: '1rem' }}>
+                <div>
+                  <label htmlFor="login-email" className="sr-only">อีเมล</label>
+                  <input id="login-email" type="email" className="form-control" placeholder="อีเมล" value={loginEmail} onChange={(e) => setLoginEmail(e.target.value)} required aria-required="true" />
+                </div>
+                <div>
+                  <label htmlFor="login-password" className="sr-only">รหัสผ่าน</label>
+                  <input id="login-password" type="password" className="form-control" placeholder="รหัสผ่าน" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} required aria-required="true" />
+                </div>
                 
-                <label htmlFor="login-password" className="sr-only">รหัสผ่าน</label>
-                <input id="login-password" type="password" placeholder="รหัสผ่าน" value={loginPassword} onChange={(e) => setLoginPassword(e.target.value)} style={{ width: '100%', marginBottom: '10px' }} required aria-required="true" />
-                
-                <div style={{ display: 'flex', gap: '10px' }}>
-                  <button type="submit" className="btn btn-primary">เข้าสู่ระบบ</button>
-                  <button type="button" className="btn btn-secondary" onClick={() => setIsLoginModalOpen(false)}>ยกเลิก</button>
+                <div style={{ display: 'flex', gap: '0.75rem', marginTop: '0.5rem' }}>
+                  <button type="submit" className="btn btn-primary" style={{ flex: 1 }}>เข้าสู่ระบบ</button>
+                  <button type="button" className="btn btn-secondary" style={{ flex: 1 }} onClick={() => setIsLoginModalOpen(false)}>ยกเลิก</button>
                 </div>
               </form>
             </div>

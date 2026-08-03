@@ -139,7 +139,7 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
           <p className="page-subtitle">จัดการแต้มความประพฤติและแลกของรางวัล</p>
         </div>
         {notification && (
-          <div style={{ backgroundColor: 'rgba(16, 185, 129, 0.2)', color: '#10b981', padding: '0.5rem 1rem', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold' }}>
+          <div style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--success-color)', padding: '0.5rem 1rem', borderRadius: 'var(--radius-md)', display: 'flex', alignItems: 'center', gap: '0.5rem', fontWeight: 'bold' }}>
             <CheckCircle size={18} /> {notification}
           </div>
         )}
@@ -173,7 +173,7 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
                   <tr>
                     <th style={{ width: '60px', textAlign: 'center' }}>เลขที่</th>
                     <th>ชื่อ - นามสกุล</th>
-                    <th style={{ textAlign: 'center', color: '#fbbf24' }}>แต้มสะสมปัจจุบัน</th>
+                    <th style={{ textAlign: 'center', color: 'var(--warning-color)' }}>แต้มสะสมปัจจุบัน</th>
                     <th style={{ textAlign: 'center' }}>จัดการแต้ม</th>
                   </tr>
                 </thead>
@@ -185,7 +185,7 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
                         <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--text-muted)' }}>{index + 1}</td>
                         <td style={{ fontWeight: 500 }}>{s.name}</td>
                         <td style={{ textAlign: 'center' }}>
-                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', backgroundColor: 'rgba(251, 191, 36, 0.1)', padding: '0.25rem 0.75rem', borderRadius: 'var(--radius-full)', color: '#fbbf24', fontWeight: 'bold', fontSize: '1.1rem' }}>
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', backgroundColor: 'var(--bg-secondary)', padding: '0.25rem 0.75rem', borderRadius: 'var(--radius-full)', color: 'var(--warning-color)', fontWeight: 'bold', fontSize: '1.1rem' }}>
                             <Paintbrush size={16} fill="currentColor" /> {points}
                           </div>
                         </td>
@@ -194,7 +194,7 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
                             <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
                               <button 
                                 className="btn-icon" 
-                                style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.3)' }}
+                                style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--success-color)', border: '1px solid rgba(16, 185, 129, 0.3)' }}
                                 onClick={() => updatePoints(s.id, 1)}
                                 title="เพิ่ม 1 แต้ม"
                               >
@@ -202,7 +202,7 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
                               </button>
                               <button 
                                 className="btn-icon" 
-                                style={{ backgroundColor: 'rgba(16, 185, 129, 0.1)', color: '#10b981', border: '1px solid rgba(16, 185, 129, 0.3)' }}
+                                style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--success-color)', border: '1px solid rgba(16, 185, 129, 0.3)' }}
                                 onClick={() => updatePoints(s.id, 5)}
                                 title="เพิ่ม 5 แต้ม"
                               >
@@ -210,7 +210,7 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
                               </button>
                               <button 
                                 className="btn-icon" 
-                                style={{ backgroundColor: 'rgba(239, 68, 68, 0.1)', color: '#ef4444', border: '1px solid rgba(239, 68, 68, 0.3)' }}
+                                style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--danger-color)', border: '1px solid rgba(239, 68, 68, 0.3)' }}
                                 onClick={() => updatePoints(s.id, -1)}
                                 title="ลด 1 แต้ม"
                                 disabled={points <= 0}
@@ -252,8 +252,8 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
                 <div key={reward.id} className="card" style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '2rem 1.5rem', position: 'relative' }}>
                   {!readOnly && (
                     <div style={{ position: 'absolute', top: '10px', right: '10px', display: 'flex', gap: '0.25rem' }}>
-                      <button className="btn-icon" style={{ padding: '4px' }} onClick={() => handleOpenRewardModal(reward)}><Edit2 size={14} /></button>
-                      <button className="btn-icon" style={{ padding: '4px', color: 'var(--danger-color)' }} onClick={() => handleDeleteReward(reward.id)}><Trash2 size={14} /></button>
+                      <button className="btn-icon" aria-label="แก้ไข" style={{ padding: '4px' }} onClick={() => handleOpenRewardModal(reward)}><Edit2 size={14} /></button>
+                      <button className="btn-icon" aria-label="ลบ" style={{ padding: '4px', color: 'var(--danger-color)' }} onClick={() => handleDeleteReward(reward.id)}><Trash2 size={14} /></button>
                     </div>
                   )}
                   
@@ -261,7 +261,7 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
                     {reward.icon}
                   </div>
                   <h3 style={{ fontSize: '1.25rem', marginBottom: '0.5rem', textAlign: 'center' }}>{reward.name}</h3>
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#fbbf24', fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '1.5rem' }}>
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--warning-color)', fontWeight: 'bold', fontSize: '1.1rem', marginBottom: '1.5rem' }}>
                     <Paintbrush fill="currentColor" size={18} /> {reward.points} แต้ม
                   </div>
                   
@@ -287,7 +287,7 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
           <div className="modal-content" style={{ maxWidth: '400px' }}>
             <div className="modal-header">
               <h3 className="modal-title">{editingRewardId ? 'แก้ไขของรางวัล' : 'เพิ่มของรางวัลใหม่'}</h3>
-              <button className="btn-icon" onClick={() => setIsRewardModalOpen(false)}>×</button>
+              <button className="btn-icon" aria-label="ปิด" onClick={() => setIsRewardModalOpen(false)}>×</button>
             </div>
             <form onSubmit={handleSaveReward}>
               <div className="form-group">
@@ -355,13 +355,13 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
           <div className="modal-content" style={{ maxWidth: '500px' }}>
             <div className="modal-header">
               <h3 className="modal-title">ยืนยันการแลกรางวัล</h3>
-              <button className="btn-icon" onClick={() => setIsRedeemModalOpen(false)}>×</button>
+              <button className="btn-icon" aria-label="ปิด" onClick={() => setIsRedeemModalOpen(false)}>×</button>
             </div>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', backgroundColor: 'rgba(15, 23, 42, 0.4)', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem' }}>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '1rem', padding: '1rem', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-md)', marginBottom: '1.5rem' }}>
               <div style={{ fontSize: '3rem' }}>{redeemReward.icon}</div>
               <div>
                 <h4 style={{ fontSize: '1.1rem', margin: 0 }}>{redeemReward.name}</h4>
-                <div style={{ color: '#fbbf24', fontWeight: 'bold' }}>ใช้ {redeemReward.points} แต้ม</div>
+                <div style={{ color: 'var(--warning-color)', fontWeight: 'bold' }}>ใช้ {redeemReward.points} แต้ม</div>
               </div>
             </div>
             

@@ -329,20 +329,20 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                   
                   {/* Exams Groups */}
                   {showMidterm && (
-                    <th colSpan={Math.max(1, classScoreColumns.filter(c => c.type === 'midterm').length) + 1} style={{ textAlign: 'center', borderLeft: '2px solid var(--border-color)', backgroundColor: 'rgba(255, 23, 68, 0.15)' }}>
+                    <th colSpan={Math.max(1, classScoreColumns.filter(c => c.type === 'midterm').length) + 1} style={{ textAlign: 'center', borderLeft: '2px solid var(--border-color)', backgroundColor: 'var(--bg-tertiary)' }}>
                       <div style={{ color: 'var(--danger-color)' }}>สอบกลางภาค</div>
                       <div style={{ fontSize: '0.75rem', fontWeight: 'normal' }}>น้ำหนัก: {midtermWeight} คะแนน</div>
                     </th>
                   )}
                   {showFinal && (
-                    <th colSpan={Math.max(1, classScoreColumns.filter(c => c.type === 'final').length) + 1} style={{ textAlign: 'center', borderLeft: '2px solid var(--border-color)', backgroundColor: 'rgba(255, 145, 0, 0.15)' }}>
+                    <th colSpan={Math.max(1, classScoreColumns.filter(c => c.type === 'final').length) + 1} style={{ textAlign: 'center', borderLeft: '2px solid var(--border-color)', backgroundColor: 'var(--bg-tertiary)' }}>
                       <div style={{ color: 'var(--warning-color)' }}>สอบปลายภาค</div>
                       <div style={{ fontSize: '0.75rem', fontWeight: 'normal' }}>น้ำหนัก: {finalWeight} คะแนน</div>
                     </th>
                   )}
                   
                   {/* Summary */}
-                  <th rowSpan={2} style={{ textAlign: 'center', borderLeft: '2px solid var(--primary-color)', backgroundColor: 'rgba(0, 229, 255, 0.15)', color: 'var(--primary-color)', verticalAlign: 'middle' }}>
+                  <th rowSpan={2} style={{ textAlign: 'center', borderLeft: '2px solid var(--primary-color)', backgroundColor: 'var(--bg-tertiary)', color: 'var(--primary-color)', verticalAlign: 'middle' }}>
                     รวมเทอม {viewTerm !== 'all' ? viewTerm : 'ทั้งหมด'}
                   </th>
                   {viewTerm === 'all' && (
@@ -361,8 +361,8 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                         <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>(เต็ม {col.maxScore})</div>
                         {!readOnly && (
                           <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '4px' }}>
-                            <button className="btn-icon" style={{ padding: '2px', color: 'var(--text-muted)' }} onClick={() => handleOpenEditModal(col)}><Edit2 size={12} /></button>
-                            <button className="btn-icon" style={{ padding: '2px', color: 'var(--danger-color)', opacity: 0.5 }} onClick={() => handleDeleteColumn(col.id)}><Trash2 size={12} /></button>
+                            <button className="btn-icon" aria-label="แก้ไข" style={{ padding: '2px', color: 'var(--text-muted)' }} onClick={() => handleOpenEditModal(col)}><Edit2 size={12} /></button>
+                            <button className="btn-icon" aria-label="ลบ" style={{ padding: '2px', color: 'var(--danger-color)', opacity: 0.5 }} onClick={() => handleDeleteColumn(col.id)}><Trash2 size={12} /></button>
                           </div>
                         )}
                       </th>
@@ -374,7 +374,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
 
                     return [
                       ...colsElements,
-                      <th key={`total-${unit.id}`} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)', backgroundColor: 'rgba(99, 102, 241, 0.05)', color: 'var(--primary-color)' }}>
+                      <th key={`total-${unit.id}`} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)', color: 'var(--primary-color)' }}>
                         <div style={{ fontSize: '0.75rem' }}>แปลงแล้ว</div>
                         <div>(/{unit.weight})</div>
                       </th>
@@ -385,13 +385,13 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                   {showMidterm && (() => {
                     const examCols = classScoreColumns.filter(c => c.type === 'midterm');
                     const colsElements = examCols.length > 0 ? examCols.map(col => (
-                      <th key={col.id} style={{ textAlign: 'center', minWidth: '80px', borderLeft: '1px solid var(--border-color)', backgroundColor: 'rgba(239, 68, 68, 0.02)', fontWeight: 'normal' }}>
+                      <th key={col.id} style={{ textAlign: 'center', minWidth: '80px', borderLeft: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)', fontWeight: 'normal' }}>
                         <div>{col.name}</div>
                         <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>(เต็ม {col.maxScore})</div>
                         {!readOnly && (
                           <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '4px' }}>
-                            <button className="btn-icon" style={{ padding: '2px', color: 'var(--text-muted)' }} onClick={() => handleOpenEditModal(col)}><Edit2 size={12} /></button>
-                            <button className="btn-icon" style={{ padding: '2px', color: 'var(--danger-color)', opacity: 0.5 }} onClick={() => handleDeleteColumn(col.id)}><Trash2 size={12} /></button>
+                            <button className="btn-icon" aria-label="แก้ไข" style={{ padding: '2px', color: 'var(--text-muted)' }} onClick={() => handleOpenEditModal(col)}><Edit2 size={12} /></button>
+                            <button className="btn-icon" aria-label="ลบ" style={{ padding: '2px', color: 'var(--danger-color)', opacity: 0.5 }} onClick={() => handleDeleteColumn(col.id)}><Trash2 size={12} /></button>
                           </div>
                         )}
                       </th>
@@ -403,7 +403,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
 
                     return [
                       ...colsElements,
-                      <th key="total-midterm" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)', backgroundColor: 'rgba(239, 68, 68, 0.05)', color: '#ef4444' }}>
+                      <th key="total-midterm" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)', color: 'var(--danger-color)' }}>
                         <div style={{ fontSize: '0.75rem' }}>แปลงแล้ว</div>
                         <div>(/{midtermWeight})</div>
                       </th>
@@ -414,13 +414,13 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                   {showFinal && (() => {
                     const examCols = classScoreColumns.filter(c => c.type === 'final');
                     const colsElements = examCols.length > 0 ? examCols.map(col => (
-                      <th key={col.id} style={{ textAlign: 'center', minWidth: '80px', borderLeft: '1px solid var(--border-color)', backgroundColor: 'rgba(220, 38, 38, 0.02)', fontWeight: 'normal' }}>
+                      <th key={col.id} style={{ textAlign: 'center', minWidth: '80px', borderLeft: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)', fontWeight: 'normal' }}>
                         <div>{col.name}</div>
                         <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>(เต็ม {col.maxScore})</div>
                         {!readOnly && (
                           <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '4px' }}>
-                            <button className="btn-icon" style={{ padding: '2px', color: 'var(--text-muted)' }} onClick={() => handleOpenEditModal(col)}><Edit2 size={12} /></button>
-                            <button className="btn-icon" style={{ padding: '2px', color: 'var(--danger-color)', opacity: 0.5 }} onClick={() => handleDeleteColumn(col.id)}><Trash2 size={12} /></button>
+                            <button className="btn-icon" aria-label="แก้ไข" style={{ padding: '2px', color: 'var(--text-muted)' }} onClick={() => handleOpenEditModal(col)}><Edit2 size={12} /></button>
+                            <button className="btn-icon" aria-label="ลบ" style={{ padding: '2px', color: 'var(--danger-color)', opacity: 0.5 }} onClick={() => handleDeleteColumn(col.id)}><Trash2 size={12} /></button>
                           </div>
                         )}
                       </th>
@@ -432,7 +432,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
 
                     return [
                       ...colsElements,
-                      <th key="total-final" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)', backgroundColor: 'rgba(220, 38, 38, 0.05)', color: '#dc2626' }}>
+                      <th key="total-final" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)', color: 'var(--danger-color)' }}>
                         <div style={{ fontSize: '0.75rem' }}>แปลงแล้ว</div>
                         <div>(/{finalWeight})</div>
                       </th>
@@ -476,7 +476,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
 
                         return [
                           ...colsElements,
-                          <td key={`total-cell-${unit.id}`} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)', backgroundColor: 'rgba(99, 102, 241, 0.05)', fontWeight: 600, color: 'var(--primary-color)' }}>
+                          <td key={`total-cell-${unit.id}`} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)', fontWeight: 600, color: 'var(--primary-color)' }}>
                             <div title={`ดิบ: ${uScore.raw}/${uScore.maxRaw}`}>{Math.round(uScore.scaled)}</div>
                           </td>
                         ];
@@ -509,7 +509,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
 
                         return [
                           ...colsElements,
-                          <td key="total-midterm-cell" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)', backgroundColor: 'rgba(239, 68, 68, 0.05)', fontWeight: 600, color: '#ef4444' }}>
+                          <td key="total-midterm-cell" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)', fontWeight: 600, color: 'var(--danger-color)' }}>
                             <div title={`ดิบ: ${mScore.raw}/${mScore.maxRaw}`}>{Math.round(mScore.scaled)}</div>
                           </td>
                         ];
@@ -542,14 +542,14 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
 
                         return [
                           ...colsElements,
-                          <td key="total-final-cell" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)', backgroundColor: 'rgba(220, 38, 38, 0.05)', fontWeight: 600, color: '#dc2626' }}>
+                          <td key="total-final-cell" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)', fontWeight: 600, color: 'var(--danger-color)' }}>
                             <div title={`ดิบ: ${fScore.raw}/${fScore.maxRaw}`}>{Math.round(fScore.scaled)}</div>
                           </td>
                         ];
                       })()}
 
                       {/* Summary Cell */}
-                      <td style={{ textAlign: 'center', borderLeft: '2px solid var(--primary-color)', backgroundColor: 'rgba(99, 102, 241, 0.1)', fontWeight: 700, fontSize: '1.1rem', color: 'var(--primary-color)' }}>
+                      <td style={{ textAlign: 'center', borderLeft: '2px solid var(--primary-color)', backgroundColor: 'var(--bg-secondary)', fontWeight: 700, fontSize: '1.1rem', color: 'var(--primary-color)' }}>
                         {Math.round(studentViewTotal)}
                       </td>
                       {viewTerm === 'all' && (
@@ -572,7 +572,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
           <div className="modal-content">
             <div className="modal-header">
               <h3 className="modal-title">{editingColumnId ? 'แก้ไขช่องคะแนน' : 'เพิ่มช่องคะแนน'}</h3>
-              <button className="btn-icon" onClick={() => setIsColumnModalOpen(false)}>×</button>
+              <button className="btn-icon" aria-label="ปิด" onClick={() => setIsColumnModalOpen(false)}>×</button>
             </div>
             <form onSubmit={handleSaveColumn}>
               <div className="form-group">
@@ -615,7 +615,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                 <div className="form-group">
                   <label className="form-label">สังกัดหน่วยการเรียนรู้ (จำเป็น)</label>
                   {classUnits.length === 0 ? (
-                    <div style={{ color: '#ef4444', fontSize: '0.875rem', padding: '0.5rem', backgroundColor: 'rgba(239, 68, 68, 0.1)', borderRadius: 'var(--radius-sm)' }}>
+                    <div style={{ color: 'var(--danger-color)', fontSize: '0.875rem', padding: '0.5rem', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-sm)' }}>
                       ❌ ยังไม่มีหน่วยการเรียนรู้: กรุณาไปที่เมนู โครงสร้างรายวิชา เพื่อสร้างหน่วยการเรียนรู้ก่อนเพิ่มคะแนนเก็บ
                     </div>
                   ) : (

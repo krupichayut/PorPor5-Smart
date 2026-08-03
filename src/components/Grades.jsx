@@ -140,8 +140,8 @@ export default function Grades({ students, activeClassId, classes, scores, score
                   <th rowSpan={2} style={{ verticalAlign: 'middle' }}>ชื่อ - นามสกุล</th>
                   {reportType !== 'evaluations' && (
                     <>
-                      <th colSpan={selectedTerm === 'all' ? 4 : 2} style={{ textAlign: 'center', borderBottom: '1px solid var(--border-color)', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>สัดส่วนคะแนน</th>
-                      <th rowSpan={2} style={{ textAlign: 'center', verticalAlign: 'middle', backgroundColor: 'rgba(99, 102, 241, 0.15)', color: 'var(--primary-light)' }}>รวม {totalPossible}</th>
+                      <th colSpan={selectedTerm === 'all' ? 4 : 2} style={{ textAlign: 'center', borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)' }}>สัดส่วนคะแนน</th>
+                      <th rowSpan={2} style={{ textAlign: 'center', verticalAlign: 'middle', backgroundColor: 'var(--bg-tertiary)', color: 'var(--primary-light)' }}>รวม {totalPossible}</th>
                       <th rowSpan={2} style={{ textAlign: 'center', verticalAlign: 'middle' }}>ระดับผลการเรียน</th>
                     </>
                   )}
@@ -154,14 +154,14 @@ export default function Grades({ students, activeClassId, classes, scores, score
                     <>
                       {(selectedTerm === '1' || selectedTerm === 'all') && (
                         <>
-                          <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>เทอม 1 ({term1CollectedWeight})</th>
-                          <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>กลางภาค ({midtermWeight})</th>
+                          <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: 'var(--bg-secondary)' }}>เทอม 1 ({term1CollectedWeight})</th>
+                          <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: 'var(--bg-secondary)' }}>กลางภาค ({midtermWeight})</th>
                         </>
                       )}
                       {(selectedTerm === '2' || selectedTerm === 'all') && (
                         <>
-                          <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>เทอม 2 ({term2CollectedWeight})</th>
-                          <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: 'rgba(255, 255, 255, 0.05)' }}>ปลายภาค ({finalWeight})</th>
+                          <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: 'var(--bg-secondary)' }}>เทอม 2 ({term2CollectedWeight})</th>
+                          <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: 'var(--bg-secondary)' }}>ปลายภาค ({finalWeight})</th>
                         </>
                       )}
                     </>
@@ -203,7 +203,7 @@ export default function Grades({ students, activeClassId, classes, scores, score
                               <td style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>{studentScores.finalScaled}</td>
                             </>
                           )}
-                          <td style={{ textAlign: 'center', fontWeight: 700, color: 'var(--primary-color)', backgroundColor: 'rgba(99, 102, 241, 0.1)' }}>{studentScores.totalScaled}</td>
+                          <td style={{ textAlign: 'center', fontWeight: 700, color: 'var(--primary-color)', backgroundColor: 'var(--bg-secondary)' }}>{studentScores.totalScaled}</td>
                           <td style={{ textAlign: 'center', fontWeight: 600 }}>{grade}</td>
                         </>
                       )}

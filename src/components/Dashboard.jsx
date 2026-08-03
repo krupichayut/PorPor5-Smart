@@ -100,7 +100,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
         </div>
 
         {totalClasses === 0 ? (
-          <div className="bento-item col-span-12" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
+          <div className="bento-item col-span-12" style={{ textAlign: 'center', color: 'var(--text-muted)' }}>
             <BookOpen size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
             <p>ยังไม่มีข้อมูลห้องเรียน กรุณาเพิ่มห้องเรียนในเมนู <strong>จัดการวิชา</strong></p>
           </div>
@@ -108,38 +108,38 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
           <>
             <div className="bento-grid studio-action-gallery" style={{ marginBottom: '2.5rem' }}>
               {/* Top Row: Small Stats & Important Warning */}
-              <div className="bento-item col-span-3" style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.25rem 1.5rem' }} onClick={() => navigate('/classes')}>
+              <div className="bento-item col-span-3" style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', }} onClick={() => navigate('/classes')}>
                 <div>
                   <h3 style={{ fontSize: '1.75rem', fontWeight: 700, margin: 0, fontFamily: 'var(--font-game)' }}>{totalClasses}</h3>
                   <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0 }}>ห้องเรียน</p>
                 </div>
-                <div style={{ background: 'var(--grad-cyan-purple)', color: '#fff', padding: '0.75rem', borderRadius: '50%', boxShadow: 'var(--shadow-glow-cyan)' }}>
+                <div style={{ background: 'var(--grad-cyan-purple)', color: 'var(--text-primary)', padding: '0.75rem', borderRadius: '50%', boxShadow: 'var(--shadow-glow-cyan)' }}>
                   <BookOpen size={20} />
                 </div>
               </div>
 
-              <div className="bento-item col-span-3" style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '1.25rem 1.5rem' }} onClick={() => navigate('/students')}>
+              <div className="bento-item col-span-3" style={{ cursor: 'pointer', display: 'flex', justifyContent: 'space-between', alignItems: 'center', }} onClick={() => navigate('/students')}>
                 <div>
                   <h3 style={{ fontSize: '1.75rem', fontWeight: 700, margin: 0, fontFamily: 'var(--font-game)' }}>{totalStudents}</h3>
                   <p style={{ color: 'var(--text-secondary)', fontSize: '0.85rem', margin: 0 }}>นักเรียนทั้งหมด</p>
                 </div>
-                <div style={{ background: 'var(--grad-pink-magenta)', color: '#fff', padding: '0.75rem', borderRadius: '50%', boxShadow: 'var(--shadow-glow-pink)' }}>
+                <div style={{ background: 'var(--grad-pink-magenta)', color: 'var(--text-primary)', padding: '0.75rem', borderRadius: '50%', boxShadow: 'var(--shadow-glow-pink)' }}>
                   <Users size={20} />
                 </div>
               </div>
 
               <div className="bento-item col-span-6" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem', border: totalMissing > 0 ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid rgba(255, 255, 255, 0.08)', background: totalMissing > 0 ? 'linear-gradient(to right, rgba(239, 68, 68, 0.1), transparent)' : '' }} onClick={() => navigate('/grading')}>
-                <div style={{ background: totalMissing > 0 ? 'rgba(239, 68, 68, 0.2)' : 'var(--bg-tertiary)', color: totalMissing > 0 ? '#f87171' : 'var(--text-secondary)', padding: '1rem', borderRadius: '16px' }}>
+                <div style={{ background: totalMissing > 0 ? 'rgba(239, 68, 68, 0.2)' : 'var(--bg-tertiary)', color: totalMissing > 0 ? 'var(--danger-color)' : 'var(--text-secondary)', padding: '1rem', borderRadius: '16px' }}>
                   <FileWarning size={28} />
                 </div>
                 <div>
                   <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>งานค้างที่ต้องติดตาม</p>
-                  <h3 style={{ fontSize: '2rem', fontWeight: 700, margin: 0, fontFamily: 'var(--font-game)', color: totalMissing > 0 ? '#f87171' : 'var(--text-primary)' }}>{totalMissing} <span style={{ fontSize: '1rem', fontWeight: 'normal', color: 'var(--text-muted)' }}>ชิ้น</span></h3>
+                  <h3 style={{ fontSize: '2rem', fontWeight: 700, margin: 0, fontFamily: 'var(--font-game)', color: totalMissing > 0 ? 'var(--danger-color)' : 'var(--text-primary)' }}>{totalMissing} <span style={{ fontSize: '1rem', fontWeight: 'normal', color: 'var(--text-muted)' }}>ชิ้น</span></h3>
                 </div>
               </div>
 
               {/* Middle Row: Quick Actions & Attendance */}
-              <div className="bento-item col-span-6" style={{ background: 'rgba(255,255,255,0.02)', padding: '1.25rem 1.5rem', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+              <div className="bento-item col-span-6" style={{ display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                 <p style={{ margin: '0 0 0.75rem 0', color: 'var(--text-secondary)', fontSize: '0.85rem', fontWeight: 500 }}>เมนูลัด (Quick Actions)</p>
                 <div style={{ display: 'flex', gap: '0.75rem' }}>
                   <button className="btn btn-secondary" style={{ padding: '0.5rem 1rem', fontSize: '0.85rem', flex: 1, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '0.5rem' }} onClick={() => navigate('/classes')}>
@@ -152,12 +152,12 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
               </div>
 
               <div className="bento-item col-span-6" style={{ cursor: 'pointer', display: 'flex', alignItems: 'center', gap: '1rem' }} onClick={() => navigate('/attendance')}>
-                <div style={{ background: 'rgba(52, 211, 153, 0.15)', color: '#34d399', padding: '1rem', borderRadius: '16px' }}>
+                <div style={{ background: 'var(--bg-tertiary)', color: 'var(--success-color)', padding: '1rem', borderRadius: '16px' }}>
                   <TrendingUp size={28} />
                 </div>
                 <div>
                   <p style={{ color: 'var(--text-secondary)', fontSize: '0.9rem', margin: 0 }}>อัตราการเข้าเรียนเฉลี่ย</p>
-                  <h3 style={{ fontSize: '2rem', fontWeight: 700, margin: 0, fontFamily: 'var(--font-game)', color: '#34d399' }}>{overallAttRate}<span style={{ fontSize: '1.2rem', color: 'var(--text-muted)' }}>%</span></h3>
+                  <h3 style={{ fontSize: '2rem', fontWeight: 700, margin: 0, fontFamily: 'var(--font-game)', color: 'var(--success-color)' }}>{overallAttRate}<span style={{ fontSize: '1.2rem', color: 'var(--text-muted)' }}>%</span></h3>
                 </div>
               </div>
 
@@ -211,7 +211,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
               </div>
             </div>
 
-            <div className="bento-item col-span-12 studio-data-board" style={{ padding: '0' }}>
+            <div className="bento-item col-span-12 studio-data-board" >
               <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--bg-tertiary)' }}>
                 <h3 style={{ margin: 0, fontSize: '1.25rem', color: 'var(--text-primary)' }}>เปรียบเทียบสถิติแต่ละห้องเรียน</h3>
               </div>
@@ -253,7 +253,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                             )}
                           </td>
                           <td style={{ textAlign: 'center' }}>
-                            <button className="btn-icon" style={{ color: 'var(--text-muted)' }}>
+                            <button className="btn-icon" aria-label="View details" style={{ color: 'var(--text-muted)' }}>
                               <ChevronRight size={18} />
                             </button>
                           </td>
@@ -266,7 +266,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
             </div>
             
             <div className="studio-followup-zone" style={{ marginTop: '3rem' }}>
-              <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#f87171' }}>
+              <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--danger-color)' }}>
                 <FileWarning size={24} /> งานค้างมากที่สุด (แยกตามห้อง)
               </h3>
               <div className="bento-grid">
@@ -290,12 +290,12 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
 
                   if (topMissing.length === 0) {
                     return (
-                      <div className="bento-item col-span-4" key={cls.id} style={{ padding: 0, border: '1px solid rgba(16, 185, 129, 0.2)' }}>
-                        <div style={{ padding: '1rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'rgba(16, 185, 129, 0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                      <div className="bento-item col-span-4" key={cls.id} style={{ padding: 0, }}>
+                        <div style={{ padding: '1rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--bg-tertiary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                           <h4 style={{ margin: 0, fontSize: '1rem', color: 'var(--text-primary)' }}>{cls.name}</h4>
                           <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{cls.subject}</span>
                         </div>
-                        <div style={{ padding: '2rem 1rem', textAlign: 'center', color: '#10b981' }}>
+                        <div style={{ padding: '2rem 1rem', textAlign: 'center', color: 'var(--success-color)' }}>
                           <CheckCircle size={32} style={{ margin: '0 auto 0.5rem', opacity: 0.5 }} />
                           <div style={{ fontWeight: 600, fontSize: '0.9rem' }}>ไม่มีงานค้าง</div>
                         </div>
@@ -304,8 +304,8 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                   }
 
                   return (
-                    <div className="bento-item col-span-4" key={cls.id} style={{ padding: 0, border: '1px solid rgba(239, 68, 68, 0.2)' }}>
-                      <div style={{ padding: '1rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'rgba(239, 68, 68, 0.05)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div className="bento-item col-span-4" key={cls.id} style={{ padding: 0, }}>
+                      <div style={{ padding: '1rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--bg-tertiary)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                         <h4 style={{ margin: 0, fontSize: '1rem', color: 'var(--text-primary)' }}>{cls.name}</h4>
                         <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{cls.subject}</span>
                       </div>
@@ -314,7 +314,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                           {topMissing.map((s, idx) => (
                             <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '0.5rem', borderBottom: idx !== topMissing.length - 1 ? '1px solid var(--border-color)' : 'none' }}>
                               <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-                                <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#f87171', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.8rem' }}>
+                                <div style={{ width: '24px', height: '24px', borderRadius: '50%', backgroundColor: 'var(--bg-tertiary)', color: 'var(--danger-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.8rem' }}>
                                   {idx + 1}
                                 </div>
                                 <div>
@@ -322,7 +322,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                                   <div style={{ fontSize: '0.7rem', color: 'var(--text-muted)' }}>เลขที่ {s.number}</div>
                                 </div>
                               </div>
-                              <div style={{ fontWeight: 700, color: '#f87171', fontSize: '0.9rem' }}>{s.missingCount} ชิ้น</div>
+                              <div style={{ fontWeight: 700, color: 'var(--danger-color)', fontSize: '0.9rem' }}>{s.missingCount} ชิ้น</div>
                             </div>
                           ))}
                         </div>
@@ -374,7 +374,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
       <div className="page-header">
         <div>
           <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem' }}>
-            <button className="btn-icon" onClick={() => setActiveClassId(null)} title="กลับไปดูภาพรวมทุกห้อง" style={{ padding: '4px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-sm)' }}>
+            <button className="btn-icon" onClick={() => setActiveClassId(null)} title="กลับไปดูภาพรวมทุกห้อง" aria-label="Back to overview" style={{ padding: '4px', backgroundColor: 'var(--bg-secondary)', borderRadius: 'var(--radius-sm)' }}>
               <ChevronRight size={18} style={{ transform: 'rotate(180deg)' }} />
             </button>
             <h2 className="page-title" style={{ margin: 0 }}>แดชบอร์ด: {activeClass?.name}</h2>
@@ -385,7 +385,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
       
       <div className="bento-grid studio-action-gallery" style={{ marginBottom: '2rem' }}>
         {/* Class Hero Banner */}
-        <div className="bento-item col-span-12" style={{ background: 'linear-gradient(to right, rgba(59, 130, 246, 0.15), rgba(139, 92, 246, 0.1))', display: 'flex', justifyContent: 'space-between', alignItems: 'center', padding: '2rem' }}>
+        <div className="bento-item col-span-12" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', }}>
           <div>
             <h3 style={{ fontSize: '1.75rem', margin: '0 0 0.5rem 0', fontFamily: 'var(--font-game)', color: 'var(--text-primary)' }}>{activeClass?.name}</h3>
             <p style={{ color: 'var(--text-secondary)', margin: 0, fontSize: '1rem' }}>วิชา: {activeClass?.subject}</p>
@@ -397,36 +397,36 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
             </div>
             <div style={{ textAlign: 'center' }}>
               <p style={{ color: 'var(--text-muted)', fontSize: '0.85rem', margin: '0 0 0.25rem 0' }}>ช่องให้คะแนน</p>
-              <h4 style={{ fontSize: '1.5rem', margin: 0, color: '#fbbf24' }}>{classColumns.length}</h4>
+              <h4 style={{ fontSize: '1.5rem', margin: 0, color: 'var(--warning-color)' }}>{classColumns.length}</h4>
             </div>
           </div>
         </div>
 
         {/* Small Stats */}
         <div className="bento-item col-span-6" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem' }}>
-          <div style={{ backgroundColor: 'rgba(52, 211, 153, 0.15)', color: '#34d399', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
+          <div style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--success-color)', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
             <Calendar size={32} />
           </div>
           <div>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 500, margin: 0 }}>อัตราเข้าเรียน (จาก {uniqueDates.length} ครั้ง)</p>
-            <h3 style={{ fontSize: '1.875rem', fontWeight: 700, margin: 0, color: '#34d399' }}>{classAttRate}<span style={{ fontSize: '1.2rem' }}>%</span></h3>
+            <h3 style={{ fontSize: '1.875rem', fontWeight: 700, margin: 0, color: 'var(--success-color)' }}>{classAttRate}<span style={{ fontSize: '1.2rem' }}>%</span></h3>
           </div>
         </div>
 
         <div className="bento-item col-span-6" style={{ display: 'flex', alignItems: 'center', gap: '1.5rem', border: totalMissingClass > 0 ? '1px solid rgba(239, 68, 68, 0.3)' : '1px solid rgba(255, 255, 255, 0.08)' }}>
-          <div style={{ backgroundColor: totalMissingClass > 0 ? 'rgba(239, 68, 68, 0.15)' : 'var(--bg-tertiary)', color: totalMissingClass > 0 ? '#f87171' : 'var(--text-secondary)', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
+          <div style={{ backgroundColor: totalMissingClass > 0 ? 'rgba(239, 68, 68, 0.15)' : 'var(--bg-tertiary)', color: totalMissingClass > 0 ? 'var(--danger-color)' : 'var(--text-secondary)', padding: '1rem', borderRadius: 'var(--radius-full)' }}>
             <FileWarning size={32} />
           </div>
           <div>
             <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem', fontWeight: 500, margin: 0 }}>งานค้างรวมทั้งห้อง</p>
-            <h3 style={{ fontSize: '1.875rem', fontWeight: 700, margin: 0, color: totalMissingClass > 0 ? '#f87171' : 'var(--text-primary)' }}>
+            <h3 style={{ fontSize: '1.875rem', fontWeight: 700, margin: 0, color: totalMissingClass > 0 ? 'var(--danger-color)' : 'var(--text-primary)' }}>
               {totalMissingClass} <span style={{ fontSize: '1rem', fontWeight: 'normal', color: 'var(--text-muted)' }}>ชิ้น</span>
             </h3>
           </div>
         </div>
-        <div className="bento-item col-span-6 row-span-2" style={{ padding: 0, border: '1px solid rgba(239, 68, 68, 0.2)' }}>
-          <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'rgba(239, 68, 68, 0.05)' }}>
-            <h3 style={{ margin: 0, fontSize: '1.125rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: '#f87171' }}>
+        <div className="bento-item col-span-6 row-span-2" style={{ padding: 0, }}>
+          <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--bg-tertiary)' }}>
+            <h3 style={{ margin: 0, fontSize: '1.125rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--danger-color)' }}>
               <FileWarning size={20} /> นักเรียนที่งานค้างเยอะที่สุด (Top 5)
             </h3>
           </div>
@@ -440,7 +440,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                 {topMissingStudents.map((s, idx) => (
                   <div key={s.id} style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', paddingBottom: '0.75rem', borderBottom: idx !== topMissingStudents.length - 1 ? '1px solid var(--border-color)' : 'none' }}>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: 'rgba(239, 68, 68, 0.15)', color: '#f87171', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.875rem' }}>
+                      <div style={{ width: '28px', height: '28px', borderRadius: '50%', backgroundColor: 'var(--bg-tertiary)', color: 'var(--danger-color)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontWeight: 'bold', fontSize: '0.875rem' }}>
                         {idx + 1}
                       </div>
                       <div>
@@ -449,7 +449,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                       </div>
                     </div>
                     <div style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
-                      <div style={{ fontWeight: 700, color: '#f87171' }}>{s.missingCount} ชิ้น</div>
+                      <div style={{ fontWeight: 700, color: 'var(--danger-color)' }}>{s.missingCount} ชิ้น</div>
                       <button className="btn btn-secondary" style={{ padding: '0.25rem 0.5rem', fontSize: '0.75rem' }} onClick={() => navigate('/grading/missing')}>
                         ดูรายละเอียด
                       </button>
@@ -461,7 +461,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
           </div>
         </div>
 
-        <div className="bento-item col-span-6 row-span-2" style={{ padding: '1.5rem', display: 'flex', flexDirection: 'column' }}>
+        <div className="bento-item col-span-6 row-span-2" style={{ display: 'flex', flexDirection: 'column' }}>
           <h3 style={{ margin: '0 0 1rem 0', fontSize: '1.125rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--success-color)' }}>
             <Calendar size={20} /> สัดส่วนการมาเรียนรวม
           </h3>
@@ -502,7 +502,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
           </div>
         </div>
         
-        <div className="bento-item col-span-12 row-span-2" style={{ padding: '1.5rem' }}>
+        <div className="bento-item col-span-12 row-span-2" >
           <h3 style={{ margin: '0 0 1.5rem 0', fontSize: '1.125rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--primary-color)' }}>
             <BarChart3 size={20} /> สรุปผลการเรียน (ตัดเกรดจำลอง)
           </h3>

@@ -132,8 +132,9 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
             <p className="page-subtitle">จัดการตารางแผนการสอน เช็คสถานะการสอน และบันทึกหลังสอน</p>
           </div>
         </div>
-        <div className="card" style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
-          <ClipboardList size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
+        <div className="empty-state">
+          <ClipboardList size={48} />
+          <h3>ไม่มีการเลือกห้องเรียน</h3>
           <p>กรุณาเลือกห้องเรียนจากเมนู <strong>ห้องเรียน / วิชา</strong> ก่อน</p>
         </div>
       </div>
@@ -165,9 +166,10 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
 
       <div className="card">
         {classPlans.length === 0 ? (
-          <div style={{ textAlign: 'center', padding: '3rem 0', color: 'var(--text-muted)' }}>
-            <ClipboardList size={48} style={{ margin: '0 auto 1rem', opacity: 0.5 }} />
-            <p>ยังไม่มีข้อมูลแผนการสอน {!readOnly && 'กรุณากด "เพิ่มแผนการสอน" หรือ "นำเข้าจาก Excel"'}</p>
+          <div className="empty-state">
+            <ClipboardList size={48} />
+            <h3>ไม่พบข้อมูลแผนการสอน</h3>
+            <p>{!readOnly ? 'กรุณากด "เพิ่มแผนการสอน" หรือ "นำเข้าจาก Excel"' : 'ยังไม่มีข้อมูล'}</p>
           </div>
         ) : (
           <div className="table-container">
@@ -184,10 +186,10 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
               </thead>
               <tbody>
                 {classPlans.map((plan) => (
-                  <tr key={plan.id} style={{ backgroundColor: plan.isTaught ? 'rgba(16, 185, 129, 0.05)' : 'transparent' }}>
+                  <tr key={plan.id} style={{ backgroundColor: plan.isTaught ? 'var(--bg-tertiary)' : 'transparent' }}>
                     <td style={{ textAlign: 'center', cursor: readOnly ? 'default' : 'pointer' }} onClick={() => handleToggleTaught(plan.id, plan.isTaught)}>
                       {plan.isTaught ? (
-                        <CheckSquare size={20} color="#10b981" />
+                        <CheckSquare size={20} color="var(--success-color, #10b981)" />
                       ) : (
                         <Square size={20} color="var(--text-muted)" />
                       )}
@@ -202,6 +204,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
                         className={`btn-icon ${plan.postRecord ? 'has-record' : ''}`} 
                         onClick={() => openRecordModal(plan)}
                         title={plan.postRecord ? 'แก้ไขบันทึกหลังสอน' : 'เขียนบันทึกหลังสอน'}
+                        aria-label={plan.postRecord ? 'แก้ไขบันทึกหลังสอน' : 'เขียนบันทึกหลังสอน'}
                         style={{ color: plan.postRecord ? 'var(--primary-color)' : 'var(--text-muted)' }}
                       >
                         {plan.postRecord ? <Check size={18} /> : <FileEdit size={18} />}
@@ -210,10 +213,10 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
                     </td>
                     {!readOnly && (
                       <td style={{ textAlign: 'center', display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
-                        <button className="btn-icon" style={{ color: 'var(--primary-color)' }} onClick={() => openEditModal(plan)}>
+                        <button className="btn-icon" style={{ color: 'var(--primary-color)' }} onClick={() => openEditModal(plan)} aria-label="แก้ไขแผนการสอน">
                           <Pencil size={16} />
                         </button>
-                        <button className="btn-icon" style={{ color: 'var(--danger-color)' }} onClick={() => handleDelete(plan.id)}>
+                        <button className="btn-icon" style={{ color: 'var(--danger-color)' }} onClick={() => handleDelete(plan.id)} aria-label="ลบแผนการสอน">
                           <Trash2 size={16} />
                         </button>
                       </td>
@@ -232,7 +235,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
           <div className="modal-content">
             <div className="modal-header">
               <h3 className="modal-title">{editingPlanId ? 'แก้ไขแผนการสอน' : 'เพิ่มแผนการสอน'}</h3>
-              <button className="btn-icon" onClick={closeAddModal}>×</button>
+              <button type="button" className="btn-icon" onClick={closeAddModal} aria-label="ปิด">×</button>
             </div>
             <form onSubmit={handleAddPlan}>
               <div className="form-group">
@@ -282,7 +285,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
           <div className="modal-content" style={{ maxWidth: '600px' }}>
             <div className="modal-header">
               <h3 className="modal-title">นำเข้าแผนการสอนจาก Excel</h3>
-              <button className="btn-icon" onClick={() => setIsImportModalOpen(false)}>×</button>
+              <button type="button" className="btn-icon" onClick={() => setIsImportModalOpen(false)} aria-label="ปิด">×</button>
             </div>
             <form onSubmit={handleImport}>
               <div className="form-group">
@@ -317,7 +320,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
           <div className="modal-content" style={{ maxWidth: '600px' }}>
             <div className="modal-header">
               <h3 className="modal-title">บันทึกหลังสอน</h3>
-              <button className="btn-icon" onClick={() => setIsRecordModalOpen(false)}>×</button>
+              <button type="button" className="btn-icon" onClick={() => setIsRecordModalOpen(false)} aria-label="ปิด">×</button>
             </div>
             <form onSubmit={handleSaveRecord}>
               <div className="form-group">
