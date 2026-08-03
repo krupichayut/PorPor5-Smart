@@ -48,42 +48,43 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
     return Math.round((presentCount / validRecords.length) * 100);
   };
 
+  // ----- Global Computations (Moved outside conditional to fix Hook error) -----
+  const overallAttRate = calculateAttendanceRate(attendance);
+
+  const totalMissing = useMemo(() => {
+    let missing = 0;
+    classes.forEach(cls => {
+      const clsStudents = students.filter(s => s.classId === cls.id);
+      const clsColumns = scoreColumns.filter(c => c.classId === cls.id);
+      missing += calculateMissingWork(clsStudents, clsColumns, scores);
+    });
+    return missing;
+  }, [classes, students, scoreColumns, scores]);
+
+  const radarChartData = useMemo(() => {
+    const totalSummary = { '4.0': 0, '3.5': 0, '3.0': 0, '2.5': 0, '2.0': 0, '1.5': 0, '1.0': 0, '0': 0 };
+    classes.forEach(cls => {
+      const clsStudents = students.filter(s => s.classId === cls.id);
+      const clsSummaryData = getGradeSummaryData(clsStudents, getClassScoreContext(cls.id, classes, scoreColumns, indicators), scores);
+      clsSummaryData.forEach(d => { totalSummary[d.grade] += d.value; });
+    });
+    return [
+      { grade: '4.0', value: totalSummary['4.0'] },
+      { grade: '3.5', value: totalSummary['3.5'] },
+      { grade: '3.0', value: totalSummary['3.0'] },
+      { grade: '2.5', value: totalSummary['2.5'] },
+      { grade: '2.0', value: totalSummary['2.0'] },
+      { grade: '1.5', value: totalSummary['1.5'] },
+      { grade: '1.0', value: totalSummary['1.0'] },
+      { grade: '0', value: totalSummary['0'] }
+    ];
+  }, [classes, students, scoreColumns, indicators, scores]);
+
   // ----- Global Overview Mode -----
   if (!activeClassId) {
     const totalClasses = classes.length;
     const totalStudents = students.length;
     
-    const overallAttRate = calculateAttendanceRate(attendance);
-
-    const totalMissing = useMemo(() => {
-      let missing = 0;
-      classes.forEach(cls => {
-        const clsStudents = students.filter(s => s.classId === cls.id);
-        const clsColumns = scoreColumns.filter(c => c.classId === cls.id);
-        missing += calculateMissingWork(clsStudents, clsColumns, scores);
-      });
-      return missing;
-    }, [classes, students, scoreColumns, scores]);
-
-    const radarChartData = useMemo(() => {
-      const totalSummary = { '4.0': 0, '3.5': 0, '3.0': 0, '2.5': 0, '2.0': 0, '1.5': 0, '1.0': 0, '0': 0 };
-      classes.forEach(cls => {
-        const clsStudents = students.filter(s => s.classId === cls.id);
-        const clsSummaryData = getGradeSummaryData(clsStudents, getClassScoreContext(cls.id, classes, scoreColumns, indicators), scores);
-        clsSummaryData.forEach(d => { totalSummary[d.grade] += d.value; });
-      });
-      return [
-        { grade: '4.0', value: totalSummary['4.0'] },
-        { grade: '3.5', value: totalSummary['3.5'] },
-        { grade: '3.0', value: totalSummary['3.0'] },
-        { grade: '2.5', value: totalSummary['2.5'] },
-        { grade: '2.0', value: totalSummary['2.0'] },
-        { grade: '1.5', value: totalSummary['1.5'] },
-        { grade: '1.0', value: totalSummary['1.0'] },
-        { grade: '0', value: totalSummary['0'] }
-      ];
-    }, [classes, students, scoreColumns, indicators, scores]);
-
     const handleSelectClass = (id) => {
       setActiveClassId(id);
     };
