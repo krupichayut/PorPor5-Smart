@@ -10,6 +10,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
   const [editingPlanId, setEditingPlanId] = useState(null);
   const [printingPlan, setPrintingPlan] = useState(null);
   
+  const [unit, setUnit] = useState('');
   const [week, setWeek] = useState('');
   const [topic, setTopic] = useState('');
   const [hours, setHours] = useState(1);
@@ -58,13 +59,14 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
 
     if (editingPlanId) {
       setLessonPlans(lessonPlans.map(p => 
-        p.id === editingPlanId ? { ...p, week, topic, hours: Number(hours) } : p
+        p.id === editingPlanId ? { ...p, unit, week, topic, hours: Number(hours) } : p
       ));
     } else {
       const newPlan = {
         // eslint-disable-next-line react-hooks/purity
         id: Date.now().toString() + Math.random().toString(36).substr(2, 5),
         classId: activeClassId,
+        unit,
         week,
         topic,
         hours: Number(hours),
@@ -80,6 +82,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
   const closeAddModal = () => {
     setIsAddModalOpen(false);
     setEditingPlanId(null);
+    setUnit('');
     setWeek('');
     setTopic('');
     setHours(1);
@@ -87,6 +90,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
 
   const openEditModal = (plan) => {
     setEditingPlanId(plan.id);
+    setUnit(plan.unit || '');
     setWeek(plan.week);
     setTopic(plan.topic);
     setHours(plan.hours);
@@ -317,6 +321,16 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
             </div>
             <form onSubmit={handleAddPlan}>
               <div className="form-group">
+                <label className="form-label">หน่วยการเรียนรู้ที่ (เช่น 1, โครงสร้างวิชา)</label>
+                <input 
+                  type="text" 
+                  className="form-control" 
+                  value={unit}
+                  onChange={(e) => setUnit(e.target.value)}
+                  autoFocus
+                />
+              </div>
+              <div className="form-group">
                 <label className="form-label">สัปดาห์ที่ (เช่น 1, 1-2)</label>
                 <input 
                   type="text" 
@@ -324,7 +338,6 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
                   value={week}
                   onChange={(e) => setWeek(e.target.value)}
                   required
-                  autoFocus
                 />
               </div>
               <div className="form-group">
