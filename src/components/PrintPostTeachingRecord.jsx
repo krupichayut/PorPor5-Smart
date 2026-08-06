@@ -56,10 +56,10 @@ export default function PrintPostTeachingRecord({ plan, appSettings, activeClass
         <h2 style={{ textAlign: 'center', fontSize: '18pt', fontWeight: 'bold', marginBottom: '20px' }}>บันทึกผลหลังการสอน</h2>
         
         <div style={{ marginBottom: '8px' }}>
-          หน่วยการเรียนรู้ที่ {plan.unit || '....................'} : ........................................................................................................
+          หน่วยการเรียนรู้ที่ {record.unitNumber || '....................'} : {record.unitName || '........................................................................................................'}
         </div>
         <div style={{ marginBottom: '8px' }}>
-          แผนการจัดการเรียนรู้ที่ .................... เรื่อง {plan.topic} จำนวน {plan.hours || '........'} ชั่วโมง
+          แผนการจัดการเรียนรู้ที่ {record.planNumber || '....................'} เรื่อง {plan.topic} จำนวน {plan.hours || '........'} ชั่วโมง
         </div>
         <div style={{ marginBottom: '16px' }}>
           สอนวันที่ {day} เดือน {month} พ.ศ. {year}

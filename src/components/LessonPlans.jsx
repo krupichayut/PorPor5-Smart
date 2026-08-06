@@ -19,6 +19,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
   
   const [recordData, setRecordData] = useState({
     date: '', k: '', p: '', a: '', problems: '', 
+    unitNumber: '', unitName: '', planNumber: '',
     absentCount: 0, failedStudentIds: [],
     passedCount: '', passedPercent: '', failedCount: '', failedPercent: '', failedNames: ''
   });
@@ -146,6 +147,9 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
         p: plan.postRecord.p || '',
         a: plan.postRecord.a || '',
         problems: plan.postRecord.problems || '',
+        unitNumber: plan.postRecord.unitNumber || '',
+        unitName: plan.postRecord.unitName || '',
+        planNumber: plan.postRecord.planNumber || '',
         absentCount: plan.postRecord.absentCount || 0,
         failedStudentIds: plan.postRecord.failedStudentIds || [],
         passedCount: plan.postRecord.passedCount || '',
@@ -158,6 +162,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
       setRecordData({
         date: '', k: '', p: '', a: '',
         problems: typeof plan.postRecord === 'string' ? plan.postRecord : '',
+        unitNumber: '', unitName: '', planNumber: '',
         absentCount: 0, failedStudentIds: [],
         passedCount: '', passedPercent: '', failedCount: '', failedPercent: '', failedNames: ''
       });
@@ -412,6 +417,21 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
             </div>
             <form onSubmit={handleSaveRecord}>
               
+              <div className="hairline-grid" style={{ gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                <div className="form-group">
+                  <label className="form-label">หน่วยการเรียนรู้ที่</label>
+                  <input type="text" name="unitNumber" className="form-control" value={recordData.unitNumber} onChange={handleRecordChange} placeholder="เช่น 1" />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">ชื่อหน่วยการเรียนรู้</label>
+                  <input type="text" name="unitName" className="form-control" value={recordData.unitName} onChange={handleRecordChange} placeholder="เช่น โครงสร้างวิชา" />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">แผนการจัดการเรียนรู้ที่</label>
+                  <input type="text" name="planNumber" className="form-control" value={recordData.planNumber} onChange={handleRecordChange} placeholder="เช่น 1" />
+                </div>
+              </div>
+
               <div className="form-group">
                 <label className="form-label">วันที่สอน (สำหรับแสดงในเอกสาร)</label>
                 <input type="date" name="date" className="form-control" value={recordData.date} onChange={handleRecordChange} required />
