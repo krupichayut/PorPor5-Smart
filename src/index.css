@@ -424,29 +424,27 @@ body {
   }
   
   /* Hide all app UI elements during print */
-  .app-layout > .sidebar,
-  .app-layout > .main-wrapper > .top-header,
-  .app-layout > .main-wrapper > .content-area > :not(.print-container) {
+  .sidebar,
+  .top-header,
+  .no-print,
+  .tabs-container {
     display: none !important;
   }
   
-  /* If print-container is inside content-area, hide padding/backgrounds */
-  .content-area {
+  /* Ensure structural containers are visible and take full space */
+  .app-layout,
+  .main-wrapper,
+  .content-area,
+  .animate-fade-in {
+    display: block !important;
     padding: 0 !important;
-    background: none !important;
+    margin: 0 !important;
+    background: transparent !important;
     overflow: visible !important;
+    width: 100% !important;
+    height: auto !important;
   }
   
-  .main-wrapper {
-    overflow: visible !important;
-  }
-
-  /* Show only the print-only container */
-  .print-only {
-    display: block !important;
-    width: 100%;
-  }
-
   /* Make sure everything else is strictly hidden unless inside print-only */
   * {
     -webkit-print-color-adjust: exact !important;
