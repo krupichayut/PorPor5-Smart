@@ -51,9 +51,9 @@ export default function PrintPostTeachingRecord({ plan, appSettings, activeClass
 
   return (
     <div className="print-only print-page">
-      <div style={{ fontFamily: '"Sarabun", "TH Sarabun PSK", serif', fontSize: '16pt', color: '#000', lineHeight: '1.4' }}>
+      <div style={{ fontFamily: '"Sarabun", "TH Sarabun PSK", serif', fontSize: '15pt', color: '#000', lineHeight: '1.4' }}>
         
-        <h2 style={{ textAlign: 'center', fontSize: '18pt', fontWeight: 'bold', marginBottom: '20px' }}>บันทึกผลหลังการสอน</h2>
+        <h2 style={{ textAlign: 'center', fontSize: '16pt', fontWeight: 'bold', marginBottom: '20px' }}>บันทึกผลหลังการสอน</h2>
         
         <div style={{ marginBottom: '8px' }}>
           หน่วยการเรียนรู้ที่ {record.unitNumber || '....................'} : {record.unitName || '........................................................................................................'}
@@ -115,7 +115,7 @@ export default function PrintPostTeachingRecord({ plan, appSettings, activeClass
 
         {/* Teacher Signature */}
         <div style={{ marginTop: '40px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', pageBreakInside: 'avoid' }}>
-          <div style={{ textAlign: 'center', width: '350px' }}>
+          <div style={{ textAlign: 'center', width: '450px' }}>
             <div>ลงชื่อ.................................................................</div>
             <div style={{ marginTop: '8px' }}>({appSettings?.teacherName || '...................................................'})</div>
             <div style={{ marginTop: '4px' }}>ตำแหน่ง ครู</div>
@@ -130,10 +130,10 @@ export default function PrintPostTeachingRecord({ plan, appSettings, activeClass
           <div style={{ borderBottom: '1px dotted #000', height: '28px' }}></div>
           <div style={{ borderBottom: '1px dotted #000', height: '28px' }}></div>
           
-          <div style={{ alignSelf: 'flex-end', textAlign: 'center', width: '350px', marginTop: '30px' }}>
+          <div style={{ alignSelf: 'flex-end', textAlign: 'center', width: '450px', marginTop: '30px' }}>
             <div>ลงชื่อ.................................................................</div>
             <div style={{ marginTop: '8px' }}>({appSettings?.academicHeadName || '...................................................'})</div>
-            <div style={{ marginTop: '4px' }}>ตำแหน่ง หัวหน้าบริหารวิชาการ{appSettings?.schoolName ? `โรงเรียน${appSettings.schoolName.replace('โรงเรียน', '')}` : ''}</div>
+            <div style={{ marginTop: '4px', whiteSpace: 'nowrap' }}>ตำแหน่ง หัวหน้าบริหารวิชาการ{appSettings?.schoolName ? `โรงเรียน${appSettings.schoolName.replace('โรงเรียน', '')}` : ''}</div>
           </div>
         </div>
 
@@ -145,10 +145,10 @@ export default function PrintPostTeachingRecord({ plan, appSettings, activeClass
           <div style={{ borderBottom: '1px dotted #000', height: '28px' }}></div>
           <div style={{ borderBottom: '1px dotted #000', height: '28px' }}></div>
           
-          <div style={{ alignSelf: 'flex-end', textAlign: 'center', width: '350px', marginTop: '30px' }}>
+          <div style={{ alignSelf: 'flex-end', textAlign: 'center', width: '450px', marginTop: '30px' }}>
             <div>ลงชื่อ.................................................................</div>
             <div style={{ marginTop: '8px' }}>({appSettings?.principalName || '...................................................'})</div>
-            <div style={{ marginTop: '4px' }}>ตำแหน่ง ผู้อำนวยการ{appSettings?.schoolName ? `โรงเรียน${appSettings.schoolName.replace('โรงเรียน', '')}` : ''}</div>
+            <div style={{ marginTop: '4px', whiteSpace: 'nowrap' }}>ตำแหน่ง ผู้อำนวยการ{appSettings?.schoolName ? `โรงเรียน${appSettings.schoolName.replace('โรงเรียน', '')}` : ''}</div>
           </div>
         </div>
 
