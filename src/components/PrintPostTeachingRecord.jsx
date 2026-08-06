@@ -54,12 +54,15 @@ export default function PrintPostTeachingRecord({ plan, appSettings, activeClass
       <div style={{ fontFamily: '"Sarabun", "TH Sarabun PSK", serif', fontSize: '15pt', color: '#000', lineHeight: '1.4' }}>
         
         <h2 style={{ textAlign: 'center', fontSize: '16pt', fontWeight: 'bold', marginBottom: '20px' }}>บันทึกผลหลังการสอน</h2>
-        
         <div style={{ marginBottom: '8px' }}>
-          หน่วยการเรียนรู้ที่ <span style={{ display: 'inline-block', minWidth: '80px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{record.unitNumber}</span> : <span style={{ display: 'inline-block', minWidth: '350px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{record.unitName}</span>
+          หน่วยการเรียนรู้ที่ <span style={{ display: 'inline-block', minWidth: '80px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{record.unitNumber}</span> : <span style={{ display: 'inline-block', minWidth: '350px', borderBottom: '1px dotted #000', textAlign: 'left', paddingLeft: '8px' }}>{record.unitName}</span>
         </div>
         <div style={{ marginBottom: '8px' }}>
-          แผนการจัดการเรียนรู้ที่ <span style={{ display: 'inline-block', minWidth: '80px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{record.planNumber}</span> เรื่อง <span style={{ display: 'inline-block', minWidth: '250px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{plan.topic}</span> จำนวน <span style={{ display: 'inline-block', minWidth: '60px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{plan.hours}</span> ชั่วโมง
+          แผนการจัดการเรียนรู้ที่ <span style={{ display: 'inline-block', minWidth: '80px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{record.planNumber}</span> 
+          &nbsp;&nbsp;จำนวน <span style={{ display: 'inline-block', minWidth: '60px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{plan.hours}</span> ชั่วโมง
+        </div>
+        <div style={{ marginBottom: '8px', textAlign: 'left' }}>
+          เรื่อง <span style={{ borderBottom: '1px dotted #000', paddingLeft: '8px', paddingRight: '16px' }}>{plan.topic}</span>
         </div>
         <div style={{ marginBottom: '16px' }}>
           สอนวันที่ <span style={{ display: 'inline-block', minWidth: '60px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{day}</span> เดือน <span style={{ display: 'inline-block', minWidth: '150px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{month}</span> พ.ศ. <span style={{ display: 'inline-block', minWidth: '80px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{year}</span>
