@@ -58,10 +58,12 @@ export default function PrintPostTeachingRecord({ plan, appSettings, activeClass
         <div style={{ marginBottom: '6px' }}>
           หน่วยการเรียนรู้ที่ <span style={{ display: 'inline-block', minWidth: '60px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{record.unitNumber}</span> : <span style={{ display: 'inline-block', minWidth: '350px', borderBottom: '1px dotted #000', textAlign: 'left', paddingLeft: '8px' }}>{record.unitName}</span>
         </div>
-        <div style={{ marginBottom: '6px', whiteSpace: 'nowrap' }}>
+        <div style={{ marginBottom: '6px' }}>
           แผนการจัดการเรียนรู้ที่ <span style={{ display: 'inline-block', minWidth: '60px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{record.planNumber}</span> 
-          {' '}เรื่อง <span style={{ display: 'inline-block', width: '380px', borderBottom: '1px dotted #000', textAlign: 'left', paddingLeft: '8px', overflow: 'hidden', textOverflow: 'ellipsis' }}>{plan.topic}</span>
           {' '}จำนวน <span style={{ display: 'inline-block', minWidth: '40px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{plan.hours}</span> ชั่วโมง
+        </div>
+        <div style={{ marginBottom: '6px', textAlign: 'left', lineHeight: '1.5' }}>
+          เรื่อง <span style={{ borderBottom: '1px dotted #000', paddingLeft: '8px', paddingRight: '8px' }}>{plan.topic}</span>
         </div>
         <div style={{ marginBottom: '12px' }}>
           สอนวันที่ <span style={{ display: 'inline-block', minWidth: '60px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{day}</span> เดือน <span style={{ display: 'inline-block', minWidth: '120px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{month}</span> พ.ศ. <span style={{ display: 'inline-block', minWidth: '60px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{year}</span>
