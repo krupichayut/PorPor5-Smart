@@ -2,7 +2,7 @@ import { useState, useEffect } from 'react';
 import { ClipboardList, Plus, Trash2, Pencil, Upload, CheckSquare, Square, FileEdit, Check, Printer } from 'lucide-react';
 import PrintPostTeachingRecord from './PrintPostTeachingRecord';
 
-export default function LessonPlans({ activeClassId, classes, lessonPlans, setLessonPlans, readOnly, appSettings }) {
+export default function LessonPlans({ activeClassId, classes, lessonPlans, setLessonPlans, readOnly, appSettings, students }) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
@@ -17,11 +17,25 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
   const [importText, setImportText] = useState('');
   
   const [recordData, setRecordData] = useState({
-    date: '', k: '', p: '', a: '', problems: '', passedCount: '', passedPercent: '', failedCount: '', failedPercent: '', failedNames: ''
+    date: '', k: '', p: '', a: '', problems: '', 
+    absentCount: 0, failedStudentIds: [],
+    passedCount: '', passedPercent: '', failedCount: '', failedPercent: '', failedNames: ''
   });
 
   const activeClass = classes.find(c => c.id === activeClassId);
   const classPlans = lessonPlans.filter(p => p.classId === activeClassId);
+  const classStudents = students ? students.filter(s => s.classId === activeClassId) : [];
+  const totalClassStudents = classStudents.length;
+
+  const presentCount = totalClassStudents - (Number(recordData.absentCount) || 0);
+  const autoFailedCount = recordData.failedStudentIds.length;
+  const autoPassedCount = Math.max(0, presentCount - autoFailedCount);
+  const autoPassedPercent = presentCount > 0 ? ((autoPassedCount / presentCount) * 100).toFixed(2) : 0;
+  const autoFailedPercent = presentCount > 0 ? ((autoFailedCount / presentCount) * 100).toFixed(2) : 0;
+  const autoFailedNames = recordData.failedStudentIds.map(id => {
+    const s = classStudents.find(student => student.id === id);
+    return s ? `${s.firstName} ${s.lastName}` : 'ไม่ทราบชื่อ';
+  }).join('\n');
 
   useEffect(() => {
     if (printingPlan) {
@@ -128,6 +142,8 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
         p: plan.postRecord.p || '',
         a: plan.postRecord.a || '',
         problems: plan.postRecord.problems || '',
+        absentCount: plan.postRecord.absentCount || 0,
+        failedStudentIds: plan.postRecord.failedStudentIds || [],
         passedCount: plan.postRecord.passedCount || '',
         passedPercent: plan.postRecord.passedPercent || '',
         failedCount: plan.postRecord.failedCount || '',
@@ -138,6 +154,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
       setRecordData({
         date: '', k: '', p: '', a: '',
         problems: typeof plan.postRecord === 'string' ? plan.postRecord : '',
+        absentCount: 0, failedStudentIds: [],
         passedCount: '', passedPercent: '', failedCount: '', failedPercent: '', failedNames: ''
       });
     }
@@ -146,8 +163,16 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
 
   const handleSaveRecord = (e) => {
     e.preventDefault();
+    const finalRecordData = {
+      ...recordData,
+      passedCount: autoPassedCount,
+      passedPercent: autoPassedPercent,
+      failedCount: autoFailedCount,
+      failedPercent: autoFailedPercent,
+      failedNames: autoFailedNames,
+    };
     setLessonPlans(lessonPlans.map(p => 
-      p.id === editingPlanId ? { ...p, postRecord: recordData } : p
+      p.id === editingPlanId ? { ...p, postRecord: finalRecordData } : p
     ));
     setIsRecordModalOpen(false);
     setEditingPlanId(null);
@@ -381,26 +406,54 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
 
               <div className="hairline-grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
                 <div className="form-group">
-                  <label className="form-label">จำนวนนักเรียนที่ผ่าน (คน)</label>
-                  <input type="number" name="passedCount" className="form-control" value={recordData.passedCount} onChange={handleRecordChange} />
+                  <label className="form-label">จำนวนนักเรียนทั้งหมด (คน)</label>
+                  <input type="number" className="form-control" value={totalClassStudents} disabled style={{ backgroundColor: 'var(--bg-tertiary)' }} />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">คิดเป็นร้อยละ</label>
-                  <input type="number" name="passedPercent" className="form-control" value={recordData.passedPercent} onChange={handleRecordChange} />
+                  <label className="form-label">จำนวนนักเรียนที่ขาดเรียน (คน)</label>
+                  <input type="number" name="absentCount" className="form-control" min="0" max={totalClassStudents} value={recordData.absentCount} onChange={handleRecordChange} />
+                </div>
+              </div>
+
+              <div className="hairline-grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                <div className="form-group">
+                  <label className="form-label">นักเรียนที่ผ่าน (อัปเดตอัตโนมัติ)</label>
+                  <input type="text" className="form-control" value={`${autoPassedCount} คน (${autoPassedPercent}%)`} disabled style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--success-color, #10b981)' }} />
                 </div>
                 <div className="form-group">
-                  <label className="form-label">จำนวนนักเรียนที่ไม่ผ่าน (คน)</label>
-                  <input type="number" name="failedCount" className="form-control" value={recordData.failedCount} onChange={handleRecordChange} />
-                </div>
-                <div className="form-group">
-                  <label className="form-label">คิดเป็นร้อยละ</label>
-                  <input type="number" name="failedPercent" className="form-control" value={recordData.failedPercent} onChange={handleRecordChange} />
+                  <label className="form-label">นักเรียนที่ไม่ผ่าน (อัปเดตอัตโนมัติ)</label>
+                  <input type="text" className="form-control" value={`${autoFailedCount} คน (${autoFailedPercent}%)`} disabled style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--danger)' }} />
                 </div>
               </div>
 
               <div className="form-group">
-                <label className="form-label">รายชื่อนักเรียนที่ไม่ผ่าน (คนละ 1 บรรทัด)</label>
-                <textarea name="failedNames" className="form-control" rows="3" value={recordData.failedNames} onChange={handleRecordChange} placeholder="เด็กชายสมมติ รักเรียน&#10;เด็กหญิงสมศรี ดีใจ" />
+                <label className="form-label" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                  <span>เลือกนักเรียนที่ไม่ผ่าน (คลิกเพื่อเลือก)</span>
+                  <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>เลือกแล้ว {autoFailedCount} คน</span>
+                </label>
+                <div className="hairline-cell" style={{ maxHeight: '150px', overflowY: 'auto', padding: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                  {classStudents.map(student => (
+                    <label key={student.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', padding: '4px 8px', borderRadius: '4px', backgroundColor: recordData.failedStudentIds.includes(student.id) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                      <input 
+                        type="checkbox" 
+                        checked={recordData.failedStudentIds.includes(student.id)}
+                        onChange={(e) => {
+                          if (e.target.checked) {
+                            setRecordData(prev => ({ ...prev, failedStudentIds: [...prev.failedStudentIds, student.id] }));
+                          } else {
+                            setRecordData(prev => ({ ...prev, failedStudentIds: prev.failedStudentIds.filter(id => id !== student.id) }));
+                          }
+                        }}
+                      />
+                      <span style={{ color: recordData.failedStudentIds.includes(student.id) ? 'var(--danger)' : 'var(--text-primary)' }}>
+                        {student.firstName} {student.lastName}
+                      </span>
+                    </label>
+                  ))}
+                  {classStudents.length === 0 && (
+                    <div style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '1rem' }}>ไม่พบรายชื่อนักเรียนในห้องนี้</div>
+                  )}
+                </div>
               </div>
 
               <div className="form-group">
