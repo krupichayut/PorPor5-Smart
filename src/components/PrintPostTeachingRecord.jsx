@@ -56,13 +56,13 @@ export default function PrintPostTeachingRecord({ plan, appSettings, activeClass
         <h2 style={{ textAlign: 'center', fontSize: '16pt', fontWeight: 'bold', marginBottom: '20px' }}>บันทึกผลหลังการสอน</h2>
         
         <div style={{ marginBottom: '8px' }}>
-          หน่วยการเรียนรู้ที่ {record.unitNumber || '....................'} : {record.unitName || '........................................................................................................'}
+          หน่วยการเรียนรู้ที่ <span style={{ display: 'inline-block', minWidth: '80px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{record.unitNumber}</span> : <span style={{ display: 'inline-block', minWidth: '350px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{record.unitName}</span>
         </div>
         <div style={{ marginBottom: '8px' }}>
-          แผนการจัดการเรียนรู้ที่ {record.planNumber || '....................'} เรื่อง {plan.topic} จำนวน {plan.hours || '........'} ชั่วโมง
+          แผนการจัดการเรียนรู้ที่ <span style={{ display: 'inline-block', minWidth: '80px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{record.planNumber}</span> เรื่อง <span style={{ display: 'inline-block', minWidth: '250px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{plan.topic}</span> จำนวน <span style={{ display: 'inline-block', minWidth: '60px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{plan.hours}</span> ชั่วโมง
         </div>
         <div style={{ marginBottom: '16px' }}>
-          สอนวันที่ {day} เดือน {month} พ.ศ. {year}
+          สอนวันที่ <span style={{ display: 'inline-block', minWidth: '60px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{day}</span> เดือน <span style={{ display: 'inline-block', minWidth: '150px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{month}</span> พ.ศ. <span style={{ display: 'inline-block', minWidth: '80px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{year}</span>
         </div>
 
         <div style={{ fontWeight: 'bold', marginLeft: '40px', marginBottom: '8px' }}>
@@ -70,18 +70,20 @@ export default function PrintPostTeachingRecord({ plan, appSettings, activeClass
         </div>
 
         <div style={{ marginLeft: '40px' }}>
-          <div>๑. นักเรียนจำนวน {totalStudents || '........'} คน</div>
+          <div>๑. นักเรียนจำนวน <span style={{ display: 'inline-block', minWidth: '80px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{totalStudents}</span> คน</div>
           <div style={{ marginLeft: '40px' }}>
-            ผ่านจุดประสงค์การเรียนรู้ {record.passedCount || '........'} คน คิดเป็นร้อยละ {record.passedPercent || '........'}
+            ผ่านจุดประสงค์การเรียนรู้ <span style={{ display: 'inline-block', minWidth: '60px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{record.passedCount}</span> คน คิดเป็นร้อยละ <span style={{ display: 'inline-block', minWidth: '80px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{record.passedPercent}</span>
           </div>
           <div style={{ marginLeft: '40px' }}>
-            ไม่ผ่านจุดประสงค์ {record.failedCount || '........'} คน คิดเป็นร้อยละ {record.failedPercent || '........'}
+            ไม่ผ่านจุดประสงค์ <span style={{ display: 'inline-block', minWidth: '60px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{record.failedCount}</span> คน คิดเป็นร้อยละ <span style={{ display: 'inline-block', minWidth: '80px', borderBottom: '1px dotted #000', textAlign: 'center' }}>{record.failedPercent}</span>
           </div>
           <div style={{ marginLeft: '40px' }}>ได้แก่</div>
-          <div style={{ marginLeft: '60px', minHeight: '60px', lineHeight: '1.4' }}>
+          <div style={{ marginLeft: '40px', minHeight: '60px', lineHeight: '1.4' }}>
             {failedNamesList.length > 0 ? (
               failedNamesList.map((name, idx) => (
-                <div key={idx}>{idx + 1}. {name}</div>
+                <div key={idx}>
+                  {['๑', '๒', '๓', '๔', '๕', '๖', '๗', '๘', '๙', '๑๐'][idx] || (idx + 1)}. <span style={{ display: 'inline-block', minWidth: '350px', borderBottom: '1px dotted #000' }}>{name}</span>
+                </div>
               ))
             ) : (
               <>
@@ -115,7 +117,7 @@ export default function PrintPostTeachingRecord({ plan, appSettings, activeClass
 
         {/* Teacher Signature */}
         <div style={{ marginTop: '40px', display: 'flex', flexDirection: 'column', alignItems: 'flex-end', pageBreakInside: 'avoid' }}>
-          <div style={{ textAlign: 'center', width: '450px' }}>
+          <div style={{ textAlign: 'center', width: '350px' }}>
             <div>ลงชื่อ.................................................................</div>
             <div style={{ marginTop: '8px' }}>({appSettings?.teacherName || '...................................................'})</div>
             <div style={{ marginTop: '4px' }}>ตำแหน่ง ครู</div>
