@@ -34,7 +34,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
   const autoFailedPercent = presentCount > 0 ? ((autoFailedCount / presentCount) * 100).toFixed(2) : 0;
   const autoFailedNames = recordData.failedStudentIds.map(id => {
     const s = classStudents.find(student => student.id === id);
-    return s ? `${s.firstName} ${s.lastName}` : 'ไม่ทราบชื่อ';
+    return s ? s.name : 'ไม่ทราบชื่อ';
   }).join('\n');
 
   useEffect(() => {
@@ -446,7 +446,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
                         }}
                       />
                       <span style={{ color: recordData.failedStudentIds.includes(student.id) ? 'var(--danger)' : 'var(--text-primary)' }}>
-                        {student.firstName} {student.lastName}
+                        {student.name}
                       </span>
                     </label>
                   ))}
