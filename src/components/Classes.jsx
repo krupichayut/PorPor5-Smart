@@ -158,7 +158,6 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
                   </table>
                   </div>
                 </div>
-              </>
             )}
           </>
         )}
