@@ -97,7 +97,7 @@ export default function Literacy({ students, activeClassId, classes, literacy, s
                       {c.name}
                     </th>
                   ))}
-                  <th style={{ textAlign: 'center', backgroundColor: 'var(--primary-light)', color: 'var(--primary-color)' }}>สรุปผล</th>
+                  <th style={{ textAlign: 'center', backgroundColor: 'var(--primary-light)', color: 'var(--accent-cyan)' }}>สรุปผล</th>
                 </tr>
               </thead>
               <tbody>
@@ -126,7 +126,7 @@ export default function Literacy({ students, activeClassId, classes, literacy, s
                           </td>
                         );
                       })}
-                      <td style={{ textAlign: 'center', fontWeight: 700, color: 'var(--primary-color)', backgroundColor: 'var(--bg-primary)' }}>
+                      <td style={{ textAlign: 'center', fontWeight: 700, color: 'var(--accent-cyan)', backgroundColor: 'var(--bg-primary)' }}>
                         {getLevelLabel(avg)}
                       </td>
                     </tr>

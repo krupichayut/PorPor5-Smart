@@ -123,7 +123,7 @@ export default function SettingsPage({ appSettings, setAppSettings, readOnly, cl
           </div>
 
           <hr style={{ border: '0', borderTop: '1px solid var(--border-color)', margin: '2rem 0' }} />
-          <h3 style={{ margin: '0 0 1.5rem 0', color: 'var(--primary-color)', fontSize: '1.1rem' }}>ข้อมูลบุคลากร (สำหรับเซ็นเอกสาร)</h3>
+          <h3 style={{ margin: '0 0 1.5rem 0', color: 'var(--accent-cyan)', fontSize: '1.1rem' }}>ข้อมูลบุคลากร (สำหรับเซ็นเอกสาร)</h3>
 
           <div className="form-group" style={{ marginBottom: '1.5rem' }}>
             <label className="form-label">ชื่อ-นามสกุล ครูผู้สอน</label>
@@ -170,7 +170,7 @@ export default function SettingsPage({ appSettings, setAppSettings, readOnly, cl
                 <Save size={18} style={{ marginRight: '0.5rem' }} />
                 บันทึกข้อมูล
               </button>
-              {isSaved && <span style={{ color: 'var(--success-color)', fontWeight: 500 }}>บันทึกข้อมูลเรียบร้อยแล้ว!</span>}
+              {isSaved && <span style={{ color: 'var(--success)', fontWeight: 500 }}>บันทึกข้อมูลเรียบร้อยแล้ว!</span>}
             </div>
           )}
         </form>
@@ -185,7 +185,7 @@ export default function SettingsPage({ appSettings, setAppSettings, readOnly, cl
           เพื่อเก็บสำรองไว้ในเครื่องคอมพิวเตอร์ของคุณเองได้ตลอดเวลา
         </p>
         <button 
-          className="btn btn-secondary" 
+          className="btn btn-outline" 
           onClick={handleBackup}
           disabled={readOnly}
           style={{ width: '100%', maxWidth: '300px', display: 'flex', justifyContent: 'center' }}

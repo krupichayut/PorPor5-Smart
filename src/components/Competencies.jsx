@@ -99,7 +99,7 @@ export default function Competencies({ students, activeClassId, classes, compete
                       {c.name}
                     </th>
                   ))}
-                  <th style={{ textAlign: 'center', backgroundColor: 'var(--primary-light)', color: 'var(--primary-color)' }}>สรุปผล</th>
+                  <th style={{ textAlign: 'center', backgroundColor: 'var(--primary-light)', color: 'var(--accent-cyan)' }}>สรุปผล</th>
                 </tr>
               </thead>
               <tbody>
@@ -128,7 +128,7 @@ export default function Competencies({ students, activeClassId, classes, compete
                           </td>
                         );
                       })}
-                      <td style={{ textAlign: 'center', fontWeight: 700, color: 'var(--primary-color)', backgroundColor: 'var(--bg-primary)' }}>
+                      <td style={{ textAlign: 'center', fontWeight: 700, color: 'var(--accent-cyan)', backgroundColor: 'var(--bg-primary)' }}>
                         {getLevelLabel(avg)}
                       </td>
                     </tr>

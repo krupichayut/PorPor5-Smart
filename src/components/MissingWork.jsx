@@ -172,10 +172,10 @@ export default function MissingWork({ students, activeClassId, classes, scores, 
             </div>
             {selectedAssignmentId && !readOnly && (
               <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <button className="btn btn-secondary" onClick={handleOpenEdit} title="แก้ไขชิ้นงานนี้">
+                <button className="btn btn-outline" onClick={handleOpenEdit} title="แก้ไขชิ้นงานนี้">
                   <Edit2 size={18} />
                 </button>
-                <button className="btn btn-secondary" onClick={handleDeleteAssignment} style={{ color: 'var(--danger-color)' }} title="ลบชิ้นงานนี้">
+                <button className="btn btn-outline" onClick={handleDeleteAssignment} style={{ color: 'var(--danger)' }} title="ลบชิ้นงานนี้">
                   <Trash2 size={18} />
                 </button>
               </div>
@@ -185,7 +185,7 @@ export default function MissingWork({ students, activeClassId, classes, scores, 
           {selectedAssignmentId && (
             <div>
               <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1rem' }}>
-                <h3 style={{ margin: 0, color: 'var(--primary-color)' }}>
+                <h3 style={{ margin: 0, color: 'var(--accent-cyan)' }}>
                   รายชื่อผู้ที่ยังไม่ส่ง: {selectedAssignment?.name}
                 </h3>
                 <span className="badge badge-warning" style={{ fontSize: '0.9rem' }}>
@@ -279,7 +279,7 @@ export default function MissingWork({ students, activeClassId, classes, scores, 
                       borderRadius: 'var(--radius-md)',
                       cursor: 'pointer',
                       textAlign: 'left',
-                      color: selectedStudentId === student.id ? 'var(--primary-color)' : 'inherit',
+                      color: selectedStudentId === student.id ? 'var(--accent-cyan)' : 'inherit',
                       fontWeight: selectedStudentId === student.id ? 600 : 400
                     }}
                   >
@@ -301,7 +301,7 @@ export default function MissingWork({ students, activeClassId, classes, scores, 
               </div>
             ) : (
               <div>
-                <h3 style={{ margin: '0 0 1rem 0', color: 'var(--primary-color)', display: 'flex', alignItems: 'center' }}>
+                <h3 style={{ margin: '0 0 1rem 0', color: 'var(--accent-cyan)', display: 'flex', alignItems: 'center' }}>
                   งานที่ค้างส่ง: {selectedStudent?.name}
                 </h3>
 
@@ -328,7 +328,7 @@ export default function MissingWork({ students, activeClassId, classes, scores, 
 
                           return (
                             <tr key={col.id}>
-                              <td style={{ fontWeight: 500, color: 'var(--danger-color)' }}>
+                              <td style={{ fontWeight: 500, color: 'var(--danger)' }}>
                                 <FileWarning size={14} style={{ display: 'inline', marginRight: '6px', verticalAlign: 'text-bottom' }} />
                                 {col.name}
                               </td>
@@ -417,7 +417,7 @@ export default function MissingWork({ students, activeClassId, classes, scores, 
                 />
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setIsEditModalOpen(false)}>ยกเลิก</button>
+                <button type="button" className="btn btn-outline" onClick={() => setIsEditModalOpen(false)}>ยกเลิก</button>
                 <button type="submit" className="btn btn-primary" disabled={!editColName.trim() || editColMax <= 0 || !editColUnitId}>
                   บันทึกการแก้ไข
                 </button>

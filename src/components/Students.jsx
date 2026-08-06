@@ -277,11 +277,11 @@ export default function Students({ students, setStudents, activeClassId, classes
               ref={fileInputRef}
               onChange={handleImportStudents}
             />
-            <button className="btn btn-secondary" onClick={() => fileInputRef.current?.click()} title="นำเข้าข้อมูลนักเรียนจาก Excel">
+            <button className="btn btn-outline" onClick={() => fileInputRef.current?.click()} title="นำเข้าข้อมูลนักเรียนจาก Excel">
               <Upload size={18} />
               <span className="hide-on-mobile">นำเข้า Excel</span>
             </button>
-            <button className="btn btn-secondary" onClick={handleExportStudents} title="ส่งออกข้อมูลนักเรียนเป็น Excel">
+            <button className="btn btn-outline" onClick={handleExportStudents} title="ส่งออกข้อมูลนักเรียนเป็น Excel">
               <Download size={18} />
               <span className="hide-on-mobile">ส่งออก Excel</span>
             </button>
@@ -339,7 +339,7 @@ export default function Students({ students, setStudents, activeClassId, classes
             <Search size={18} className="search-icon" />
             <input 
               type="text" 
-              className="search-input" 
+              className="form-control" style={{maxWidth:"300px"}} 
               placeholder="ค้นหาชื่อ หรือ รหัสประจำตัว..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
@@ -394,7 +394,7 @@ export default function Students({ students, setStudents, activeClassId, classes
                       <div 
                         style={{ display: 'flex', alignItems: 'center', cursor: 'pointer', transition: 'color 0.2s' }}
                         onClick={() => setSelectedStudentProfile(s)}
-                        onMouseOver={(e) => e.currentTarget.style.color = 'var(--primary-color)'}
+                        onMouseOver={(e) => e.currentTarget.style.color = 'var(--accent-cyan)'}
                         onMouseOut={(e) => e.currentTarget.style.color = 'inherit'}
                         title="คลิกเพื่อดูรายงานรายบุคคล"
                       >
@@ -405,10 +405,10 @@ export default function Students({ students, setStudents, activeClassId, classes
                     <td style={{ textAlign: 'right' }}>
                       {!readOnly && (
                         <>
-                          <button className="btn-icon" aria-label="แก้ไขนักเรียน" onClick={() => handleEditClick(s)} style={{ color: 'var(--primary-color)', marginRight: '0.5rem' }}>
+                          <button className="btn-icon" aria-label="แก้ไขนักเรียน" onClick={() => handleEditClick(s)} style={{ color: 'var(--accent-cyan)', marginRight: '0.5rem' }}>
                             <Edit size={18} />
                           </button>
-                          <button className="btn-icon" aria-label="ลบนักเรียน" onClick={() => handleDeleteStudent(s.id)} style={{ color: 'var(--danger-color)' }}>
+                          <button className="btn-icon" aria-label="ลบนักเรียน" onClick={() => handleDeleteStudent(s.id)} style={{ color: 'var(--danger)' }}>
                             <Trash2 size={18} />
                           </button>
                         </>
@@ -434,14 +434,14 @@ export default function Students({ students, setStudents, activeClassId, classes
             <div style={{ display: 'flex', borderBottom: '1px solid var(--border-color)', marginBottom: '1.5rem' }}>
               <button 
                 type="button"
-                style={{ flex: 1, padding: '0.75rem', background: 'none', border: 'none', borderBottom: addMode === 'single' ? '2px solid var(--primary-color)' : '2px solid transparent', color: addMode === 'single' ? 'var(--primary-color)' : 'var(--text-muted)', fontWeight: addMode === 'single' ? 600 : 400, cursor: 'pointer' }}
+                style={{ flex: 1, padding: '0.75rem', background: 'none', border: 'none', borderBottom: addMode === 'single' ? '2px solid var(--accent-cyan)' : '2px solid transparent', color: addMode === 'single' ? 'var(--accent-cyan)' : 'var(--text-muted)', fontWeight: addMode === 'single' ? 600 : 400, cursor: 'pointer' }}
                 onClick={() => setAddMode('single')}
               >
                 เพิ่มทีละคน
               </button>
               <button 
                 type="button"
-                style={{ flex: 1, padding: '0.75rem', background: 'none', border: 'none', borderBottom: addMode === 'bulk' ? '2px solid var(--primary-color)' : '2px solid transparent', color: addMode === 'bulk' ? 'var(--primary-color)' : 'var(--text-muted)', fontWeight: addMode === 'bulk' ? 600 : 400, cursor: 'pointer' }}
+                style={{ flex: 1, padding: '0.75rem', background: 'none', border: 'none', borderBottom: addMode === 'bulk' ? '2px solid var(--accent-cyan)' : '2px solid transparent', color: addMode === 'bulk' ? 'var(--accent-cyan)' : 'var(--text-muted)', fontWeight: addMode === 'bulk' ? 600 : 400, cursor: 'pointer' }}
                 onClick={() => setAddMode('bulk')}
               >
                 เพิ่มหลายคน (ก๊อปปี้จาก Excel)
@@ -472,7 +472,7 @@ export default function Students({ students, setStudents, activeClassId, classes
                   />
                 </div>
                 <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>ยกเลิก</button>
+                  <button type="button" className="btn btn-outline" onClick={() => setIsModalOpen(false)}>ยกเลิก</button>
                   <button type="submit" className="btn btn-primary" disabled={!newStudentId.trim() || !newStudentName.trim()}>เพิ่มนักเรียน</button>
                 </div>
               </form>
@@ -493,7 +493,7 @@ export default function Students({ students, setStudents, activeClassId, classes
                   />
                 </div>
                 <div className="modal-footer">
-                  <button type="button" className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>ยกเลิก</button>
+                  <button type="button" className="btn btn-outline" onClick={() => setIsModalOpen(false)}>ยกเลิก</button>
                   <button type="submit" className="btn btn-primary" disabled={!bulkData.trim()}>เพิ่มรายชื่อทั้งหมด</button>
                 </div>
               </form>
@@ -542,7 +542,7 @@ export default function Students({ students, setStudents, activeClassId, classes
                 />
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setIsEditModalOpen(false)}>ยกเลิก</button>
+                <button type="button" className="btn btn-outline" onClick={() => setIsEditModalOpen(false)}>ยกเลิก</button>
                 <button type="submit" className="btn btn-primary">บันทึกการแก้ไข</button>
               </div>
             </form>
@@ -556,7 +556,7 @@ export default function Students({ students, setStudents, activeClassId, classes
             <div className="modal-header no-print">
               <h3 className="modal-title">รายงานผลรายบุคคล</h3>
               <div style={{ display: 'flex', gap: '0.5rem' }}>
-                <button className="btn btn-secondary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem' }} onClick={() => window.print()}>
+                <button className="btn btn-outline" style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem' }} onClick={() => window.print()}>
                   <Printer size={16} style={{ marginRight: '0.5rem' }} /> พิมพ์รายงาน
                 </button>
                 <button className="btn-icon" aria-label="ปิด" onClick={() => setSelectedStudentProfile(null)}>×</button>
@@ -591,15 +591,15 @@ export default function Students({ students, setStudents, activeClassId, classes
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
                     <div style={{ backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1.25rem', textAlign: 'center' }}>
                       <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>คะแนนสะสม</div>
-                      <div style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--primary-color)' }}>{stats.totalScore} <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 400 }}>/ {stats.totalMax}</span></div>
+                      <div style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--accent-cyan)' }}>{stats.totalScore} <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 400 }}>/ {stats.totalMax}</span></div>
                     </div>
                     <div style={{ backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1.25rem', textAlign: 'center' }}>
                       <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>งานที่ค้างส่ง</div>
-                      <div style={{ fontSize: '1.75rem', fontWeight: 700, color: stats.missingWorkCount > 0 ? 'var(--danger-color)' : 'var(--success-color)' }}>{stats.missingWorkCount} <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 400 }}>ชิ้น</span></div>
+                      <div style={{ fontSize: '1.75rem', fontWeight: 700, color: stats.missingWorkCount > 0 ? 'var(--danger)' : 'var(--success)' }}>{stats.missingWorkCount} <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 400 }}>ชิ้น</span></div>
                     </div>
                     <div style={{ backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1.25rem', textAlign: 'center' }}>
                       <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>เวลาเรียน</div>
-                      <div style={{ fontSize: '1.75rem', fontWeight: 700, color: attPercent >= 80 ? 'var(--success-color)' : 'var(--warning-color)' }}>{attPercent}%</div>
+                      <div style={{ fontSize: '1.75rem', fontWeight: 700, color: attPercent >= 80 ? 'var(--success)' : 'var(--warning)' }}>{attPercent}%</div>
                     </div>
                   </div>
 
@@ -610,11 +610,11 @@ export default function Students({ students, setStudents, activeClassId, classes
                       </h4>
                       <ul style={{ listStyle: 'none', padding: 0, margin: 0, border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)' }}>
                         <li style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 1rem', borderBottom: '1px solid var(--border-color)' }}>
-                          <span style={{ color: 'var(--success-color)' }}>มาเรียนปกติ</span>
+                          <span style={{ color: 'var(--success)' }}>มาเรียนปกติ</span>
                           <span style={{ fontWeight: 600 }}>{stats.present} วัน</span>
                         </li>
                         <li style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 1rem', borderBottom: '1px solid var(--border-color)' }}>
-                          <span style={{ color: 'var(--warning-color)' }}>มาสาย</span>
+                          <span style={{ color: 'var(--warning)' }}>มาสาย</span>
                           <span style={{ fontWeight: 600 }}>{stats.late} วัน</span>
                         </li>
                         <li style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 1rem', borderBottom: '1px solid var(--border-color)' }}>
@@ -622,7 +622,7 @@ export default function Students({ students, setStudents, activeClassId, classes
                           <span style={{ fontWeight: 600 }}>{stats.leave} วัน</span>
                         </li>
                         <li style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 1rem' }}>
-                          <span style={{ color: 'var(--danger-color)' }}>ขาดเรียน</span>
+                          <span style={{ color: 'var(--danger)' }}>ขาดเรียน</span>
                           <span style={{ fontWeight: 600 }}>{stats.absent} วัน</span>
                         </li>
                       </ul>

@@ -136,7 +136,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
           <h2 className="page-title">เช็คเวลาเรียน: {activeClass?.name}</h2>
           <p className="page-subtitle">
             คลิกที่สถานะในตารางเพื่อเปลี่ยน (มา &rarr; ขาด &rarr; สาย &rarr; ลา)
-            {displayTotal > 0 && <span style={{ marginLeft: '8px', color: 'var(--primary-color)' }}>• เวลาเรียนเต็ม {displayTotal} คาบ (ต้องมาเรียนไม่น้อยกว่า {required80} คาบ)</span>}
+            {displayTotal > 0 && <span style={{ marginLeft: '8px', color: 'var(--accent-cyan)' }}>• เวลาเรียนเต็ม {displayTotal} คาบ (ต้องมาเรียนไม่น้อยกว่า {required80} คาบ)</span>}
           </p>
         </div>
         {!readOnly && (
@@ -183,7 +183,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
                           {!readOnly && (
                             <button 
                               onClick={() => handleDeleteDate(date)}
-                              className="btn-icon" style={{ color: 'var(--danger-color)' }}
+                              className="btn-icon" style={{ color: 'var(--danger)' }}
                               title="ลบวันที่นี้"
                               aria-label="ลบวันที่นี้"
                             >
@@ -236,7 +236,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
                       <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--badge-leave-text)' }}>{leaveCount}</td>
                       <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--badge-absent-text)' }}>{absentCount}</td>
                       <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--badge-late-text)' }}>{lateCount}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 700, color: percentage < 80 ? 'var(--badge-absent-text)' : 'var(--primary-color)' }}>
+                      <td style={{ textAlign: 'center', fontWeight: 700, color: percentage < 80 ? 'var(--badge-absent-text)' : 'var(--accent-cyan)' }}>
                         {percentage}%
                       </td>
                     </tr>
@@ -293,7 +293,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
                 )}
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>ยกเลิก</button>
+                <button type="button" className="btn btn-outline" onClick={() => setIsModalOpen(false)}>ยกเลิก</button>
                 <button type="submit" className="btn btn-primary" disabled={!newDate}>เพิ่มวันที่</button>
               </div>
             </form>

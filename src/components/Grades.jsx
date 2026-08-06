@@ -202,7 +202,7 @@ export default function Grades({ students, activeClassId, classes, scores, score
                               <td style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>{studentScores.finalScaled}</td>
                             </>
                           )}
-                          <td style={{ textAlign: 'center', fontWeight: 700, color: 'var(--primary-color)', backgroundColor: 'var(--bg-secondary)' }}>{studentScores.totalScaled}</td>
+                          <td style={{ textAlign: 'center', fontWeight: 700, color: 'var(--accent-cyan)', backgroundColor: 'var(--bg-secondary)' }}>{studentScores.totalScaled}</td>
                           <td style={{ textAlign: 'center', fontWeight: 600 }}>{grade}</td>
                         </>
                       )}

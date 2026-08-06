@@ -1,12 +1,14 @@
-import { useState } from 'react';
-import { ClipboardList, Plus, Trash2, Pencil, Upload, CheckSquare, Square, FileEdit, Check } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { ClipboardList, Plus, Trash2, Pencil, Upload, CheckSquare, Square, FileEdit, Check, Printer } from 'lucide-react';
+import PrintPostTeachingRecord from './PrintPostTeachingRecord';
 
-export default function LessonPlans({ activeClassId, classes, lessonPlans, setLessonPlans, readOnly }) {
+export default function LessonPlans({ activeClassId, classes, lessonPlans, setLessonPlans, readOnly, appSettings }) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
 
   const [editingPlanId, setEditingPlanId] = useState(null);
+  const [printingPlan, setPrintingPlan] = useState(null);
   
   const [week, setWeek] = useState('');
   const [topic, setTopic] = useState('');
@@ -14,14 +16,27 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
   
   const [importText, setImportText] = useState('');
   
-  const [postRecord, setPostRecord] = useState('');
+  const [recordData, setRecordData] = useState({
+    date: '', k: '', p: '', a: '', problems: '', passedCount: '', passedPercent: '', failedCount: '', failedPercent: '', failedNames: ''
+  });
 
   const activeClass = classes.find(c => c.id === activeClassId);
   const classPlans = lessonPlans.filter(p => p.classId === activeClassId);
 
-  // Sort by week assuming week might be a number or string like "1-2"
-  // For simplicity, we just sort them by the order they were added (which is preserved in array) or try to parse week.
-  // We will leave them in the order they are in the array for now.
+  useEffect(() => {
+    if (printingPlan) {
+      const timer = setTimeout(() => {
+        window.print();
+      }, 500);
+      return () => clearTimeout(timer);
+    }
+  }, [printingPlan]);
+
+  useEffect(() => {
+    const handleAfterPrint = () => setPrintingPlan(null);
+    window.addEventListener('afterprint', handleAfterPrint);
+    return () => window.removeEventListener('afterprint', handleAfterPrint);
+  }, []);
 
   const handleAddPlan = (e) => {
     e.preventDefault();
@@ -106,18 +121,47 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
 
   const openRecordModal = (plan) => {
     setEditingPlanId(plan.id);
-    setPostRecord(plan.postRecord || '');
+    if (typeof plan.postRecord === 'object' && plan.postRecord !== null) {
+      setRecordData({
+        date: plan.postRecord.date || '',
+        k: plan.postRecord.k || '',
+        p: plan.postRecord.p || '',
+        a: plan.postRecord.a || '',
+        problems: plan.postRecord.problems || '',
+        passedCount: plan.postRecord.passedCount || '',
+        passedPercent: plan.postRecord.passedPercent || '',
+        failedCount: plan.postRecord.failedCount || '',
+        failedPercent: plan.postRecord.failedPercent || '',
+        failedNames: plan.postRecord.failedNames || ''
+      });
+    } else {
+      setRecordData({
+        date: '', k: '', p: '', a: '',
+        problems: typeof plan.postRecord === 'string' ? plan.postRecord : '',
+        passedCount: '', passedPercent: '', failedCount: '', failedPercent: '', failedNames: ''
+      });
+    }
     setIsRecordModalOpen(true);
   };
 
   const handleSaveRecord = (e) => {
     e.preventDefault();
     setLessonPlans(lessonPlans.map(p => 
-      p.id === editingPlanId ? { ...p, postRecord } : p
+      p.id === editingPlanId ? { ...p, postRecord: recordData } : p
     ));
     setIsRecordModalOpen(false);
     setEditingPlanId(null);
-    setPostRecord('');
+  };
+
+  const handleRecordChange = (e) => {
+    setRecordData({
+      ...recordData,
+      [e.target.name]: e.target.value
+    });
+  };
+
+  const handlePrint = (plan) => {
+    setPrintingPlan(plan);
   };
 
   const totalHours = classPlans.reduce((sum, p) => sum + Number(p.hours || 0), 0);
@@ -143,7 +187,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
 
   return (
     <div className="animate-fade-in">
-      <div className="page-header">
+      <div className="page-header no-print">
         <div>
           <h2 className="page-title">แผนการสอน: {activeClass?.subject}</h2>
           <p className="page-subtitle">
@@ -152,19 +196,17 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
         </div>
         {!readOnly && (
           <div style={{ display: 'flex', gap: '0.5rem' }}>
-            <button className="btn btn-secondary" onClick={() => setIsImportModalOpen(true)}>
-              <Upload size={18} />
-              นำเข้าจาก Excel
+            <button className="btn btn-outline" onClick={() => setIsImportModalOpen(true)}>
+              <Upload size={18} />นำเข้าจาก Excel
             </button>
             <button className="btn btn-primary" onClick={() => setIsAddModalOpen(true)}>
-              <Plus size={18} />
-              เพิ่มแผนการสอน
+              <Plus size={18} />เพิ่มแผนการสอน
             </button>
           </div>
         )}
       </div>
 
-      <div className="hairline-cell">
+      <div className="hairline-cell no-print">
         {classPlans.length === 0 ? (
           <div className="empty-state">
             <ClipboardList size={48} />
@@ -172,6 +214,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
             <p>{!readOnly ? 'กรุณากด "เพิ่มแผนการสอน" หรือ "นำเข้าจาก Excel"' : 'ยังไม่มีข้อมูล'}</p>
           </div>
         ) : (
+            <div style={{ overflowX: 'auto' }}>
             <table className="data-table">
               <thead>
                 <tr>
@@ -188,7 +231,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
                   <tr key={plan.id} style={{ backgroundColor: plan.isTaught ? 'var(--bg-tertiary)' : 'transparent' }}>
                     <td style={{ textAlign: 'center', cursor: readOnly ? 'default' : 'pointer' }} onClick={() => handleToggleTaught(plan.id, plan.isTaught)}>
                       {plan.isTaught ? (
-                        <CheckSquare size={20} color="var(--success-color, #10b981)" />
+                        <CheckSquare size={20} color="var(--success)" />
                       ) : (
                         <Square size={20} color="var(--text-muted)" />
                       )}
@@ -199,23 +242,34 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
                     </td>
                     <td style={{ textAlign: 'center' }}>{plan.hours}</td>
                     <td style={{ textAlign: 'center' }}>
-                      <button 
-                        className={`btn-icon ${plan.postRecord ? 'has-record' : ''}`} 
-                        onClick={() => openRecordModal(plan)}
-                        title={plan.postRecord ? 'แก้ไขบันทึกหลังสอน' : 'เขียนบันทึกหลังสอน'}
-                        aria-label={plan.postRecord ? 'แก้ไขบันทึกหลังสอน' : 'เขียนบันทึกหลังสอน'}
-                        style={{ color: plan.postRecord ? 'var(--primary-color)' : 'var(--text-muted)' }}
-                      >
-                        {plan.postRecord ? <Check size={18} /> : <FileEdit size={18} />}
-                        {plan.postRecord && <span style={{ fontSize: '0.75rem', marginLeft: '4px' }}>มีบันทึก</span>}
-                      </button>
+                      <div style={{ display: 'flex', gap: '4px', justifyContent: 'center' }}>
+                        <button 
+                          className={`btn-icon ${plan.postRecord ? 'has-record' : ''}`} 
+                          onClick={() => openRecordModal(plan)}
+                          title={plan.postRecord ? 'แก้ไขบันทึกหลังสอน' : 'เขียนบันทึกหลังสอน'}
+                          aria-label={plan.postRecord ? 'แก้ไขบันทึกหลังสอน' : 'เขียนบันทึกหลังสอน'}
+                          style={{ color: plan.postRecord ? 'var(--accent-cyan)' : 'var(--text-muted)' }}
+                        >
+                          {plan.postRecord ? <Check size={18} /> : <FileEdit size={18} />}
+                        </button>
+                        {plan.postRecord && (
+                          <button 
+                            className="btn-icon" 
+                            onClick={() => handlePrint(plan)}
+                            title="พิมพ์บันทึก"
+                            style={{ color: 'var(--text-primary)' }}
+                          >
+                            <Printer size={18} />
+                          </button>
+                        )}
+                      </div>
                     </td>
                     {!readOnly && (
                       <td style={{ textAlign: 'center', display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
-                        <button className="btn-icon" style={{ color: 'var(--primary-color)' }} onClick={() => openEditModal(plan)} aria-label="แก้ไขแผนการสอน">
+                        <button className="btn-icon" style={{ color: 'var(--accent-cyan)' }} onClick={() => openEditModal(plan)} aria-label="แก้ไขแผนการสอน">
                           <Pencil size={16} />
                         </button>
-                        <button className="btn-icon" style={{ color: 'var(--danger-color)' }} onClick={() => handleDelete(plan.id)} aria-label="ลบแผนการสอน">
+                        <button className="btn-icon" style={{ color: 'var(--danger)' }} onClick={() => handleDelete(plan.id)} aria-label="ลบแผนการสอน">
                           <Trash2 size={16} />
                         </button>
                       </td>
@@ -224,12 +278,13 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
                 ))}
               </tbody>
             </table>
+            </div>
         )}
       </div>
 
       {/* Add/Edit Modal */}
       {isAddModalOpen && (
-        <div className="modal-overlay">
+        <div className="modal-overlay no-print">
           <div className="modal-content">
             <div className="modal-header">
               <h3 className="modal-title">{editingPlanId ? 'แก้ไขแผนการสอน' : 'เพิ่มแผนการสอน'}</h3>
@@ -269,7 +324,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
                 />
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={closeAddModal}>ยกเลิก</button>
+                <button type="button" className="btn btn-outline" onClick={closeAddModal}>ยกเลิก</button>
                 <button type="submit" className="btn btn-primary">{editingPlanId ? 'บันทึกการแก้ไข' : 'เพิ่มแผนการสอน'}</button>
               </div>
             </form>
@@ -279,7 +334,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
 
       {/* Import Modal */}
       {isImportModalOpen && (
-        <div className="modal-overlay">
+        <div className="modal-overlay no-print">
           <div className="modal-content" style={{ maxWidth: '600px' }}>
             <div className="modal-header">
               <h3 className="modal-title">นำเข้าแผนการสอนจาก Excel</h3>
@@ -299,12 +354,9 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
                   required
                   autoFocus
                 />
-                <p style={{ fontSize: '0.8rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
-                  * ข้อมูลแต่ละคอลัมน์จะถูกเว้นด้วย Tab อัตโนมัติเวลา Copy มาจาก Excel หรือ Word
-                </p>
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setIsImportModalOpen(false)}>ยกเลิก</button>
+                <button type="button" className="btn btn-outline" onClick={() => setIsImportModalOpen(false)}>ยกเลิก</button>
                 <button type="submit" className="btn btn-primary" disabled={!importText.trim()}>นำเข้าข้อมูล</button>
               </div>
             </form>
@@ -314,31 +366,72 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
 
       {/* Record Modal */}
       {isRecordModalOpen && (
-        <div className="modal-overlay">
-          <div className="modal-content" style={{ maxWidth: '600px' }}>
+        <div className="modal-overlay no-print">
+          <div className="modal-content" style={{ maxWidth: '800px', maxHeight: '90vh', overflowY: 'auto' }}>
             <div className="modal-header">
-              <h3 className="modal-title">บันทึกหลังสอน</h3>
+              <h3 className="modal-title">บันทึกผลหลังการสอน (รูปแบบราชการ)</h3>
               <button type="button" className="btn-icon" onClick={() => setIsRecordModalOpen(false)} aria-label="ปิด">×</button>
             </div>
             <form onSubmit={handleSaveRecord}>
+              
               <div className="form-group">
-                <label className="form-label">บันทึกผลการจัดการเรียนรู้ ปัญหา/อุปสรรค และแนวทางแก้ไข</label>
-                <textarea 
-                  className="form-control" 
-                  value={postRecord}
-                  onChange={(e) => setPostRecord(e.target.value)}
-                  rows="10"
-                  placeholder="นักเรียนส่วนใหญ่เข้าใจเนื้อหา มีนักเรียน 2 คนที่ยังสับสนเรื่อง... ได้ทำการสอนเสริมหลังเลิกเรียนแล้ว"
-                  autoFocus
-                />
+                <label className="form-label">วันที่สอน (สำหรับแสดงในเอกสาร)</label>
+                <input type="date" name="date" className="form-control" value={recordData.date} onChange={handleRecordChange} required />
               </div>
+
+              <div className="hairline-grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
+                <div className="form-group">
+                  <label className="form-label">จำนวนนักเรียนที่ผ่าน (คน)</label>
+                  <input type="number" name="passedCount" className="form-control" value={recordData.passedCount} onChange={handleRecordChange} />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">คิดเป็นร้อยละ</label>
+                  <input type="number" name="passedPercent" className="form-control" value={recordData.passedPercent} onChange={handleRecordChange} />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">จำนวนนักเรียนที่ไม่ผ่าน (คน)</label>
+                  <input type="number" name="failedCount" className="form-control" value={recordData.failedCount} onChange={handleRecordChange} />
+                </div>
+                <div className="form-group">
+                  <label className="form-label">คิดเป็นร้อยละ</label>
+                  <input type="number" name="failedPercent" className="form-control" value={recordData.failedPercent} onChange={handleRecordChange} />
+                </div>
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">รายชื่อนักเรียนที่ไม่ผ่าน (คนละ 1 บรรทัด)</label>
+                <textarea name="failedNames" className="form-control" rows="3" value={recordData.failedNames} onChange={handleRecordChange} placeholder="เด็กชายสมมติ รักเรียน&#10;เด็กหญิงสมศรี ดีใจ" />
+              </div>
+
+              <div className="form-group">
+                <label className="form-label">๒. นักเรียนมีความรู้ความเข้าใจ (K)</label>
+                <textarea name="k" className="form-control" rows="2" value={recordData.k} onChange={handleRecordChange} />
+              </div>
+              <div className="form-group">
+                <label className="form-label">๓. นักเรียนมีความรู้เกิดทักษะ (P)</label>
+                <textarea name="p" className="form-control" rows="2" value={recordData.p} onChange={handleRecordChange} />
+              </div>
+              <div className="form-group">
+                <label className="form-label">๔. นักเรียนมีเจตคติ ค่านิยม คุณธรรมจริยธรรม (A)</label>
+                <textarea name="a" className="form-control" rows="2" value={recordData.a} onChange={handleRecordChange} />
+              </div>
+              <div className="form-group">
+                <label className="form-label">ปัญหา/อุปสรรค /แนวทางแก้ไข</label>
+                <textarea name="problems" className="form-control" rows="3" value={recordData.problems} onChange={handleRecordChange} />
+              </div>
+
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setIsRecordModalOpen(false)}>ยกเลิก</button>
+                <button type="button" className="btn btn-outline" onClick={() => setIsRecordModalOpen(false)}>ยกเลิก</button>
                 <button type="submit" className="btn btn-primary">บันทึกข้อความ</button>
               </div>
             </form>
           </div>
         </div>
+      )}
+
+      {/* Invisible Print Layout */}
+      {printingPlan && (
+        <PrintPostTeachingRecord plan={printingPlan} appSettings={appSettings} activeClass={activeClass} />
       )}
     </div>
   );

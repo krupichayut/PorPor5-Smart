@@ -83,7 +83,8 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
                 <Search size={18} className="search-icon" />
                 <input 
                   type="text" 
-                  className="search-input" 
+                  className="form-control" 
+                  style={{ maxWidth: '300px' }}
                   placeholder="ค้นหาชื่อห้องเรียน หรือ รายวิชา..." 
                   value={searchTerm}
                   onChange={(e) => setSearchTerm(e.target.value)}
@@ -101,47 +102,8 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
                 <p>ไม่มีห้องเรียนที่ตรงกับ "{searchTerm}"</p>
               </div>
             ) : (
-              <>
-                <div className="hairline-grid">
-                  {filteredClasses.map((c, index) => (
-                    <article
-                      className={`hairline-cell ${activeClassId === c.id ? 'is-active' : ''}`}
-                      key={`mosaic-${c.id}`}
-                    >
-                      <button
-                        type="button"
-                        className="studio-class-card-main"
-                        onClick={() => setActiveClassId(c.id)}
-                      >
-                        <span className="studio-card-kicker">Studio {String(index + 1).padStart(2, '0')}</span>
-                        <strong>{c.name}</strong>
-                        <span>{c.subject}</span>
-                      </button>
-                      <div className="studio-card-meta">
-                        <span>Mid {c.midtermWeight ?? 10}</span>
-                        <span>Final {c.finalWeight ?? 10}</span>
-                      </div>
-                      {activeClassId === c.id && (
-                        <div className="studio-card-status">
-                          <CheckCircle2 size={14} />
-                          Active class
-                        </div>
-                      )}
-                      {!readOnly && (
-                        <button
-                          type="button"
-                          className="studio-card-delete"
-                          onClick={() => handleDeleteClass(c.id)}
-                          aria-label="Delete class"
-                        >
-                          <Trash2 size={16} />
-                        </button>
-                      )}
-                    </article>
-                  ))}
-                </div>
-
-                <div>
+                <div className="hairline-cell" style={{ padding: 0 }}>
+                  <div style={{ overflowX: 'auto' }}>
                   <table className="data-table">
               <thead>
                 <tr>
@@ -159,12 +121,12 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
                     <td style={{ fontWeight: 500 }}>{c.name}</td>
                     <td>{c.subject}</td>
                     <td style={{ textAlign: 'center' }}>
-                      <span className="badge" className="badge badge-danger">
+                      <span className="badge badge-warning">
                         {c.midtermWeight ?? 10} คะแนน
                       </span>
                     </td>
                     <td style={{ textAlign: 'center' }}>
-                      <span className="badge" className="badge badge-danger">
+                      <span className="badge badge-warning">
                         {c.finalWeight ?? 10} คะแนน
                       </span>
                     </td>
@@ -175,7 +137,7 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
                         </span>
                       ) : (
                         <button 
-                          className="btn btn-secondary" 
+                          className="btn btn-outline" 
                           style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}
                           onClick={() => setActiveClassId(c.id)}
                         >
@@ -185,7 +147,7 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
                     </td>
                     <td style={{ textAlign: 'right' }}>
                       {!readOnly && (
-                        <button className="btn-icon" aria-label="Delete class" onClick={() => handleDeleteClass(c.id)} style={{ color: 'var(--danger-color)' }}>
+                        <button className="btn-icon" aria-label="Delete class" onClick={() => handleDeleteClass(c.id)} style={{ color: 'var(--danger)' }}>
                           <Trash2 size={18} />
                         </button>
                       )}
@@ -194,6 +156,7 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
                 ))}
               </tbody>
                   </table>
+                  </div>
                 </div>
               </>
             )}
@@ -258,7 +221,7 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
               </div>
               
               <div className="modal-footer">
-                <button type="button" className="btn btn-secondary" onClick={() => setIsModalOpen(false)}>ยกเลิก</button>
+                <button type="button" className="btn btn-outline" onClick={() => setIsModalOpen(false)}>ยกเลิก</button>
                 <button type="submit" className="btn btn-primary" disabled={!newClassName.trim() || !newClassSubject.trim()}>บันทึกข้อมูล</button>
               </div>
             </form>
