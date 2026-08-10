@@ -107,7 +107,10 @@ export default function Attendance({ students, activeClassId, classes, attendanc
   };
   
   const expectedHours = getExpectedHours(activeClass?.name, activeTab);
-  const displayTotal = activeTab.includes('-') ? filteredDates.length : Math.max(expectedHours, filteredDates.length);
+  // Default to 2 hours per check-in based on user request (1 week = 2 hours = 1 check-in)
+  const hoursPerCheck = 2; 
+  
+  const displayTotal = activeTab.includes('-') ? filteredDates.length * hoursPerCheck : Math.max(expectedHours, filteredDates.length * hoursPerCheck);
   const required80 = Math.ceil(displayTotal * 0.8);
 
   const monthNames = ["ม.ค.", "ก.พ.", "มี.ค.", "เม.ย.", "พ.ค.", "มิ.ย.", "ก.ค.", "ส.ค.", "ก.ย.", "ต.ค.", "พ.ย.", "ธ.ค."];
@@ -208,7 +211,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
           <h2 className="page-title">เช็คเวลาเรียน: {activeClass?.name}</h2>
           <p className="page-subtitle">
             {!isSummaryView && 'คลิกที่สถานะในตารางเพื่อเปลี่ยน (มา → ขาด → สาย → ลา) '}
-            {displayTotal > 0 && <span style={{ color: 'var(--accent-cyan)' }}>• เวลาเรียนเต็ม {displayTotal} คาบ (ต้องมาเรียนไม่น้อยกว่า {required80} คาบ)</span>}
+            {displayTotal > 0 && <span style={{ color: 'var(--accent-cyan)' }}>• เวลาเรียนเต็ม {displayTotal} ชั่วโมง (ต้องเรียนไม่น้อยกว่า {required80} ชั่วโมง) *นับคอลัมน์ละ 2 ชม.</span>}
           </p>
         </div>
         {!readOnly && (
@@ -299,11 +302,11 @@ export default function Attendance({ students, activeClassId, classes, attendanc
                     })
                   )}
                   
-                  <th style={{ textAlign: 'center', minWidth: '60px', backgroundColor: 'var(--bg-tertiary)' }}>เต็ม</th>
-                  <th style={{ textAlign: 'center', minWidth: '60px', backgroundColor: 'var(--bg-tertiary)' }}>มา</th>
-                  <th style={{ textAlign: 'center', minWidth: '60px', backgroundColor: 'var(--bg-tertiary)' }}>ลา</th>
-                  <th style={{ textAlign: 'center', minWidth: '60px', backgroundColor: 'var(--bg-tertiary)' }}>ขาด</th>
-                  <th style={{ textAlign: 'center', minWidth: '60px', backgroundColor: 'var(--bg-tertiary)' }}>สาย</th>
+                  <th style={{ textAlign: 'center', minWidth: '60px', backgroundColor: 'var(--bg-tertiary)' }}>เต็ม(ชม.)</th>
+                  <th style={{ textAlign: 'center', minWidth: '60px', backgroundColor: 'var(--bg-tertiary)' }}>มา(ชม.)</th>
+                  <th style={{ textAlign: 'center', minWidth: '60px', backgroundColor: 'var(--bg-tertiary)' }}>ลา(ชม.)</th>
+                  <th style={{ textAlign: 'center', minWidth: '60px', backgroundColor: 'var(--bg-tertiary)' }}>ขาด(ชม.)</th>
+                  <th style={{ textAlign: 'center', minWidth: '60px', backgroundColor: 'var(--bg-tertiary)' }}>สาย(ชม.)</th>
                   <th style={{ textAlign: 'center', minWidth: '80px', backgroundColor: 'var(--bg-tertiary)' }}>ร้อยละ %</th>
                 </tr>
               </thead>
@@ -313,7 +316,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
                   const { present: presentCount, leave: leaveCount, absent: absentCount, late: lateCount, holiday: holidayCount } = counts;
                   
                   // In Thai schools, late and holidays are counted as present for the final attended count
-                  const actualAttended = presentCount + lateCount + holidayCount; 
+                  const actualAttended = (presentCount + lateCount + holidayCount) * hoursPerCheck; 
                   const percentage = displayTotal > 0 ? Math.round((actualAttended / displayTotal) * 100) : 0;
                   
                   return (
@@ -351,10 +354,10 @@ export default function Attendance({ students, activeClassId, classes, attendanc
                       )}
 
                       <td style={{ textAlign: 'center', fontWeight: 600 }}>{displayTotal}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--success)' }} title={`มา ${presentCount} วัน, วันหยุด ${holidayCount} วัน`}>{presentCount + holidayCount}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: '#3b82f6' }}>{leaveCount}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--danger)' }}>{absentCount}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--warning)' }}>{lateCount}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--success)' }} title={`มา ${(presentCount + holidayCount) * hoursPerCheck} ชม.`}>{(presentCount + holidayCount) * hoursPerCheck}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: '#3b82f6' }}>{leaveCount * hoursPerCheck}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--danger)' }}>{absentCount * hoursPerCheck}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--warning)' }}>{lateCount * hoursPerCheck}</td>
                       <td style={{ textAlign: 'center', fontWeight: 700, color: percentage < 80 ? 'var(--danger)' : 'var(--accent-cyan)' }}>
                         {percentage}%
                       </td>
