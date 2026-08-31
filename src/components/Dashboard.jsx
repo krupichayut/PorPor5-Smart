@@ -80,6 +80,35 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
     ];
   }, [classes, students, scoreColumns, indicators, scores]);
 
+  const globalAtRiskStudents = useMemo(() => {
+    const atRisk = [];
+    students.forEach(student => {
+      const cls = classes.find(c => c.id === student.classId);
+      if (!cls) return;
+      
+      const clsColumns = scoreColumns.filter(c => c.classId === cls.id);
+      let missingCount = 0;
+      clsColumns.forEach(col => {
+        const hasScore = scores.some(s => s.studentId === student.id && s.columnId === col.id && s.score !== null && s.score !== '');
+        if (!hasScore) missingCount++;
+      });
+      
+      const studAtt = attendance.filter(a => a.studentId === student.id);
+      const attRate = calculateAttendanceRate(studAtt);
+      
+      // At risk if >= 3 missing works OR attendance < 80% (with at least some attendance recorded)
+      if (missingCount >= 3 || (studAtt.length > 0 && attRate < 80)) {
+        atRisk.push({
+          ...student,
+          className: cls.name,
+          missingCount,
+          attRate
+        });
+      }
+    });
+    return atRisk.sort((a, b) => b.missingCount - a.missingCount).slice(0, 10);
+  }, [students, classes, scoreColumns, scores, attendance]);
+
   // ----- Global Overview Mode -----
   if (!activeClassId) {
     const totalClasses = classes.length;
@@ -229,6 +258,42 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
               </div>
             </div>
 
+            {globalAtRiskStudents.length > 0 && (
+              <div className="hairline-grid" style={{ marginTop: '2rem' }}>
+                <div className="hairline-cell" style={{ padding: 0 }}>
+                  <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                    <div className="stat-label" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--danger)' }}>
+                      <FileWarning size={18} /> 🚨 แจ้งเตือนนักเรียนกลุ่มเสี่ยง (ต้องติดตามด่วน)
+                    </div>
+                  </div>
+                  <div style={{ padding: '0.5rem' }}>
+                    <table className="data-table">
+                      <tbody>
+                        {globalAtRiskStudents.map((s, idx) => (
+                          <tr key={s.id}>
+                            <td style={{ width: '40px', color: 'var(--text-muted)', fontWeight: 600 }}>#{idx + 1}</td>
+                            <td>
+                              <div style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{s.name}</div>
+                              <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>ห้อง {s.className} | เลขที่ {s.number} | รหัส {s.studentId}</div>
+                            </td>
+                            <td style={{ textAlign: 'right' }}>
+                              {s.attRate > 0 && s.attRate < 80 && (
+                                <div style={{ fontWeight: 600, color: 'var(--warning)', marginBottom: '4px' }}>เวลาเรียน {s.attRate}%</div>
+                              )}
+                              {s.missingCount >= 3 && (
+                                <div style={{ fontWeight: 600, color: 'var(--danger)' }}>ค้าง {s.missingCount} งาน</div>
+                              )}
+                            </td>
+                          </tr>
+                        ))}
+                      </tbody>
+                    </table>
+                  </div>
+                </div>
+              </div>
+            )}
+
+
           </>
         )}
       </div>
@@ -353,7 +418,7 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
           <div className="hairline-cell" style={{ padding: 0 }}>
             <div style={{ padding: '1.5rem', borderBottom: '1px solid var(--border-subtle)', display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
               <div className="stat-label" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--danger)' }}>
-                <FileWarning size={16} /> Top Missing Work (Action Required)
+                <FileWarning size={16} /> 🚨 แจ้งเตือนนักเรียนกลุ่มเสี่ยง (เฉพาะห้องนี้)
               </div>
             </div>
             <div style={{ padding: '0.5rem' }}>
@@ -364,9 +429,9 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                       <td style={{ width: '40px', color: 'var(--text-muted)', fontWeight: 600 }}>#{idx + 1}</td>
                       <td>
                         <div style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{s.name}</div>
-                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>No. {s.number} | ID {s.studentId}</div>
+                        <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>เลขที่ {s.number} | รหัส {s.studentId}</div>
                       </td>
-                      <td style={{ textAlign: 'right', fontWeight: 600, color: 'var(--danger)' }}>{s.missingCount} Missing</td>
+                      <td style={{ textAlign: 'right', fontWeight: 600, color: 'var(--danger)' }}>ค้าง {s.missingCount} งาน</td>
                     </tr>
                   ))}
                 </tbody>

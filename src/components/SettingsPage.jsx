@@ -9,7 +9,8 @@ export default function SettingsPage({ appSettings, setAppSettings, readOnly, cl
     academicHeadName: '',
     principalName: '',
     academicYear: '',
-    semester: ''
+    semester: '',
+    hoursPerCheck: 2
   });
   const [isSaved, setIsSaved] = useState(false);
 
@@ -22,7 +23,8 @@ export default function SettingsPage({ appSettings, setAppSettings, readOnly, cl
         academicHeadName: appSettings.academicHeadName || '',
         principalName: appSettings.principalName || '',
         academicYear: appSettings.academicYear || '',
-        semester: appSettings.semester || ''
+        semester: appSettings.semester || '',
+        hoursPerCheck: appSettings.hoursPerCheck !== undefined ? appSettings.hoursPerCheck : 2
       });
     }
   }, [appSettings]);
@@ -107,6 +109,22 @@ export default function SettingsPage({ appSettings, setAppSettings, readOnly, cl
                 disabled={readOnly}
               />
             </div>
+          </div>
+
+          <div className="form-group" style={{ marginBottom: '1.5rem' }}>
+            <label className="form-label">จำนวนชั่วโมงต่อการเช็คชื่อ 1 ครั้ง</label>
+            <input 
+              type="number" 
+              className="form-control" 
+              name="hoursPerCheck"
+              value={formData.hoursPerCheck}
+              onChange={handleChange}
+              min="1"
+              max="8"
+              step="0.5"
+              disabled={readOnly}
+            />
+            <small style={{ color: 'var(--text-muted)' }}>ใช้สำหรับคำนวณสรุปเวลาเรียนรวม (ค่าเริ่มต้นคือ 2 ชั่วโมง)</small>
           </div>
 
           <div className="form-group" style={{ marginBottom: '1.5rem' }}>

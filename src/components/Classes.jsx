@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { BookOpen, Plus, Trash2, Search, CheckCircle2 } from 'lucide-react';
 
-export default function Classes({ classes, setClasses, activeClassId, setActiveClassId, readOnly }) {
+export default function Classes({ classes, setClasses, activeClassId, setActiveClassId, readOnly, students, setStudents, attendance, setAttendance, scores, setScores, scoreColumns, setScoreColumns, attributes, setAttributes, literacy, setLiteracy, competencies, setCompetencies, indicators, setIndicators, lessonPlans, setLessonPlans, studentPoints, setStudentPoints }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [newClassName, setNewClassName] = useState('');
   const [newClassSubject, setNewClassSubject] = useState('');
@@ -40,11 +40,30 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
   };
 
   const handleDeleteClass = (id) => {
-    if (confirm('คุณแน่ใจหรือไม่ว่าต้องการลบห้องเรียนนี้? ข้อมูลนักเรียนทั้งหมดในห้องนี้จะถูกลบไปด้วย')) {
+    if (confirm('คุณแน่ใจหรือไม่ว่าต้องการลบห้องเรียนนี้? ข้อมูลนักเรียนทั้งหมดในห้องและคะแนนทั้งหมดจะถูกลบไปด้วยอย่างถาวร')) {
       setClasses(classes.filter(c => c.id !== id));
       if (activeClassId === id) {
         setActiveClassId(null);
       }
+      
+      // Cascading Delete for the entire class
+      if (students) setStudents(students.filter(s => s.classId !== id));
+      if (attendance) setAttendance(attendance.filter(a => a.classId !== id));
+      
+      // We need to filter scores based on class columns.
+      // Easiest way is to remove columns for this class, and remove scores for those columns.
+      if (scoreColumns) {
+        const colsToRemove = scoreColumns.filter(c => c.classId === id).map(c => c.id);
+        setScoreColumns(scoreColumns.filter(c => c.classId !== id));
+        if (scores) setScores(scores.filter(s => !colsToRemove.includes(s.columnId)));
+      }
+      
+      if (attributes) setAttributes(attributes.filter(a => a.classId !== id));
+      if (literacy) setLiteracy(literacy.filter(l => l.classId !== id));
+      if (competencies) setCompetencies(competencies.filter(c => c.classId !== id));
+      if (indicators) setIndicators(indicators.filter(i => i.classId !== id));
+      if (lessonPlans) setLessonPlans(lessonPlans.filter(lp => lp.classId !== id));
+      if (studentPoints) setStudentPoints(studentPoints.filter(p => p.classId !== id));
     }
   };
 

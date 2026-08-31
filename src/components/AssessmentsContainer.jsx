@@ -2,7 +2,8 @@ import { useState } from 'react';
 import Attributes from './Attributes';
 import Literacy from './Literacy';
 import Competencies from './Competencies';
-import { Star, BookType, Brain } from 'lucide-react';
+import PAEvidence from './PAEvidence';
+import { Star, BookType, Brain, Camera } from 'lucide-react';
 
 export default function AssessmentsContainer(props) {
   const [activeTab, setActiveTab] = useState('attributes');
@@ -28,12 +29,19 @@ export default function AssessmentsContainer(props) {
         >
           <Brain size={16} style={{ display: 'inline', marginRight: '6px' }} /> สมรรถนะสำคัญ
         </button>
+        <button 
+          className={`tab-btn ${activeTab === 'pa' ? 'active' : ''}`}
+          onClick={() => setActiveTab('pa')}
+        >
+          <Camera size={16} style={{ display: 'inline', marginRight: '6px' }} /> หลักฐาน ว PA
+        </button>
       </div>
 
       <div>
         {activeTab === 'attributes' && <Attributes {...props} />}
         {activeTab === 'literacy' && <Literacy {...props} />}
         {activeTab === 'competencies' && <Competencies {...props} />}
+        {activeTab === 'pa' && <PAEvidence {...props} />}
       </div>
     </div>
   );

@@ -1,7 +1,7 @@
 import { useState, useMemo } from 'react';
 import { Calendar, Plus, Check, X, Clock, FileText, Trash2, Star, Users } from 'lucide-react';
 
-export default function Attendance({ students, activeClassId, classes, attendance, setAttendance, readOnly }) {
+export default function Attendance({ appSettings, students, activeClassId, classes, attendance, setAttendance, readOnly }) {
   const [newDate, setNewDate] = useState('');
   const [isHoliday, setIsHoliday] = useState(false);
   const [holidayName, setHolidayName] = useState('');
@@ -13,6 +13,9 @@ export default function Attendance({ students, activeClassId, classes, attendanc
   
   // Filter attendance records for current class
   const classAttendance = attendance.filter(a => a.classId === activeClassId);
+
+  // Dynamic hours per check based on settings
+  const hoursPerCheck = appSettings?.hoursPerCheck ? Number(appSettings.hoursPerCheck) : 2;
 
   // Get unique dates
   const dates = useMemo(() => [...new Set(classAttendance.map(a => a.date))].sort(), [classAttendance]);
@@ -108,7 +111,7 @@ export default function Attendance({ students, activeClassId, classes, attendanc
   
   const expectedHours = getExpectedHours(activeClass?.name, activeTab);
   // Default to 2 hours per check-in based on user request (1 week = 2 hours = 1 check-in)
-  const hoursPerCheck = 2; 
+
   
   const displayTotal = activeTab.includes('-') ? filteredDates.length * hoursPerCheck : Math.max(expectedHours, filteredDates.length * hoursPerCheck);
   const required80 = Math.ceil(displayTotal * 0.8);
@@ -243,8 +246,8 @@ export default function Attendance({ students, activeClassId, classes, attendanc
         {classStudents.length === 0 ? (
           <div className="empty-state">
             <Users size={48} className="empty-state-icon" />
-            <h3>ไม่พบข้อมูลนักเรียน</h3>
-            <p>ยังไม่มีข้อมูลนักเรียนในห้องนี้ กรุณาเพิ่มนักเรียนก่อนทำการเช็คชื่อ</p>
+            <h3>ห้องเรียนยังว่างเปล่า</h3>
+            <p>กรุณาเพิ่มรายชื่อนักเรียนก่อน จึงจะสามารถเช็คเวลาเรียนได้ครับ</p>
           </div>
         ) : filteredDates.length === 0 && !isSummaryView ? (
           <div className="empty-state">
@@ -255,8 +258,8 @@ export default function Attendance({ students, activeClassId, classes, attendanc
         ) : dates.length === 0 ? (
           <div className="empty-state">
             <Calendar size={48} className="empty-state-icon" />
-            <h3>ยังไม่มีประวัติการเช็คชื่อ</h3>
-            <p>กรุณากดปุ่ม "เพิ่มวันเช็คชื่อ" เพื่อเริ่มต้น</p>
+            <h3>เริ่มเช็คชื่อกันเลย!</h3>
+            <p>กดปุ่ม "เพิ่มวันเช็คชื่อ" มุมขวาบนเพื่อเริ่มต้นบันทึกเวลาเรียนครับ</p>
           </div>
         ) : (
           <div className="data-table-container">

@@ -70,15 +70,15 @@ const HeroWave = () => {
           }
 
           const wave = (fastSin(a) + fastCos(d)) * 0.5;
-          const intensity = 0.3 + 0.4 * wave;
-          // Subtler, more elegant base colors for Boutique Studio theme
-          const baseVal = 0.05 + 0.1 * fastCos(u_x + u_y + time * 0.3);
-          const blueAccent = 0.15 * fastSin(a * 1.5 + time * 0.2);
-          const purpleAccent = 0.1 * fastCos(d * 2 + time * 0.1);
+          const intensity = 0.25 + 0.35 * wave;
+          // Subtler, more elegant base colors for Premium Art Gallery theme (Charcoal & Amber Gold)
+          const baseVal = 0.03 + 0.05 * fastCos(u_x + u_y + time * 0.2);
+          const goldAccent = 0.12 * fastSin(a * 1.3 + time * 0.15);
+          const copperAccent = 0.10 * fastCos(d * 1.8 + time * 0.1);
 
-          const r = Math.max(0, Math.min(1, baseVal + purpleAccent * 0.8)) * intensity;
-          const g = Math.max(0, Math.min(1, baseVal + blueAccent * 0.6)) * intensity;
-          const b = Math.max(0, Math.min(1, baseVal + blueAccent * 1.2 + purpleAccent * 0.4)) * intensity;
+          const r = Math.max(0, Math.min(1, baseVal + copperAccent * 1.2 + goldAccent * 0.8)) * intensity;
+          const g = Math.max(0, Math.min(1, baseVal + copperAccent * 0.6 + goldAccent * 0.9)) * intensity;
+          const b = Math.max(0, Math.min(1, baseVal + goldAccent * 0.3)) * intensity;
 
           const index = (y * width + x) * 4;
           data[index] = r * 255;

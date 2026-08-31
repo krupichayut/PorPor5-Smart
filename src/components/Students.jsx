@@ -3,7 +3,7 @@ import { Users, Plus, Trash2, Edit, Download, Upload, Search, Printer, Award, Ca
 import { downloadCsv, parseDelimitedText } from '../utils/fileExports';
 import { calculateStudentScores, getClassScoreContext } from '../utils/scoring';
 
-export default function Students({ students, setStudents, activeClassId, classes, readOnly, attendance, scores, scoreColumns, indicators }) {
+export default function Students({ students, setStudents, activeClassId, classes, readOnly, attendance, setAttendance, scores, setScores, scoreColumns, attributes, setAttributes, literacy, setLiteracy, competencies, setCompetencies, indicators, studentPoints, setStudentPoints }) {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [addMode, setAddMode] = useState('single');
   const [bulkData, setBulkData] = useState('');
@@ -116,10 +116,17 @@ export default function Students({ students, setStudents, activeClassId, classes
   };
 
   const handleDeleteStudent = (id) => {
-    if (confirm('คุณแน่ใจหรือไม่ว่าต้องการลบนักเรียนคนนี้?')) {
-      // Re-calculate numbers after deletion to keep them sequential if desired
+    if (confirm('คุณแน่ใจหรือไม่ว่าต้องการลบนักเรียนคนนี้? ข้อมูลคะแนนและเวลาเรียนทั้งหมดจะถูกลบไปด้วย')) {
       const newStudentsList = students.filter(s => s.id !== id);
       setStudents(newStudentsList);
+      
+      // Cascading Delete
+      if (attendance) setAttendance(attendance.filter(a => a.studentId !== id));
+      if (scores) setScores(scores.filter(s => s.studentId !== id));
+      if (attributes) setAttributes(attributes.filter(a => a.studentId !== id));
+      if (literacy) setLiteracy(literacy.filter(l => l.studentId !== id));
+      if (competencies) setCompetencies(competencies.filter(c => c.studentId !== id));
+      if (studentPoints) setStudentPoints(studentPoints.filter(p => p.studentId !== id));
     }
   };
 
@@ -633,7 +640,7 @@ export default function Students({ students, setStudents, activeClassId, classes
                       </h4>
                       <div style={{ padding: '1rem', border: '1px dashed var(--border-color)', borderRadius: 'var(--radius-md)', textAlign: 'center', height: 'calc(100% - 2.5rem)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                         <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>การประเมินสามารถดูรายละเอียดเชิงลึก</p>
-                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>ได้ที่หน้ารายงาน PicthClass ฉบับสมบูรณ์</p>
+                        <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>ได้ที่หน้ารายงาน PitchClass ฉบับสมบูรณ์</p>
                       </div>
                     </div>
                   </div>
