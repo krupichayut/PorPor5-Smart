@@ -58,57 +58,61 @@ export default function PorPor5Generator({
   }
 
   return (
-    <div className="animate-fade-in" style={{ padding: '1.5rem' }}>
-      <div className="roster-hero-card" style={{ marginBottom: '2rem' }}>
-        <span className="studio-card-kicker">Automated Document</span>
-        <strong>ออกรายงาน ปพ.5 (Excel)</strong>
-        <span>รวบรวมข้อมูลทั้งหมดของวิชา {activeClass?.subject} สำหรับห้อง {activeClass?.name} ออกมาเป็นไฟล์ Excel ทันที</span>
+    <div className="animate-fade-in">
+      <div className="stat-card" style={{ marginBottom: '1.5rem', padding: '1.5rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+          <span className="badge badge-success">Automated Export Engine</span>
+          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>Excel XLSX Format</span>
+        </div>
+        <h2 style={{ fontSize: '1.35rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>
+          ออกรายงาน ปพ.5 (สมุดบันทึกผลการพัฒนาคุณภาพผู้เรียน)
+        </h2>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+          รวบรวมข้อมูลทั้งหมดของวิชา <strong>{activeClass?.subject}</strong> ห้อง <strong>{activeClass?.name}</strong> (นักเรียน {classStudents.length} คน) ออกมาเป็นไฟล์ Excel ครบทั้ง 3 ส่วนหลักทันที
+        </p>
       </div>
 
-      <div className="hairline-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1.5rem', marginBottom: '2rem' }}>
-        <div className="card hairline-cell">
-          <h3 style={{ fontSize: '1.1rem', marginBottom: '1rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <CheckCircle size={18} color="var(--accent-cyan)" /> ข้อมูลที่จะถูกรวมในเอกสาร
+      <div className="hairline-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
+        <div className="hairline-cell">
+          <h3 style={{ fontSize: '0.95rem', fontWeight: 600, marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--text-primary)' }}>
+            <CheckCircle size={16} style={{ color: 'var(--success)' }} /> ข้อมูลที่จะถูกสร้างในไฟล์ Excel
           </h3>
-          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.75rem', color: 'var(--text-secondary)' }}>
-            <li>• หน้าปก (ดึงจากตั้งค่าโรงเรียน)</li>
-            <li>• เวลาเรียน (คำนวณเป็นชั่วโมง)</li>
-            <li>• ผลสัมฤทธิ์ทางการเรียน (คะแนนเก็บ/สอบ/เกรด)</li>
-            {/* <li>• คุณลักษณะอันพึงประสงค์ 8 ประการ (เร็วๆ นี้)</li>
-            <li>• อ่าน คิดวิเคราะห์ และเขียน (เร็วๆ นี้)</li>
-            <li>• สมรรถนะสำคัญ 5 ประการ (เร็วๆ นี้)</li> */}
+          <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+            <li>✓ <strong>Sheet 1 (หน้าปก):</strong> ข้อมูลสถานศึกษา, รหัสวิชา, ครูผู้สอน</li>
+            <li>✓ <strong>Sheet 2 (เวลาเรียน):</strong> สรุปเวลาเรียนรายสัปดาห์ / รายเดือน / ร้อยละการเข้าเรียน</li>
+            <li>✓ <strong>Sheet 3 (ผลการเรียน):</strong> คะแนนเก็บทุกหน่วย, สอบกลางภาค, สอบปลายภาค และเกรด</li>
           </ul>
         </div>
       </div>
 
-      <div style={{ display: 'flex', justifyContent: 'center', padding: '2rem 0' }}>
+      <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', padding: '1.5rem 0' }}>
         <button 
           className="btn btn-primary" 
           onClick={handleExport} 
           disabled={isGenerating || classStudents.length === 0}
-          style={{ padding: '1rem 2rem', fontSize: '1.1rem', borderRadius: 'var(--rounded-lg)' }}
+          style={{ padding: '0.75rem 2rem', fontSize: '1rem' }}
         >
           {isGenerating ? (
             <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <div className="spinner" style={{ width: '20px', height: '20px' }}></div> กำลังสร้างไฟล์...
+              กำลังประมวลผลไฟล์...
             </span>
           ) : success ? (
             <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <CheckCircle size={20} /> ดาวน์โหลดสำเร็จ!
+              <CheckCircle size={18} /> ดาวน์โหลดสำเร็จแล้ว!
             </span>
           ) : (
             <span style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Download size={20} /> ดาวน์โหลด ปพ.5 (Excel)
+              <Download size={18} /> ดาวน์โหลด ปพ.5 (.xlsx)
             </span>
           )}
         </button>
+        
+        {classStudents.length === 0 && (
+          <p style={{ textAlign: 'center', color: 'var(--danger)', marginTop: '0.75rem', fontSize: '0.85rem' }}>
+            ไม่สามารถดาวน์โหลดได้เนื่องจากยังไม่มีรายชื่อนักเรียนในห้องนี้
+          </p>
+        )}
       </div>
-      
-      {classStudents.length === 0 && (
-        <p style={{ textAlign: 'center', color: 'var(--danger)', marginTop: '1rem' }}>
-          ไม่สามารถดาวน์โหลดได้เนื่องจากยังไม่มีรายชื่อนักเรียนในห้องนี้
-        </p>
-      )}
     </div>
   );
 }

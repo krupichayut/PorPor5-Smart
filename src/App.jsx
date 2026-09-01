@@ -133,38 +133,40 @@ function App() {
         {/* Sidebar */}
         <aside className="sidebar no-print">
           <div className="sidebar-brand">
-            <Paintbrush size={24} /> PitchClass
+            <Paintbrush size={20} style={{ color: 'var(--text-primary)' }} />
+            <span>PitchClass</span>
+            <span className="sidebar-brand-badge">ปพ.5</span>
           </div>
           <nav className="nav-menu">
             <NavLink to="/" aria-label="แดชบอร์ด" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} end>
-              <BarChart3 size={18} /> แดชบอร์ด
+              <BarChart3 size={17} /> แดชบอร์ด
             </NavLink>
             <NavLink to="/classes" aria-label="จัดการวิชา" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <BookOpen size={18} /> จัดการวิชา
+              <BookOpen size={17} /> จัดการวิชา
             </NavLink>
             <NavLink to="/course-plan" aria-label="โครงสร้างวิชา" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <ClipboardList size={18} /> โครงสร้างวิชา
+              <ClipboardList size={17} /> โครงสร้างวิชา
             </NavLink>
             <NavLink to="/students" aria-label="นักเรียน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Users size={18} /> นักเรียน
+              <Users size={17} /> นักเรียน
             </NavLink>
             <NavLink to="/attendance" aria-label="เวลาเรียน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Calendar size={18} /> เวลาเรียน
+              <Calendar size={17} /> เวลาเรียน
             </NavLink>
             <NavLink to="/grading" aria-label="บันทึกคะแนน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Award size={18} /> บันทึกคะแนน
+              <Award size={17} /> บันทึกคะแนน
             </NavLink>
             <NavLink to="/rewards" aria-label="ของรางวัล" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Paintbrush size={18} /> ของรางวัล
+              <Paintbrush size={17} /> ของรางวัล
             </NavLink>
             <NavLink to="/assessments" aria-label="การประเมิน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Star size={18} /> การประเมิน
+              <Star size={17} /> การประเมิน
             </NavLink>
             <NavLink to="/reports" aria-label="รายงาน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <FileText size={18} /> รายงาน
+              <FileText size={17} /> รายงาน
             </NavLink>
             <NavLink to="/settings" aria-label="ตั้งค่าระบบ" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Settings size={18} /> ตั้งค่าระบบ
+              <Settings size={17} /> ตั้งค่าระบบ
             </NavLink>
           </nav>
         </aside>
@@ -175,31 +177,40 @@ function App() {
           {/* Top Header */}
           <header className="top-header no-print">
             <div className="header-title">
-              {activeClass ? `${activeClass.name} - ${activeClass.subject}` : 'ภาพรวมระบบ'}
+              {activeClass ? (
+                <>
+                  <span style={{ color: 'var(--text-primary)' }}>{activeClass.name}</span>
+                  <span style={{ color: 'var(--text-muted)' }}>•</span>
+                  <span style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>{activeClass.subject}</span>
+                </>
+              ) : (
+                <span style={{ color: 'var(--text-primary)' }}>ภาพรวมทุกห้องเรียน</span>
+              )}
             </div>
             <div className="header-controls">
               {classes && classes.length > 0 && (
-                <select 
-                  className="form-control"
-                  style={{ width: '250px' }}
-                  value={activeClassId || ''}
-                  onChange={(e) => setActiveClassId(e.target.value)}
-                  aria-label="เลือกห้องเรียน"
-                >
-                  <option value="" disabled>-- เลือกห้องเรียน --</option>
-                  {classes.map(c => (
-                    <option key={c.id} value={c.id}>{c.name} - {c.subject}</option>
-                  ))}
-                </select>
+                <div className="capsule-select">
+                  <BookOpen size={14} style={{ color: 'var(--text-muted)' }} />
+                  <select 
+                    value={activeClassId || ''}
+                    onChange={(e) => setActiveClassId(e.target.value)}
+                    aria-label="เลือกห้องเรียน"
+                  >
+                    <option value="">-- ทุกห้องเรียน (Overview) --</option>
+                    {classes.map(c => (
+                      <option key={c.id} value={c.id}>{c.name} : {c.subject}</option>
+                    ))}
+                  </select>
+                </div>
               )}
 
               {user ? (
-                <button className="btn btn-outline text-danger" onClick={handleLogout} title="ออกจากระบบ" aria-label="ออกจากระบบ">
-                  <LogOut size={16} /> ออกจากระบบ
+                <button className="btn btn-outline text-danger" onClick={handleLogout} title="ออกจากระบบ" aria-label="ออกจากระบบ" style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}>
+                  <LogOut size={14} /> ออกจากระบบ
                 </button>
               ) : (
-                <button className="btn btn-primary" onClick={() => setIsLoginModalOpen(true)} title="เข้าสู่ระบบ" aria-label="เข้าสู่ระบบ">
-                  <Key size={16} /> เข้าสู่ระบบ
+                <button className="btn btn-primary" onClick={() => setIsLoginModalOpen(true)} title="เข้าสู่ระบบ" aria-label="เข้าสู่ระบบ" style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}>
+                  <Key size={14} /> เข้าสู่ระบบ
                 </button>
               )}
             </div>

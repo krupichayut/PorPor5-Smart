@@ -16,44 +16,51 @@ export default function PAEvidence({ activeClassId, classes, students, lessonPla
   }
 
   return (
-    <div className="animate-fade-in" style={{ padding: '1rem' }}>
-      <div className="roster-hero-card" style={{ marginBottom: '2rem' }}>
-        <span className="studio-card-kicker">ว PA Evidence Dashboard</span>
-        <strong>แฟ้มสะสมผลงาน (Portfolio)</strong>
-        <span>รวบรวมหลักฐานและร่องรอยการจัดการเรียนรู้ วิชาวิชา {activeClass?.subject} สำหรับประกอบการประเมิน ว PA</span>
+    <div className="animate-fade-in">
+      <div className="stat-card" style={{ marginBottom: '1.5rem', padding: '1.5rem' }}>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '0.5rem' }}>
+          <span className="badge badge-present">ก.ค.ศ. ว PA Portfolio</span>
+          <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>วิชา {activeClass?.subject}</span>
+        </div>
+        <h2 style={{ fontSize: '1.35rem', fontWeight: 600, color: 'var(--text-primary)', marginBottom: '0.25rem' }}>
+          แฟ้มสะสมผลงานและร่องรอยการจัดการเรียนรู้
+        </h2>
+        <p style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
+          รวบรวมหลักฐานและผลลัพธ์การเรียนรู้ของนักเรียนห้อง <strong>{activeClass?.name}</strong> เพื่อประกอบการประเมินวิทยฐานะตามเกณฑ์ ว PA
+        </p>
       </div>
 
-      <div className="hairline-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '2rem' }}>
-        <div className="card hairline-cell" style={{ textAlign: 'center', padding: '1.5rem' }}>
-          <div style={{ color: 'var(--accent-cyan)', marginBottom: '0.5rem' }}><FileText size={32} /></div>
-          <h3 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>{lessonPlans?.filter(lp => lp.classId === activeClassId)?.length || 0}</h3>
-          <p style={{ color: 'var(--text-secondary)' }}>แผนการสอนที่บันทึกแล้ว</p>
+      <div className="hairline-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', gap: '1rem', marginBottom: '1.5rem' }}>
+        <div className="stat-card">
+          <div className="stat-label">แผนการสอนทั้งหมด</div>
+          <div className="stat-value">{lessonPlans?.filter(lp => lp.classId === activeClassId)?.length || 0}</div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>แผนที่สร้างไว้</div>
         </div>
-        <div className="card hairline-cell" style={{ textAlign: 'center', padding: '1.5rem' }}>
-          <div style={{ color: 'var(--accent-purple)', marginBottom: '0.5rem' }}><CheckCircle size={32} /></div>
-          <h3 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>
+        <div className="stat-card">
+          <div className="stat-label">บันทึกหลังสอนเสร็จ</div>
+          <div className="stat-value" style={{ color: 'var(--success)' }}>
             {lessonPlans?.filter(lp => lp.classId === activeClassId && lp.postRecord)?.length || 0}
-          </h3>
-          <p style={{ color: 'var(--text-secondary)' }}>บันทึกหลังสอนเสร็จสิ้น</p>
+          </div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>รายการที่บันทึกแล้ว</div>
         </div>
-        <div className="card hairline-cell" style={{ textAlign: 'center', padding: '1.5rem' }}>
-          <div style={{ color: 'var(--success)', marginBottom: '0.5rem' }}><TrendingUp size={32} /></div>
-          <h3 style={{ fontSize: '2rem', marginBottom: '0.5rem' }}>
+        <div className="stat-card">
+          <div className="stat-label">คะแนนชิ้นงานที่บันทึก</div>
+          <div className="stat-value">
             {scores?.filter(s => s.score > 0)?.length || 0}
-          </h3>
-          <p style={{ color: 'var(--text-secondary)' }}>ชิ้นงานที่ประเมินแล้ว</p>
+          </div>
+          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>รายการประเมิน</div>
         </div>
       </div>
 
       <div className="tabs-container" style={{ marginBottom: '1.5rem' }}>
         <button className={`tab-btn ${activeTab === 'photos' ? 'active' : ''}`} onClick={() => setActiveTab('photos')}>
-          <Image size={16} style={{ display: 'inline', marginRight: '6px' }}/> ภาพถ่ายการสอน
+          <Image size={15} /> ภาพถ่ายการสอน
         </button>
         <button className={`tab-btn ${activeTab === 'videos' ? 'active' : ''}`} onClick={() => setActiveTab('videos')}>
-          <FileVideo size={16} style={{ display: 'inline', marginRight: '6px' }}/> คลิปการสอน (ประเด็นท้าทาย)
+          <FileVideo size={15} /> คลิปการสอน (ประเด็นท้าทาย)
         </button>
         <button className={`tab-btn ${activeTab === 'works' ? 'active' : ''}`} onClick={() => setActiveTab('works')}>
-          <Users size={16} style={{ display: 'inline', marginRight: '6px' }}/> ผลงานนักเรียน
+          <Users size={15} /> ผลงานนักเรียน
         </button>
       </div>
 

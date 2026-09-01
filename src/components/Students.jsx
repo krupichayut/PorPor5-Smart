@@ -300,45 +300,32 @@ export default function Students({ students, setStudents, activeClassId, classes
         )}
       </div>
 
-      <section className="roster-spotlight">
-        <div className="roster-hero-card">
-          <span className="studio-card-kicker">Active Roster</span>
-          <strong>{activeClass?.name}</strong>
-          <span>{activeClass?.subject}</span>
+      <div className="hairline-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', marginBottom: '1.25rem' }}>
+        <div className="stat-card">
+          <div className="stat-label">ห้องเรียน</div>
+          <div className="stat-value" style={{ fontSize: '1.4rem', marginTop: '0.25rem' }}>{activeClass?.name}</div>
+          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>{activeClass?.subject}</div>
         </div>
-        <div className="roster-stat-strip">
-          <div>
-            <Users size={18} />
-            <strong>{classStudents.length}</strong>
-            <span>Students</span>
-          </div>
-          <div>
-            <AlertCircle size={18} />
-            <strong>{rosterSummary.missingWork}</strong>
-            <span>Missing works</span>
-          </div>
-          <div>
-            <Calendar size={18} />
-            <strong>{attendanceRate}%</strong>
-            <span>Attendance</span>
-          </div>
+        <div className="stat-card">
+          <div className="stat-label">จำนวนนักเรียน</div>
+          <div className="stat-value">{classStudents.length}</div>
+          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>คนในห้องนี้</div>
         </div>
-        <div className="roster-preview-rail">
-          {rosterPreview.map((student) => {
-            const firstChar = student.name.replace(/^(เด็กชาย|เด็กหญิง|ด\.ช\.|ด\.ญ\.)/i, '').trim().charAt(0) || student.name.charAt(0);
-            return (
-              <button
-                type="button"
-                key={`preview-${student.id}`}
-                onClick={() => setSelectedStudentProfile(student)}
-                title={student.name}
-              >
-                <span>{firstChar}</span>
-              </button>
-            );
-          })}
+        <div className="stat-card">
+          <div className="stat-label">งานค้างส่งทั้งหมด</div>
+          <div className="stat-value" style={{ color: rosterSummary.missingWork > 0 ? 'var(--danger)' : 'var(--text-primary)' }}>
+            {rosterSummary.missingWork}
+          </div>
+          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>รายการ</div>
         </div>
-      </section>
+        <div className="stat-card">
+          <div className="stat-label">เวลาเรียนเฉลี่ย</div>
+          <div className="stat-value" style={{ color: attendanceRate < 80 ? 'var(--warning)' : 'var(--success)' }}>
+            {attendanceRate}%
+          </div>
+          <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>ของห้องเรียน</div>
+        </div>
+      </div>
 
       <div className="hairline-cell">
         <div className="studio-list-toolbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>

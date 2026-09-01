@@ -140,8 +140,8 @@ export default function SettingsPage({ appSettings, setAppSettings, readOnly, cl
             />
           </div>
 
-          <hr style={{ border: '0', borderTop: '1px solid var(--border-color)', margin: '2rem 0' }} />
-          <h3 style={{ margin: '0 0 1.5rem 0', color: 'var(--accent-cyan)', fontSize: '1.1rem' }}>ข้อมูลบุคลากร (สำหรับเซ็นเอกสาร)</h3>
+          <hr style={{ border: '0', borderTop: '1px solid var(--border-subtle)', margin: '1.75rem 0' }} />
+          <h3 style={{ margin: '0 0 1.25rem 0', color: 'var(--text-primary)', fontSize: '1rem', fontWeight: 600 }}>ข้อมูลบุคลากร (สำหรับเซ็นเอกสาร)</h3>
 
           <div className="form-group" style={{ marginBottom: '1.5rem' }}>
             <label className="form-label">ชื่อ-นามสกุล ครูผู้สอน</label>

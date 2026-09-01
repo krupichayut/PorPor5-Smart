@@ -121,62 +121,62 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
                 <p>ไม่มีห้องเรียนที่ตรงกับ "{searchTerm}"</p>
               </div>
             ) : (
-                <div className="hairline-cell" style={{ padding: 0 }}>
-                  <div style={{ overflowX: 'auto' }}>
+              <div className="data-table-container">
+                <div style={{ overflowX: 'auto' }}>
                   <table className="data-table">
-              <thead>
-                <tr>
-                  <th>ห้องเรียน / ชั้น</th>
-                  <th>รายวิชา</th>
-                  <th style={{ textAlign: 'center' }}>สอบกลางภาค</th>
-                  <th style={{ textAlign: 'center' }}>สอบปลายภาค</th>
-                  <th>สถานะ</th>
-                  <th style={{ textAlign: 'right' }}>จัดการ</th>
-                </tr>
-              </thead>
-              <tbody>
-                {filteredClasses.map(c => (
-                  <tr key={c.id} style={{ backgroundColor: activeClassId === c.id ? 'var(--primary-light)' : 'transparent' }}>
-                    <td style={{ fontWeight: 500 }}>{c.name}</td>
-                    <td>{c.subject}</td>
-                    <td style={{ textAlign: 'center' }}>
-                      <span className="badge badge-warning">
-                        {c.midtermWeight ?? 10} คะแนน
-                      </span>
-                    </td>
-                    <td style={{ textAlign: 'center' }}>
-                      <span className="badge badge-warning">
-                        {c.finalWeight ?? 10} คะแนน
-                      </span>
-                    </td>
-                    <td>
-                      {activeClassId === c.id ? (
-                        <span className="badge badge-success" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
-                          <CheckCircle2 size={14} /> กำลังเลือกทำงาน
-                        </span>
-                      ) : (
-                        <button 
-                          className="btn btn-outline" 
-                          style={{ fontSize: '0.75rem', padding: '0.25rem 0.5rem' }}
-                          onClick={() => setActiveClassId(c.id)}
-                        >
-                          เลือกห้องนี้
-                        </button>
-                      )}
-                    </td>
-                    <td style={{ textAlign: 'right' }}>
-                      {!readOnly && (
-                        <button className="btn-icon" aria-label="Delete class" onClick={() => handleDeleteClass(c.id)} style={{ color: 'var(--danger)' }}>
-                          <Trash2 size={18} />
-                        </button>
-                      )}
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
+                    <thead>
+                      <tr>
+                        <th>ห้องเรียน / ชั้น</th>
+                        <th>รายวิชา</th>
+                        <th style={{ textAlign: 'center' }}>สอบกลางภาค</th>
+                        <th style={{ textAlign: 'center' }}>สอบปลายภาค</th>
+                        <th>สถานะ</th>
+                        <th style={{ textAlign: 'right' }}>จัดการ</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {filteredClasses.map(c => (
+                        <tr key={c.id} style={{ backgroundColor: activeClassId === c.id ? 'var(--bg-tertiary)' : 'transparent' }}>
+                          <td style={{ fontWeight: 600, color: 'var(--text-primary)' }}>{c.name}</td>
+                          <td>{c.subject}</td>
+                          <td style={{ textAlign: 'center' }}>
+                            <span className="badge badge-warning">
+                              {c.midtermWeight ?? 10} คะแนน
+                            </span>
+                          </td>
+                          <td style={{ textAlign: 'center' }}>
+                            <span className="badge badge-warning">
+                              {c.finalWeight ?? 10} คะแนน
+                            </span>
+                          </td>
+                          <td>
+                            {activeClassId === c.id ? (
+                              <span className="badge badge-success" style={{ display: 'inline-flex', alignItems: 'center', gap: '4px' }}>
+                                <CheckCircle2 size={13} /> กำลังเลือก
+                              </span>
+                            ) : (
+                              <button 
+                                className="btn btn-outline" 
+                                style={{ fontSize: '0.75rem', padding: '0.2rem 0.6rem' }}
+                                onClick={() => setActiveClassId(c.id)}
+                              >
+                                เลือกห้องนี้
+                              </button>
+                            )}
+                          </td>
+                          <td style={{ textAlign: 'right' }}>
+                            {!readOnly && (
+                              <button className="btn-icon" aria-label="ลบห้องเรียน" onClick={() => handleDeleteClass(c.id)} style={{ color: 'var(--danger)', opacity: 0.7 }}>
+                                <Trash2 size={16} />
+                              </button>
+                            )}
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
                   </table>
-                  </div>
                 </div>
+              </div>
             )}
           </>
         )}

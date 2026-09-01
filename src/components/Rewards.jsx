@@ -185,16 +185,16 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
                         <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--text-muted)' }}>{index + 1}</td>
                         <td style={{ fontWeight: 500 }}>{s.name}</td>
                         <td style={{ textAlign: 'center' }}>
-                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', backgroundColor: 'var(--bg-secondary)', padding: '0.25rem 0.75rem', color: 'var(--warning)', fontWeight: 'bold', fontSize: '1.1rem' }}>
-                            <Paintbrush size={16} fill="currentColor" /> {points}
+                          <div style={{ display: 'inline-flex', alignItems: 'center', gap: '0.4rem', backgroundColor: 'var(--bg-tertiary)', padding: '0.2rem 0.65rem', borderRadius: 'var(--radius-sm)', color: 'var(--warning)', fontWeight: 600, fontSize: '0.95rem' }}>
+                            <Paintbrush size={14} fill="currentColor" /> {points}
                           </div>
                         </td>
                         <td style={{ textAlign: 'center' }}>
                           {!readOnly && (
-                            <div style={{ display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
+                            <div style={{ display: 'flex', justifyContent: 'center', gap: '0.4rem' }}>
                               <button 
                                 className="btn-icon" 
-                                style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--success)', border: '1px solid rgba(16, 185, 129, 0.3)' }}
+                                style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--success)', border: '1px solid var(--success-border)', padding: '0.2rem 0.5rem', fontSize: '0.75rem', fontWeight: 600 }}
                                 onClick={() => updatePoints(s.id, 1)}
                                 title="เพิ่ม 1 แต้ม"
                               >
@@ -202,7 +202,7 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
                               </button>
                               <button 
                                 className="btn-icon" 
-                                style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--success)', border: '1px solid rgba(16, 185, 129, 0.3)' }}
+                                style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--success)', border: '1px solid var(--success-border)', padding: '0.2rem 0.5rem', fontSize: '0.75rem', fontWeight: 600 }}
                                 onClick={() => updatePoints(s.id, 5)}
                                 title="เพิ่ม 5 แต้ม"
                               >
@@ -210,7 +210,7 @@ export default function Rewards({ students, activeClassId, classes, studentPoint
                               </button>
                               <button 
                                 className="btn-icon" 
-                                style={{ backgroundColor: 'var(--bg-secondary)', color: 'var(--danger)', border: '1px solid rgba(239, 68, 68, 0.3)' }}
+                                style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--danger)', border: '1px solid var(--danger-border)', padding: '0.2rem 0.5rem', fontSize: '0.75rem', fontWeight: 600 }}
                                 onClick={() => updatePoints(s.id, -1)}
                                 title="ลด 1 แต้ม"
                                 disabled={points <= 0}

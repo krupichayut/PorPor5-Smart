@@ -266,13 +266,13 @@ export default function Attendance({ appSettings, students, activeClassId, class
             <table className="data-table" style={{ whiteSpace: 'nowrap' }}>
               <thead>
                 <tr>
-                  <th style={{ width: '60px', textAlign: 'center', position: 'sticky', left: 0, backgroundColor: 'var(--bg-tertiary)', zIndex: 2 }}>เลขที่</th>
-                  <th style={{ position: 'sticky', left: '60px', backgroundColor: 'var(--bg-tertiary)', zIndex: 2, minWidth: '150px' }}>ชื่อ - นามสกุล</th>
+                  <th style={{ width: '50px', textAlign: 'center', position: 'sticky', left: 0, backgroundColor: 'var(--bg-surface-elevated)', zIndex: 2, borderRight: '1px solid var(--border-subtle)' }}>เลขที่</th>
+                  <th style={{ position: 'sticky', left: '50px', backgroundColor: 'var(--bg-surface-elevated)', zIndex: 2, minWidth: '160px', borderRight: '1px solid var(--border-subtle)' }}>ชื่อ - นามสกุล</th>
                   
                   {isSummaryView ? (
                     <>
                       {activeTab === 'overall' && availableMonths.map(m => (
-                        <th key={`th-${m}`} style={{ textAlign: 'center', minWidth: '70px', backgroundColor: 'var(--bg-secondary)', color: 'var(--text-secondary)', fontSize: '0.85rem' }}>{formatMonthKey(m)}</th>
+                        <th key={`th-${m}`} style={{ textAlign: 'center', minWidth: '70px', backgroundColor: 'var(--bg-surface)', color: 'var(--text-secondary)', fontSize: '0.8rem' }}>{formatMonthKey(m)}</th>
                       ))}
                     </>
                   ) : (
@@ -281,22 +281,22 @@ export default function Attendance({ appSettings, students, activeClassId, class
                       const colNote = firstRecord?.note || '';
                       
                       return (
-                        <th key={date} style={{ textAlign: 'center', minWidth: '100px', position: 'relative' }}>
-                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '4px' }}>
-                            <span>{new Date(date).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })}</span>
+                        <th key={date} style={{ textAlign: 'center', minWidth: '85px', position: 'relative', borderLeft: '1px solid var(--border-subtle)' }}>
+                          <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px' }}>
+                            <span style={{ fontSize: '0.8rem', color: 'var(--text-primary)' }}>{new Date(date).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })}</span>
                             {colNote && (
-                              <span style={{ fontSize: '0.7rem', color: 'var(--badge-holiday-text)', backgroundColor: 'var(--badge-holiday-bg)', padding: '2px 4px', borderRadius: '4px', maxWidth: '80px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={colNote}>
+                              <span style={{ fontSize: '0.68rem', color: '#a855f7', backgroundColor: 'rgba(168, 85, 247, 0.1)', padding: '1px 4px', borderRadius: '4px', maxWidth: '75px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={colNote}>
                                 {colNote}
                               </span>
                             )}
                             {!readOnly && (
                               <button 
                                 onClick={() => handleDeleteDate(date)}
-                                className="btn-icon" style={{ color: 'var(--danger)' }}
+                                className="btn-icon" style={{ color: 'var(--danger)', opacity: 0.6 }}
                                 title="ลบวันที่นี้"
                                 aria-label="ลบวันที่นี้"
                               >
-                                <Trash2 size={14} />
+                                <Trash2 size={12} />
                               </button>
                             )}
                           </div>
@@ -305,12 +305,12 @@ export default function Attendance({ appSettings, students, activeClassId, class
                     })
                   )}
                   
-                  <th style={{ textAlign: 'center', minWidth: '60px', backgroundColor: 'var(--bg-tertiary)' }}>เต็ม(ชม.)</th>
-                  <th style={{ textAlign: 'center', minWidth: '60px', backgroundColor: 'var(--bg-tertiary)' }}>มา(ชม.)</th>
-                  <th style={{ textAlign: 'center', minWidth: '60px', backgroundColor: 'var(--bg-tertiary)' }}>ลา(ชม.)</th>
-                  <th style={{ textAlign: 'center', minWidth: '60px', backgroundColor: 'var(--bg-tertiary)' }}>ขาด(ชม.)</th>
-                  <th style={{ textAlign: 'center', minWidth: '60px', backgroundColor: 'var(--bg-tertiary)' }}>สาย(ชม.)</th>
-                  <th style={{ textAlign: 'center', minWidth: '80px', backgroundColor: 'var(--bg-tertiary)' }}>ร้อยละ %</th>
+                  <th style={{ textAlign: 'center', minWidth: '55px', backgroundColor: 'var(--bg-surface-elevated)', borderLeft: '1px solid var(--border-subtle)' }}>เต็ม(ชม.)</th>
+                  <th style={{ textAlign: 'center', minWidth: '55px', backgroundColor: 'var(--bg-surface-elevated)' }}>มา(ชม.)</th>
+                  <th style={{ textAlign: 'center', minWidth: '55px', backgroundColor: 'var(--bg-surface-elevated)' }}>ลา(ชม.)</th>
+                  <th style={{ textAlign: 'center', minWidth: '55px', backgroundColor: 'var(--bg-surface-elevated)' }}>ขาด(ชม.)</th>
+                  <th style={{ textAlign: 'center', minWidth: '55px', backgroundColor: 'var(--bg-surface-elevated)' }}>สาย(ชม.)</th>
+                  <th style={{ textAlign: 'center', minWidth: '70px', backgroundColor: 'var(--bg-surface-elevated)', borderLeft: '1px solid var(--border-subtle)' }}>ร้อยละ %</th>
                 </tr>
               </thead>
               <tbody>
@@ -324,8 +324,8 @@ export default function Attendance({ appSettings, students, activeClassId, class
                   
                   return (
                     <tr key={s.id}>
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--text-muted)', position: 'sticky', left: 0, backgroundColor: 'var(--bg-base)', zIndex: 1, borderRight: '1px solid var(--border-color)' }}>{index + 1}</td>
-                      <td style={{ fontWeight: 500, position: 'sticky', left: '60px', backgroundColor: 'var(--bg-base)', zIndex: 1, borderRight: '1px solid var(--border-color)' }}>{s.name}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--text-muted)', position: 'sticky', left: 0, backgroundColor: 'var(--bg-surface)', zIndex: 1, borderRight: '1px solid var(--border-subtle)' }}>{index + 1}</td>
+                      <td style={{ fontWeight: 500, position: 'sticky', left: '50px', backgroundColor: 'var(--bg-surface)', zIndex: 1, borderRight: '1px solid var(--border-subtle)', color: 'var(--text-primary)' }}>{s.name}</td>
                       
                       {isSummaryView ? (
                         <>
@@ -342,12 +342,13 @@ export default function Attendance({ appSettings, students, activeClassId, class
                         filteredDates.map(date => {
                           const record = classAttendance.find(a => a.studentId === s.id && a.date === date);
                           return (
-                            <td key={date} style={{ textAlign: 'center', padding: '0.25rem' }}>
+                            <td key={date} style={{ textAlign: 'center', padding: '0.25rem', borderLeft: '1px solid var(--border-subtle)' }}>
                               <button 
                                 aria-label="เปลี่ยนสถานะ"
                                 className="btn-icon"
                                 onClick={() => handleUpdateStatus(s.id, date, cycleStatus(record?.status || 'present'))}
                                 title="คลิกเพื่อเปลี่ยนสถานะ"
+                                style={{ padding: '2px' }}
                               >
                                 {getStatusIcon(record)}
                               </button>
@@ -356,12 +357,12 @@ export default function Attendance({ appSettings, students, activeClassId, class
                         })
                       )}
 
-                      <td style={{ textAlign: 'center', fontWeight: 600 }}>{displayTotal}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 600, borderLeft: '1px solid var(--border-subtle)' }}>{displayTotal}</td>
                       <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--success)' }} title={`มา ${(presentCount + holidayCount) * hoursPerCheck} ชม.`}>{(presentCount + holidayCount) * hoursPerCheck}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: '#3b82f6' }}>{leaveCount * hoursPerCheck}</td>
+                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--info)' }}>{leaveCount * hoursPerCheck}</td>
                       <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--danger)' }}>{absentCount * hoursPerCheck}</td>
                       <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--warning)' }}>{lateCount * hoursPerCheck}</td>
-                      <td style={{ textAlign: 'center', fontWeight: 700, color: percentage < 80 ? 'var(--danger)' : 'var(--accent-cyan)' }}>
+                      <td style={{ textAlign: 'center', fontWeight: 700, borderLeft: '1px solid var(--border-subtle)', color: percentage < 80 ? 'var(--danger)' : 'var(--text-primary)' }}>
                         {percentage}%
                       </td>
                     </tr>
