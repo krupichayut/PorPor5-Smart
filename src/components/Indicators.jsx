@@ -1,5 +1,5 @@
 import { useState } from 'react';
-import { FileText, Plus, Trash2, Pencil } from 'lucide-react';
+import { FileText, Plus, Trash2, Pencil, ArrowUp, ArrowDown } from 'lucide-react';
 
 export default function Indicators({ activeClassId, classes, indicators, setIndicators, readOnly }) {
   const [isUnitModalOpen, setIsUnitModalOpen] = useState(false);
@@ -87,6 +87,37 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
     if (confirm('แน่ใจหรือไม่ว่าต้องการลบหน่วยการเรียนรู้นี้? ตัวชี้วัดทั้งหมดในหน่วยนี้จะถูกลบไปด้วย')) {
       setIndicators(indicators.filter(u => u.id !== unitId));
     }
+  };
+
+  const handleMoveUnit = (index, direction) => {
+    if (direction === -1 && index === 0) return;
+    if (direction === 1 && index === classUnits.length - 1) return;
+
+    const newClassUnits = [...classUnits];
+    const temp = newClassUnits[index];
+    newClassUnits[index] = newClassUnits[index + direction];
+    newClassUnits[index + direction] = temp;
+
+    const otherUnits = indicators.filter(u => u.classId !== activeClassId);
+    setIndicators([...otherUnits, ...newClassUnits]);
+  };
+
+  const handleMoveIndicator = (unitId, itemIndex, direction) => {
+    const updatedIndicators = indicators.map(unit => {
+      if (unit.id === unitId) {
+        if (direction === -1 && itemIndex === 0) return unit;
+        if (direction === 1 && itemIndex === unit.items.length - 1) return unit;
+        
+        const newItems = [...unit.items];
+        const temp = newItems[itemIndex];
+        newItems[itemIndex] = newItems[itemIndex + direction];
+        newItems[itemIndex + direction] = temp;
+        
+        return { ...unit, items: newItems };
+      }
+      return unit;
+    });
+    setIndicators(updatedIndicators);
   };
 
   const openIndicatorModal = (unitId) => {
@@ -234,7 +265,7 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
                         <div style={{ color: 'var(--text-muted)', fontSize: '0.875rem', marginBottom: '0.5rem' }}>- ยังไม่มีตัวชี้วัด -</div>
                       ) : (
                         <ul style={{ margin: 0, paddingLeft: '1.25rem', fontSize: '0.875rem', marginBottom: '0.75rem', color: 'var(--text-primary)' }}>
-                          {unit.items.map(item => (
+                          {unit.items.map((item, itemIndex) => (
                             <li key={item.id} style={{ marginBottom: '0.5rem', lineHeight: '1.4' }}>
                               <strong style={{ color: 'var(--accent-cyan)' }}>{item.code}</strong> 
                               {item.type === 'between' && <span className="badge" style={{ marginLeft: '6px', backgroundColor: 'var(--bg-tertiary)', color: 'var(--warning)' }}>ระหว่างทาง</span>}
@@ -245,6 +276,26 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
                                   <button 
                                     className="btn-icon" 
                                     style={{ display: 'inline-flex', padding: '0 4px', color: 'var(--accent-cyan)', opacity: 0.8, verticalAlign: 'middle', marginLeft: '8px' }} 
+                                    onClick={() => handleMoveIndicator(unit.id, itemIndex, -1)}
+                                    title="เลื่อนขึ้น"
+                                    aria-label="เลื่อนขึ้น"
+                                    disabled={itemIndex === 0}
+                                  >
+                                    <ArrowUp size={12} style={{ opacity: itemIndex === 0 ? 0.3 : 1 }} />
+                                  </button>
+                                  <button 
+                                    className="btn-icon" 
+                                    style={{ display: 'inline-flex', padding: '0 4px', color: 'var(--accent-cyan)', opacity: 0.8, verticalAlign: 'middle' }} 
+                                    onClick={() => handleMoveIndicator(unit.id, itemIndex, 1)}
+                                    title="เลื่อนลง"
+                                    aria-label="เลื่อนลง"
+                                    disabled={itemIndex === unit.items.length - 1}
+                                  >
+                                    <ArrowDown size={12} style={{ opacity: itemIndex === unit.items.length - 1 ? 0.3 : 1 }} />
+                                  </button>
+                                  <button 
+                                    className="btn-icon" 
+                                    style={{ display: 'inline-flex', padding: '0 4px', color: 'var(--accent-cyan)', opacity: 0.8, verticalAlign: 'middle', marginLeft: '4px' }} 
                                     onClick={() => openEditIndicatorModal(unit.id, item)}
                                     title="แก้ไขตัวชี้วัดนี้"
                                     aria-label="แก้ไขตัวชี้วัดนี้"
@@ -280,7 +331,13 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
                     <td style={{ textAlign: 'center', paddingTop: '1rem' }}>{unit.hours}</td>
                     <td style={{ textAlign: 'center', paddingTop: '1rem' }}>{unit.weight}</td>
                     {!readOnly && (
-                      <td style={{ textAlign: 'center', paddingTop: '1rem', display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
+                      <td style={{ textAlign: 'center', paddingTop: '1rem', display: 'flex', justifyContent: 'center', gap: '0.25rem', flexWrap: 'wrap' }}>
+                        <button className="btn-icon" style={{ color: 'var(--accent-cyan)' }} onClick={() => handleMoveUnit(index, -1)} disabled={index === 0} title="เลื่อนขึ้น" aria-label="เลื่อนขึ้น">
+                          <ArrowUp size={16} style={{ opacity: index === 0 ? 0.3 : 1 }} />
+                        </button>
+                        <button className="btn-icon" style={{ color: 'var(--accent-cyan)' }} onClick={() => handleMoveUnit(index, 1)} disabled={index === classUnits.length - 1} title="เลื่อนลง" aria-label="เลื่อนลง">
+                          <ArrowDown size={16} style={{ opacity: index === classUnits.length - 1 ? 0.3 : 1 }} />
+                        </button>
                         <button className="btn-icon" style={{ color: 'var(--accent-cyan)' }} onClick={() => openEditUnitModal(unit)} title="แก้ไขหน่วยการเรียนรู้นี้" aria-label="แก้ไขหน่วยการเรียนรู้นี้">
                           <Pencil size={16} />
                         </button>
