@@ -1,6 +1,9 @@
 import { lazy, Suspense, useState, useEffect, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, Navigate, useLocation } from 'react-router-dom';
-import { BookOpen, Users, Calendar, Award, BarChart3, Settings, Star, FileText, Key, LogOut, ClipboardList, Paintbrush } from 'lucide-react';
+import { 
+  Users, Calendar, Award, Settings, BookOpen, LogOut, Key, BarChart3,
+  FileText, ClipboardList, Star, Paintbrush, Menu
+} from 'lucide-react';
 import { auth } from './firebase';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
 import HeroWave from './components/DynamicWaveBackground';
@@ -125,13 +128,15 @@ function App() {
   ), [attendance, activeClassId]);
 
 
+  const [isSidebarCollapsed, setIsSidebarCollapsed] = useState(false);
+
   return (
     <Router>
-      <div className="app-layout">
+      <div className={`app-layout ${isSidebarCollapsed ? 'sidebar-collapsed' : ''}`}>
         <HeroWave />
         
         {/* Sidebar */}
-        <aside className="sidebar no-print">
+        <aside className={`sidebar no-print ${isSidebarCollapsed ? 'collapsed' : ''}`}>
           <div className="sidebar-brand">
             <Paintbrush size={20} style={{ color: 'var(--text-primary)' }} />
             <span>PitchClass</span>
@@ -139,34 +144,34 @@ function App() {
           </div>
           <nav className="nav-menu">
             <NavLink to="/" aria-label="แดชบอร์ด" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} end>
-              <BarChart3 size={17} /> แดชบอร์ด
+              <BarChart3 size={17} /> <span>แดชบอร์ด</span>
             </NavLink>
             <NavLink to="/classes" aria-label="จัดการวิชา" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <BookOpen size={17} /> จัดการวิชา
+              <BookOpen size={17} /> <span>จัดการวิชา</span>
             </NavLink>
             <NavLink to="/course-plan" aria-label="โครงสร้างวิชา" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <ClipboardList size={17} /> โครงสร้างวิชา
+              <ClipboardList size={17} /> <span>โครงสร้างวิชา</span>
             </NavLink>
             <NavLink to="/students" aria-label="นักเรียน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Users size={17} /> นักเรียน
+              <Users size={17} /> <span>นักเรียน</span>
             </NavLink>
             <NavLink to="/attendance" aria-label="เวลาเรียน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Calendar size={17} /> เวลาเรียน
+              <Calendar size={17} /> <span>เวลาเรียน</span>
             </NavLink>
             <NavLink to="/grading" aria-label="บันทึกคะแนน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Award size={17} /> บันทึกคะแนน
+              <Award size={17} /> <span>บันทึกคะแนน</span>
             </NavLink>
             <NavLink to="/rewards" aria-label="ของรางวัล" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Paintbrush size={17} /> ของรางวัล
+              <Paintbrush size={17} /> <span>ของรางวัล</span>
             </NavLink>
             <NavLink to="/assessments" aria-label="การประเมิน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Star size={17} /> การประเมิน
+              <Star size={17} /> <span>การประเมิน</span>
             </NavLink>
             <NavLink to="/reports" aria-label="รายงาน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <FileText size={17} /> รายงาน
+              <FileText size={17} /> <span>รายงาน</span>
             </NavLink>
             <NavLink to="/settings" aria-label="ตั้งค่าระบบ" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Settings size={17} /> ตั้งค่าระบบ
+              <Settings size={17} /> <span>ตั้งค่าระบบ</span>
             </NavLink>
           </nav>
         </aside>
@@ -176,7 +181,16 @@ function App() {
           
           {/* Top Header */}
           <header className="top-header no-print">
-            <div className="header-title">
+            <div className="header-title" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <button 
+                className="btn-icon" 
+                onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} 
+                aria-label="ซ่อน/แสดงเมนู"
+                title="ซ่อน/แสดงเมนู"
+                style={{ padding: '0.25rem' }}
+              >
+                <Menu size={20} />
+              </button>
               {activeClass ? (
                 <>
                   <span style={{ color: 'var(--text-primary)' }}>{activeClass.name}</span>
