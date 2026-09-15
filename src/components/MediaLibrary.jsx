@@ -1,8 +1,15 @@
 import { useState, useMemo, useRef, useEffect } from 'react';
 import { Library, Plus, Trash2, Pencil, ExternalLink, Search, FileText, Video, Image, Link2, File, MoreHorizontal, UploadCloud, Printer, MonitorPlay } from 'lucide-react';
-import { storage } from '../firebase';
-import { ref, uploadBytesResumable, getDownloadURL } from 'firebase/storage';
 import PrintMediaReport from './PrintMediaReport';
+
+const GAS_URL = "https://script.google.com/macros/s/AKfycbxuYDzj5LUPFNAXpGAO2pRKZ7EwDzwYOzMcxiV6uORgeEsoaR51SKOIkui2BGEurT7I/exec";
+
+const fileToBase64 = (file) => new Promise((resolve, reject) => {
+  const reader = new FileReader();
+  reader.readAsDataURL(file);
+  reader.onload = () => resolve(reader.result.split(',')[1]);
+  reader.onerror = error => reject(error);
+});
 
 const MEDIA_TYPES = [
   { value: 'worksheet', label: 'ใบงาน', icon: FileText, color: 'var(--accent-cyan)' },
@@ -137,34 +144,39 @@ export default function MediaLibrary({ appSettings, activeClassId, classes, medi
   const handleUploadCover = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
+    
+    // Check file size (limit to ~5MB for GAS base64)
+    if (file.size > 5 * 1024 * 1024) {
+      alert('ขนาดไฟล์ภาพปกใหญ่เกินไป กรุณาใช้ไฟล์ขนาดไม่เกิน 5MB');
+      if (coverInputRef.current) coverInputRef.current.value = '';
+      return;
+    }
+
     try {
       setIsUploadingCover(true);
-      const fileRef = ref(storage, `mediaLibrary/cover_${Date.now()}_${file.name}`);
-      const uploadTask = uploadBytesResumable(fileRef, file);
-      await new Promise((resolve, reject) => {
-        uploadTask.on(
-          'state_changed', 
-          (snapshot) => {
-            // Optional: can track cover upload progress here if needed
-          }, 
-          (error) => {
-            console.error('Cover upload error:', error);
-            reject(error);
-          }, 
-          async () => {
-            try {
-              const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
-              setCoverImageUrl(downloadUrl);
-              resolve();
-            } catch (err) {
-              reject(err);
-            }
-          }
-        );
+      const base64 = await fileToBase64(file);
+      
+      const payload = {
+        base64: base64,
+        mimeType: file.type,
+        fileName: `cover_${Date.now()}_${file.name}`
+      };
+
+      const response = await fetch(GAS_URL, {
+        method: 'POST',
+        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+        body: JSON.stringify(payload)
       });
+      
+      const result = await response.json();
+      if (result.status === 'success') {
+        setCoverImageUrl(result.url);
+      } else {
+        throw new Error(result.message || 'Unknown error from GAS');
+      }
     } catch (error) {
-      console.error(error);
-      alert('อัปโหลดภาพปกไม่สำเร็จ');
+      console.error('GAS Upload Error:', error);
+      alert('อัปโหลดภาพปกไป Google Drive ไม่สำเร็จ กรุณาลองใหม่อีกครั้ง');
     } finally {
       setIsUploadingCover(false);
       if (coverInputRef.current) coverInputRef.current.value = '';
@@ -179,30 +191,42 @@ export default function MediaLibrary({ appSettings, activeClassId, classes, medi
 
     // Handle file upload
     if (uploadMode === 'file' && selectedFile) {
+      if (selectedFile.size > 5 * 1024 * 1024) {
+        alert('ขนาดไฟล์ใหญ่เกิน 5MB (ข้อจำกัดของการอัปโหลดผ่านระบบนี้) กรุณาอัปโหลดลง Google Drive โดยตรงแล้วนำลิงก์มาแปะแทนครับ');
+        return;
+      }
+
       try {
         setIsUploading(true);
-        const fileRef = ref(storage, `mediaLibrary/${Date.now()}_${selectedFile.name}`);
-        const uploadTask = uploadBytesResumable(fileRef, selectedFile);
+        setUploadProgress(10); // Fake progress to show activity
+        
+        const base64 = await fileToBase64(selectedFile);
+        setUploadProgress(50);
+        
+        const payload = {
+          base64: base64,
+          mimeType: selectedFile.type,
+          fileName: `media_${Date.now()}_${selectedFile.name}`
+        };
 
-        await new Promise((resolve, reject) => {
-          uploadTask.on(
-            'state_changed',
-            (snapshot) => {
-              const progress = (snapshot.bytesTransferred / snapshot.totalBytes) * 100;
-              setUploadProgress(progress);
-            },
-            (error) => {
-              console.error('Upload error:', error);
-              alert('เกิดข้อผิดพลาดในการอัปโหลดไฟล์');
-              reject(error);
-            },
-            async () => {
-              finalUrl = await getDownloadURL(uploadTask.snapshot.ref);
-              resolve();
-            }
-          );
+        const response = await fetch(GAS_URL, {
+          method: 'POST',
+          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
+          body: JSON.stringify(payload)
         });
+        
+        setUploadProgress(90);
+        const result = await response.json();
+        
+        if (result.status === 'success') {
+          finalUrl = result.url;
+          setUploadProgress(100);
+        } else {
+          throw new Error(result.message || 'Unknown error from GAS');
+        }
       } catch (error) {
+        console.error('GAS Upload Error:', error);
+        alert('เกิดข้อผิดพลาดในการอัปโหลดไฟล์ไป Google Drive');
         setIsUploading(false);
         return;
       }
