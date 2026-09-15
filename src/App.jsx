@@ -2,7 +2,7 @@ import { lazy, Suspense, useState, useEffect, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, Navigate, useLocation } from 'react-router-dom';
 import { 
   Users, Calendar, Award, Settings, BookOpen, LogOut, Key, BarChart3,
-  FileText, ClipboardList, Star, Paintbrush, Menu
+  FileText, ClipboardList, Star, Paintbrush, Menu, Library
 } from 'lucide-react';
 import { auth } from './firebase';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
@@ -20,6 +20,7 @@ const GradingContainer = lazy(() => import('./components/GradingContainer'));
 const ReportsContainer = lazy(() => import('./components/ReportsContainer'));
 const CoursePlanContainer = lazy(() => import('./components/CoursePlanContainer'));
 const Rewards = lazy(() => import('./components/Rewards'));
+const MediaLibrary = lazy(() => import('./components/MediaLibrary'));
 
 function PageLoading() {
   return (
@@ -91,6 +92,7 @@ function App() {
   
   const [studentPoints, setStudentPoints, spInit, studentPointsSaveError] = useFirestoreData('appData', 'studentPoints', []);
   const [rewards, setRewards, rwInit, rewardsSaveError] = useFirestoreData('appData', 'rewards', []);
+  const [mediaLibrary, setMediaLibrary, mlInit, mediaLibrarySaveError] = useFirestoreData('appData', 'mediaLibrary', []);
 
   const [appSettings, setAppSettings, settingsInit, settingsSaveError] = useFirestoreData('appData', 'settings', {
     schoolName: '',
@@ -101,7 +103,7 @@ function App() {
     semester: ''
   });
 
-  const isDataLoaded = classesInit && studentsInit && attInit && scInit && scoresInit && attrInit && litInit && compInit && indInit && settingsInit && lpInit && spInit && rwInit;
+  const isDataLoaded = classesInit && studentsInit && attInit && scInit && scoresInit && attrInit && litInit && compInit && indInit && settingsInit && lpInit && spInit && rwInit && mlInit;
   const hasSaveError = [
     classesSaveError,
     studentsSaveError,
@@ -115,6 +117,7 @@ function App() {
     lessonPlansSaveError,
     studentPointsSaveError,
     rewardsSaveError,
+    mediaLibrarySaveError,
     settingsSaveError
   ].some(Boolean);
 
@@ -163,6 +166,9 @@ function App() {
             </NavLink>
             <NavLink to="/rewards" aria-label="ของรางวัล" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Paintbrush size={17} /> <span>ของรางวัล</span>
+            </NavLink>
+            <NavLink to="/media-library" aria-label="คลังสื่อ" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Library size={17} /> <span>คลังสื่อ</span>
             </NavLink>
             <NavLink to="/assessments" aria-label="การประเมิน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Star size={17} /> <span>การประเมิน</span>
@@ -268,7 +274,7 @@ function App() {
                   <Route path="/" element={<Dashboard classes={classes} students={students} activeClassId={activeClassId} setActiveClassId={setActiveClassId} attendance={attendance} scores={scores} scoreColumns={scoreColumns} indicators={indicators} />} />
                   <Route path="/settings" element={<SettingsPage appSettings={appSettings} setAppSettings={setAppSettings} readOnly={readOnly} classes={classes} students={students} attendance={attendance} scores={scores} scoreColumns={scoreColumns} attributes={attributes} literacy={literacy} competencies={competencies} lessonPlans={lessonPlans} indicators={indicators} />} />
                   <Route path="/classes" element={<Classes classes={classes} setClasses={setClasses} activeClassId={activeClassId} setActiveClassId={setActiveClassId} readOnly={readOnly} students={students} setStudents={setStudents} attendance={attendance} setAttendance={setAttendance} scores={scores} setScores={setScores} scoreColumns={scoreColumns} setScoreColumns={setScoreColumns} attributes={attributes} setAttributes={setAttributes} literacy={literacy} setLiteracy={setLiteracy} competencies={competencies} setCompetencies={setCompetencies} indicators={indicators} setIndicators={setIndicators} lessonPlans={lessonPlans} setLessonPlans={setLessonPlans} studentPoints={studentPoints} setStudentPoints={setStudentPoints} />} />
-                  <Route path="/course-plan" element={<CoursePlanContainer activeClassId={activeClassId} classes={classes} students={students} indicators={indicators} setIndicators={setIndicators} lessonPlans={lessonPlans} setLessonPlans={setLessonPlans} readOnly={readOnly} appSettings={appSettings} />} />
+                  <Route path="/course-plan" element={<CoursePlanContainer activeClassId={activeClassId} classes={classes} students={students} indicators={indicators} setIndicators={setIndicators} lessonPlans={lessonPlans} setLessonPlans={setLessonPlans} readOnly={readOnly} appSettings={appSettings} mediaLibrary={mediaLibrary} />} />
                   <Route path="/students" element={<Students students={students} setStudents={setStudents} classes={classes} activeClassId={activeClassId} readOnly={readOnly} attendance={attendance} setAttendance={setAttendance} scores={scores} setScores={setScores} scoreColumns={scoreColumns} attributes={attributes} setAttributes={setAttributes} literacy={literacy} setLiteracy={setLiteracy} competencies={competencies} setCompetencies={setCompetencies} indicators={indicators} studentPoints={studentPoints} setStudentPoints={setStudentPoints} />} />
                   <Route path="/attendance" element={<Attendance appSettings={appSettings} students={students} activeClassId={activeClassId} classes={classes} attendance={attendance} setAttendance={setAttendance} readOnly={readOnly} />} />
                   <Route path="/grading" element={<GradingContainer students={students} activeClassId={activeClassId} classes={classes} scores={scores} setScores={setScores} scoreColumns={scoreColumns} setScoreColumns={setScoreColumns} indicators={indicators} readOnly={readOnly} studentPoints={studentPoints} setStudentPoints={setStudentPoints} />} />
@@ -277,6 +283,7 @@ function App() {
                   <Route path="/reports/:tab" element={<ReportsContainer appSettings={appSettings} activeClassId={activeClassId} classes={classes} students={students} attendance={attendance} scoreColumns={scoreColumns} scores={scores} attributes={attributes} literacy={literacy} competencies={competencies} indicators={indicators} readOnly={readOnly} />} />
                   <Route path="/assessments" element={<AssessmentsContainer students={students} activeClassId={activeClassId} classes={classes} attributes={attributes} setAttributes={setAttributes} literacy={literacy} setLiteracy={setLiteracy} competencies={competencies} setCompetencies={setCompetencies} readOnly={readOnly} />} />
                   <Route path="/rewards" element={<Rewards students={students} activeClassId={activeClassId} classes={classes} studentPoints={studentPoints} setStudentPoints={setStudentPoints} rewards={rewards} setRewards={setRewards} readOnly={readOnly} />} />
+                  <Route path="/media-library" element={<MediaLibrary activeClassId={activeClassId} classes={classes} mediaLibrary={mediaLibrary} setMediaLibrary={setMediaLibrary} readOnly={readOnly} />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </AnimatedRoutes>
               </Suspense>

@@ -1,8 +1,8 @@
-import { useState, useEffect } from 'react';
-import { ClipboardList, Plus, Trash2, Pencil, Upload, CheckSquare, Square, FileEdit, Check, Printer } from 'lucide-react';
+import { useState, useEffect, useMemo } from 'react';
+import { ClipboardList, Plus, Trash2, Pencil, Upload, CheckSquare, Square, FileEdit, Check, Printer, Library, Link2 } from 'lucide-react';
 import PrintPostTeachingRecord from './PrintPostTeachingRecord';
 
-export default function LessonPlans({ activeClassId, classes, lessonPlans, setLessonPlans, readOnly, appSettings, students }) {
+export default function LessonPlans({ activeClassId, classes, lessonPlans, setLessonPlans, readOnly, appSettings, students, mediaLibrary }) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
@@ -14,6 +14,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
   const [week, setWeek] = useState('');
   const [topic, setTopic] = useState('');
   const [hours, setHours] = useState(1);
+  const [selectedMediaIds, setSelectedMediaIds] = useState([]);
   
   const [importText, setImportText] = useState('');
   
@@ -28,6 +29,14 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
   const classPlans = lessonPlans.filter(p => p.classId === activeClassId);
   const classStudents = students ? students.filter(s => s.classId === activeClassId) : [];
   const totalClassStudents = classStudents.length;
+
+  // Media available for this class (global + class-specific)
+  const availableMedia = useMemo(() => {
+    if (!mediaLibrary) return [];
+    return mediaLibrary.filter(m =>
+      !m.classIds || m.classIds.length === 0 || m.classIds.includes(activeClassId)
+    );
+  }, [mediaLibrary, activeClassId]);
 
   const presentCount = totalClassStudents - (Number(recordData.absentCount) || 0);
   const autoFailedCount = recordData.failedStudentIds.length;
@@ -60,7 +69,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
 
     if (editingPlanId) {
       setLessonPlans(lessonPlans.map(p => 
-        p.id === editingPlanId ? { ...p, unit, week, topic, hours: Number(hours) } : p
+        p.id === editingPlanId ? { ...p, unit, week, topic, hours: Number(hours), mediaIds: selectedMediaIds } : p
       ));
     } else {
       const newPlan = {
@@ -72,7 +81,8 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
         topic,
         hours: Number(hours),
         isTaught: false,
-        postRecord: ''
+        postRecord: '',
+        mediaIds: selectedMediaIds
       };
       setLessonPlans([...lessonPlans, newPlan]);
     }
@@ -87,6 +97,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
     setWeek('');
     setTopic('');
     setHours(1);
+    setSelectedMediaIds([]);
   };
 
   const openEditModal = (plan) => {
@@ -95,6 +106,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
     setWeek(plan.week);
     setTopic(plan.topic);
     setHours(plan.hours);
+    setSelectedMediaIds(plan.mediaIds || []);
     setIsAddModalOpen(true);
   };
 
@@ -273,6 +285,11 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
                     <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--text-secondary)' }}>{plan.week}</td>
                     <td style={{ fontWeight: 500, color: plan.isTaught ? 'var(--text-primary)' : 'var(--text-secondary)' }}>
                       {plan.topic}
+                      {plan.mediaIds && plan.mediaIds.length > 0 && (
+                        <span className="badge" style={{ marginLeft: '8px', backgroundColor: 'var(--bg-tertiary)', color: 'var(--accent-cyan)', fontSize: '0.68rem', verticalAlign: 'middle' }} title={plan.mediaIds.map(id => (mediaLibrary || []).find(m => m.id === id)?.name || '').filter(Boolean).join(', ')}>
+                          <Library size={11} style={{ marginRight: '3px', verticalAlign: 'middle' }} />{plan.mediaIds.length} สื่อ
+                        </span>
+                      )}
                     </td>
                     <td style={{ textAlign: 'center' }}>{plan.hours}</td>
                     <td style={{ textAlign: 'center' }}>
@@ -366,6 +383,40 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
                   required
                 />
               </div>
+
+              {/* Media Selector */}
+              {availableMedia.length > 0 && (
+                <div className="form-group">
+                  <label className="form-label" style={{ display: 'flex', justifyContent: 'space-between' }}>
+                    <span><Library size={14} style={{ marginRight: '4px', verticalAlign: 'middle' }} />สื่อที่ใช้ในแผนนี้</span>
+                    <span style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>เลือกแล้ว {selectedMediaIds.length}</span>
+                  </label>
+                  <div className="hairline-cell" style={{ maxHeight: '140px', overflowY: 'auto', padding: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
+                    {availableMedia.map(media => (
+                      <label key={media.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', padding: '4px 8px', borderRadius: '4px', backgroundColor: selectedMediaIds.includes(media.id) ? 'rgba(6, 182, 212, 0.08)' : 'transparent' }}>
+                        <input
+                          type="checkbox"
+                          checked={selectedMediaIds.includes(media.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setSelectedMediaIds(prev => [...prev, media.id]);
+                            } else {
+                              setSelectedMediaIds(prev => prev.filter(id => id !== media.id));
+                            }
+                          }}
+                        />
+                        <span style={{ color: 'var(--text-primary)', fontSize: '0.85rem' }}>
+                          {media.name}
+                        </span>
+                        <span className="badge" style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-muted)', fontSize: '0.65rem', marginLeft: 'auto' }}>
+                          {media.type === 'worksheet' ? 'ใบงาน' : media.type === 'video' ? 'วีดีโอ' : media.type === 'image' ? 'รูปภาพ' : media.type === 'link' ? 'ลิงก์' : media.type === 'document' ? 'เอกสาร' : 'อื่นๆ'}
+                        </span>
+                      </label>
+                    ))}
+                  </div>
+                </div>
+              )}
+
               <div className="modal-footer">
                 <button type="button" className="btn btn-outline" onClick={closeAddModal}>ยกเลิก</button>
                 <button type="submit" className="btn btn-primary">{editingPlanId ? 'บันทึกการแก้ไข' : 'เพิ่มแผนการสอน'}</button>
