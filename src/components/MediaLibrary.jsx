@@ -2,7 +2,7 @@ import { useState, useMemo, useRef, useEffect } from 'react';
 import { Library, Plus, Trash2, Pencil, ExternalLink, Search, FileText, Video, Image, Link2, File, MoreHorizontal, UploadCloud, Printer, MonitorPlay } from 'lucide-react';
 import PrintMediaReport from './PrintMediaReport';
 
-const GAS_URL = "https://script.google.com/macros/s/AKfycbxuYDzj5LUPFNAXpGAO2pRKZ7EwDzwYOzMcxiV6uORgeEsoaR51SKOIkui2BGEurT7I/exec";
+const GAS_URL = "https://script.google.com/macros/s/AKfycbyq5P4lI7g5u1MnDHe3So9dIfTJSBbswCJlZBWLdNTy-_sC4cRrrZ45BkTdt9VPkWUy/exec";
 
 const fileToBase64 = (file) => new Promise((resolve, reject) => {
   const reader = new FileReader();
@@ -164,7 +164,6 @@ export default function MediaLibrary({ appSettings, activeClassId, classes, medi
 
       const response = await fetch(GAS_URL, {
         method: 'POST',
-        headers: { 'Content-Type': 'text/plain;charset=utf-8' },
         body: JSON.stringify(payload)
       });
       
@@ -211,7 +210,6 @@ export default function MediaLibrary({ appSettings, activeClassId, classes, medi
 
         const response = await fetch(GAS_URL, {
           method: 'POST',
-          headers: { 'Content-Type': 'text/plain;charset=utf-8' },
           body: JSON.stringify(payload)
         });
         
