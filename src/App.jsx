@@ -283,7 +283,7 @@ function App() {
                   <Route path="/reports/:tab" element={<ReportsContainer appSettings={appSettings} activeClassId={activeClassId} classes={classes} students={students} attendance={attendance} scoreColumns={scoreColumns} scores={scores} attributes={attributes} literacy={literacy} competencies={competencies} indicators={indicators} readOnly={readOnly} />} />
                   <Route path="/assessments" element={<AssessmentsContainer students={students} activeClassId={activeClassId} classes={classes} attributes={attributes} setAttributes={setAttributes} literacy={literacy} setLiteracy={setLiteracy} competencies={competencies} setCompetencies={setCompetencies} readOnly={readOnly} />} />
                   <Route path="/rewards" element={<Rewards students={students} activeClassId={activeClassId} classes={classes} studentPoints={studentPoints} setStudentPoints={setStudentPoints} rewards={rewards} setRewards={setRewards} readOnly={readOnly} />} />
-                  <Route path="/media-library" element={<MediaLibrary activeClassId={activeClassId} classes={classes} mediaLibrary={mediaLibrary} setMediaLibrary={setMediaLibrary} readOnly={readOnly} />} />
+                  <Route path="/media-library" element={<MediaLibrary appSettings={appSettings} activeClassId={activeClassId} classes={classes} mediaLibrary={mediaLibrary} setMediaLibrary={setMediaLibrary} readOnly={readOnly} />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </AnimatedRoutes>
               </Suspense>
