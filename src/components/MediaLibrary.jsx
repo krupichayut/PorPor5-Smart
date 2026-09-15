@@ -139,14 +139,28 @@ export default function MediaLibrary({ appSettings, activeClassId, classes, medi
     if (!file) return;
     try {
       setIsUploadingCover(true);
-      const fileRef = ref(storage, `mediaLibrary/covers/${Date.now()}_${file.name}`);
+      const fileRef = ref(storage, `mediaLibrary/cover_${Date.now()}_${file.name}`);
       const uploadTask = uploadBytesResumable(fileRef, file);
       await new Promise((resolve, reject) => {
-        uploadTask.on('state_changed', null, reject, async () => {
-          const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
-          setCoverImageUrl(downloadUrl);
-          resolve();
-        });
+        uploadTask.on(
+          'state_changed', 
+          (snapshot) => {
+            // Optional: can track cover upload progress here if needed
+          }, 
+          (error) => {
+            console.error('Cover upload error:', error);
+            reject(error);
+          }, 
+          async () => {
+            try {
+              const downloadUrl = await getDownloadURL(uploadTask.snapshot.ref);
+              setCoverImageUrl(downloadUrl);
+              resolve();
+            } catch (err) {
+              reject(err);
+            }
+          }
+        );
       });
     } catch (error) {
       console.error(error);
