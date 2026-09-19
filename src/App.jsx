@@ -21,6 +21,7 @@ const ReportsContainer = lazy(() => import('./components/ReportsContainer'));
 const CoursePlanContainer = lazy(() => import('./components/CoursePlanContainer'));
 const Rewards = lazy(() => import('./components/Rewards'));
 const MediaLibrary = lazy(() => import('./components/MediaLibrary'));
+const StudentWorks = lazy(() => import('./components/StudentWorks'));
 
 function PageLoading() {
   return (
@@ -93,6 +94,7 @@ function App() {
   const [studentPoints, setStudentPoints, spInit, studentPointsSaveError] = useFirestoreData('appData', 'studentPoints', []);
   const [rewards, setRewards, rwInit, rewardsSaveError] = useFirestoreData('appData', 'rewards', []);
   const [mediaLibrary, setMediaLibrary, mlInit, mediaLibrarySaveError] = useFirestoreData('appData', 'mediaLibrary', []);
+  const [studentWorks, setStudentWorks, swInit, studentWorksSaveError] = useFirestoreData('appData', 'studentWorks', []);
 
   const [appSettings, setAppSettings, settingsInit, settingsSaveError] = useFirestoreData('appData', 'settings', {
     schoolName: '',
@@ -103,7 +105,7 @@ function App() {
     semester: ''
   });
 
-  const isDataLoaded = classesInit && studentsInit && attInit && scInit && scoresInit && attrInit && litInit && compInit && indInit && settingsInit && lpInit && spInit && rwInit && mlInit;
+  const isDataLoaded = classesInit && studentsInit && attInit && scInit && scoresInit && attrInit && litInit && compInit && indInit && settingsInit && lpInit && spInit && rwInit && mlInit && swInit;
   const hasSaveError = [
     classesSaveError,
     studentsSaveError,
@@ -169,6 +171,9 @@ function App() {
             </NavLink>
             <NavLink to="/media-library" aria-label="คลังสื่อ" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Library size={17} /> <span>คลังสื่อ</span>
+            </NavLink>
+            <NavLink to="/gallery" aria-label="ผลงานนักเรียน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Image size={17} /> <span>แกลเลอรีผลงาน</span>
             </NavLink>
             <NavLink to="/assessments" aria-label="การประเมิน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Star size={17} /> <span>การประเมิน</span>
@@ -284,6 +289,7 @@ function App() {
                   <Route path="/assessments" element={<AssessmentsContainer students={students} activeClassId={activeClassId} classes={classes} attributes={attributes} setAttributes={setAttributes} literacy={literacy} setLiteracy={setLiteracy} competencies={competencies} setCompetencies={setCompetencies} readOnly={readOnly} />} />
                   <Route path="/rewards" element={<Rewards students={students} activeClassId={activeClassId} classes={classes} studentPoints={studentPoints} setStudentPoints={setStudentPoints} rewards={rewards} setRewards={setRewards} readOnly={readOnly} />} />
                   <Route path="/media-library" element={<MediaLibrary appSettings={appSettings} activeClassId={activeClassId} classes={classes} mediaLibrary={mediaLibrary} setMediaLibrary={setMediaLibrary} readOnly={readOnly} />} />
+                  <Route path="/gallery" element={<StudentWorks works={studentWorks} setWorks={setStudentWorks} classes={classes} readOnly={readOnly} />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </AnimatedRoutes>
               </Suspense>

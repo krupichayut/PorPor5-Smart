@@ -144,38 +144,33 @@ export default function MediaLibrary({ appSettings, activeClassId, classes, medi
   const handleUploadCover = async (e) => {
     const file = e.target.files?.[0];
     if (!file) return;
-    
-    // Check file size (limit to ~5MB for GAS base64)
-    if (file.size > 5 * 1024 * 1024) {
-      alert('ขนาดไฟล์ภาพปกใหญ่เกินไป กรุณาใช้ไฟล์ขนาดไม่เกิน 5MB');
-      if (coverInputRef.current) coverInputRef.current.value = '';
+
+    if (!file.type.startsWith('image/')) {
+      alert('กรุณาอัปโหลดไฟล์รูปภาพสำหรับภาพปกเท่านั้นครับ');
       return;
     }
 
     try {
       setIsUploadingCover(true);
-      const base64 = await fileToBase64(file);
       
-      const payload = {
-        base64: base64,
-        mimeType: file.type,
-        fileName: `cover_${Date.now()}_${file.name}`
-      };
-
-      const response = await fetch(GAS_URL, {
+      const formData = new FormData();
+      formData.append('image', file);
+      
+      const response = await fetch('https://api.imgbb.com/1/upload?key=106580ebef11da51048e4ec5959fe9d1', {
         method: 'POST',
-        body: JSON.stringify(payload)
+        body: formData
       });
       
-      const result = await response.json();
-      if (result.status === 'success') {
-        setCoverImageUrl(result.url);
+      const data = await response.json();
+      
+      if (data.success) {
+        setCoverImageUrl(data.data.url);
       } else {
-        throw new Error(result.message || 'Unknown error from GAS');
+        throw new Error(data.error?.message || 'Upload failed');
       }
     } catch (error) {
-      console.error('GAS Upload Error:', error);
-      alert('อัปโหลดภาพปกไป Google Drive ไม่สำเร็จ กรุณาลองใหม่อีกครั้ง');
+      console.error('ImgBB Upload Error:', error);
+      alert('เกิดข้อผิดพลาดในการอัปโหลดภาพปก');
     } finally {
       setIsUploadingCover(false);
       if (coverInputRef.current) coverInputRef.current.value = '';
@@ -190,41 +185,40 @@ export default function MediaLibrary({ appSettings, activeClassId, classes, medi
 
     // Handle file upload
     if (uploadMode === 'file' && selectedFile) {
-      if (selectedFile.size > 5 * 1024 * 1024) {
-        alert('ขนาดไฟล์ใหญ่เกิน 5MB (ข้อจำกัดของการอัปโหลดผ่านระบบนี้) กรุณาอัปโหลดลง Google Drive โดยตรงแล้วนำลิงก์มาแปะแทนครับ');
+      if (!selectedFile.type.startsWith('image/')) {
+        alert('ระบบรองรับการอัปโหลดเฉพาะ "ไฟล์รูปภาพ" เท่านั้นครับ (สำหรับวิดีโอหรือ PDF กรุณาอัปโหลดลง Google Drive แล้วนำลิงก์มาแปะแทนครับ)');
+        return;
+      }
+
+      if (selectedFile.size > 32 * 1024 * 1024) {
+        alert('ขนาดไฟล์ภาพใหญ่เกิน 32MB');
         return;
       }
 
       try {
         setIsUploading(true);
-        setUploadProgress(10); // Fake progress to show activity
+        setUploadProgress(10);
         
-        const base64 = await fileToBase64(selectedFile);
-        setUploadProgress(50);
+        const formData = new FormData();
+        formData.append('image', selectedFile);
         
-        const payload = {
-          base64: base64,
-          mimeType: selectedFile.type,
-          fileName: `media_${Date.now()}_${selectedFile.name}`
-        };
-
-        const response = await fetch(GAS_URL, {
+        const response = await fetch('https://api.imgbb.com/1/upload?key=106580ebef11da51048e4ec5959fe9d1', {
           method: 'POST',
-          body: JSON.stringify(payload)
+          body: formData
         });
         
         setUploadProgress(90);
-        const result = await response.json();
+        const data = await response.json();
         
-        if (result.status === 'success') {
-          finalUrl = result.url;
+        if (data.success) {
+          finalUrl = data.data.url;
           setUploadProgress(100);
         } else {
-          throw new Error(result.message || 'Unknown error from GAS');
+          throw new Error(data.error?.message || 'Upload failed');
         }
       } catch (error) {
-        console.error('GAS Upload Error:', error);
-        alert('เกิดข้อผิดพลาดในการอัปโหลดไฟล์ไป Google Drive');
+        console.error('ImgBB Upload Error:', error);
+        alert('เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ');
         setIsUploading(false);
         return;
       }
