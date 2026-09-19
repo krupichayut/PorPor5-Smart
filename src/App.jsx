@@ -2,7 +2,7 @@ import { lazy, Suspense, useState, useEffect, useMemo } from 'react';
 import { BrowserRouter as Router, Routes, Route, NavLink, Navigate, useLocation } from 'react-router-dom';
 import { 
   Users, Calendar, Award, Settings, BookOpen, LogOut, Key, BarChart3,
-  FileText, ClipboardList, Star, Paintbrush, Menu, Library
+  FileText, ClipboardList, Star, Paintbrush, Menu, Library, Image
 } from 'lucide-react';
 import { auth } from './firebase';
 import { onAuthStateChanged, signInWithEmailAndPassword, signOut } from 'firebase/auth';
