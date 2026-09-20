@@ -37,6 +37,287 @@ function ChartFrame({ children, style }) {
   );
 }
 
+// ===== ATTENDANCE HEATMAP (GitHub-style) =====
+const WEEKDAY_LABELS = ['อา', 'จ', 'อ', 'พ', 'พฤ', 'ศ', 'ส'];
+const MONTH_LABELS = ['ม.ค.', 'ก.พ.', 'มี.ค.', 'เม.ย.', 'พ.ค.', 'มิ.ย.', 'ก.ค.', 'ส.ค.', 'ก.ย.', 'ต.ค.', 'พ.ย.', 'ธ.ค.'];
+
+function getHeatmapColor(rate) {
+  if (rate === null) return 'var(--bg-tertiary)';
+  if (rate >= 95) return '#22c55e';
+  if (rate >= 85) return '#4ade80';
+  if (rate >= 75) return '#86efac';
+  if (rate >= 60) return '#fbbf24';
+  if (rate >= 40) return '#f97316';
+  return '#ef4444';
+}
+
+function AttendanceHeatmap({ attendance, classes, students }) {
+  const heatmapData = useMemo(() => {
+    if (!attendance || attendance.length === 0) return { weeks: [], months: [] };
+    
+    // Get all unique dates sorted
+    const allDates = [...new Set(attendance.map(a => a.date))].sort();
+    if (allDates.length === 0) return { weeks: [], months: [] };
+
+    // Build a map: date -> { present, total }
+    const dateMap = {};
+    attendance.forEach(a => {
+      if (a.status === 'holiday') return;
+      if (!dateMap[a.date]) dateMap[a.date] = { present: 0, total: 0 };
+      dateMap[a.date].total++;
+      if (a.status === 'present' || a.status === 'late') dateMap[a.date].present++;
+    });
+
+    // Build calendar grid from first to last date
+    const startDate = new Date(allDates[0]);
+    const endDate = new Date(allDates[allDates.length - 1]);
+    
+    // Adjust start to beginning of week (Sunday)
+    const calStart = new Date(startDate);
+    calStart.setDate(calStart.getDate() - calStart.getDay());
+    
+    // Adjust end to end of week (Saturday)
+    const calEnd = new Date(endDate);
+    calEnd.setDate(calEnd.getDate() + (6 - calEnd.getDay()));
+    
+    const weeks = [];
+    const months = [];
+    let currentWeek = [];
+    let lastMonth = -1;
+    
+    const cursor = new Date(calStart);
+    while (cursor <= calEnd) {
+      const dateStr = cursor.toISOString().split('T')[0];
+      const dayOfWeek = cursor.getDay();
+      const month = cursor.getMonth();
+      
+      // Track month labels
+      if (month !== lastMonth) {
+        months.push({ label: MONTH_LABELS[month], weekIndex: weeks.length });
+        lastMonth = month;
+      }
+      
+      const dayData = dateMap[dateStr];
+      currentWeek.push({
+        date: dateStr,
+        dayOfWeek,
+        rate: dayData ? Math.round((dayData.present / dayData.total) * 100) : null,
+        hasData: !!dayData,
+        present: dayData?.present || 0,
+        total: dayData?.total || 0
+      });
+      
+      if (dayOfWeek === 6) {
+        weeks.push(currentWeek);
+        currentWeek = [];
+      }
+      
+      cursor.setDate(cursor.getDate() + 1);
+    }
+    if (currentWeek.length > 0) weeks.push(currentWeek);
+    
+    return { weeks, months };
+  }, [attendance]);
+
+  const [tooltip, setTooltip] = useState(null);
+  
+  if (heatmapData.weeks.length === 0) {
+    return <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>ยังไม่มีข้อมูลการเช็คชื่อ</div>;
+  }
+
+  const cellSize = 14;
+  const cellGap = 3;
+  const labelWidth = 28;
+
+  return (
+    <div style={{ position: 'relative' }}>
+      <div style={{ overflowX: 'auto', paddingBottom: '0.5rem' }}>
+        {/* Month labels */}
+        <div style={{ display: 'flex', paddingLeft: labelWidth + 'px', marginBottom: '4px' }}>
+          {heatmapData.months.map((m, i) => (
+            <span key={i} style={{
+              position: 'absolute',
+              left: `${labelWidth + m.weekIndex * (cellSize + cellGap)}px`,
+              fontSize: '0.65rem',
+              color: 'var(--text-muted)',
+              whiteSpace: 'nowrap'
+            }}>{m.label}</span>
+          ))}
+        </div>
+        
+        <div style={{ display: 'flex', gap: '0px', marginTop: '18px' }}>
+          {/* Weekday labels */}
+          <div style={{ display: 'flex', flexDirection: 'column', gap: cellGap + 'px', width: labelWidth + 'px', flexShrink: 0 }}>
+            {WEEKDAY_LABELS.map((label, i) => (
+              <div key={i} style={{ 
+                height: cellSize + 'px', 
+                fontSize: '0.6rem', 
+                color: 'var(--text-muted)', 
+                display: 'flex', 
+                alignItems: 'center',
+                visibility: (i % 2 === 1) ? 'visible' : 'hidden'
+              }}>{label}</div>
+            ))}
+          </div>
+          
+          {/* Heatmap grid */}
+          <div style={{ display: 'flex', gap: cellGap + 'px' }}>
+            {heatmapData.weeks.map((week, wi) => (
+              <div key={wi} style={{ display: 'flex', flexDirection: 'column', gap: cellGap + 'px' }}>
+                {week.map((day, di) => (
+                  <div
+                    key={di}
+                    onMouseEnter={(e) => setTooltip({ ...day, x: e.clientX, y: e.clientY })}
+                    onMouseLeave={() => setTooltip(null)}
+                    style={{
+                      width: cellSize + 'px',
+                      height: cellSize + 'px',
+                      borderRadius: '3px',
+                      backgroundColor: getHeatmapColor(day.rate),
+                      opacity: day.hasData ? 1 : 0.15,
+                      cursor: day.hasData ? 'pointer' : 'default',
+                      transition: 'transform 0.15s ease',
+                    }}
+                    onMouseOver={(e) => { if (day.hasData) e.target.style.transform = 'scale(1.3)'; }}
+                    onMouseOut={(e) => { e.target.style.transform = 'scale(1)'; }}
+                  />
+                ))}
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+      
+      {/* Legend */}
+      <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginTop: '0.75rem', justifyContent: 'flex-end' }}>
+        <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>น้อย</span>
+        {['#ef4444', '#f97316', '#fbbf24', '#86efac', '#4ade80', '#22c55e'].map((c, i) => (
+          <div key={i} style={{ width: 10, height: 10, borderRadius: 2, backgroundColor: c }} />
+        ))}
+        <span style={{ fontSize: '0.65rem', color: 'var(--text-muted)' }}>มาก</span>
+      </div>
+
+      {/* Tooltip */}
+      {tooltip && tooltip.hasData && (
+        <div style={{
+          position: 'fixed',
+          left: tooltip.x + 12,
+          top: tooltip.y - 40,
+          background: 'var(--bg-surface-elevated)',
+          border: '1px solid var(--border-strong)',
+          borderRadius: '8px',
+          padding: '0.5rem 0.75rem',
+          fontSize: '0.8rem',
+          color: 'var(--text-primary)',
+          zIndex: 10000,
+          pointerEvents: 'none',
+          boxShadow: '0 4px 12px rgba(0,0,0,0.4)',
+          whiteSpace: 'nowrap'
+        }}>
+          <div style={{ fontWeight: 600, marginBottom: '2px' }}>{tooltip.date}</div>
+          <div>มาเรียน {tooltip.present}/{tooltip.total} คน ({tooltip.rate}%)</div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+// ===== GRADE STACKED BAR =====
+const GRADE_COLORS = {
+  '4.0': '#a78bfa',
+  '3.5': '#818cf8',
+  '3.0': '#60a5fa',
+  '2.5': '#38bdf8',
+  '2.0': '#34d399',
+  '1.5': '#fbbf24',
+  '1.0': '#fb923c',
+  '0': '#f87171'
+};
+
+function GradeStackedBar({ classes, students, scoreColumns, indicators, scores }) {
+  const barData = useMemo(() => {
+    return classes.map(cls => {
+      const clsStudents = students.filter(s => s.classId === cls.id);
+      const context = getClassScoreContext(cls.id, classes, scoreColumns, indicators);
+      const gradeSummary = getGradeSummaryData(clsStudents, context, scores);
+      
+      const total = gradeSummary.reduce((sum, g) => sum + g.value, 0);
+      const grades = {};
+      gradeSummary.forEach(g => {
+        grades[g.grade] = total > 0 ? Math.round((g.value / total) * 100) : 0;
+      });
+      
+      return { name: cls.name, total, grades, raw: gradeSummary };
+    });
+  }, [classes, students, scoreColumns, indicators, scores]);
+
+  const [hoverBar, setHoverBar] = useState(null);
+
+  if (barData.length === 0 || barData.every(d => d.total === 0)) {
+    return <div style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>ยังไม่มีข้อมูลผลการเรียน</div>;
+  }
+
+  const gradeKeys = ['4.0', '3.5', '3.0', '2.5', '2.0', '1.5', '1.0', '0'];
+
+  return (
+    <div>
+      <div style={{ display: 'flex', flexDirection: 'column', gap: '0.75rem' }}>
+        {barData.map((cls, i) => (
+          <div key={i} style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}
+               onMouseEnter={() => setHoverBar(i)}
+               onMouseLeave={() => setHoverBar(null)}>
+            <div style={{ width: '80px', flexShrink: 0, fontSize: '0.8rem', color: 'var(--text-secondary)', textAlign: 'right', fontWeight: 500 }}>
+              {cls.name}
+            </div>
+            <div style={{ flex: 1, display: 'flex', height: '28px', borderRadius: '6px', overflow: 'hidden', transition: 'transform 0.2s ease', transform: hoverBar === i ? 'scaleY(1.15)' : 'scaleY(1)' }}>
+              {cls.total === 0 ? (
+                <div style={{ flex: 1, background: 'var(--bg-tertiary)', display: 'flex', alignItems: 'center', justifyContent: 'center', fontSize: '0.7rem', color: 'var(--text-muted)' }}>ไม่มีข้อมูล</div>
+              ) : gradeKeys.map(grade => {
+                const pct = cls.grades[grade] || 0;
+                if (pct === 0) return null;
+                const rawVal = cls.raw.find(g => g.grade === grade)?.value || 0;
+                return (
+                  <div
+                    key={grade}
+                    title={`เกรด ${grade}: ${rawVal} คน (${pct}%)`}
+                    style={{
+                      width: pct + '%',
+                      backgroundColor: GRADE_COLORS[grade],
+                      display: 'flex',
+                      alignItems: 'center',
+                      justifyContent: 'center',
+                      fontSize: '0.65rem',
+                      color: 'rgba(0,0,0,0.7)',
+                      fontWeight: 600,
+                      transition: 'width 0.5s ease',
+                      minWidth: pct > 5 ? 'auto' : '0'
+                    }}
+                  >
+                    {pct >= 8 ? `${pct}%` : ''}
+                  </div>
+                );
+              })}
+            </div>
+            <div style={{ width: '40px', flexShrink: 0, fontSize: '0.75rem', color: 'var(--text-muted)', textAlign: 'left' }}>
+              {cls.total} คน
+            </div>
+          </div>
+        ))}
+      </div>
+      
+      {/* Legend */}
+      <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.75rem', marginTop: '1rem', justifyContent: 'center' }}>
+        {gradeKeys.map(grade => (
+          <div key={grade} style={{ display: 'flex', alignItems: 'center', gap: '4px' }}>
+            <div style={{ width: 10, height: 10, borderRadius: 2, backgroundColor: GRADE_COLORS[grade] }} />
+            <span style={{ fontSize: '0.7rem', color: 'var(--text-secondary)' }}>เกรด {grade}</span>
+          </div>
+        ))}
+      </div>
+    </div>
+  );
+}
+
 export default function Dashboard({ classes, students, activeClassId, setActiveClassId, attendance, scores, scoreColumns, indicators }) {
   const navigate = useNavigate();
 
@@ -173,56 +454,22 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
               </div>
             </div>
 
-            <div className="hairline-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(380px, 1fr))', marginBottom: '1.5rem' }}>
+            {/* Heatmap Calendar + Stacked Bar Charts */}
+            <div className="hairline-grid" style={{ gridTemplateColumns: '1fr', marginBottom: '1.5rem' }}>
               <div className="hairline-cell">
                 <div className="stat-label" style={{ marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <TrendingUp size={15} style={{ color: 'var(--text-primary)' }} /> แนวโน้มการเข้าเรียนรายห้อง
+                  <Calendar size={15} style={{ color: 'var(--text-primary)' }} /> ปฏิทินการเข้าเรียน (Attendance Heatmap)
                 </div>
-                <ChartFrame style={{ height: 260 }}>
-                  {({ width, height }) => classes.length > 0 ? (
-                      <AreaChart width={width} height={height} data={classes.map(cls => ({
-                        name: cls.name,
-                        rate: calculateAttendanceRate(attendance.filter(a => a.classId === cls.id))
-                      }))}>
-                        <CartesianGrid strokeDasharray="3 3" stroke="var(--border-subtle)" vertical={false} />
-                        <XAxis dataKey="name" stroke="var(--text-muted)" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} />
-                        <YAxis stroke="var(--text-muted)" tick={{ fill: 'var(--text-muted)', fontSize: 11 }} axisLine={false} tickLine={false} domain={[0, 100]} />
-                        <Tooltip 
-                          contentStyle={{ backgroundColor: 'var(--bg-surface-elevated)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '0.85rem' }} 
-                        />
-                        <defs>
-                          <linearGradient id="colorAtt" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="5%" stopColor="#ffffff" stopOpacity={0.2}/>
-                            <stop offset="95%" stopColor="#ffffff" stopOpacity={0}/>
-                          </linearGradient>
-                        </defs>
-                        <Area type="monotone" dataKey="rate" stroke="#ffffff" strokeWidth={2} fill="url(#colorAtt)" />
-                      </AreaChart>
-                  ) : (
-                    <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>ไม่มีข้อมูล</div>
-                  )}
-                </ChartFrame>
+                <AttendanceHeatmap attendance={attendance} classes={classes} students={students} />
               </div>
+            </div>
 
+            <div className="hairline-grid" style={{ gridTemplateColumns: '1fr', marginBottom: '1.5rem' }}>
               <div className="hairline-cell">
                 <div className="stat-label" style={{ marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-                  <BarChart3 size={15} style={{ color: 'var(--text-primary)' }} /> การกระจายตัวของผลการเรียน (Grade Distribution)
+                  <BarChart3 size={15} style={{ color: 'var(--text-primary)' }} /> สัดส่วนผลการเรียนแยกตามห้อง (Grade Distribution)
                 </div>
-                <ChartFrame style={{ height: 260 }}>
-                  {({ width, height }) => classes.length > 0 ? (
-                      <RadarChart width={width} height={height} cx="50%" cy="50%" outerRadius="70%" data={radarChartData}>
-                        <PolarGrid stroke="var(--border-subtle)" />
-                        <PolarAngleAxis dataKey="grade" tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} />
-                        <PolarRadiusAxis angle={30} domain={[0, 'auto']} tick={false} axisLine={false} />
-                        <Radar name="จำนวนนักเรียน" dataKey="value" stroke="var(--accent-primary)" fill="var(--accent-primary)" fillOpacity={0.15} />
-                        <Tooltip 
-                          contentStyle={{ backgroundColor: 'var(--bg-surface-elevated)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '0.85rem' }} 
-                        />
-                      </RadarChart>
-                  ) : (
-                    <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>ไม่มีข้อมูล</div>
-                  )}
-                </ChartFrame>
+                <GradeStackedBar classes={classes} students={students} scoreColumns={scoreColumns} indicators={indicators} scores={scores} />
               </div>
             </div>
 
