@@ -25,19 +25,27 @@ export default function StudentWorks({ works, setWorks, classes, readOnly }) {
   });
 
   const uploadToImgBB = async (file) => {
-    const formData = new FormData();
-    formData.append('image', file);
-    formData.append('key', '106580ebef11da51048e4ec5959fe9d1');
-    
-    const response = await fetch(`https://api.imgbb.com/1/upload`, {
-      method: 'POST',
-      body: formData
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.onload = async () => {
+        try {
+          const base64 = reader.result.split(',')[1];
+          const body = new URLSearchParams();
+          body.append('key', '106580ebef11da51048e4ec5959fe9d1');
+          body.append('image', base64);
+          const response = await fetch('https://api.imgbb.com/1/upload', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+            body: body.toString()
+          });
+          const data = await response.json();
+          if (data.success) resolve(data.data.url);
+          else reject(new Error(data.error?.message || 'Upload failed'));
+        } catch (err) { reject(err); }
+      };
+      reader.onerror = () => reject(new Error('FileReader error'));
+      reader.readAsDataURL(file);
     });
-    const data = await response.json();
-    if (data.success) {
-      return data.data.url;
-    }
-    throw new Error(data.error?.message || 'Upload failed');
   };
 
   const handleFileChange = async (e) => {

@@ -153,22 +153,29 @@ export default function MediaLibrary({ appSettings, activeClassId, classes, medi
     try {
       setIsUploadingCover(true);
       
-      const formData = new FormData();
-      formData.append('image', file);
-      formData.append('key', '106580ebef11da51048e4ec5959fe9d1');
-      
-      const response = await fetch('https://api.imgbb.com/1/upload', {
-        method: 'POST',
-        body: formData
+      const url = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = async () => {
+          try {
+            const base64 = reader.result.split(',')[1];
+            const body = new URLSearchParams();
+            body.append('key', '106580ebef11da51048e4ec5959fe9d1');
+            body.append('image', base64);
+            const response = await fetch('https://api.imgbb.com/1/upload', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+              body: body.toString()
+            });
+            const data = await response.json();
+            if (data.success) resolve(data.data.url);
+            else reject(new Error(data.error?.message || 'Upload failed'));
+          } catch (err) { reject(err); }
+        };
+        reader.onerror = () => reject(new Error('FileReader error'));
+        reader.readAsDataURL(file);
       });
       
-      const data = await response.json();
-      
-      if (data.success) {
-        setCoverImageUrl(data.data.url);
-      } else {
-        throw new Error(data.error?.message || 'Upload failed');
-      }
+      setCoverImageUrl(url);
     } catch (error) {
       console.error('ImgBB Upload Error:', error);
       alert('เกิดข้อผิดพลาดในการอัปโหลดภาพปก');
@@ -200,24 +207,31 @@ export default function MediaLibrary({ appSettings, activeClassId, classes, medi
         setIsUploading(true);
         setUploadProgress(10);
         
-        const formData = new FormData();
-        formData.append('image', selectedFile);
-        formData.append('key', '106580ebef11da51048e4ec5959fe9d1');
-        
-        const response = await fetch('https://api.imgbb.com/1/upload', {
-          method: 'POST',
-          body: formData
+        finalUrl = await new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.onload = async () => {
+            try {
+              const base64 = reader.result.split(',')[1];
+              const body = new URLSearchParams();
+              body.append('key', '106580ebef11da51048e4ec5959fe9d1');
+              body.append('image', base64);
+              setUploadProgress(50);
+              const response = await fetch('https://api.imgbb.com/1/upload', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: body.toString()
+              });
+              const data = await response.json();
+              setUploadProgress(90);
+              if (data.success) resolve(data.data.url);
+              else reject(new Error(data.error?.message || 'Upload failed'));
+            } catch (err) { reject(err); }
+          };
+          reader.onerror = () => reject(new Error('FileReader error'));
+          reader.readAsDataURL(selectedFile);
         });
         
-        setUploadProgress(90);
-        const data = await response.json();
-        
-        if (data.success) {
-          finalUrl = data.data.url;
-          setUploadProgress(100);
-        } else {
-          throw new Error(data.error?.message || 'Upload failed');
-        }
+        setUploadProgress(100);
       } catch (error) {
         console.error('ImgBB Upload Error:', error);
         alert('เกิดข้อผิดพลาดในการอัปโหลดรูปภาพ');
