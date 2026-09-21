@@ -8,7 +8,9 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
   const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
 
   const [editingPlanId, setEditingPlanId] = useState(null);
+  const [editingRecordIndex, setEditingRecordIndex] = useState(-1);
   const [printingPlan, setPrintingPlan] = useState(null);
+  const [printingRecordIndex, setPrintingRecordIndex] = useState(-1);
   
   const [unit, setUnit] = useState('');
   const [week, setWeek] = useState('');
@@ -159,31 +161,39 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
     setImportText('');
   };
 
-  const openRecordModal = (plan) => {
+  const openRecordModal = (plan, recordIndex = -1) => {
     setEditingPlanId(plan.id);
-    if (typeof plan.postRecord === 'object' && plan.postRecord !== null) {
+    setEditingRecordIndex(recordIndex);
+    
+    const records = plan.postRecords || (plan.postRecord ? [plan.postRecord] : []);
+    
+    if (recordIndex >= 0 && recordIndex < records.length) {
+      const rec = records[recordIndex];
       setRecordData({
-        date: plan.postRecord.date || '',
-        k: plan.postRecord.k || '',
-        p: plan.postRecord.p || '',
-        a: plan.postRecord.a || '',
-        problems: plan.postRecord.problems || '',
-        unitNumber: plan.postRecord.unitNumber || '',
-        unitName: plan.postRecord.unitName || '',
-        planNumber: plan.postRecord.planNumber || '',
-        absentCount: plan.postRecord.absentCount || 0,
-        failedStudentIds: plan.postRecord.failedStudentIds || [],
-        passedCount: plan.postRecord.passedCount || '',
-        passedPercent: plan.postRecord.passedPercent || '',
-        failedCount: plan.postRecord.failedCount || '',
-        failedPercent: plan.postRecord.failedPercent || '',
-        failedNames: plan.postRecord.failedNames || ''
+        date: rec.date || '',
+        k: rec.k || '',
+        p: rec.p || '',
+        a: rec.a || '',
+        problems: rec.problems || (typeof rec === 'string' ? rec : ''),
+        unitNumber: rec.unitNumber || '',
+        unitName: rec.unitName || '',
+        planNumber: rec.planNumber || '',
+        absentCount: rec.absentCount || 0,
+        failedStudentIds: rec.failedStudentIds || [],
+        passedCount: rec.passedCount || '',
+        passedPercent: rec.passedPercent || '',
+        failedCount: rec.failedCount || '',
+        failedPercent: rec.failedPercent || '',
+        failedNames: rec.failedNames || ''
       });
     } else {
+      const lastRec = records.length > 0 ? records[records.length - 1] : {};
       setRecordData({
         date: '', k: '', p: '', a: '',
-        problems: typeof plan.postRecord === 'string' ? plan.postRecord : '',
-        unitNumber: '', unitName: '', planNumber: '',
+        problems: '',
+        unitNumber: lastRec.unitNumber || '', 
+        unitName: lastRec.unitName || '', 
+        planNumber: lastRec.planNumber ? String(Number(lastRec.planNumber) + 1) : '',
         absentCount: 0, failedStudentIds: [],
         passedCount: '', passedPercent: '', failedCount: '', failedPercent: '', failedNames: ''
       });
@@ -201,11 +211,22 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
       failedPercent: autoFailedPercent,
       failedNames: autoFailedNames,
     };
-    setLessonPlans(lessonPlans.map(p => 
-      p.id === editingPlanId ? { ...p, postRecord: finalRecordData } : p
-    ));
+    
+    setLessonPlans(lessonPlans.map(p => {
+      if (p.id === editingPlanId) {
+        const records = [...(p.postRecords || (p.postRecord ? [p.postRecord] : []))];
+        if (editingRecordIndex >= 0 && editingRecordIndex < records.length) {
+          records[editingRecordIndex] = finalRecordData;
+        } else {
+          records.push(finalRecordData);
+        }
+        return { ...p, postRecords: records, postRecord: null };
+      }
+      return p;
+    }));
     setIsRecordModalOpen(false);
     setEditingPlanId(null);
+    setEditingRecordIndex(-1);
   };
 
   const handleRecordChange = (e) => {
@@ -259,8 +280,9 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
     }
   };
 
-  const handlePrint = (plan) => {
+  const handlePrint = (plan, recordIndex = -1) => {
     setPrintingPlan(plan);
+    setPrintingRecordIndex(recordIndex);
   };
 
   const totalHours = classPlans.reduce((sum, p) => sum + Number(p.hours || 0), 0);
@@ -346,27 +368,43 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
                     </td>
                     <td style={{ textAlign: 'center' }}>{plan.hours}</td>
                     <td style={{ textAlign: 'center' }}>
-                      <div style={{ display: 'flex', gap: '4px', justifyContent: 'center' }}>
-                        <button 
-                          className={`btn-icon ${plan.postRecord ? 'has-record' : ''}`} 
-                          onClick={() => openRecordModal(plan)}
-                          title={plan.postRecord ? 'แก้ไขบันทึกหลังสอน' : 'เขียนบันทึกหลังสอน'}
-                          aria-label={plan.postRecord ? 'แก้ไขบันทึกหลังสอน' : 'เขียนบันทึกหลังสอน'}
-                          style={{ color: plan.postRecord ? 'var(--accent-cyan)' : 'var(--text-muted)' }}
-                        >
-                          {plan.postRecord ? <Check size={18} /> : <FileEdit size={18} />}
-                        </button>
-                        {plan.postRecord && (
-                          <button 
-                            className="btn-icon" 
-                            onClick={() => handlePrint(plan)}
-                            title="พิมพ์บันทึก"
-                            style={{ color: 'var(--text-primary)' }}
-                          >
-                            <Printer size={18} />
-                          </button>
-                        )}
-                      </div>
+                      {(() => {
+                        const records = plan.postRecords || (plan.postRecord ? [plan.postRecord] : []);
+                        return (
+                          <div style={{ display: 'flex', flexDirection: 'column', gap: '4px', alignItems: 'center' }}>
+                            {records.map((rec, i) => (
+                              <div key={i} style={{ display: 'flex', gap: '4px', alignItems: 'center' }}>
+                                <span style={{ color: 'var(--text-muted)', fontSize: '0.75rem', minWidth: '40px', textAlign: 'right', marginRight: '4px' }}>ครั้งที่ {i+1}</span>
+                                <button 
+                                  className="btn-icon" 
+                                  onClick={() => openRecordModal(plan, i)}
+                                  title="แก้ไขบันทึกหลังสอน"
+                                  style={{ color: 'var(--accent-cyan)' }}
+                                >
+                                  <FileEdit size={16} />
+                                </button>
+                                <button 
+                                  className="btn-icon" 
+                                  onClick={() => handlePrint(plan, i)}
+                                  title="พิมพ์บันทึก"
+                                  style={{ color: 'var(--text-primary)' }}
+                                >
+                                  <Printer size={16} />
+                                </button>
+                              </div>
+                            ))}
+                            {!readOnly && (
+                              <button 
+                                className="btn btn-outline" 
+                                style={{ padding: '2px 8px', fontSize: '0.75rem', marginTop: records.length > 0 ? '4px' : '0' }} 
+                                onClick={() => openRecordModal(plan, records.length)}
+                              >
+                                {records.length > 0 ? '+ เพิ่มครั้งต่อไป' : 'เขียนบันทึก'}
+                              </button>
+                            )}
+                          </div>
+                        );
+                      })()}
                     </td>
                     {!readOnly && (
                       <td style={{ textAlign: 'center', display: 'flex', justifyContent: 'center', gap: '0.5rem' }}>
@@ -643,7 +681,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
 
       {/* Invisible Print Layout */}
       {printingPlan && (
-        <PrintPostTeachingRecord plan={printingPlan} appSettings={appSettings} activeClass={activeClass} />
+        <PrintPostTeachingRecord plan={printingPlan} recordIndex={printingRecordIndex} appSettings={appSettings} activeClass={activeClass} />
       )}
     </div>
   );

@@ -1,16 +1,19 @@
 import React from 'react';
 
-export default function PrintPostTeachingRecord({ plan, appSettings, activeClass }) {
+export default function PrintPostTeachingRecord({ plan, recordIndex = -1, appSettings, activeClass }) {
   if (!plan) return null;
 
-  const record = plan.postRecord && typeof plan.postRecord === 'object' 
-    ? plan.postRecord 
+  const records = plan.postRecords || (plan.postRecord ? [plan.postRecord] : []);
+  const rawRecord = (recordIndex >= 0 && recordIndex < records.length) ? records[recordIndex] : plan.postRecord;
+
+  const record = rawRecord && typeof rawRecord === 'object' 
+    ? rawRecord 
     : {
         date: '',
         k: '',
         p: '',
         a: '',
-        problems: typeof plan.postRecord === 'string' ? plan.postRecord : '',
+        problems: typeof rawRecord === 'string' ? rawRecord : '',
         passedCount: '',
         passedPercent: '',
         failedCount: '',
