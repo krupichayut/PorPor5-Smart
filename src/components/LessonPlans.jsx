@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from 'react';
 import { ClipboardList, Plus, Trash2, Pencil, Upload, CheckSquare, Square, FileEdit, Check, Printer, Library, Link2 } from 'lucide-react';
 import PrintPostTeachingRecord from './PrintPostTeachingRecord';
 
-export default function LessonPlans({ activeClassId, classes, lessonPlans, setLessonPlans, readOnly, appSettings, students, mediaLibrary }) {
+export default function LessonPlans({ activeClassId, classes, lessonPlans, setLessonPlans, readOnly, appSettings, students, mediaLibrary, attendance, indicators }) {
   const [isAddModalOpen, setIsAddModalOpen] = useState(false);
   const [isImportModalOpen, setIsImportModalOpen] = useState(false);
   const [isRecordModalOpen, setIsRecordModalOpen] = useState(false);
@@ -29,6 +29,7 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
   const classPlans = lessonPlans.filter(p => p.classId === activeClassId);
   const classStudents = students ? students.filter(s => s.classId === activeClassId) : [];
   const totalClassStudents = classStudents.length;
+  const classIndicators = indicators ? indicators.filter(i => i.classId === activeClassId) : [];
 
   // Media available for this class (global + class-specific)
   const availableMedia = useMemo(() => {
@@ -37,6 +38,14 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
       !m.classIds || m.classIds.length === 0 || m.classIds.includes(activeClassId)
     );
   }, [mediaLibrary, activeClassId]);
+
+  // Absent students on selected date
+  const absentStudentIdsForDate = useMemo(() => {
+    if (!recordData.date || !attendance) return [];
+    return attendance
+      .filter(a => a.classId === activeClassId && a.date === recordData.date && a.status === 'absent')
+      .map(a => a.studentId);
+  }, [recordData.date, attendance, activeClassId]);
 
   const presentCount = totalClassStudents - (Number(recordData.absentCount) || 0);
   const autoFailedCount = recordData.failedStudentIds.length;
@@ -200,10 +209,54 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
   };
 
   const handleRecordChange = (e) => {
+    const { name, value } = e.target;
+    
+    // Auto-link: When date changes, pre-fill absent students from attendance data
+    if (name === 'date' && attendance) {
+      const absentRecords = attendance.filter(a => 
+        a.classId === activeClassId && 
+        a.date === value && 
+        a.status === 'absent'
+      );
+      
+      const newAbsentStudentIds = absentRecords.map(a => a.studentId);
+      
+      setRecordData({
+        ...recordData,
+        date: value,
+        failedStudentIds: newAbsentStudentIds,
+        absentCount: newAbsentStudentIds.length
+      });
+      return;
+    }
+
     setRecordData({
       ...recordData,
-      [e.target.name]: e.target.value
+      [name]: value
     });
+  };
+
+  const handleUnitSelect = (e) => {
+    const unitId = e.target.value;
+    if (!unitId) return;
+    
+    const selectedUnit = classIndicators.find(u => u.id === unitId);
+    if (selectedUnit) {
+      // Try to parse "หน่วยที่ 1 ทัศนธาตุ" into number and name
+      let uNum = '';
+      let uName = selectedUnit.name;
+      const match = selectedUnit.name.match(/หน่วยที่\s*(\d+)\s*(.*)/);
+      if (match) {
+        uNum = match[1];
+        uName = match[2] || selectedUnit.name;
+      }
+      
+      setRecordData(prev => ({
+        ...prev,
+        unitNumber: uNum || prev.unitNumber,
+        unitName: uName
+      }));
+    }
   };
 
   const handlePrint = (plan) => {
@@ -468,6 +521,19 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
             </div>
             <form onSubmit={handleSaveRecord}>
               
+              <div className="form-group" style={{ marginBottom: '1rem' }}>
+                <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Link2 size={16} style={{ color: 'var(--primary-color)' }} />
+                  เลือกหน่วยการเรียนรู้ (Auto-link จากโครงสร้างวิชา)
+                </label>
+                <select className="form-control" onChange={handleUnitSelect} defaultValue="" style={{ border: '1px solid var(--primary-color)' }}>
+                  <option value="" disabled>-- เลือกหน่วยเพื่อเติมข้อมูลอัตโนมัติ --</option>
+                  {classIndicators.map(unit => (
+                    <option key={unit.id} value={unit.id}>{unit.name}</option>
+                  ))}
+                </select>
+              </div>
+
               <div className="hairline-grid" style={{ gridTemplateColumns: '1fr 1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
                 <div className="form-group">
                   <label className="form-label">หน่วยการเรียนรู้ที่</label>
@@ -484,8 +550,11 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
               </div>
 
               <div className="form-group">
-                <label className="form-label">วันที่สอน (สำหรับแสดงในเอกสาร)</label>
-                <input type="date" name="date" className="form-control" value={recordData.date} onChange={handleRecordChange} required />
+                <label className="form-label" style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                  <Link2 size={16} style={{ color: 'var(--primary-color)' }} />
+                  วันที่สอน (เชื่อมโยงข้อมูลขาดเรียนอัตโนมัติ)
+                </label>
+                <input type="date" name="date" className="form-control" value={recordData.date} onChange={handleRecordChange} required style={{ border: '1px solid var(--primary-color)' }} />
               </div>
 
               <div className="hairline-grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1rem' }}>
@@ -516,24 +585,30 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
                   <span style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>เลือกแล้ว {autoFailedCount} คน</span>
                 </label>
                 <div className="hairline-cell" style={{ maxHeight: '150px', overflowY: 'auto', padding: '0.5rem', display: 'flex', flexDirection: 'column', gap: '0.25rem' }}>
-                  {classStudents.map(student => (
-                    <label key={student.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', padding: '4px 8px', borderRadius: '4px', backgroundColor: recordData.failedStudentIds.includes(student.id) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
-                      <input 
-                        type="checkbox" 
-                        checked={recordData.failedStudentIds.includes(student.id)}
-                        onChange={(e) => {
-                          if (e.target.checked) {
-                            setRecordData(prev => ({ ...prev, failedStudentIds: [...prev.failedStudentIds, student.id] }));
-                          } else {
-                            setRecordData(prev => ({ ...prev, failedStudentIds: prev.failedStudentIds.filter(id => id !== student.id) }));
-                          }
-                        }}
-                      />
-                      <span style={{ color: recordData.failedStudentIds.includes(student.id) ? 'var(--danger)' : 'var(--text-primary)' }}>
-                        {student.name}
-                      </span>
-                    </label>
-                  ))}
+                  {classStudents.map(student => {
+                    const isAbsentInAttendance = absentStudentIdsForDate.includes(student.id);
+                    return (
+                      <label key={student.id} style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer', padding: '4px 8px', borderRadius: '4px', backgroundColor: recordData.failedStudentIds.includes(student.id) ? 'rgba(239, 68, 68, 0.1)' : 'transparent' }}>
+                        <input 
+                          type="checkbox" 
+                          checked={recordData.failedStudentIds.includes(student.id)}
+                          onChange={(e) => {
+                            if (e.target.checked) {
+                              setRecordData(prev => ({ ...prev, failedStudentIds: [...prev.failedStudentIds, student.id] }));
+                            } else {
+                              setRecordData(prev => ({ ...prev, failedStudentIds: prev.failedStudentIds.filter(id => id !== student.id) }));
+                            }
+                          }}
+                        />
+                        <span style={{ color: recordData.failedStudentIds.includes(student.id) ? 'var(--danger)' : 'var(--text-primary)', flex: 1 }}>
+                          {student.name}
+                        </span>
+                        {isAbsentInAttendance && (
+                          <span className="badge" style={{ backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-muted)', fontSize: '0.65rem' }}>ขาดเรียน</span>
+                        )}
+                      </label>
+                    );
+                  })}
                   {classStudents.length === 0 && (
                     <div style={{ color: 'var(--text-muted)', textAlign: 'center', padding: '1rem' }}>ไม่พบรายชื่อนักเรียนในห้องนี้</div>
                   )}
