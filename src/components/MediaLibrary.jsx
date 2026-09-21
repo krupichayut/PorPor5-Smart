@@ -155,8 +155,9 @@ export default function MediaLibrary({ appSettings, activeClassId, classes, medi
       
       const formData = new FormData();
       formData.append('image', file);
+      formData.append('key', '106580ebef11da51048e4ec5959fe9d1');
       
-      const response = await fetch('https://api.imgbb.com/1/upload?key=106580ebef11da51048e4ec5959fe9d1', {
+      const response = await fetch('https://api.imgbb.com/1/upload', {
         method: 'POST',
         body: formData
       });
@@ -201,8 +202,9 @@ export default function MediaLibrary({ appSettings, activeClassId, classes, medi
         
         const formData = new FormData();
         formData.append('image', selectedFile);
+        formData.append('key', '106580ebef11da51048e4ec5959fe9d1');
         
-        const response = await fetch('https://api.imgbb.com/1/upload?key=106580ebef11da51048e4ec5959fe9d1', {
+        const response = await fetch('https://api.imgbb.com/1/upload', {
           method: 'POST',
           body: formData
         });

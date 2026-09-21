@@ -53,9 +53,9 @@ export default function Certificates({ certificates, setCertificates, classes, a
   const uploadToImgBB = async (file) => {
     const formData = new FormData();
     formData.append('image', file);
-    const API_KEY = '106580ebef11da51048e4ec5959fe9d1';
+    formData.append('key', '106580ebef11da51048e4ec5959fe9d1');
     
-    const response = await fetch(`https://api.imgbb.com/1/upload?key=${API_KEY}`, {
+    const response = await fetch(`https://api.imgbb.com/1/upload`, {
       method: 'POST',
       body: formData
     });
