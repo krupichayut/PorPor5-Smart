@@ -22,6 +22,8 @@ const CoursePlanContainer = lazy(() => import('./components/CoursePlanContainer'
 const Rewards = lazy(() => import('./components/Rewards'));
 const MediaLibrary = lazy(() => import('./components/MediaLibrary'));
 const StudentWorks = lazy(() => import('./components/StudentWorks'));
+const Certificates = lazy(() => import('./components/Certificates'));
+
 
 function PageLoading() {
   return (
@@ -95,6 +97,7 @@ function App() {
   const [rewards, setRewards, rwInit, rewardsSaveError] = useFirestoreData('appData', 'rewards', []);
   const [mediaLibrary, setMediaLibrary, mlInit, mediaLibrarySaveError] = useFirestoreData('appData', 'mediaLibrary', []);
   const [studentWorks, setStudentWorks, swInit, studentWorksSaveError] = useFirestoreData('appData', 'studentWorks', []);
+  const [certificates, setCertificates, certInit, certificatesSaveError] = useFirestoreData('appData', 'certificates', []);
 
   const [appSettings, setAppSettings, settingsInit, settingsSaveError] = useFirestoreData('appData', 'settings', {
     schoolName: '',
@@ -174,6 +177,9 @@ function App() {
             </NavLink>
             <NavLink to="/gallery" aria-label="ผลงานนักเรียน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Image size={17} /> <span>แกลเลอรีผลงาน</span>
+            </NavLink>
+            <NavLink to="/certificates" aria-label="เกียรติบัตร" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Award size={17} /> <span>เกียรติบัตร</span>
             </NavLink>
             <NavLink to="/assessments" aria-label="การประเมิน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Star size={17} /> <span>การประเมิน</span>
@@ -290,6 +296,7 @@ function App() {
                   <Route path="/rewards" element={<Rewards students={students} activeClassId={activeClassId} classes={classes} studentPoints={studentPoints} setStudentPoints={setStudentPoints} rewards={rewards} setRewards={setRewards} readOnly={readOnly} />} />
                   <Route path="/media-library" element={<MediaLibrary appSettings={appSettings} activeClassId={activeClassId} classes={classes} mediaLibrary={mediaLibrary} setMediaLibrary={setMediaLibrary} readOnly={readOnly} />} />
                   <Route path="/gallery" element={<StudentWorks works={studentWorks} setWorks={setStudentWorks} classes={classes} readOnly={readOnly} />} />
+                  <Route path="/certificates" element={<Certificates certificates={certificates} setCertificates={setCertificates} classes={classes} appSettings={appSettings} readOnly={readOnly} />} />
                   <Route path="*" element={<Navigate to="/" replace />} />
                 </AnimatedRoutes>
               </Suspense>
