@@ -596,8 +596,8 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                         {Math.round(studentViewTotal)}
                       </td>
                       {viewTerm === 'all' && (
-                        <td style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface-elevated)', fontWeight: 700, color: getGradeColor(calculateGrade(studentViewTotal)) }}>
-                          {calculateGrade(studentViewTotal)}
+                        <td style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface-elevated)', fontWeight: 700, color: getGradeColor(getGrade(studentViewTotal)) }}>
+                          {getGrade(studentViewTotal)}
                         </td>
                       )}
                     </tr>
