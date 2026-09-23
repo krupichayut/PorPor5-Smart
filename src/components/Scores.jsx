@@ -335,8 +335,8 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
             <table className="data-table gradebook-table" style={{ whiteSpace: 'nowrap' }}>
               <thead>
                 <tr>
-                  <th className="sticky-col-left" rowSpan={2} style={{ width: '50px', textAlign: 'center', position: 'sticky', left: 0, backgroundColor: 'var(--bg-surface-elevated)', verticalAlign: 'middle', borderRight: '1px solid var(--border-subtle)' }}>เลขที่</th>
-                  <th className="sticky-col-left" rowSpan={2} style={{ position: 'sticky', left: '50px', backgroundColor: 'var(--bg-surface-elevated)', verticalAlign: 'middle', minWidth: '160px', borderRight: '1px solid var(--border-subtle)' }}>ชื่อ - นามสกุล</th>
+                  <th className="sticky-col-left" rowSpan={2} style={{ boxSizing: 'border-box', width: '60px', minWidth: '60px', padding: '0.5rem', textAlign: 'center', position: 'sticky', left: 0, backgroundColor: 'var(--bg-surface-elevated)', verticalAlign: 'middle', borderRight: '1px solid var(--border-subtle)' }}>เลขที่</th>
+                  <th className="sticky-col-left" rowSpan={2} style={{ boxSizing: 'border-box', width: '220px', minWidth: '220px', padding: '0.5rem 1rem', position: 'sticky', left: '60px', backgroundColor: 'var(--bg-surface-elevated)', verticalAlign: 'middle', borderRight: '1px solid var(--border-subtle)' }}>ชื่อ - นามสกุล</th>
                   
                   {/* Unit Groups */}
                   {displayUnits.map(unit => {
@@ -489,8 +489,8 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                   
                   return (
                     <tr key={s.id}>
-                      <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--text-muted)', position: 'sticky', left: 0, backgroundColor: 'var(--bg-surface)', zIndex: 2, borderRight: '1px solid var(--border-subtle)' }}>{index + 1}</td>
-                      <td style={{ fontWeight: 500, position: 'sticky', left: '50px', backgroundColor: 'var(--bg-surface)', zIndex: 2, borderRight: '1px solid var(--border-subtle)', color: 'var(--text-primary)' }}>{s.name}</td>
+                      <td style={{ boxSizing: 'border-box', width: '60px', minWidth: '60px', padding: '0.5rem', textAlign: 'center', fontWeight: 600, color: 'var(--text-muted)', position: 'sticky', left: 0, backgroundColor: 'var(--bg-surface-elevated)', zIndex: 2, borderRight: '1px solid var(--border-subtle)' }}>{index + 1}</td>
+                      <td style={{ boxSizing: 'border-box', width: '220px', minWidth: '220px', padding: '0.5rem 1rem', fontWeight: 500, position: 'sticky', left: '60px', backgroundColor: 'var(--bg-surface-elevated)', zIndex: 2, borderRight: '1px solid var(--border-subtle)', color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.name}</td>
                       
                       {/* Unit Cells */}
                       {displayUnits.map(unit => {
