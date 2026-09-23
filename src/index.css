@@ -528,15 +528,44 @@ body {
 .data-table-container, .table-container {
   width: 100%;
   overflow-x: auto;
+  overflow-y: auto;
   border: 1px solid var(--border-subtle);
   border-radius: var(--radius-md);
   background-color: var(--bg-surface);
 }
 
+.gradebook-table-container {
+  max-height: calc(100vh - 280px); /* Leave room for header/tools */
+  overflow: auto;
+}
+
+.gradebook-table th {
+  position: sticky;
+  top: 0;
+  z-index: 3;
+  box-shadow: 0 1px 0 var(--border-subtle);
+}
+
+/* Second row of headers */
+.gradebook-table thead tr:nth-child(2) th {
+  top: 45px; /* Adjust based on first row height */
+  box-shadow: 0 1px 0 var(--border-subtle);
+  z-index: 3;
+}
+
+.gradebook-table th.sticky-col-left {
+  z-index: 5 !important;
+}
+
 .data-table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: separate;
+  border-spacing: 0;
   font-size: 0.875rem;
+}
+
+.data-table th, .data-table td {
+  border-bottom: 1px solid var(--border-subtle);
 }
 
 .data-table th {

@@ -11,7 +11,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
   const [newColumnUnitId, setNewColumnUnitId] = useState('');
   const [newColumnIndicatorId, setNewColumnIndicatorId] = useState('');
   
-  const [viewTerm, setViewTerm] = useState('1'); // '1', '2', 'all'
+  const [viewTerm, setViewTerm] = useState('all'); // '1', '2', 'all'
   const [viewUnit, setViewUnit] = useState('all'); // 'all', or unitId
 
   const activeClass = classes.find(c => c.id === activeClassId);
@@ -44,6 +44,28 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
     setNewColumnType(col.type || 'collected');
     setNewColumnUnitId(col.unitId || '');
     setNewColumnIndicatorId(col.indicatorId || '');
+    setIsColumnModalOpen(true);
+  };
+
+  const handleQuickAddColumn = (type, unitId = '') => {
+    setEditingColumnId(null);
+    setNewColumnType(type);
+    setNewColumnUnitId(unitId);
+    setNewColumnIndicatorId('');
+    
+    // Auto-generate name based on type
+    if (type === 'midterm') {
+      setNewColumnName('สอบกลางภาค');
+      setNewColumnMax(activeClass?.midtermWeight || 10);
+    } else if (type === 'final') {
+      setNewColumnName('สอบปลายภาค');
+      setNewColumnMax(activeClass?.finalWeight || 10);
+    } else {
+      const existingCols = scoreColumns.filter(c => c.classId === activeClassId && c.unitId === unitId);
+      setNewColumnName(`ชิ้นงานที่ ${existingCols.length + 1}`);
+      setNewColumnMax(10);
+    }
+    
     setIsColumnModalOpen(true);
   };
 
@@ -206,8 +228,8 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
     displayUnits = displayUnits.filter(u => u.id === viewUnit);
   }
 
-  const showMidterm = (viewTerm === '1' || viewTerm === 'all') && viewUnit === 'all';
-  const showFinal = (viewTerm === '2' || viewTerm === 'all') && viewUnit === 'all';
+  const showMidterm = viewUnit === 'all';
+  const showFinal = viewUnit === 'all';
 
   if (!activeClassId) {
     return (
@@ -313,15 +335,22 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
             <table className="data-table gradebook-table" style={{ whiteSpace: 'nowrap' }}>
               <thead>
                 <tr>
-                  <th rowSpan={2} style={{ width: '50px', textAlign: 'center', position: 'sticky', left: 0, backgroundColor: 'var(--bg-surface-elevated)', zIndex: 3, verticalAlign: 'middle', borderRight: '1px solid var(--border-subtle)' }}>เลขที่</th>
-                  <th rowSpan={2} style={{ position: 'sticky', left: '50px', backgroundColor: 'var(--bg-surface-elevated)', zIndex: 3, verticalAlign: 'middle', minWidth: '160px', borderRight: '1px solid var(--border-subtle)' }}>ชื่อ - นามสกุล</th>
+                  <th className="sticky-col-left" rowSpan={2} style={{ width: '50px', textAlign: 'center', position: 'sticky', left: 0, backgroundColor: 'var(--bg-surface-elevated)', verticalAlign: 'middle', borderRight: '1px solid var(--border-subtle)' }}>เลขที่</th>
+                  <th className="sticky-col-left" rowSpan={2} style={{ position: 'sticky', left: '50px', backgroundColor: 'var(--bg-surface-elevated)', verticalAlign: 'middle', minWidth: '160px', borderRight: '1px solid var(--border-subtle)' }}>ชื่อ - นามสกุล</th>
                   
                   {/* Unit Groups */}
                   {displayUnits.map(unit => {
                     const unitCols = classScoreColumns.filter(c => c.unitId === unit.id && c.type === 'collected');
                     return (
                       <th key={unit.id} colSpan={Math.max(1, unitCols.length) + 1} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface)' }}>
-                        <div style={{ color: 'var(--text-primary)', fontWeight: 600 }}>{unit.name}</div>
+                        <div style={{ color: 'var(--text-primary)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                          {unit.name}
+                          {!readOnly && (
+                            <button className="btn-icon" style={{ color: 'var(--accent-cyan)', padding: '2px' }} onClick={() => handleQuickAddColumn('collected', unit.id)} title="เพิ่มชิ้นงานในหน่วยนี้">
+                              <Plus size={14} />
+                            </button>
+                          )}
+                        </div>
                         <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>น้ำหนัก: {unit.weight} คะแนน</div>
                       </th>
                     );
@@ -330,13 +359,27 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                   {/* Exams Groups */}
                   {showMidterm && (
                     <th colSpan={Math.max(1, classScoreColumns.filter(c => c.type === 'midterm').length) + 1} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface)' }}>
-                      <div style={{ color: 'var(--warning)', fontWeight: 600 }}>สอบกลางภาค</div>
+                      <div style={{ color: 'var(--warning)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                        สอบกลางภาค
+                        {!readOnly && (
+                          <button className="btn-icon" style={{ color: 'var(--warning)', padding: '2px' }} onClick={() => handleQuickAddColumn('midterm')} title="เพิ่มช่องคะแนนกลางภาค">
+                            <Plus size={14} />
+                          </button>
+                        )}
+                      </div>
                       <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>น้ำหนัก: {midtermWeight} คะแนน</div>
                     </th>
                   )}
                   {showFinal && (
                     <th colSpan={Math.max(1, classScoreColumns.filter(c => c.type === 'final').length) + 1} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface)' }}>
-                      <div style={{ color: 'var(--danger)', fontWeight: 600 }}>สอบปลายภาค</div>
+                      <div style={{ color: 'var(--danger)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                        สอบปลายภาค
+                        {!readOnly && (
+                          <button className="btn-icon" style={{ color: 'var(--danger)', padding: '2px' }} onClick={() => handleQuickAddColumn('final')} title="เพิ่มช่องคะแนนปลายภาค">
+                            <Plus size={14} />
+                          </button>
+                        )}
+                      </div>
                       <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>น้ำหนัก: {finalWeight} คะแนน</div>
                     </th>
                   )}
