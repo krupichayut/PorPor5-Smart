@@ -1,5 +1,5 @@
 import { useState, useRef } from 'react';
-import { Users, Plus, Trash2, Edit, Download, Upload, Search, Printer, Award, Calendar, AlertCircle } from 'lucide-react';
+import { Users, Plus, Trash2, Edit, Download, Upload, Search, Printer, Award, Calendar, AlertCircle, ArrowUp, ArrowDown } from 'lucide-react';
 import { downloadCsv, parseDelimitedText } from '../utils/fileExports';
 import { calculateStudentScores, getClassScoreContext } from '../utils/scoring';
 
@@ -122,6 +122,27 @@ export default function Students({ students, setStudents, activeClassId, classes
       const newStudentsList = students.filter(s => s.id !== id);
       setStudents(newStudentsList);
     }
+  };
+
+  const handleMoveStudent = (student, direction) => {
+    const currentIndex = classStudents.findIndex(s => s.id === student.id);
+    const targetIndex = currentIndex + direction;
+    
+    if (targetIndex < 0 || targetIndex >= classStudents.length) return;
+    
+    const targetStudent = classStudents[targetIndex];
+    
+    const newStudents = students.map(s => {
+      if (s.id === student.id) {
+        return { ...s, number: targetStudent.number };
+      }
+      if (s.id === targetStudent.id) {
+        return { ...s, number: student.number };
+      }
+      return s;
+    });
+    
+    setStudents(newStudents);
   };
 
   const handleEditClick = (student) => {
@@ -434,19 +455,34 @@ export default function Students({ students, setStudents, activeClassId, classes
                         onMouseOut={(e) => e.currentTarget.style.color = 'inherit'}
                         title="คลิกเพื่อดูรายงานรายบุคคล"
                       >
-                        <span className={`avatar-circle c${colorIndex}`}>{firstChar}</span>
+                                                <span style={{
+                          display: "inline-flex", alignItems: "center", justifyContent: "center",
+                          width: "28px", height: "28px", borderRadius: "50%",
+                          backgroundColor: `var(--avatar-${colorIndex + 1}-bg, var(--bg-tertiary))`,
+                          color: `var(--avatar-${colorIndex + 1}-text, var(--text-primary))`,
+                          fontSize: "0.75rem", fontWeight: 700, marginRight: "12px", flexShrink: 0
+                        }}>
+                          {firstChar}
+                        </span>
                         {s.name} {s.status === "transferred" && <span className="badge badge-transferred" style={{marginLeft: "0.5rem"}}>ย้ายออก</span>}</div>
                     </td>
                     <td style={{ textAlign: 'right' }}>
                       {!readOnly && (
-                        <>
-                          <button className="btn-icon" onClick={() => handleEditClick(s)} style={{ color: 'var(--primary-color)', marginRight: '0.5rem' }}>
-                            <Edit size={18} />
+                        <div style={{ display: 'flex', gap: '0.25rem', justifyContent: 'flex-end', alignItems: 'center' }}>
+                          <button className="btn-icon" onClick={() => handleMoveStudent(s, -1)} disabled={index === 0} style={{ color: 'var(--text-secondary)', opacity: index === 0 ? 0.3 : 1 }} title="เลื่อนขึ้น">
+                            <ArrowUp size={16} />
                           </button>
-                          <button className="btn-icon" onClick={() => handleDeleteStudent(s.id)} style={{ color: 'var(--danger-color)' }}>
-                            <Trash2 size={18} />
+                          <button className="btn-icon" onClick={() => handleMoveStudent(s, 1)} disabled={index === classStudents.length - 1} style={{ color: 'var(--text-secondary)', opacity: index === classStudents.length - 1 ? 0.3 : 1 }} title="เลื่อนลง">
+                            <ArrowDown size={16} />
                           </button>
-                        </>
+                          <div style={{ width: '1px', height: '16px', backgroundColor: 'var(--border-subtle)', margin: '0 0.5rem' }}></div>
+                          <button className="btn-icon" onClick={() => handleEditClick(s)} style={{ color: 'var(--primary-color)' }} title="แก้ไข">
+                            <Edit size={16} />
+                          </button>
+                          <button className="btn-icon" onClick={() => handleDeleteStudent(s.id)} style={{ color: 'var(--danger-color)' }} title="ลบ">
+                            <Trash2 size={16} />
+                          </button>
+                        </div>
                       )}
                     </td>
                   </tr>
@@ -616,7 +652,13 @@ export default function Students({ students, setStudents, activeClassId, classes
               return (
                 <div style={{ padding: '1rem 0' }}>
                   <div style={{ display: 'flex', alignItems: 'center', marginBottom: '2rem', gap: '1.5rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1.5rem' }}>
-                    <div className={`avatar-circle c${colorIndex}`} style={{ width: '80px', height: '80px', fontSize: '2.5rem', margin: 0 }}>
+                    <div style={{ 
+                      width: "80px", height: "80px", borderRadius: "50%", 
+                      backgroundColor: `var(--avatar-${colorIndex + 1}-bg, var(--bg-tertiary))`,
+                      color: `var(--avatar-${colorIndex + 1}-text, var(--text-primary))`,
+                      display: "flex", alignItems: "center", justifyContent: "center",
+                      fontSize: "2.5rem", fontWeight: 700, margin: 0, flexShrink: 0
+                    }}>
                       {firstChar}
                     </div>
                     <div>
