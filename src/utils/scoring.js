@@ -41,14 +41,16 @@ export function getUnitWeightSum(classUnits, term) {
     .reduce((sum, unit) => sum + Number(unit.weight || 0), 0);
 }
 
-export function calculateStudentScores(studentId, context, scores, selectedTerm = 'all', providedMap = null) {
+export function calculateStudentScores(studentId, context, scores, selectedTerm = "all", providedMap = null) {
   const { classScoreColumns, classUnits, midtermWeight, finalWeight } = context;
   const scoreMap = providedMap || new Map(scores.map(s => [`${s.studentId}_${s.columnId}`, s.score]));
   let term1Collected = 0;
   let term2Collected = 0;
+  let term1Raw = 0;
+  let term2Raw = 0;
 
   classUnits.forEach(unit => {
-    const unitCols = classScoreColumns.filter(c => c.unitId === unit.id && c.type === 'collected');
+    const unitCols = classScoreColumns.filter(c => c.unitId === unit.id && c.type === "collected");
     const unitMaxRaw = unitCols.reduce((sum, col) => sum + Number(col.maxScore || 0), 0);
     const unitRaw = unitCols.reduce((sum, col) => {
       const scoreVal = scoreMap.get(`${studentId}_${col.id}`);
@@ -56,35 +58,50 @@ export function calculateStudentScores(studentId, context, scores, selectedTerm 
     }, 0);
     const scaled = unitMaxRaw > 0 ? (unitRaw / unitMaxRaw) * Number(unit.weight || 0) : 0;
 
-    if (unit.term === '2') term2Collected += scaled;
-    else term1Collected += scaled;
+    if (unit.term === "2") {
+      term2Collected += scaled;
+      term2Raw += unitRaw;
+    } else {
+      term1Collected += scaled;
+      term1Raw += unitRaw;
+    }
   });
 
-  const getExamScaled = (type, weight) => {
+  const getExamScores = (type, weight) => {
     const cols = classScoreColumns.filter(c => c.type === type);
     const maxRaw = cols.reduce((sum, col) => sum + Number(col.maxScore || 0), 0);
     const raw = cols.reduce((sum, col) => {
       const scoreVal = scoreMap.get(`${studentId}_${col.id}`);
       return sum + (scoreVal !== undefined && scoreVal !== null ? Number(scoreVal) : 0);
     }, 0);
-    return maxRaw > 0 ? (raw / maxRaw) * weight : 0;
+    const scaled = maxRaw > 0 ? (raw / maxRaw) * weight : 0;
+    return { raw, scaled };
   };
 
-  const midtermScaled = getExamScaled('midterm', midtermWeight);
-  const finalScaled = getExamScaled('final', finalWeight);
+  const midterm = getExamScores("midterm", midtermWeight);
+  const finalExam = getExamScores("final", finalWeight);
+  
   const finalTotal =
-    selectedTerm === '1'
-      ? term1Collected + midtermScaled
-      : selectedTerm === '2'
-        ? term2Collected + finalScaled
-        : term1Collected + term2Collected + midtermScaled + finalScaled;
+    selectedTerm === "1"
+      ? term1Collected + midterm.scaled
+      : selectedTerm === "2"
+        ? term2Collected + finalExam.scaled
+        : term1Collected + term2Collected + midterm.scaled + finalExam.scaled;
+        
+  const rawTotal = 
+    selectedTerm === "1"
+      ? term1Raw + midterm.raw
+      : selectedTerm === "2"
+        ? term2Raw + finalExam.raw
+        : term1Raw + term2Raw + midterm.raw + finalExam.raw;
 
   return {
     term1Collected: Number(term1Collected.toFixed(2)),
     term2Collected: Number(term2Collected.toFixed(2)),
-    midtermScaled: Number(midtermScaled.toFixed(2)),
-    finalScaled: Number(finalScaled.toFixed(2)),
-    totalScaled: Math.round(finalTotal)
+    midtermScaled: Number(midterm.scaled.toFixed(2)),
+    finalScaled: Number(finalExam.scaled.toFixed(2)),
+    totalScaled: Math.round(finalTotal),
+    totalRaw: Math.round(rawTotal)
   };
 }
 

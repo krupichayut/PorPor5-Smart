@@ -140,7 +140,8 @@ export default function Grades({ students, activeClassId, classes, scores, score
                   {reportType !== 'evaluations' && (
                     <>
                       <th colSpan={selectedTerm === 'all' ? 4 : 2} style={{ textAlign: 'center', borderBottom: '1px solid var(--border-color)', backgroundColor: 'var(--bg-secondary)' }}>สัดส่วนคะแนน</th>
-                      <th rowSpan={2} style={{ textAlign: 'center', verticalAlign: 'middle', backgroundColor: 'var(--bg-tertiary)', color: 'var(--primary-light)' }}>รวม {totalPossible}</th>
+                      <th rowSpan={2} style={{ textAlign: "center", verticalAlign: "middle", backgroundColor: "var(--bg-tertiary)", color: "var(--text-secondary)" }}>รวมดิบ</th>
+                      <th rowSpan={2} style={{ textAlign: "center", verticalAlign: "middle", backgroundColor: "var(--bg-tertiary)", color: "var(--primary-light)" }}>แปลง {totalPossible}</th>
                       <th rowSpan={2} style={{ textAlign: 'center', verticalAlign: 'middle' }}>ระดับผลการเรียน</th>
                     </>
                   )}
@@ -202,7 +203,8 @@ export default function Grades({ students, activeClassId, classes, scores, score
                               <td style={{ textAlign: 'center', color: 'var(--text-secondary)' }}>{studentScores.finalScaled}</td>
                             </>
                           )}
-                          <td style={{ textAlign: 'center', fontWeight: 700, color: 'var(--accent-cyan)', backgroundColor: 'var(--bg-secondary)' }}>{studentScores.totalScaled}</td>
+                          <td style={{ textAlign: "center", fontWeight: 700, color: "var(--text-secondary)", backgroundColor: "var(--bg-secondary)" }}>{studentScores.totalRaw}</td>
+                          <td style={{ textAlign: "center", fontWeight: 700, color: "var(--accent-cyan)", backgroundColor: "var(--bg-secondary)" }}>{studentScores.totalScaled}</td>
                           <td style={{ textAlign: 'center', fontWeight: 600 }}>{grade}</td>
                         </>
                       )}

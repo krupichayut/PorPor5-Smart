@@ -384,9 +384,12 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                     </th>
                   )}
                   
-                  {/* Summary */}
-                  <th rowSpan={2} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface-elevated)', color: 'var(--text-primary)', verticalAlign: 'middle' }}>
-                    รวมเทอม {viewTerm !== 'all' ? viewTerm : 'ทั้งหมด'}
+                                    {/* Summary */}
+                  <th rowSpan={2} style={{ textAlign: "center", borderLeft: "1px solid var(--border-subtle)", backgroundColor: "var(--bg-surface-elevated)", color: "var(--text-primary)", verticalAlign: "middle" }}>
+                    รวมดิบ
+                  </th>
+                  <th rowSpan={2} style={{ textAlign: "center", borderLeft: "1px solid var(--border-subtle)", backgroundColor: "var(--bg-surface-elevated)", color: "var(--text-primary)", verticalAlign: "middle" }}>
+                    แปลง (เทอม {viewTerm !== "all" ? viewTerm : "ทั้งหมด"})
                   </th>
                   {viewTerm === 'all' && (
                     <th rowSpan={2} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface-elevated)', verticalAlign: 'middle', width: '60px' }}>
@@ -486,6 +489,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
               <tbody>
                 {classStudents.map((s, index) => {
                   let studentViewTotal = 0;
+                  let studentRawTotal = 0;
                   
                   return (
                     <tr key={s.id} className={s.status === "transferred" ? "row-transferred" : ""}>
@@ -497,6 +501,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                         const unitCols = classScoreColumns.filter(c => c.unitId === unit.id && c.type === 'collected');
                         const uScore = getUnitScore(s.id, unit.id);
                         studentViewTotal += uScore.scaled;
+                        studentRawTotal += uScore.raw;
                         
                         const colsElements = unitCols.length > 0 ? unitCols.map(col => {
                           const record = scores.find(r => r.studentId === s.id && r.columnId === col.id);
@@ -530,6 +535,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                         const examCols = classScoreColumns.filter(c => c.type === 'midterm');
                         const mScore = getExamScore(s.id, 'midterm');
                         studentViewTotal += mScore.scaled;
+                        studentRawTotal += mScore.raw;
 
                         const colsElements = examCols.length > 0 ? examCols.map(col => {
                           const record = scores.find(r => r.studentId === s.id && r.columnId === col.id);
@@ -563,6 +569,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                         const examCols = classScoreColumns.filter(c => c.type === 'final');
                         const fScore = getExamScore(s.id, 'final');
                         studentViewTotal += fScore.scaled;
+                        studentRawTotal += fScore.raw;
 
                         const colsElements = examCols.length > 0 ? examCols.map(col => {
                           const record = scores.find(r => r.studentId === s.id && r.columnId === col.id);
@@ -591,8 +598,11 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                         ];
                       })()}
 
-                      {/* Summary Cells */}
-                      <td style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface-elevated)', fontWeight: 700, color: 'var(--text-primary)' }}>
+                                            {/* Summary Cells */}
+                      <td style={{ textAlign: "center", borderLeft: "1px solid var(--border-subtle)", backgroundColor: "var(--bg-surface-elevated)", fontWeight: 700, color: "var(--text-secondary)" }}>
+                        {Math.round(studentRawTotal)}
+                      </td>
+                      <td style={{ textAlign: "center", borderLeft: "1px solid var(--border-subtle)", backgroundColor: "var(--bg-surface-elevated)", fontWeight: 700, color: "var(--text-primary)" }}>
                         {Math.round(studentViewTotal)}
                       </td>
                       {viewTerm === 'all' && (
