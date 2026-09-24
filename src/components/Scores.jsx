@@ -488,7 +488,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                   let studentViewTotal = 0;
                   
                   return (
-                    <tr key={s.id}>
+                    <tr key={s.id} className={s.status === "transferred" ? "row-transferred" : ""}>
                       <td className="sticky-col-left" style={{ boxSizing: 'border-box', width: '60px', minWidth: '60px', padding: '0.5rem', textAlign: 'center', fontWeight: 600, color: 'var(--text-muted)', left: 0 }}>{index + 1}</td>
                       <td className="sticky-col-left" style={{ boxSizing: 'border-box', width: '220px', minWidth: '220px', padding: '0.5rem 1rem', fontWeight: 500, left: '60px', color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.name}</td>
                       

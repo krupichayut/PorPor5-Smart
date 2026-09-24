@@ -323,9 +323,9 @@ export default function Attendance({ appSettings, students, activeClassId, class
                   const percentage = displayTotal > 0 ? Math.round((actualAttended / displayTotal) * 100) : 0;
                   
                   return (
-                    <tr key={s.id}>
+                    <tr key={s.id} className={s.status === "transferred" ? "row-transferred" : ""}>
                       <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--text-muted)', position: 'sticky', left: 0, backgroundColor: 'var(--bg-surface)', zIndex: 1, borderRight: '1px solid var(--border-subtle)' }}>{index + 1}</td>
-                      <td style={{ fontWeight: 500, position: 'sticky', left: '50px', backgroundColor: 'var(--bg-surface)', zIndex: 1, borderRight: '1px solid var(--border-subtle)', color: 'var(--text-primary)' }}>{s.name}</td>
+                      <td style={{ fontWeight: 500, position: 'sticky', left: '50px', backgroundColor: 'var(--bg-surface)', zIndex: 1, borderRight: '1px solid var(--border-subtle)', color: 'var(--text-primary)' }}>{s.name} {s.status === "transferred" && <span className="badge badge-transferred" style={{marginLeft: "0.5rem"}}>ย้ายออก</span>}</td>
                       
                       {isSummaryView ? (
                         <>

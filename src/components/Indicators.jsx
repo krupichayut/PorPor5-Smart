@@ -34,8 +34,57 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
 
   const expectedHours = getExpectedHours(activeClass?.name);
 
-
-
+  const handleLoadP2Preset = () => {
+    if (confirm("ต้องการโหลดตัวชี้วัดศิลปะ ป.2 (เทอม 1-2) อัตโนมัติหรือไม่? (ข้อมูลเดิมในวิชานี้จะถูกลบและแทนที่ใหม่)")) {
+      const p2Preset = [
+        {
+          id: Date.now().toString() + "-1",
+          classId: activeClassId,
+          name: "ศิลปะ ป.2 เทอม 1 (ทัศนศิลป์)",
+          weight: 50,
+          hours: 20,
+          term: "1",
+          items: [
+            { id: "p2-1-1", code: "ศ 1.1 ป.2/1", description: "บรรยายรูปร่าง รูปทรงที่พบในธรรมชาติและสิ่งแวดล้อม", type: "between" },
+            { id: "p2-1-2", code: "ศ 1.1 ป.2/2", description: "ระบุทัศนธาตุที่อยู่ในสิ่งแวดล้อมและงานทัศนศิลป์ โดยเน้นเรื่อง เส้น สี รูปร่าง และรูปทรง", type: "between" },
+            { id: "p2-1-3", code: "ศ 1.1 ป.2/3", description: "สร้างงานทัศนศิลป์ต่างๆ โดยใช้ทัศนธาตุที่เน้นเส้น รูปร่าง", type: "end" },
+            { id: "p2-1-4", code: "ศ 1.1 ป.2/4", description: "มีทักษะพื้นฐานในการใช้วัสดุอุปกรณ์ สร้างงานทัศนศิลป์ 3 มิติ", type: "end" },
+            { id: "p2-1-5", code: "ศ 1.1 ป.2/5", description: "สร้างภาพปะติดโดยการตัด หรือฉีกกระดาษ", type: "between" },
+            { id: "p2-1-6", code: "ศ 1.1 ป.2/6", description: "วาดภาพเพื่อถ่ายทอดเรื่องราวเกี่ยวกับครอบครัว ของตนเองและเพื่อนบ้าน", type: "end" },
+            { id: "p2-1-7", code: "ศ 1.1 ป.2/7", description: "เลือกงานทัศนศิลป์ และบรรยาย ถึงสิ่งที่มองเห็น รวมถึงเนื้อหา เรื่องราว", type: "between" },
+            { id: "p2-1-8", code: "ศ 1.1 ป.2/8", description: "สร้างสรรค์งานทัศนศิลป์เป็น รูปแบบงานโครงสร้างเคลื่อนไหว", type: "end" },
+            { id: "p2-1-9", code: "ศ 1.2 ป.2/1", description: "บอกความสำคัญของงานทัศนศิลป์ที่พบเห็นในชีวิตประจำวัน", type: "between" },
+            { id: "p2-1-10", code: "ศ 1.2 ป.2/2", description: "อภิปรายเกี่ยวกับงานทัศนศิลป์ประเภทต่างๆ ในท้องถิ่นโดยเน้นวิธีการสร้างงานและวัสดุอุปกรณ์ที่ใช้", type: "between" }
+          ]
+        },
+        {
+          id: Date.now().toString() + "-2",
+          classId: activeClassId,
+          name: "ศิลปะ ป.2 เทอม 2 (ดนตรี-นาฏศิลป์)",
+          weight: 50,
+          hours: 20,
+          term: "2",
+          items: [
+            { id: "p2-2-1", code: "ศ 2.1 ป.2/1", description: "รู้สิ่งต่างๆสามารถก่อกำเนิดเสียงที่แตกต่างกัน", type: "between" },
+            { id: "p2-2-2", code: "ศ 2.1 ป.2/2", description: "บอกลักษณะของเสียงดัง-เบา และความช้า-เร็ว ของจังหวะ", type: "between" },
+            { id: "p2-2-3", code: "ศ 2.1 ป.2/3", description: "ท่องบทกลอน ร้องเพลงง่ายๆ", type: "end" },
+            { id: "p2-2-4", code: "ศ 2.1 ป.2/4", description: "มีส่วนร่วมในกิจกรรมดนตรีอย่างสนุกสนาน", type: "end" },
+            { id: "p2-2-5", code: "ศ 2.2 ป.2/1", description: "บอกความเกี่ยวข้องของเพลงที่ใช้ในชีวิตประจำวัน", type: "between" },
+            { id: "p2-2-6", code: "ศ 2.2 ป.2/2", description: "เล่าถึงเพลงในท้องถิ่น", type: "between" },
+            { id: "p2-2-7", code: "ศ 2.2 ป.2/3", description: "ระบุสิ่งที่ชื่นชอบในดนตรีท้องถิ่น", type: "between" },
+            { id: "p2-2-8", code: "ศ 3.1 ป.2/1", description: "เลียนแบบการเคลื่อนไหว", type: "between" },
+            { id: "p2-2-9", code: "ศ 3.1 ป.2/2", description: "แสดงท่าทางง่ายๆ เพื่อสื่อความหมายแทนคำพูด", type: "end" },
+            { id: "p2-2-10", code: "ศ 3.1 ป.2/3", description: "บอกสิ่งที่ตนเองชอบ จากการดูหรือร่วมแสดง", type: "between" },
+            { id: "p2-2-11", code: "ศ 3.2 ป.2/1", description: "ระบุ และเล่นการละเล่นของเด็กไทย", type: "between" },
+            { id: "p2-2-12", code: "ศ 3.2 ป.2/2", description: "บอกสิ่งที่ตนเองชอบในการแสดง นาฏศิลป์ไทย", type: "between" }
+          ]
+        }
+      ];
+      
+      const otherUnits = indicators.filter(i => i.classId !== activeClassId);
+      setIndicators([...otherUnits, ...p2Preset]);
+    }
+  };
   const handleAddUnit = (e) => {
     e.preventDefault();
     if (!newUnitName.trim()) return;
@@ -227,11 +276,16 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
             )}
           </p>
         </div>
-        {!readOnly && (
-          <button className="btn btn-primary" onClick={openAddUnitModal}>
-            <Plus size={18} />
-            เพิ่มหน่วยการเรียนรู้
-          </button>
+                {!readOnly && (
+          <div style={{ display: "flex", gap: "0.5rem" }}>
+            <button className="btn btn-outline" onClick={handleLoadP2Preset} style={{ color: "var(--accent-primary)", borderColor: "var(--border-strong)", background: "rgba(250, 204, 21, 0.1)" }}>
+              ✨ โหลดตัวชี้วัด ป.2 อัตโนมัติ
+            </button>
+            <button className="btn btn-primary" onClick={openAddUnitModal}>
+              <Plus size={18} />
+              เพิ่มหน่วยการเรียนรู้
+            </button>
+          </div>
         )}
       </div>
 

@@ -15,7 +15,6 @@ export default function Students({ students, setStudents, activeClassId, classes
   const [editNumber, setEditNumber] = useState('');
   const [editStudentId, setEditStudentId] = useState('');
   const [editName, setEditName] = useState('');
-  const [editStatus, setEditStatus] = useState('active');
   const [searchTerm, setSearchTerm] = useState('');
   const [selectedStudentProfile, setSelectedStudentProfile] = useState(null);
   const fileInputRef = useRef(null);
@@ -129,7 +128,6 @@ export default function Students({ students, setStudents, activeClassId, classes
     setEditNumber(student.number);
     setEditStudentId(student.studentId);
     setEditName(student.name);
-    setEditStatus(student.status || 'active');
     setIsEditModalOpen(true);
   };
 
@@ -143,8 +141,7 @@ export default function Students({ students, setStudents, activeClassId, classes
           ...s,
           studentId: editStudentId,
           name: editName,
-          number: Number(editNumber),
-          status: editStatus
+          number: Number(editNumber)
         };
       }
       return s;
@@ -321,7 +318,7 @@ export default function Students({ students, setStudents, activeClassId, classes
         </div>
         <div className="roster-preview-rail">
           {rosterPreview.map((student) => {
-            const firstChar = student.name.replace(/^(à¹€à¸”à¹‡à¸à¸Šà¸²à¸¢|à¹€à¸”à¹‡à¸à¸«à¸à¸´à¸‡|à¸”\.à¸Š\.|à¸”\.à¸\.)/i, '').trim().charAt(0) || student.name.charAt(0);
+            const firstChar = student.name.replace(/^(เด็กชาย|เด็กหญิง|ด\.ช\.|ด\.ญ\.)/i, '').trim().charAt(0) || student.name.charAt(0);
             return (
               <button
                 type="button"
@@ -336,7 +333,7 @@ export default function Students({ students, setStudents, activeClassId, classes
         </div>
       </section>
 
-      <div className="hairline-cell">
+      <div className="card roster-shell">
         <div className="studio-list-toolbar" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem', flexWrap: 'wrap', gap: '1rem' }}>
           <div className="search-wrapper">
             <Search size={18} className="search-icon" />
@@ -372,8 +369,8 @@ export default function Students({ students, setStudents, activeClassId, classes
             <p>ไม่มีนักเรียนที่ตรงกับ "{searchTerm}" ลองค้นหาด้วยคำอื่นดูอีกครั้ง</p>
           </div>
         ) : (
-          <div className="">
-            <table className="data-table">
+          <div className="table-container roster-table">
+            <table className="table">
               <thead>
                 <tr>
                   <th style={{ width: '80px', textAlign: 'center' }}>เลขที่</th>
@@ -390,7 +387,7 @@ export default function Students({ students, setStudents, activeClassId, classes
                   const firstChar = s.name.replace(/^(เด็กชาย|เด็กหญิง|ด\.ช\.|ด\.ญ\.)/i, '').trim().charAt(0) || s.name.charAt(0);
                   
                   return (
-                  <tr key={s.id} className={s.status === "transferred" ? "row-transferred" : ""}>
+                  <tr key={s.id}>
                     <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--text-muted)' }}>{s.number}</td>
                     <td>{s.studentId}</td>
                     <td style={{ fontWeight: 500 }}>
@@ -402,15 +399,16 @@ export default function Students({ students, setStudents, activeClassId, classes
                         title="คลิกเพื่อดูรายงานรายบุคคล"
                       >
                         <span className={`avatar-circle c${colorIndex}`}>{firstChar}</span>
-                        {s.name} {s.status === "transferred" && <span className="badge badge-transferred" style={{marginLeft: "0.5rem"}}>ย้ายออก</span>}</div>
+                        {s.name}
+                      </div>
                     </td>
                     <td style={{ textAlign: 'right' }}>
                       {!readOnly && (
                         <>
-                          <button className="btn-icon" onClick={() => handleEditClick(s)} style={{ color: 'var(--primary-color)', marginRight: '0.5rem' }}>
+                          <button className="btn-icon" aria-label="แก้ไขนักเรียน" onClick={() => handleEditClick(s)} style={{ color: 'var(--primary-color)', marginRight: '0.5rem' }}>
                             <Edit size={18} />
                           </button>
-                          <button className="btn-icon" onClick={() => handleDeleteStudent(s.id)} style={{ color: 'var(--danger-color)' }}>
+                          <button className="btn-icon" aria-label="ลบนักเรียน" onClick={() => handleDeleteStudent(s.id)} style={{ color: 'var(--danger-color)' }}>
                             <Trash2 size={18} />
                           </button>
                         </>
@@ -430,7 +428,7 @@ export default function Students({ students, setStudents, activeClassId, classes
           <div className="modal-content" style={{ maxWidth: '600px' }}>
             <div className="modal-header">
               <h3 className="modal-title">เพิ่มรายชื่อนักเรียน</h3>
-              <button className="btn-icon" onClick={() => setIsModalOpen(false)}>×</button>
+              <button className="btn-icon" aria-label="ปิด" onClick={() => setIsModalOpen(false)}>×</button>
             </div>
             
             <div style={{ display: 'flex', borderBottom: '1px solid var(--border-color)', marginBottom: '1.5rem' }}>
@@ -456,7 +454,7 @@ export default function Students({ students, setStudents, activeClassId, classes
                   <label className="form-label">เลขประจำตัวนักเรียน</label>
                   <input 
                     type="text" 
-                    className="form-control" 
+                    className="form-input" 
                     value={newStudentId}
                     onChange={(e) => setNewStudentId(e.target.value)}
                     placeholder="เช่น 12345"
@@ -467,7 +465,7 @@ export default function Students({ students, setStudents, activeClassId, classes
                   <label className="form-label">ชื่อ - นามสกุล</label>
                   <input 
                     type="text" 
-                    className="form-control" 
+                    className="form-input" 
                     value={newStudentName}
                     onChange={(e) => setNewStudentName(e.target.value)}
                     placeholder="เช่น เด็กชายรักเรียน ขยันยิ่ง"
@@ -486,7 +484,7 @@ export default function Students({ students, setStudents, activeClassId, classes
                     * รูปแบบ: <strong>รหัสประจำตัว</strong> [ช่องว่าง/Tab] <strong>ชื่อ-นามสกุล</strong> (ถ้ามีแต่ชื่อ ระบบจะสร้างรหัสชั่วคราวให้)
                   </div>
                   <textarea 
-                    className="form-control" 
+                    className="form-input" 
                     value={bulkData}
                     onChange={(e) => setBulkData(e.target.value)}
                     placeholder="12345    เด็กชายเอ รักเรียน&#10;12346    เด็กหญิงบี ขยัน"
@@ -509,14 +507,14 @@ export default function Students({ students, setStudents, activeClassId, classes
           <div className="modal-content">
             <div className="modal-header">
               <h3 className="modal-title">แก้ไขข้อมูลนักเรียน</h3>
-              <button className="btn-icon" onClick={() => setIsEditModalOpen(false)}>×</button>
+              <button className="btn-icon" aria-label="ปิด" onClick={() => setIsEditModalOpen(false)}>×</button>
             </div>
             <form onSubmit={handleSaveEdit}>
               <div className="form-group">
                 <label className="form-label">เลขที่</label>
                 <input 
                   type="number" 
-                  className="form-control" 
+                  className="form-input" 
                   value={editNumber}
                   onChange={(e) => setEditNumber(e.target.value)}
                   min="1"
@@ -527,7 +525,7 @@ export default function Students({ students, setStudents, activeClassId, classes
                 <label className="form-label">รหัสประจำตัวนักเรียน</label>
                 <input 
                   type="text" 
-                  className="form-control" 
+                  className="form-input" 
                   value={editStudentId}
                   onChange={(e) => setEditStudentId(e.target.value)}
                   required
@@ -537,18 +535,11 @@ export default function Students({ students, setStudents, activeClassId, classes
                 <label className="form-label">ชื่อ - นามสกุล</label>
                 <input 
                   type="text" 
-                  className="form-control" 
+                  className="form-input" 
                   value={editName}
                   onChange={(e) => setEditName(e.target.value)}
                   required
                 />
-              </div>
-              <div className="form-group">
-                <label className="form-label">สถานะ</label>
-                <select className="form-control" value={editStatus} onChange={(e) => setEditStatus(e.target.value)}>
-                  <option value="active">ปกติ</option>
-                  <option value="transferred">ย้ายออก</option>
-                </select>
               </div>
               <div className="modal-footer">
                 <button type="button" className="btn btn-secondary" onClick={() => setIsEditModalOpen(false)}>ยกเลิก</button>
@@ -568,7 +559,7 @@ export default function Students({ students, setStudents, activeClassId, classes
                 <button className="btn btn-secondary" style={{ padding: '0.25rem 0.75rem', fontSize: '0.875rem' }} onClick={() => window.print()}>
                   <Printer size={16} style={{ marginRight: '0.5rem' }} /> พิมพ์รายงาน
                 </button>
-                <button className="btn-icon" onClick={() => setSelectedStudentProfile(null)}>×</button>
+                <button className="btn-icon" aria-label="ปิด" onClick={() => setSelectedStudentProfile(null)}>×</button>
               </div>
             </div>
             
@@ -583,7 +574,7 @@ export default function Students({ students, setStudents, activeClassId, classes
               return (
                 <div style={{ padding: '1rem 0' }}>
                   <div style={{ display: 'flex', alignItems: 'center', marginBottom: '2rem', gap: '1.5rem', borderBottom: '1px solid var(--border-color)', paddingBottom: '1.5rem' }}>
-                    <div className={`avatar-circle c${colorIndex}`} style={{ width: '80px', height: '80px', fontSize: '2.5rem', margin: 0 }}>
+                    <div className={`avatar-circle c${colorIndex}`} style={{ width: '80px', height: '80px', fontSize: '2.5rem', margin: 0, boxShadow: '0 4px 12px rgba(0,0,0,0.2)' }}>
                       {firstChar}
                     </div>
                     <div>
@@ -598,17 +589,17 @@ export default function Students({ students, setStudents, activeClassId, classes
                     <Award size={18} /> สรุปผลการเรียน
                   </h4>
                   <div style={{ display: 'grid', gridTemplateColumns: 'repeat(3, 1fr)', gap: '1rem', marginBottom: '2rem' }}>
-                    <div style={{ backgroundColor: 'rgba(15, 23, 42, 0.4)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1.25rem', textAlign: 'center' }}>
+                    <div style={{ backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1.25rem', textAlign: 'center' }}>
                       <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>คะแนนสะสม</div>
                       <div style={{ fontSize: '1.75rem', fontWeight: 700, color: 'var(--primary-color)' }}>{stats.totalScore} <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 400 }}>/ {stats.totalMax}</span></div>
                     </div>
-                    <div style={{ backgroundColor: 'rgba(15, 23, 42, 0.4)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1.25rem', textAlign: 'center' }}>
+                    <div style={{ backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1.25rem', textAlign: 'center' }}>
                       <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>งานที่ค้างส่ง</div>
-                      <div style={{ fontSize: '1.75rem', fontWeight: 700, color: stats.missingWorkCount > 0 ? '#ef4444' : '#10b981' }}>{stats.missingWorkCount} <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 400 }}>ชิ้น</span></div>
+                      <div style={{ fontSize: '1.75rem', fontWeight: 700, color: stats.missingWorkCount > 0 ? 'var(--danger-color)' : 'var(--success-color)' }}>{stats.missingWorkCount} <span style={{ fontSize: '1rem', color: 'var(--text-muted)', fontWeight: 400 }}>ชิ้น</span></div>
                     </div>
-                    <div style={{ backgroundColor: 'rgba(15, 23, 42, 0.4)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1.25rem', textAlign: 'center' }}>
+                    <div style={{ backgroundColor: 'var(--bg-tertiary)', border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)', padding: '1.25rem', textAlign: 'center' }}>
                       <div style={{ fontSize: '0.875rem', color: 'var(--text-muted)', marginBottom: '0.5rem' }}>เวลาเรียน</div>
-                      <div style={{ fontSize: '1.75rem', fontWeight: 700, color: attPercent >= 80 ? '#10b981' : '#f59e0b' }}>{attPercent}%</div>
+                      <div style={{ fontSize: '1.75rem', fontWeight: 700, color: attPercent >= 80 ? 'var(--success-color)' : 'var(--warning-color)' }}>{attPercent}%</div>
                     </div>
                   </div>
 
@@ -619,19 +610,19 @@ export default function Students({ students, setStudents, activeClassId, classes
                       </h4>
                       <ul style={{ listStyle: 'none', padding: 0, margin: 0, border: '1px solid var(--border-color)', borderRadius: 'var(--radius-md)' }}>
                         <li style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 1rem', borderBottom: '1px solid var(--border-color)' }}>
-                          <span style={{ color: '#10b981' }}>มาเรียนปกติ</span>
+                          <span style={{ color: 'var(--success-color)' }}>มาเรียนปกติ</span>
                           <span style={{ fontWeight: 600 }}>{stats.present} วัน</span>
                         </li>
                         <li style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 1rem', borderBottom: '1px solid var(--border-color)' }}>
-                          <span style={{ color: '#f59e0b' }}>มาสาย</span>
+                          <span style={{ color: 'var(--warning-color)' }}>มาสาย</span>
                           <span style={{ fontWeight: 600 }}>{stats.late} วัน</span>
                         </li>
                         <li style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 1rem', borderBottom: '1px solid var(--border-color)' }}>
-                          <span style={{ color: '#3b82f6' }}>ลาป่วย/ลากิจ</span>
+                          <span style={{ color: 'var(--studio-blue)' }}>ลาป่วย/ลากิจ</span>
                           <span style={{ fontWeight: 600 }}>{stats.leave} วัน</span>
                         </li>
                         <li style={{ display: 'flex', justifyContent: 'space-between', padding: '0.75rem 1rem' }}>
-                          <span style={{ color: '#ef4444' }}>ขาดเรียน</span>
+                          <span style={{ color: 'var(--danger-color)' }}>ขาดเรียน</span>
                           <span style={{ fontWeight: 600 }}>{stats.absent} วัน</span>
                         </li>
                       </ul>
@@ -640,7 +631,7 @@ export default function Students({ students, setStudents, activeClassId, classes
                       <h4 style={{ fontSize: '1.1rem', marginBottom: '1rem', color: 'var(--primary-light)', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
                         <AlertCircle size={18} /> สถานะการประเมิน 3 หมวด
                       </h4>
-                      <div style={{ padding: '1rem', border: '1px dashed rgba(255, 255, 255, 0.2)', borderRadius: 'var(--radius-md)', textAlign: 'center', height: 'calc(100% - 2.5rem)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
+                      <div style={{ padding: '1rem', border: '1px dashed var(--border-color)', borderRadius: 'var(--radius-md)', textAlign: 'center', height: 'calc(100% - 2.5rem)', display: 'flex', flexDirection: 'column', justifyContent: 'center' }}>
                         <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '0.5rem' }}>การประเมินสามารถดูรายละเอียดเชิงลึก</p>
                         <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem' }}>ได้ที่หน้ารายงาน PicthClass ฉบับสมบูรณ์</p>
                       </div>

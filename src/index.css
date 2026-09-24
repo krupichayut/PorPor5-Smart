@@ -2,48 +2,48 @@
 
 :root {
   /* =========================================================
-     LINEAR / OBSIDIAN SLEEK PALETTE (Minimalist Dark)
+     MODERN STARRY NIGHT PALETTE (Van Gogh meets Apple)
      ========================================================= */
-  --bg-base: #000000;
-  --bg-surface: #0a0a0a;
-  --bg-surface-elevated: #111111;
-  --bg-surface-hover: #161616;
-  --bg-tertiary: #1f1f1f;
-  --bg-glass: rgba(10, 10, 10, 0.75);
+  --bg-base: #060913; /* Deepest night sky */
+  --bg-surface: rgba(15, 23, 42, 0.6); /* Frosted navy glass */
+  --bg-surface-elevated: rgba(30, 41, 59, 0.75);
+  --bg-surface-hover: rgba(30, 41, 59, 0.9);
+  --bg-tertiary: rgba(51, 65, 85, 0.5);
+  --bg-glass: rgba(6, 9, 19, 0.75);
   
   /* Text Hierarchy */
-  --text-primary: #f4f4f5;
-  --text-secondary: #a1a1aa;
-  --text-muted: #71717a;
-  --text-faint: #3f3f46;
+  --text-primary: #f8fafc; /* Ice white */
+  --text-secondary: #cbd5e1; /* Light slate */
+  --text-muted: #64748b;
+  --text-faint: #334155;
   
-  /* Borders (Linear 1px Hairlines) */
-  --border-subtle: #1f1f1f;
-  --border-strong: #2e2e2e;
-  --border-focus: #52525b;
+  /* Borders (Cerulean tinted hairlines) */
+  --border-subtle: rgba(56, 189, 248, 0.15);
+  --border-strong: rgba(56, 189, 248, 0.35);
+  --border-focus: rgba(250, 204, 21, 0.5); /* Golden focus */
   
-  /* Accents & Brand */
-  --accent-primary: #ededed;
-  --accent-primary-hover: #ffffff;
-  --accent-cyan: #38bdf8;
-  --accent-purple: #a855f7;
+  /* Accents & Brand (Golden Yellow & Cerulean Swirls) */
+  --accent-primary: #facc15; /* Glowing Gold */
+  --accent-primary-hover: #fef08a;
+  --accent-cyan: #38bdf8; /* Swirling Cerulean */
+  --accent-purple: #818cf8; /* Soft Indigo */
   
   /* Semantic Colors (Soft Pastel Translucent) */
-  --danger: #f43f5e;
-  --danger-bg: rgba(244, 63, 94, 0.1);
-  --danger-border: rgba(244, 63, 94, 0.25);
+  --danger: #fb7185;
+  --danger-bg: rgba(251, 113, 133, 0.15);
+  --danger-border: rgba(251, 113, 133, 0.3);
   
-  --success: #10b981;
-  --success-bg: rgba(16, 185, 129, 0.1);
-  --success-border: rgba(16, 185, 129, 0.25);
+  --success: #34d399;
+  --success-bg: rgba(52, 211, 153, 0.15);
+  --success-border: rgba(52, 211, 153, 0.3);
   
-  --warning: #f59e0b;
-  --warning-bg: rgba(245, 158, 11, 0.1);
-  --warning-border: rgba(245, 158, 11, 0.25);
+  --warning: #fbbf24;
+  --warning-bg: rgba(251, 191, 36, 0.15);
+  --warning-border: rgba(251, 191, 36, 0.3);
   
-  --info: #3b82f6;
-  --info-bg: rgba(59, 130, 246, 0.1);
-  --info-border: rgba(59, 130, 246, 0.25);
+  --info: #38bdf8;
+  --info-bg: rgba(56, 189, 248, 0.15);
+  --info-border: rgba(56, 189, 248, 0.3);
 
   /* Typography */
   --font-sans: 'Outfit', 'Sarabun', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
@@ -105,16 +105,24 @@ body {
   background-color: var(--bg-base);
 }
 
-/* Sleek Ambient Background */
+/* Starry Night Ambient Background */
 .ambient-grid-bg {
   position: fixed;
   inset: 0;
   pointer-events: none;
   z-index: 0;
+  background-color: var(--bg-base);
   background-image: 
-    radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.03) 0%, transparent 60%),
-    radial-gradient(rgba(255, 255, 255, 0.04) 1px, transparent 1px);
-  background-size: 100% 100%, 28px 28px;
+    radial-gradient(circle at 15% 50%, rgba(250, 204, 21, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 85% 30%, rgba(56, 189, 248, 0.08) 0%, transparent 50%),
+    radial-gradient(circle at 50% 80%, rgba(129, 140, 248, 0.05) 0%, transparent 50%),
+    radial-gradient(rgba(255, 255, 255, 0.02) 1px, transparent 1px);
+  background-size: 100% 100%, 100% 100%, 100% 100%, 32px 32px;
+}
+/* Glassmorphism backdrop filter support */
+.card, .hairline-cell, .table-container, .modal-content {
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
 }
 
 .sidebar {
@@ -547,29 +555,35 @@ body {
 }
 
 .gradebook-table th {
+  position: -webkit-sticky;
   position: sticky;
   top: 0;
   z-index: 3;
-  box-shadow: 0 1px 0 var(--border-subtle);
+  background-color: #0b1120 !important; /* Starry Night navy for all headers */
+  color: var(--text-primary);
+  box-shadow: 0 2px 4px rgba(0,0,0,0.5) !important;
+  border-bottom: 2px solid var(--accent-primary) !important; /* Golden accent */
 }
 
 /* Second row of headers */
 .gradebook-table thead tr:nth-child(2) th {
   top: 45px; /* Adjust based on first row height */
-  box-shadow: 0 1px 0 var(--border-subtle);
+  background-color: #0d1527 !important; /* Slightly lighter navy for sub-headers */
   z-index: 3;
+  border-bottom: 1px solid var(--border-strong) !important;
 }
 
 .gradebook-table th.sticky-col-left, .gradebook-table td.sticky-col-left {
   position: -webkit-sticky !important;
   position: sticky !important;
-  background-color: #1a1a1a !important; /* Distinct dark color */
+  background-color: #0b1120 !important; /* Starry night deep navy for headers */
   box-shadow: 4px 0 12px rgba(0,0,0,0.8) !important;
-  border-right: 1px solid #333 !important;
+  border-right: 1px solid var(--border-strong) !important;
 }
 
 .gradebook-table th.sticky-col-left {
   z-index: 5 !important;
+  border-bottom: 2px solid var(--accent-primary) !important; /* Golden accent line */
 }
 
 .gradebook-table td.sticky-col-left {
@@ -699,6 +713,37 @@ body {
   background-color: var(--danger-bg);
   color: var(--danger);
   border: 1px solid var(--danger-border);
+}
+
+.badge-transferred {
+  background-color: rgba(239, 68, 68, 0.15);
+  color: #ef4444;
+  border: 1px solid rgba(239, 68, 68, 0.3);
+  margin-left: 0.5rem;
+}
+
+.row-transferred {
+  opacity: 0.45;
+  pointer-events: none; /* Disable all interactions in the row */
+  background-color: rgba(0, 0, 0, 0.2) !important;
+}
+
+.row-transferred input,
+.row-transferred select,
+.row-transferred button {
+  pointer-events: none;
+  background-color: transparent !important;
+}
+
+.row-transferred td {
+  text-decoration: line-through;
+  text-decoration-color: rgba(239, 68, 68, 0.5);
+}
+
+.row-transferred .badge-transferred {
+  pointer-events: auto; /* allow badge to be seen without strike? No, it's fine. */
+  text-decoration: none;
+  display: inline-block;
 }
 
 .badge-warning {

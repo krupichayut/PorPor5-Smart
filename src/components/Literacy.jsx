@@ -104,9 +104,9 @@ export default function Literacy({ students, activeClassId, classes, literacy, s
                 {classStudents.map((s, index) => {
                   const avg = calculateAverage(s.id);
                   return (
-                    <tr key={s.id}>
+                    <tr key={s.id} className={s.status === "transferred" ? "row-transferred" : ""}>
                       <td style={{ textAlign: 'center', fontWeight: 600, color: 'var(--text-muted)', position: 'sticky', left: 0, backgroundColor: 'var(--bg-secondary)', zIndex: 1 }}>{index + 1}</td>
-                      <td style={{ fontWeight: 500, position: 'sticky', left: '60px', backgroundColor: 'var(--bg-secondary)', zIndex: 1 }}>{s.name}</td>
+                      <td style={{ fontWeight: 500, position: 'sticky', left: '60px', backgroundColor: 'var(--bg-secondary)', zIndex: 1 }}>{s.name} {s.status === "transferred" && <span className="badge badge-transferred" style={{marginLeft: "0.5rem"}}>ย้ายออก</span>}</td>
                       {criteriaList.map(c => {
                         const record = literacy.find(record => record.studentId === s.id && record.criteriaId === c.id);
                         return (

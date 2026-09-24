@@ -184,10 +184,10 @@ export default function Grades({ students, activeClassId, classes, scores, score
                   const compAvg = calculateEvaluationAverage(s.id, competencies, 5);
                   
                   return (
-                    <tr key={s.id}>
+                    <tr key={s.id} className={s.status === "transferred" ? "row-transferred" : ""}>
                       <td style={{ textAlign: 'center' }}>{index + 1}</td>
                       <td>{s.studentId}</td>
-                      <td>{s.name}</td>
+                      <td>{s.name} {s.status === "transferred" && <span className="badge badge-transferred" style={{marginLeft: "0.5rem"}}>ย้ายออก</span>}</td>
                       {reportType !== 'evaluations' && (
                         <>
                           {(selectedTerm === '1' || selectedTerm === 'all') && (
