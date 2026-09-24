@@ -296,43 +296,76 @@ export default function Students({ students, setStudents, activeClassId, classes
         )}
       </div>
 
-      <section className="roster-spotlight">
-        <div className="roster-hero-card">
-          <span className="studio-card-kicker">Active Roster</span>
-          <strong>{activeClass?.name}</strong>
-          <span>{activeClass?.subject}</span>
+            <section className="hairline-cell" style={{ display: "flex", flexWrap: "wrap", gap: "2rem", justifyContent: "space-between", alignItems: "flex-start", marginBottom: "2rem" }}>
+        <div style={{ display: "flex", flexDirection: "column", gap: "0.25rem" }}>
+          <span style={{ fontSize: "0.75rem", textTransform: "uppercase", letterSpacing: "0.05em", color: "var(--accent-primary)", fontWeight: 600 }}>Active Roster</span>
+          <strong style={{ fontSize: "1.75rem", color: "var(--text-primary)" }}>{activeClass?.name}</strong>
+          <span style={{ color: "var(--text-secondary)" }}>วิชา {activeClass?.subject} • จำนวนนักเรียน {classStudents.length} คน</span>
         </div>
-        <div className="roster-stat-strip">
-          <div>
-            <Users size={18} />
-            <strong>{classStudents.length}</strong>
-            <span>Students</span>
+        
+        <div style={{ display: "flex", gap: "1.5rem", alignItems: "center", backgroundColor: "var(--bg-surface-elevated)", padding: "1rem 1.5rem", borderRadius: "var(--radius-lg)", border: "1px solid var(--border-subtle)", boxShadow: "0 4px 20px rgba(0,0,0,0.2)" }}>
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.25rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--text-secondary)" }}>
+              <Users size={16} /> <span style={{ fontSize: "0.875rem" }}>Students</span>
+            </div>
+            <strong style={{ fontSize: "1.25rem", color: "var(--text-primary)" }}>{classStudents.length}</strong>
           </div>
-          <div>
-            <AlertCircle size={18} />
-            <strong>{rosterSummary.missingWork}</strong>
-            <span>Missing works</span>
+          
+          <div style={{ width: "1px", height: "24px", backgroundColor: "var(--border-subtle)" }}></div>
+          
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.25rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--text-secondary)" }}>
+              <AlertCircle size={16} /> <span style={{ fontSize: "0.875rem" }}>Missing works</span>
+            </div>
+            <strong style={{ fontSize: "1.25rem", color: rosterSummary.missingWork > 0 ? "var(--danger)" : "var(--success)" }}>{rosterSummary.missingWork}</strong>
           </div>
-          <div>
-            <Calendar size={18} />
-            <strong>{attendanceRate}%</strong>
-            <span>Attendance</span>
+          
+          <div style={{ width: "1px", height: "24px", backgroundColor: "var(--border-subtle)" }}></div>
+          
+          <div style={{ display: "flex", flexDirection: "column", alignItems: "center", gap: "0.25rem" }}>
+            <div style={{ display: "flex", alignItems: "center", gap: "0.5rem", color: "var(--text-secondary)" }}>
+              <Calendar size={16} /> <span style={{ fontSize: "0.875rem" }}>Attendance</span>
+            </div>
+            <strong style={{ fontSize: "1.25rem", color: attendanceRate >= 80 ? "var(--success)" : "var(--warning)" }}>{attendanceRate}%</strong>
           </div>
         </div>
-        <div className="roster-preview-rail">
-          {rosterPreview.map((student) => {
-            const firstChar = student.name.replace(/^(à¹€à¸”à¹‡à¸à¸Šà¸²à¸¢|à¹€à¸”à¹‡à¸à¸«à¸à¸´à¸‡|à¸”\.à¸Š\.|à¸”\.à¸\.)/i, '').trim().charAt(0) || student.name.charAt(0);
+        
+        <div style={{ display: "flex", gap: "0.5rem", overflowX: "auto", paddingBottom: "0.5rem", width: "100%" }}>
+          {rosterPreview.map((student, idx) => {
+            const firstChar = student.name.replace(/^(เด็กชาย|เด็กหญิง|ด\.ช\.|ด\.ญ\.)/i, "").trim().charAt(0) || student.name.charAt(0);
             return (
               <button
                 type="button"
                 key={`preview-${student.id}`}
                 onClick={() => setSelectedStudentProfile(student)}
                 title={student.name}
+                style={{
+                  width: "40px", height: "40px", borderRadius: "50%", 
+                  border: "none", cursor: "pointer", 
+                  backgroundColor: `var(--avatar-${(idx % 5) + 1}-bg, var(--bg-tertiary))`,
+                  color: `var(--avatar-${(idx % 5) + 1}-text, var(--text-primary))`,
+                  display: "flex", alignItems: "center", justifyContent: "center",
+                  fontWeight: 600, flexShrink: 0, boxShadow: "0 2px 8px rgba(0,0,0,0.3)",
+                  transition: "transform 0.2s"
+                }}
+                onMouseOver={(e) => e.currentTarget.style.transform = "scale(1.1)"}
+                onMouseOut={(e) => e.currentTarget.style.transform = "scale(1)"}
               >
-                <span>{firstChar}</span>
+                {firstChar}
               </button>
             );
           })}
+          {classStudents.length > 10 && (
+            <div style={{ 
+              width: "40px", height: "40px", borderRadius: "50%", 
+              backgroundColor: "var(--bg-surface)", color: "var(--text-secondary)",
+              display: "flex", alignItems: "center", justifyContent: "center",
+              fontWeight: 600, flexShrink: 0, fontSize: "0.75rem",
+              border: "1px dashed var(--border-subtle)"
+            }}>
+              +{classStudents.length - 10}
+            </div>
+          )}
         </div>
       </section>
 
