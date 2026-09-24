@@ -437,7 +437,7 @@ export default function Students({ students, setStudents, activeClassId, classes
                 </tr>
               </thead>
               <tbody>
-                {filteredStudents.map((s) => {
+                {filteredStudents.map((s, index) => {
                   // Generate random color class based on name characters
                   const charCode = s.name.charCodeAt(0) || 0;
                   const colorIndex = (charCode % 6) + 1;
