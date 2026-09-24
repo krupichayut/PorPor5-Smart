@@ -527,6 +527,8 @@ body {
 ========================================= */
 .data-table-container, .table-container {
   width: 100%;
+  max-width: 100%;
+  min-width: 0; /* Crucial for preventing flex/grid blowouts */
   overflow-x: auto;
   overflow-y: auto;
   border: 1px solid var(--border-subtle);
