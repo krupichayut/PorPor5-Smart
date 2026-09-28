@@ -195,12 +195,12 @@ export default function Attendance({ appSettings, students, activeClassId, class
     let current = new Date(start);
     while (current <= end) {
       if (selectedDays.includes(current.getDay())) {
-        const dateStr = `\${current.getFullYear()}-\${String(current.getMonth() + 1).padStart(2, "0")}-\${String(current.getDate()).padStart(2, "0")}`;
+        const dateStr = `${current.getFullYear()}-${String(current.getMonth() + 1).padStart(2, "0")}-${String(current.getDate()).padStart(2, "0")}`;
         
         if (!existingDates.has(dateStr)) {
           classStudents.forEach(s => {
             newRecords.push({
-              id: `\${activeClassId}-\${s.id}-\${dateStr}`,
+              id: `${activeClassId}-${s.id}-${dateStr}`,
               classId: activeClassId,
               studentId: s.id,
               date: dateStr,
@@ -220,6 +220,14 @@ export default function Attendance({ appSettings, students, activeClassId, class
       setAttendance([...attendance, ...newRecords]);
       setIsAutoModalOpen(false);
       // Let the global toast handle the success message!
+    }
+  };
+
+  const handleClearNaN = () => {
+    if (confirm("พบข้อมูลวันที่ผิดพลาด (NaN) ต้องการล้างข้อมูลเหล่านี้ทิ้งหรือไม่?")) {
+      const validRecords = attendance.filter(a => !a.date.includes("NaN") && !a.date.includes("$"));
+      setAttendance(validRecords);
+      alert("ล้างข้อมูลผิดพลาดเรียบร้อยแล้วครับ! (ระบบจะบันทึกลงฐานข้อมูลอัตโนมัติ)");
     }
   };
 
@@ -427,6 +435,11 @@ export default function Attendance({ appSettings, students, activeClassId, class
               <span style={{ fontSize: "1.1rem" }}>⚡</span>
               <span className="hide-mobile">สร้างอัตโนมัติ</span>
             </button>
+            {dates.some(d => d.includes("NaN") || d.includes("$")) && (
+              <button className="btn btn-primary" style={{ backgroundColor: "var(--danger-color)", borderColor: "var(--danger-color)" }} onClick={handleClearNaN}>
+                🧹 ลบวัน Error
+              </button>
+            )}
           </div>
         )}
       </div>

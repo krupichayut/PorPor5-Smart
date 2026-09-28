@@ -74,6 +74,62 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
     return () => window.removeEventListener('afterprint', handleAfterPrint);
   }, []);
 
+  const handleSyncFromAttendance = () => {
+    if (readOnly || !attendance) return;
+    
+    // 1. Get all unique dates from attendance for this class
+    const classAttendanceDates = Array.from(
+      new Set(attendance.filter(a => a.classId === activeClassId).map(a => a.date))
+    ).sort();
+
+    if (classAttendanceDates.length === 0) {
+      alert("ไม่มีข้อมูลวันที่เช็คชื่อสำหรับห้องเรียนนี้ครับ (ต้องไปเพิ่มในหน้าเช็คเวลาเรียนก่อน)");
+      return;
+    }
+
+    // 2. Find which dates already exist in any lesson plan's postRecords
+    const existingDatesInPlans = new Set();
+    classPlans.forEach(plan => {
+      const records = plan.postRecords || (plan.postRecord ? [plan.postRecord] : []);
+      records.forEach(rec => {
+        if (rec && rec.date) {
+          existingDatesInPlans.add(rec.date);
+        }
+      });
+    });
+
+    // 3. Create new lesson plans for dates that don't exist
+    const newPlans = [];
+    classAttendanceDates.forEach((date, index) => {
+      if (!existingDatesInPlans.has(date)) {
+        newPlans.push({
+          id: Date.now().toString() + "-" + index + "-" + Math.random().toString(36).substr(2, 5),
+          classId: activeClassId,
+          unit: "",
+          week: "",
+          topic: "รอระบุเนื้อหา (ดึงอัตโนมัติจากเช็คชื่อ)",
+          hours: appSettings?.hoursPerCheck ? Number(appSettings.hoursPerCheck) : 2,
+          isTaught: false,
+          postRecord: null,
+          postRecords: [{
+            date: date,
+            k: "", p: "", a: "", problems: "",
+            absentCount: 0, failedStudentIds: []
+          }],
+          mediaIds: []
+        });
+      }
+    });
+
+    if (newPlans.length > 0) {
+      if (confirm(`พบ ${newPlans.length} วันที่ในระบบเช็คชื่อ ที่ยังไม่มีบันทึกหลังสอน ต้องการสร้างแผนการสอนเปล่าสำหรับวันที่เหล่านั้นอัตโนมัติหรือไม่?`)) {
+        setLessonPlans([...lessonPlans, ...newPlans]);
+      }
+    } else {
+      alert("ข้อมูลวันที่ในบันทึกหลังสอนตรงกับระบบเช็คชื่อครบถ้วนแล้วครับ ไม่มีวันที่ต้องเพิ่ม");
+    }
+  };
+
   const handleAddPlan = (e) => {
     e.preventDefault();
     if (!week.trim() || !topic.trim()) return;
@@ -317,6 +373,9 @@ export default function LessonPlans({ activeClassId, classes, lessonPlans, setLe
         </div>
         {!readOnly && (
           <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button className="btn btn-outline" onClick={handleSyncFromAttendance} style={{ color: 'var(--accent-primary)', borderColor: 'var(--border-strong)', background: 'rgba(168,85,247,0.1)' }}>
+              ⚡ ดึงวันที่จากระบบเช็คชื่อ
+            </button>
             <button className="btn btn-outline" onClick={() => setIsImportModalOpen(true)}>
               <Upload size={18} />นำเข้าจาก Excel
             </button>
