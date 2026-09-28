@@ -8,6 +8,9 @@ export default function Attendance({ appSettings, students, activeClassId, class
   const [isHoliday, setIsHoliday] = useState(false);
   const [holidayName, setHolidayName] = useState('');
   const [isModalOpen, setIsModalOpen] = useState(false);
+  const [isAutoModalOpen, setIsAutoModalOpen] = useState(false);
+  const [autoTerm, setAutoTerm] = useState("term1");
+  const [autoDays, setAutoDays] = useState({ 1: false, 2: false, 3: false, 4: false, 5: false });
   const [activeTab, setActiveTab] = useState('overall'); // 'overall', 'term1', 'term2', 'YYYY-MM'
 
   const activeClass = classes.find(c => c.id === activeClassId);
@@ -150,6 +153,74 @@ export default function Attendance({ appSettings, students, activeClassId, class
     const [year, month] = mKey.split('-');
     const mIndex = parseInt(month, 10) - 1;
     return `${monthNames[mIndex]} ${parseInt(year, 10) + 543}`;
+  };
+
+
+  const handleToggleAutoDay = (day) => {
+    setAutoDays(prev => ({ ...prev, [day]: !prev[day] }));
+  };
+
+  const handleAutoGenerate = (e) => {
+    e.preventDefault();
+    if (readOnly) return;
+
+    if (!appSettings) {
+      alert("ไม่พบข้อมูลการตั้งค่าระบบ");
+      return;
+    }
+
+    const startKey = autoTerm === "term1" ? "term1Start" : "term2Start";
+    const endKey = autoTerm === "term1" ? "term1End" : "term2End";
+    const startDateStr = appSettings[startKey];
+    const endDateStr = appSettings[endKey];
+
+    if (!startDateStr || !endDateStr) {
+      alert("กรุณาไปกำหนด วันเปิด-ปิดภาคเรียน ในเมนู 'ตั้งค่าระบบ' (Settings) ก่อนใช้งานฟังก์ชันนี้ครับ");
+      return;
+    }
+
+    const selectedDays = Object.keys(autoDays).filter(k => autoDays[k]).map(Number);
+    if (selectedDays.length === 0) {
+      alert("กรุณาเลือกวันในสัปดาห์ที่สอนอย่างน้อย 1 วัน");
+      return;
+    }
+
+    const start = new Date(startDateStr);
+    const end = new Date(endDateStr);
+    const newRecords = [];
+    
+    // Existing dates for this class to avoid duplicates
+    const existingDates = new Set(classAttendance.map(a => a.date));
+
+    let current = new Date(start);
+    while (current <= end) {
+      if (selectedDays.includes(current.getDay())) {
+        const dateStr = `\${current.getFullYear()}-\${String(current.getMonth() + 1).padStart(2, "0")}-\${String(current.getDate()).padStart(2, "0")}`;
+        
+        if (!existingDates.has(dateStr)) {
+          classStudents.forEach(s => {
+            newRecords.push({
+              id: `\${activeClassId}-\${s.id}-\${dateStr}`,
+              classId: activeClassId,
+              studentId: s.id,
+              date: dateStr,
+              status: "present",
+              note: ""
+            });
+          });
+          existingDates.add(dateStr); // Prevent duplicates if logic triggers multiple times
+        }
+      }
+      current.setDate(current.getDate() + 1);
+    }
+
+    if (newRecords.length === 0) {
+      alert("ไม่มีวันที่เพิ่มใหม่ (อาจมีครบหมดแล้ว หรือไม่มีวันที่ตรงกับเงื่อนไขในช่วงเปิดเทอม)");
+    } else {
+      setAttendance([...attendance, ...newRecords]);
+      setIsAutoModalOpen(false);
+      // Let the global toast handle the success message!
+    }
   };
 
   const handleAddDate = (e) => {
@@ -350,7 +421,11 @@ export default function Attendance({ appSettings, students, activeClassId, class
             </button>
             <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
               <Plus size={18} />
-              เพิ่มวันเช็คชื่อ
+              <span className="hide-mobile">เพิ่ม</span>
+            </button>
+            <button className="btn btn-primary" style={{ backgroundColor: "var(--accent-primary)", borderColor: "var(--accent-primary)" }} onClick={() => setIsAutoModalOpen(true)} title="สร้างวันที่อัตโนมัติ">
+              <span style={{ fontSize: "1.1rem" }}>⚡</span>
+              <span className="hide-mobile">สร้างอัตโนมัติ</span>
             </button>
           </div>
         )}
@@ -508,6 +583,58 @@ export default function Attendance({ appSettings, students, activeClassId, class
           </div>
         )}
       </div>
+
+      
+      {isAutoModalOpen && (
+        <div className="modal-overlay">
+          <div className="modal-content">
+            <div className="modal-header">
+              <h3 className="modal-title">⚡ สร้างวันที่มาเรียนอัตโนมัติ</h3>
+              <button className="btn-icon" aria-label="ปิด" onClick={() => setIsAutoModalOpen(false)}>×</button>
+            </div>
+            <form onSubmit={handleAutoGenerate}>
+              <div className="form-group" style={{ marginBottom: "1rem" }}>
+                <label className="form-label">เลือกภาคเรียน</label>
+                <select className="form-control" value={autoTerm} onChange={(e) => setAutoTerm(e.target.value)}>
+                  <option value="term1">ภาคเรียนที่ 1</option>
+                  <option value="term2">ภาคเรียนที่ 2</option>
+                </select>
+                <small style={{ color: "var(--text-muted)", display: "block", marginTop: "0.25rem" }}>
+                  ระบบจะอ้างอิงช่วงเวลาจาก "ตั้งค่าระบบ" (วันเปิด-ปิดเทอม)
+                </small>
+              </div>
+              
+              <div className="form-group" style={{ marginBottom: "1.5rem" }}>
+                <label className="form-label">เลือกวันที่สอนในสัปดาห์ (เลือกได้หลายวัน)</label>
+                <div style={{ display: "flex", gap: "0.5rem", flexWrap: "wrap" }}>
+                  {[
+                    { val: 1, label: "จันทร์" },
+                    { val: 2, label: "อังคาร" },
+                    { val: 3, label: "พุธ" },
+                    { val: 4, label: "พฤหัสฯ" },
+                    { val: 5, label: "ศุกร์" },
+                  ].map(day => (
+                    <button 
+                      key={day.val}
+                      type="button"
+                      onClick={() => handleToggleAutoDay(day.val)}
+                      className={`btn ${autoDays[day.val] ? "btn-primary" : "btn-outline"}`}
+                      style={{ flex: "1", minWidth: "60px", padding: "0.5rem" }}
+                    >
+                      {day.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+              
+              <div className="modal-footer">
+                <button type="button" className="btn btn-outline" onClick={() => setIsAutoModalOpen(false)}>ยกเลิก</button>
+                <button type="submit" className="btn btn-primary" style={{ backgroundColor: "var(--accent-primary)", borderColor: "var(--accent-primary)" }}>สร้างตารางทันที</button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
 
       {isModalOpen && (
         <div className="modal-overlay">
