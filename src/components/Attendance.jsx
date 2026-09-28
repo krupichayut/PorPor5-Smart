@@ -356,6 +356,42 @@ export default function Attendance({ appSettings, students, activeClassId, class
     }
   };
 
+  const handleToggleHolidayDate = (dateToToggle, currentNote) => {
+    const isCurrentlyHoliday = !!currentNote;
+    const newNote = prompt(`กำหนดวันหยุดพิเศษสำหรับวันที่ ${new Date(dateToToggle).toLocaleDateString('th-TH')}\n(หากต้องการยกเลิกวันหยุด ให้ลบข้อความออกให้หมดแล้วกด OK)`, currentNote || '');
+    
+    if (newNote === null) return; // User cancelled
+    
+    const isNewHoliday = newNote.trim().length > 0;
+    
+    // Check if records exist for this date
+    const hasRecords = attendance.some(a => a.classId === activeClassId && a.date === dateToToggle);
+    
+    if (hasRecords) {
+      setAttendance(attendance.map(a => {
+        if (a.classId === activeClassId && a.date === dateToToggle) {
+          return {
+            ...a,
+            status: isNewHoliday ? 'holiday' : 'present',
+            note: isNewHoliday ? newNote.trim() : ''
+          };
+        }
+        return a;
+      }));
+    } else if (isNewHoliday) {
+      // Create holiday records if they didn't exist
+      const newRecords = classStudents.map(s => ({
+        id: `${activeClassId}-${s.id}-${dateToToggle}`,
+        classId: activeClassId,
+        studentId: s.id,
+        date: dateToToggle,
+        status: 'holiday',
+        note: newNote.trim()
+      }));
+      setAttendance([...attendance, ...newRecords]);
+    }
+  };
+
   const handleUpdateStatus = (studentId, date, status) => {
     if (readOnly) return;
     const updatedRecords = attendance.map(record => {
@@ -513,14 +549,24 @@ export default function Attendance({ appSettings, students, activeClassId, class
                               </span>
                             )}
                             {!readOnly && (
-                              <button 
-                                onClick={() => handleDeleteDate(date)}
-                                className="btn-icon" style={{ color: 'var(--danger)', opacity: 0.6 }}
-                                title="ลบวันที่นี้"
-                                aria-label="ลบวันที่นี้"
-                              >
-                                <Trash2 size={12} />
-                              </button>
+                              <div style={{ display: 'flex', gap: '2px' }}>
+                                <button 
+                                  onClick={() => handleToggleHolidayDate(date, colNote)}
+                                  className="btn-icon" style={{ color: colNote ? 'var(--warning-color, #eab308)' : 'var(--text-muted)', opacity: 0.8 }}
+                                  title={colNote ? 'แก้ไขวันหยุดพิเศษ' : 'ตั้งเป็นวันหยุดพิเศษ'}
+                                  aria-label={colNote ? 'แก้ไขวันหยุดพิเศษ' : 'ตั้งเป็นวันหยุดพิเศษ'}
+                                >
+                                  <Star size={12} fill={colNote ? 'currentColor' : 'none'} />
+                                </button>
+                                <button 
+                                  onClick={() => handleDeleteDate(date)}
+                                  className="btn-icon" style={{ color: 'var(--danger-color, #ef4444)', opacity: 0.6 }}
+                                  title="ลบวันที่นี้"
+                                  aria-label="ลบวันที่นี้"
+                                >
+                                  <Trash2 size={12} />
+                                </button>
+                              </div>
                             )}
                           </div>
                         </th>
