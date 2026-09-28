@@ -1,5 +1,7 @@
 import { useState, useMemo } from 'react';
-import { Calendar, Plus, Check, X, Clock, FileText, Trash2, Star, Users } from 'lucide-react';
+import { Calendar, Plus, Check, X, Clock, FileText, Trash2, Star, Users, Download, Image as ImageIcon } from 'lucide-react';
+import { downloadCsv } from '../utils/fileExports';
+import html2canvas from 'html2canvas-pro';
 
 export default function Attendance({ appSettings, students, activeClassId, classes, attendance, setAttendance, readOnly }) {
   const [newDate, setNewDate] = useState('');
@@ -32,6 +34,22 @@ export default function Attendance({ appSettings, students, activeClassId, class
   }, [dates]);
 
   const getTermFromDate = (dateStr) => {
+    if (appSettings) {
+      if (appSettings.term1Start && appSettings.term1End) {
+        if (dateStr >= appSettings.term1Start && dateStr <= appSettings.term1End) return 'term1';
+      }
+      if (appSettings.term2Start && appSettings.term2End) {
+        if (dateStr >= appSettings.term2Start && dateStr <= appSettings.term2End) return 'term2';
+      }
+      
+      // If setting exists but date doesn't fall in either, default to term2 or out of bounds
+      // We will fallback to month-based if both are completely unset
+      if (appSettings.term1Start || appSettings.term2Start) {
+        return 'out_of_term';
+      }
+    }
+    
+    // Fallback if no settings
     const dateObj = new Date(dateStr);
     const m = dateObj.getMonth() + 1;
     if (m >= 5 && m <= 10) return 'term1';
@@ -47,7 +65,7 @@ export default function Attendance({ appSettings, students, activeClassId, class
     } else if (activeTab === 'term2') {
       activeDates = dates.filter(d => getTermFromDate(d) === 'term2');
     } else {
-      activeDates = dates.filter(d => d.startsWith(activeTab));
+      activeDates = dates.filter(d => d.startsWith(activeTab) && getTermFromDate(d) !== 'out_of_term');
     }
 
     const currentStats = {};
@@ -63,17 +81,25 @@ export default function Attendance({ appSettings, students, activeClassId, class
 
     const dpm = {};
     availableMonths.forEach(m => {
-       dpm[m] = dates.filter(d => d.startsWith(m)).length;
+       dpm[m] = dates.filter(d => d.startsWith(m) && getTermFromDate(d) !== 'out_of_term').length;
     });
 
+    const recordMap = {};
     classAttendance.forEach(a => {
-      if (currentMonthly[a.studentId]) {
-        const d = new Date(a.date);
-        const mKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}`;
-        if (currentMonthly[a.studentId][mKey] && currentMonthly[a.studentId][mKey][a.status] !== undefined) {
-          currentMonthly[a.studentId][mKey][a.status]++;
+      recordMap[`${a.studentId}_${a.date}`] = a;
+    });
+
+    classStudents.forEach(s => {
+      dates.forEach(date => {
+        const record = recordMap[`${s.id}_${date}`];
+        const status = record?.status || "present";
+        
+        const d = new Date(date);
+        const mKey = `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
+        if (currentMonthly[s.id] && currentMonthly[s.id][mKey] && currentMonthly[s.id][mKey][status] !== undefined) {
+          currentMonthly[s.id][mKey][status]++;
         }
-      }
+      });
     });
 
     classStudents.forEach(s => {
@@ -85,11 +111,14 @@ export default function Attendance({ appSettings, students, activeClassId, class
       });
     });
 
-    const activeDatesSet = new Set(activeDates);
-    classAttendance.forEach(a => {
-      if (activeDatesSet.has(a.date) && currentStats[a.studentId] && currentStats[a.studentId][a.status] !== undefined) {
-        currentStats[a.studentId][a.status]++;
-      }
+    classStudents.forEach(s => {
+      activeDates.forEach(date => {
+        const record = recordMap[`${s.id}_${date}`];
+        const status = record?.status || "present";
+        if (currentStats[s.id] && currentStats[s.id][status] !== undefined) {
+          currentStats[s.id][status]++;
+        }
+      });
     });
 
     return { filteredDates: activeDates, stats: currentStats, monthlyPercentages: currentMonthly, daysPerMonth: dpm };
@@ -148,6 +177,98 @@ export default function Attendance({ appSettings, students, activeClassId, class
     setNewDate('');
     setIsHoliday(false);
     setHolidayName('');
+  };
+
+  const handleExportCsv = () => {
+    if (classStudents.length === 0) {
+      alert("ไม่มีข้อมูลนักเรียน");
+      return;
+    }
+    
+    // Build columns
+    const columns = [
+      { key: "number", label: "เลขที่" },
+      { key: "studentId", label: "รหัสประจำตัว" },
+      { key: "name", label: "ชื่อ-นามสกุล" }
+    ];
+    
+    if (isSummaryView) {
+      if (activeTab === "overall") {
+        availableMonths.forEach(m => columns.push({ key: m, label: formatMonthKey(m) }));
+      }
+    } else {
+      filteredDates.forEach(d => {
+        const dObj = new Date(d);
+        columns.push({ key: d, label: `${dObj.getDate()} ${monthNames[dObj.getMonth()]}` });
+      });
+    }
+    
+    columns.push(
+      { key: "total", label: "เต็ม(ชม.)" },
+      { key: "present", label: "มา(ชม.)" },
+      { key: "leave", label: "ลา(ชม.)" },
+      { key: "absent", label: "ขาด(ชม.)" },
+      { key: "late", label: "สาย(ชม.)" },
+      { key: "percentage", label: "ร้อยละ" }
+    );
+    
+    const rows = classStudents.map(s => {
+      const counts = stats[s.id] || { present: 0, leave: 0, absent: 0, late: 0, holiday: 0 };
+      const { present: p, leave: l, absent: a, late: lt, holiday: h } = counts;
+      const actualAttended = (p + lt + h) * hoursPerCheck;
+      const pct = displayTotal > 0 ? Math.round((actualAttended / displayTotal) * 100) : 0;
+      
+      const rowData = {
+        number: s.number,
+        studentId: s.studentId,
+        name: s.name,
+        total: displayTotal,
+        present: (p + h) * hoursPerCheck,
+        leave: l * hoursPerCheck,
+        absent: a * hoursPerCheck,
+        late: lt * hoursPerCheck,
+        percentage: `${pct}%`
+      };
+      
+      if (isSummaryView) {
+        if (activeTab === "overall") {
+          availableMonths.forEach(m => {
+            const mPct = monthlyPercentages[s.id]?.[m]?.percentage || 0;
+            rowData[m] = mPct > 0 ? `${mPct}%` : "-";
+          });
+        }
+      } else {
+        filteredDates.forEach(date => {
+          const record = classAttendance.find(r => r.studentId === s.id && r.date === date);
+          const st = record?.status || "present";
+          const statusText = st === "present" ? "มา" : st === "absent" ? "ขาด" : st === "late" ? "สาย" : st === "leave" ? "ลา" : "หยุด";
+          rowData[date] = statusText;
+        });
+      }
+      return rowData;
+    });
+    
+    downloadCsv(`attendance_${activeClass?.name || "class"}.csv`, rows, columns);
+  };
+
+  const handleExportImage = async () => {
+    const tableEl = document.getElementById("attendance-table");
+    if (!tableEl) return;
+    
+    try {
+      const canvas = await html2canvas(tableEl, {
+        backgroundColor: "#13151A",
+        scale: 2,
+        logging: false
+      });
+      const link = document.createElement("a");
+      link.download = `attendance_${activeClass?.name || "class"}.png`;
+      link.href = canvas.toDataURL("image/png");
+      link.click();
+    } catch (err) {
+      console.error("Export image failed:", err);
+      alert("เกิดข้อผิดพลาดในการสร้างรูปภาพ");
+    }
   };
 
   const handleDeleteDate = (dateToDelete) => {
@@ -218,10 +339,20 @@ export default function Attendance({ appSettings, students, activeClassId, class
           </p>
         </div>
         {!readOnly && (
-          <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
-            <Plus size={18} />
-            เพิ่มวันเช็คชื่อ
-          </button>
+          <div style={{ display: 'flex', gap: '0.5rem' }}>
+            <button className="btn btn-outline" onClick={handleExportImage} title="ส่งออกเป็นรูปภาพ">
+              <ImageIcon size={18} />
+              <span className="hide-mobile">รูปภาพ</span>
+            </button>
+            <button className="btn btn-outline" onClick={handleExportCsv} title="ส่งออก Excel">
+              <Download size={18} />
+              <span className="hide-mobile">Excel</span>
+            </button>
+            <button className="btn btn-primary" onClick={() => setIsModalOpen(true)}>
+              <Plus size={18} />
+              เพิ่มวันเช็คชื่อ
+            </button>
+          </div>
         )}
       </div>
 
@@ -262,7 +393,7 @@ export default function Attendance({ appSettings, students, activeClassId, class
             <p>กดปุ่ม "เพิ่มวันเช็คชื่อ" มุมขวาบนเพื่อเริ่มต้นบันทึกเวลาเรียนครับ</p>
           </div>
         ) : (
-          <div className="data-table-container">
+          <div id="attendance-table" className="data-table-container" style={{ backgroundColor: 'var(--bg-main)', padding: '10px', borderRadius: 'var(--radius-lg)' }}>
             <table className="data-table" style={{ whiteSpace: 'nowrap' }}>
               <thead>
                 <tr>
@@ -285,7 +416,11 @@ export default function Attendance({ appSettings, students, activeClassId, class
                           <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '3px' }}>
                             <span style={{ fontSize: '0.8rem', color: 'var(--text-primary)' }}>{new Date(date).toLocaleDateString('th-TH', { day: 'numeric', month: 'short' })}</span>
                             {colNote && (
-                              <span style={{ fontSize: '0.68rem', color: '#a855f7', backgroundColor: 'rgba(168, 85, 247, 0.1)', padding: '1px 4px', borderRadius: '4px', maxWidth: '75px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={colNote}>
+                              <span 
+                                onClick={() => alert(`วันหยุดพิเศษ: ${colNote}`)}
+                                style={{ cursor: 'help', fontSize: '0.68rem', color: '#a855f7', backgroundColor: 'rgba(168, 85, 247, 0.1)', padding: '1px 4px', borderRadius: '4px', maxWidth: '75px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} 
+                                title={colNote}
+                              >
                                 {colNote}
                               </span>
                             )}

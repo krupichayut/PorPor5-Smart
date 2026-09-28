@@ -44,6 +44,50 @@ function AnimatedRoutes({ children }) {
   );
 }
 
+function ToastContainer() {
+  const [toast, setToast] = useState(null);
+
+  useEffect(() => {
+    let timer;
+    const handleSaved = () => {
+      setToast({ type: "success", message: "บันทึกข้อมูลสำเร็จแล้ว" });
+      clearTimeout(timer);
+      timer = setTimeout(() => setToast(null), 3000);
+    };
+    
+    const handleError = (e) => {
+      setToast({ type: "error", message: `บันทึกไม่สำเร็จ: ${e.detail}` });
+      clearTimeout(timer);
+      timer = setTimeout(() => setToast(null), 5000);
+    };
+
+    window.addEventListener("app:saved", handleSaved);
+    window.addEventListener("app:save_error", handleError);
+    
+    return () => {
+      window.removeEventListener("app:saved", handleSaved);
+      window.removeEventListener("app:save_error", handleError);
+      clearTimeout(timer);
+    };
+  }, []);
+
+  if (!toast) return null;
+
+  return (
+    <div style={{
+      position: "fixed", bottom: "24px", right: "24px", zIndex: 9999,
+      backgroundColor: toast.type === "success" ? "rgba(16, 185, 129, 0.9)" : "rgba(239, 68, 68, 0.9)",
+      color: "#fff", padding: "12px 24px", borderRadius: "100px", border: "1px solid rgba(255,255,255,0.1)",
+      boxShadow: "0 8px 32px rgba(0,0,0,0.4)", backdropFilter: "blur(12px)",
+      display: "flex", alignItems: "center", gap: "10px", fontWeight: 600, fontSize: "0.95rem",
+      transform: "translateY(0)", transition: "all 0.3s ease",
+      animation: "fade-in 0.3s ease-out forwards"
+    }}>
+      <span style={{ fontSize: "1.2rem" }}>{toast.type === "success" ? "✨" : "⚠️"}</span> 
+      {toast.message}
+    </div>
+  );
+}
 function App() {
   const [user, setUser] = useState(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -307,6 +351,7 @@ function App() {
 
         </div>
       </div>
+      <ToastContainer />
     </Router>
   );
 }

@@ -10,7 +10,11 @@ export default function SettingsPage({ appSettings, setAppSettings, readOnly, cl
     principalName: '',
     academicYear: '',
     semester: '',
-    hoursPerCheck: 2
+    hoursPerCheck: 2,
+    term1Start: '',
+    term1End: '',
+    term2Start: '',
+    term2End: ''
   });
   const [isSaved, setIsSaved] = useState(false);
 
@@ -24,7 +28,11 @@ export default function SettingsPage({ appSettings, setAppSettings, readOnly, cl
         principalName: appSettings.principalName || '',
         academicYear: appSettings.academicYear || '',
         semester: appSettings.semester || '',
-        hoursPerCheck: appSettings.hoursPerCheck !== undefined ? appSettings.hoursPerCheck : 2
+        hoursPerCheck: appSettings.hoursPerCheck !== undefined ? appSettings.hoursPerCheck : 2,
+        term1Start: appSettings.term1Start || '',
+        term1End: appSettings.term1End || '',
+        term2Start: appSettings.term2Start || '',
+        term2End: appSettings.term2End || ''
       });
     }
   }, [appSettings]);
@@ -125,6 +133,31 @@ export default function SettingsPage({ appSettings, setAppSettings, readOnly, cl
               disabled={readOnly}
             />
             <small style={{ color: 'var(--text-muted)' }}>ใช้สำหรับคำนวณสรุปเวลาเรียนรวม (ค่าเริ่มต้นคือ 2 ชั่วโมง)</small>
+          </div>
+
+          <hr style={{ border: '0', borderTop: '1px solid var(--border-subtle)', margin: '1.75rem 0' }} />
+          <h3 style={{ margin: '0 0 1.25rem 0', color: 'var(--text-primary)', fontSize: '1rem', fontWeight: 600 }}>กำหนดวันเปิด-ปิดภาคเรียน (สำหรับเช็คเวลาเรียน)</h3>
+          
+          <div className="hairline-grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+            <div className="form-group">
+              <label className="form-label">วันเปิดภาคเรียนที่ 1</label>
+              <input type="date" className="form-control" name="term1Start" value={formData.term1Start} onChange={handleChange} disabled={readOnly} />
+            </div>
+            <div className="form-group">
+              <label className="form-label">วันปิดภาคเรียนที่ 1</label>
+              <input type="date" className="form-control" name="term1End" value={formData.term1End} onChange={handleChange} disabled={readOnly} />
+            </div>
+          </div>
+          
+          <div className="hairline-grid" style={{ gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
+            <div className="form-group">
+              <label className="form-label">วันเปิดภาคเรียนที่ 2</label>
+              <input type="date" className="form-control" name="term2Start" value={formData.term2Start} onChange={handleChange} disabled={readOnly} />
+            </div>
+            <div className="form-group">
+              <label className="form-label">วันปิดภาคเรียนที่ 2</label>
+              <input type="date" className="form-control" name="term2End" value={formData.term2End} onChange={handleChange} disabled={readOnly} />
+            </div>
           </div>
 
           <div className="form-group" style={{ marginBottom: '1.5rem' }}>

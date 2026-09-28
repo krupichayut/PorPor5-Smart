@@ -34,6 +34,52 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
 
   const expectedHours = getExpectedHours(activeClass?.name);
 
+  const handleLoadP1Preset = () => {
+    if (confirm("คุณต้องการโหลดชุดตัวชี้วัด ป.1 (ภาคเรียน 1-2) แทนข้อมูลเดิมทั้งหมดใช่หรือไม่? (ข้อมูลตัวชี้วัดเดิมของห้องนี้จะถูกลบและแทนที่ด้วยชุดใหม่)")) {
+      const p1Preset = [
+        {
+          id: Date.now().toString() + "-1",
+          classId: activeClassId,
+          name: "ตัวชี้วัด ป.1 ภาคเรียนที่ 1",
+          weight: 50,
+          hours: 20,
+          term: "1",
+          items: [
+            { id: "p1-1-1", code: "ศ 1.1 ป.1/1", description: "อภิปรายเกี่ยวกับรูปร่าง ลักษณะและขนาดของสิ่งต่างๆ รอบตัวในธรรมชาติ และสิ่งที่มนุษย์สร้างขึ้น", type: "between" },
+            { id: "p1-1-2", code: "ศ 1.1 ป.1/2", description: "บอกความรู้สึกที่มีต่อธรรมชาติและสิ่งแวดล้อมรอบตัว", type: "between" },
+            { id: "p1-1-3", code: "ศ 1.1 ป.1/3", description: "มีทักษะพื้นฐานในการใช้วัสดุ อุปกรณ์สร้างงานทัศนศิลป์", type: "between" },
+            { id: "p1-1-4", code: "ศ 1.1 ป.1/4", description: "สร้างงานทัศนศิลป์ โดยการทดลองใช้สีด้วยเทคนิดง่ายๆ", type: "end" },
+            { id: "p1-1-5", code: "ศ 1.1 ป.1/5", description: "วาดภาพระบายสีภาพธรรมชาติตามความรู้สึกของตนเอง", type: "end" },
+            { id: "p1-1-6", code: "ศ 1.2 ป.1/1", description: "ระบุงานทัศนศิลป์ในชีวิต ประจำวัน", type: "between" }
+          ]
+        },
+        {
+          id: Date.now().toString() + "-2",
+          classId: activeClassId,
+          name: "ตัวชี้วัด ป.1 ภาคเรียนที่ 2",
+          weight: 50,
+          hours: 20,
+          term: "2",
+          items: [
+            { id: "p1-2-1", code: "ศ 2.1 ป.1/1", description: "รู้สิ่งต่างๆสามารถก่อกำเนิดเสียงที่แตกต่างกัน", type: "between" },
+            { id: "p1-2-2", code: "ศ 2.1 ป.1/2", description: "บอกลักษณะของเสียงดัง-เบา และความช้า-เร็ว ของจังหวะ", type: "between" },
+            { id: "p1-2-3", code: "ศ 2.1 ป.1/3", description: "ท่องบทกลอน ร้องเพลงง่ายๆ", type: "end" },
+            { id: "p1-2-4", code: "ศ 2.1 ป.1/4", description: "มีส่วนร่วมในกิจกรรมดนตรีอย่างสนุกสนาน", type: "end" },
+            { id: "p1-2-5", code: "ศ 2.1 ป.1/5", description: "บอกความเกี่ยวข้องของเพลงที่ใช้ในชีวิตประจำวัน", type: "between" },
+            { id: "p1-2-6", code: "ศ 2.2 ป.1/1", description: "เล่าถึงเพลงในท้องถิ่น", type: "between" },
+            { id: "p1-2-7", code: "ศ 2.2 ป.1/2", description: "ระบุสิ่งที่ชื่นชอบในดนตรีท้องถิ่น", type: "between" },
+            { id: "p1-2-8", code: "ศ 3.1 ป.1/1", description: "เลียนแบบการเคลื่อนไหว", type: "between" },
+            { id: "p1-2-9", code: "ศ 3.1 ป.1/2", description: "แสดงท่าทางง่ายๆ เพื่อสื่อความหมายแทนคำพูด", type: "end" },
+            { id: "p1-2-10", code: "ศ 3.1 ป.1/3", description: "บอกสิ่งที่ตนเองชอบ จากการดูหรือร่วมแสดง", type: "between" },
+            { id: "p1-2-11", code: "ศ 3.2 ป.1/1", description: "ระบุ และเล่นการละเล่นของเด็กไทย", type: "end" },
+            { id: "p1-2-12", code: "ศ 3.2 ป.1/2", description: "บอกสิ่งที่ตนเองชอบในการแสดง นาฏศิลป์ไทย", type: "between" }
+          ]
+        }
+      ];
+      setIndicators(indicators.filter(i => i.classId !== activeClassId).concat(p1Preset));
+    }
+  };
+
   const handleLoadP2Preset = () => {
     if (confirm("ต้องการโหลดตัวชี้วัดศิลปะ ป.2 (เทอม 1-2) อัตโนมัติหรือไม่? (ข้อมูลเดิมในวิชานี้จะถูกลบและแทนที่ใหม่)")) {
       const p2Preset = [
@@ -278,6 +324,9 @@ export default function Indicators({ activeClassId, classes, indicators, setIndi
         </div>
                 {!readOnly && (
           <div style={{ display: "flex", gap: "0.5rem" }}>
+            <button className="btn btn-outline" onClick={handleLoadP1Preset} style={{ color: "var(--accent-primary)", borderColor: "var(--border-strong)", background: "rgba(250, 204, 21, 0.1)" }}>
+              ✨ โหลดตัวชี้วัด ป.1 อัตโนมัติ
+            </button>
             <button className="btn btn-outline" onClick={handleLoadP2Preset} style={{ color: "var(--accent-primary)", borderColor: "var(--border-strong)", background: "rgba(250, 204, 21, 0.1)" }}>
               ✨ โหลดตัวชี้วัด ป.2 อัตโนมัติ
             </button>
