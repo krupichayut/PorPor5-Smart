@@ -401,9 +401,20 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                   {/* Unit Columns */}
                   {displayUnits.map(unit => {
                     const unitCols = classScoreColumns.filter(c => c.unitId === unit.id && c.type === 'collected');
-                    const colsElements = unitCols.length > 0 ? unitCols.map(col => (
+                    const colsElements = unitCols.length > 0 ? unitCols.map(col => {
+                      const targetIndicator = col.indicatorId ? unit.items?.find(i => i.id === col.indicatorId) : null;
+                      return (
                       <th key={col.id} style={{ textAlign: 'center', minWidth: '70px', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-base)', fontWeight: 'normal' }}>
                         <div style={{ fontSize: '0.8rem', color: 'var(--text-secondary)' }}>{col.name}</div>
+                        {targetIndicator && (
+                          <div 
+                            title={`${targetIndicator.code}: ${targetIndicator.description}`}
+                            onClick={() => alert(`รหัสตัวชี้วัด: ${targetIndicator.code}\nรายละเอียด: ${targetIndicator.description}`)}
+                            style={{ fontSize: '0.65rem', color: 'var(--accent-cyan)', cursor: 'help', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '65px', margin: '2px auto 0' }}
+                          >
+                            {targetIndicator.code}
+                          </div>
+                        )}
                         <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>({col.maxScore})</div>
                         {!readOnly && (
                           <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px' }}>
@@ -412,7 +423,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                           </div>
                         )}
                       </th>
-                    )) : [
+                    ); }) : [
                       <th key={`empty-${unit.id}`} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', color: 'var(--text-muted)', fontWeight: 'normal', fontStyle: 'italic', fontSize: '0.75rem' }}>
                         (ยังไม่มีช่อง)
                       </th>
