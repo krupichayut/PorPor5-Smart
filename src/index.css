@@ -735,6 +735,13 @@ body {
   background-color: transparent !important;
 }
 
+/* Allow editing transferred students ONLY in the Students page (.roster-board) */
+.roster-board .row-transferred,
+.roster-board .row-transferred td,
+.roster-board .row-transferred button {
+  pointer-events: auto !important;
+}
+
 .row-transferred td {
   text-decoration: line-through;
   text-decoration-color: rgba(239, 68, 68, 0.5);
