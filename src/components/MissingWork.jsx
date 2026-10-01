@@ -283,7 +283,9 @@ export default function MissingWork({ students, activeClassId, classes, scores, 
                       fontWeight: selectedStudentId === student.id ? 600 : 400
                     }}
                   >
-                    <span>{student.number}. {student.name.split(' ')[0]}</span>
+                    <span style={{ overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }}>
+                      {student.number}. {student.name}
+                    </span>
                     {missingCount > 0 && (
                       <span className="badge badge-warning" style={{ fontSize: '0.7rem', padding: '2px 6px' }}>{missingCount} งาน</span>
                     )}
