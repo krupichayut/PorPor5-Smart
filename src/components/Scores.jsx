@@ -24,8 +24,8 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
   const midtermWeight = activeClass?.midtermWeight ?? 10;
   const finalWeight = activeClass?.finalWeight ?? 10;
   const totalUnitsWeight = classUnits.reduce((sum, u) => sum + u.weight, 0);
-  const term1CollectedWeight = classUnits.filter(u => getUnitTerm(u) === '1' || getUnitTerm(u) === 'all').reduce((sum, u) => sum + (Number(u.weight) || 0), 0);
-  const term2CollectedWeight = classUnits.filter(u => getUnitTerm(u) === '2' || getUnitTerm(u) === 'all').reduce((sum, u) => sum + (Number(u.weight) || 0), 0);
+  const term1CollectedWeight = classUnits.filter(u => (u.term || '1') === '1' || (u.term || '1') === 'all').reduce((sum, u) => sum + (Number(u.weight) || 0), 0);
+  const term2CollectedWeight = classUnits.filter(u => (u.term || '1') === '2' || (u.term || '1') === 'all').reduce((sum, u) => sum + (Number(u.weight) || 0), 0);
 
   const totalClassWeight = totalUnitsWeight + midtermWeight + finalWeight;
 
