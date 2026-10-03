@@ -1,6 +1,7 @@
 import { useState, useMemo } from 'react';
-import { Award, Plus, Trash2, Calculator, Edit2, Filter, Users } from 'lucide-react';
-import { getGradeColor } from '../utils/scoring';
+import { Award, Plus, Trash2, Calculator, Edit2, Filter, Users, Download } from 'lucide-react';
+import { getGradeColor, getGrade } from '../utils/scoring';
+import { downloadCsv } from '../utils/fileExports';
 
 export default function Scores({ students, activeClassId, classes, scores, setScores, scoreColumns, setScoreColumns, indicators, readOnly, studentPoints, setStudentPoints }) {
   const [isColumnModalOpen, setIsColumnModalOpen] = useState(false);
@@ -231,6 +232,106 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
   const showMidterm = viewUnit === 'all';
   const showFinal = viewUnit === 'all';
 
+
+  const handleExportScores = () => {
+    if (classStudents.length === 0) {
+      alert('ไม่มีข้อมูลนักเรียนให้ส่งออก');
+      return;
+    }
+    
+    const headers = [
+      { key: 'number', label: 'เลขที่' },
+      { key: 'studentId', label: 'รหัสประจำตัว' },
+      { key: 'name', label: 'ชื่อ - นามสกุล' },
+    ];
+    
+    displayUnits.forEach(unit => {
+      const unitCols = classScoreColumns.filter(c => c.unitId === unit.id && c.type === 'collected');
+      unitCols.forEach(col => headers.push({ key: col.id, label: col.name }));
+      headers.push({ key: `unit_total_${unit.id}`, label: `แปลงแล้ว (${unit.name})` });
+    });
+    
+    if (showMidterm) {
+      const examCols = classScoreColumns.filter(c => c.type === 'midterm');
+      examCols.forEach(col => headers.push({ key: col.id, label: col.name }));
+      headers.push({ key: 'midterm_total', label: 'แปลงแล้ว (กลางภาค)' });
+    }
+    
+    if (showFinal) {
+      const examCols = classScoreColumns.filter(c => c.type === 'final');
+      examCols.forEach(col => headers.push({ key: col.id, label: col.name }));
+      headers.push({ key: 'final_total', label: 'แปลงแล้ว (ปลายภาค)' });
+    }
+    
+    headers.push({ key: 'total_raw', label: 'รวมดิบ' });
+    headers.push({ key: 'total_scaled', label: `แปลง (เทอม ${viewTerm !== 'all' ? viewTerm : 'ทั้งหมด'})` });
+    
+    if (viewTerm === 'all') {
+      headers.push({ key: 'grade', label: 'เกรด' });
+    }
+
+    const rows = classStudents.map(s => {
+      const row = {
+        number: s.number,
+        studentId: s.studentId,
+        name: s.name,
+      };
+      
+      let studentViewTotal = 0;
+      let studentRawTotal = 0;
+      
+      displayUnits.forEach(unit => {
+        const unitCols = classScoreColumns.filter(c => c.unitId === unit.id && c.type === 'collected');
+        unitCols.forEach(col => {
+          const record = scores.find(r => r.studentId === s.id && r.columnId === col.id);
+          row[col.id] = record ? record.score : '';
+        });
+        
+        const uScore = getUnitScore(s.id, unit.id);
+        studentViewTotal += uScore.scaled;
+        studentRawTotal += uScore.raw;
+        row[`unit_total_${unit.id}`] = Math.round(uScore.scaled);
+      });
+      
+      if (showMidterm) {
+        const examCols = classScoreColumns.filter(c => c.type === 'midterm');
+        examCols.forEach(col => {
+          const record = scores.find(r => r.studentId === s.id && r.columnId === col.id);
+          row[col.id] = record ? record.score : '';
+        });
+        
+        const mScore = getExamScore(s.id, 'midterm');
+        studentViewTotal += mScore.scaled;
+        studentRawTotal += mScore.raw;
+        row['midterm_total'] = Math.round(mScore.scaled);
+      }
+      
+      if (showFinal) {
+        const examCols = classScoreColumns.filter(c => c.type === 'final');
+        examCols.forEach(col => {
+          const record = scores.find(r => r.studentId === s.id && r.columnId === col.id);
+          row[col.id] = record ? record.score : '';
+        });
+        
+        const fScore = getExamScore(s.id, 'final');
+        studentViewTotal += fScore.scaled;
+        studentRawTotal += fScore.raw;
+        row['final_total'] = Math.round(fScore.scaled);
+      }
+      
+      row['total_raw'] = studentRawTotal;
+      row['total_scaled'] = Math.round(studentViewTotal);
+      
+      if (viewTerm === 'all') {
+        row['grade'] = getGrade(Math.round(studentViewTotal));
+      }
+      
+      return row;
+    });
+
+    downloadCsv(`scores_${activeClass?.name || 'class'}.csv`, rows, headers);
+  };
+
   if (!activeClassId) {
     return (
       <div className="animate-fade-in">
@@ -256,12 +357,18 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
           <h2 className="page-title">บันทึกคะแนน: {activeClass?.name}</h2>
           <p className="page-subtitle">จัดการคะแนนเก็บตามหน่วยและคะแนนสอบ</p>
         </div>
-        {!readOnly && (
-          <button className="btn btn-primary" onClick={handleOpenAddModal}>
-            <Plus size={18} />
-            เพิ่มช่องคะแนน
+        <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
+          <button className="btn btn-secondary" onClick={handleExportScores} title="ส่งออกคะแนนเป็น Excel">
+            <Download size={18} />
+            <span className="hide-on-mobile">ส่งออก Excel</span>
           </button>
-        )}
+          {!readOnly && (
+            <button className="btn btn-primary" onClick={handleOpenAddModal}>
+              <Plus size={18} />
+              เพิ่มช่องคะแนน
+            </button>
+          )}
+        </div>
       </div>
 
       <div className="gradebook-tools" style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginBottom: '1.5rem' }}>
