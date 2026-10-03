@@ -80,7 +80,7 @@ export default function PorPor5Generator({
           <ul style={{ listStyle: 'none', padding: 0, margin: 0, display: 'flex', flexDirection: 'column', gap: '0.5rem', color: 'var(--text-secondary)', fontSize: '0.875rem' }}>
             <li>✓ <strong>Sheet 1 (หน้าปก):</strong> ข้อมูลสถานศึกษา, รหัสวิชา, ครูผู้สอน</li>
             <li>✓ <strong>Sheet 2 (เวลาเรียน):</strong> สรุปเวลาเรียนรายสัปดาห์ / รายเดือน / ร้อยละการเข้าเรียน</li>
-            <li>✓ <strong>Sheet 3 (ผลการเรียน):</strong> คะแนนเก็บทุกหน่วย, สอบกลางภาค, สอบปลายภาค และเกรด</li>
+            <li>✓ <strong>Sheet 3 (ผลการเรียน):</strong> คะแนนเก็บทุกหน่วย, สอบปลายภาคเทอม 1, สอบปลายภาคเทอม 2 และเกรด</li>
           </ul>
         </div>
       </div>

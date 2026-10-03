@@ -24,6 +24,9 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
   const midtermWeight = activeClass?.midtermWeight ?? 10;
   const finalWeight = activeClass?.finalWeight ?? 10;
   const totalUnitsWeight = classUnits.reduce((sum, u) => sum + u.weight, 0);
+  const term1CollectedWeight = classUnits.filter(u => getUnitTerm(u) === '1' || getUnitTerm(u) === 'all').reduce((sum, u) => sum + (Number(u.weight) || 0), 0);
+  const term2CollectedWeight = classUnits.filter(u => getUnitTerm(u) === '2' || getUnitTerm(u) === 'all').reduce((sum, u) => sum + (Number(u.weight) || 0), 0);
+
   const totalClassWeight = totalUnitsWeight + midtermWeight + finalWeight;
 
   const currentUnitIndicators = classUnits.find(u => u.id === newColumnUnitId)?.items || [];
@@ -56,10 +59,10 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
     
     // Auto-generate name based on type
     if (type === 'midterm') {
-      setNewColumnName('สอบกลางภาค');
+      setNewColumnName('สอบปลายภาคเทอม 1');
       setNewColumnMax(activeClass?.midtermWeight || 10);
     } else if (type === 'final') {
-      setNewColumnName('สอบปลายภาค');
+      setNewColumnName('สอบปลายภาคเทอม 2');
       setNewColumnMax(activeClass?.finalWeight || 10);
     } else {
       const existingCols = scoreColumns.filter(c => c.classId === activeClassId && c.unitId === unitId);
@@ -229,8 +232,8 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
     displayUnits = displayUnits.filter(u => u.id === viewUnit);
   }
 
-  const showMidterm = viewUnit === 'all';
-  const showFinal = viewUnit === 'all';
+  const showMidterm = viewUnit === 'all' && (viewTerm === '1' || viewTerm === 'all');
+  const showFinal = viewUnit === 'all' && (viewTerm === '2' || viewTerm === 'all');
 
 
   const handleExportScores = () => {
@@ -252,15 +255,17 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
     });
     
     if (showMidterm) {
+      headers.push({ key: 'term1_collected', label: `รวมเก็บเทอม 1 (${term1CollectedWeight} คะแนน)` });
       const examCols = classScoreColumns.filter(c => c.type === 'midterm');
       examCols.forEach(col => headers.push({ key: col.id, label: col.name }));
-      headers.push({ key: 'midterm_total', label: 'แปลงแล้ว (กลางภาค)' });
+      headers.push({ key: 'midterm_total', label: 'แปลงแล้ว (ปลายภาคเทอม 1)' });
     }
     
     if (showFinal) {
+      headers.push({ key: 'term2_collected', label: `รวมเก็บเทอม 2 (${term2CollectedWeight} คะแนน)` });
       const examCols = classScoreColumns.filter(c => c.type === 'final');
       examCols.forEach(col => headers.push({ key: col.id, label: col.name }));
-      headers.push({ key: 'final_total', label: 'แปลงแล้ว (ปลายภาค)' });
+      headers.push({ key: 'final_total', label: 'แปลงแล้ว (ปลายภาคเทอม 2)' });
     }
     
     headers.push({ key: 'total_raw', label: 'รวมดิบ' });
@@ -293,7 +298,10 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
         row[`unit_total_${unit.id}`] = Math.round(uScore.scaled);
       });
       
+
       if (showMidterm) {
+        const term1Score = classUnits.filter(u => getUnitTerm(u) === '1' || getUnitTerm(u) === 'all').reduce((sum, u) => sum + getUnitScore(s.id, u.id).scaled, 0);
+        row['term1_collected'] = Math.round(term1Score);
         const examCols = classScoreColumns.filter(c => c.type === 'midterm');
         examCols.forEach(col => {
           const record = scores.find(r => r.studentId === s.id && r.columnId === col.id);
@@ -306,7 +314,10 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
         row['midterm_total'] = Math.round(mScore.scaled);
       }
       
+
       if (showFinal) {
+        const term2Score = classUnits.filter(u => getUnitTerm(u) === '2' || getUnitTerm(u) === 'all').reduce((sum, u) => sum + getUnitScore(s.id, u.id).scaled, 0);
+        row['term2_collected'] = Math.round(term2Score);
         const examCols = classScoreColumns.filter(c => c.type === 'final');
         examCols.forEach(col => {
           const record = scores.find(r => r.studentId === s.id && r.columnId === col.id);
@@ -396,8 +407,8 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                 setViewUnit('all'); // Reset unit filter when term changes
               }}
             >
-              <option value="1">เทอม 1 (หน่วย + กลางภาค)</option>
-              <option value="2">เทอม 2 (หน่วย + ปลายภาค)</option>
+              <option value="1">เทอม 1 (หน่วย + สอบปลายภาคเทอม 1)</option>
+              <option value="2">เทอม 2 (หน่วย + สอบปลายภาคเทอม 2)</option>
               <option value="all">ทั้งปีการศึกษา</option>
             </select>
           </div>
@@ -465,11 +476,17 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                   
                   {/* Exams Groups */}
                   {showMidterm && (
+                    <th rowSpan={2} style={{ textAlign: "center", borderLeft: "1px solid var(--border-subtle)", backgroundColor: "var(--bg-surface-elevated)", color: "var(--accent-cyan)", verticalAlign: "middle" }}>
+                      <div style={{ fontWeight: 600 }}>รวมเก็บเทอม 1</div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>({term1CollectedWeight} คะแนน)</div>
+                    </th>
+                  )}
+                  {showMidterm && (
                     <th colSpan={Math.max(1, classScoreColumns.filter(c => c.type === 'midterm').length) + 1} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface)' }}>
                       <div style={{ color: 'var(--warning)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-                        สอบกลางภาค
+                        สอบปลายภาคเทอม 1
                         {!readOnly && (
-                          <button className="btn-icon" style={{ color: 'var(--warning)', padding: '2px' }} onClick={() => handleQuickAddColumn('midterm')} title="เพิ่มช่องคะแนนกลางภาค">
+                          <button className="btn-icon" style={{ color: 'var(--warning)', padding: '2px' }} onClick={() => handleQuickAddColumn('midterm')} title="เพิ่มช่องคะแนนปลายภาคเทอม 1">
                             <Plus size={14} />
                           </button>
                         )}
@@ -478,11 +495,17 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                     </th>
                   )}
                   {showFinal && (
+                    <th rowSpan={2} style={{ textAlign: "center", borderLeft: "1px solid var(--border-subtle)", backgroundColor: "var(--bg-surface-elevated)", color: "var(--accent-cyan)", verticalAlign: "middle" }}>
+                      <div style={{ fontWeight: 600 }}>รวมเก็บเทอม 2</div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>({term2CollectedWeight} คะแนน)</div>
+                    </th>
+                  )}
+                  {showFinal && (
                     <th colSpan={Math.max(1, classScoreColumns.filter(c => c.type === 'final').length) + 1} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface)' }}>
                       <div style={{ color: 'var(--danger)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-                        สอบปลายภาค
+                        สอบปลายภาคเทอม 2
                         {!readOnly && (
-                          <button className="btn-icon" style={{ color: 'var(--danger)', padding: '2px' }} onClick={() => handleQuickAddColumn('final')} title="เพิ่มช่องคะแนนปลายภาค">
+                          <button className="btn-icon" style={{ color: 'var(--danger)', padding: '2px' }} onClick={() => handleQuickAddColumn('final')} title="เพิ่มช่องคะแนนปลายภาคเทอม 2">
                             <Plus size={14} />
                           </button>
                         )}
@@ -648,6 +671,15 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                         ];
                       })}
 
+
+                      {showMidterm && (
+                        <td style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface-elevated)', fontWeight: 600, color: 'var(--accent-cyan)' }}>
+                          {(() => {
+                             const term1Score = classUnits.filter(u => getUnitTerm(u) === '1' || getUnitTerm(u) === 'all').reduce((sum, u) => sum + getUnitScore(s.id, u.id).scaled, 0);
+                             return <div title={`รวมเก็บเทอม 1 (แปลงแล้ว)`}>{Math.round(term1Score)}</div>;
+                          })()}
+                        </td>
+                      )}
                       {/* Midterm Cells */}
                       {showMidterm && (() => {
                         const examCols = classScoreColumns.filter(c => c.type === 'midterm');
@@ -682,6 +714,15 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                         ];
                       })()}
 
+
+                      {showFinal && (
+                        <td style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface-elevated)', fontWeight: 600, color: 'var(--accent-cyan)' }}>
+                          {(() => {
+                             const term2Score = classUnits.filter(u => getUnitTerm(u) === '2' || getUnitTerm(u) === 'all').reduce((sum, u) => sum + getUnitScore(s.id, u.id).scaled, 0);
+                             return <div title={`รวมเก็บเทอม 2 (แปลงแล้ว)`}>{Math.round(term2Score)}</div>;
+                          })()}
+                        </td>
+                      )}
                       {/* Final Cells */}
                       {showFinal && (() => {
                         const examCols = classScoreColumns.filter(c => c.type === 'final');
@@ -767,7 +808,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                       checked={newColumnType === 'midterm'}
                       onChange={() => setNewColumnType('midterm')}
                     />
-                    สอบกลางภาค
+                    สอบปลายภาคเทอม 1
                   </label>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
                     <input 
@@ -777,7 +818,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                       checked={newColumnType === 'final'}
                       onChange={() => setNewColumnType('final')}
                     />
-                    สอบปลายภาค
+                    สอบปลายภาคเทอม 2
                   </label>
                 </div>
               </div>

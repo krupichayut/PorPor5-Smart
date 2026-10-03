@@ -128,8 +128,8 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
                       <tr>
                         <th>ห้องเรียน / ชั้น</th>
                         <th>รายวิชา</th>
-                        <th style={{ textAlign: 'center' }}>สอบกลางภาค</th>
-                        <th style={{ textAlign: 'center' }}>สอบปลายภาค</th>
+                        <th style={{ textAlign: 'center' }}>สอบปลายภาคเทอม 1</th>
+                        <th style={{ textAlign: 'center' }}>สอบปลายภาคเทอม 2</th>
                         <th>สถานะ</th>
                         <th style={{ textAlign: 'right' }}>จัดการ</th>
                       </tr>
@@ -215,7 +215,7 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
               <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '1rem', marginTop: '1.5rem', padding: '1rem' }}>
                 <div style={{ gridColumn: 'span 2', fontSize: '0.875rem', fontWeight: 600, color: 'var(--text-primary)' }}>ตั้งค่าน้ำหนักคะแนนสอบ (คะแนนเก็บจะคิดจากผลรวมของหน่วยการเรียนรู้)</div>
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label className="form-label">น้ำหนักสอบกลางภาค</label>
+                  <label className="form-label">น้ำหนักสอบปลายภาคเทอม 1</label>
                   <input 
                     type="number" 
                     className="form-control" 
@@ -226,7 +226,7 @@ export default function Classes({ classes, setClasses, activeClassId, setActiveC
                   />
                 </div>
                 <div className="form-group" style={{ marginBottom: 0 }}>
-                  <label className="form-label">น้ำหนักสอบปลายภาค</label>
+                  <label className="form-label">น้ำหนักสอบปลายภาคเทอม 2</label>
                   <input 
                     type="number" 
                     className="form-control" 

@@ -155,13 +155,13 @@ export default function Grades({ students, activeClassId, classes, scores, score
                       {(selectedTerm === '1' || selectedTerm === 'all') && (
                         <>
                           <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: 'var(--bg-secondary)' }}>เทอม 1 ({term1CollectedWeight})</th>
-                          <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: 'var(--bg-secondary)' }}>กลางภาค ({midtermWeight})</th>
+                          <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: 'var(--bg-secondary)' }}>ปลายภาคเทอม 1 ({midtermWeight})</th>
                         </>
                       )}
                       {(selectedTerm === '2' || selectedTerm === 'all') && (
                         <>
                           <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: 'var(--bg-secondary)' }}>เทอม 2 ({term2CollectedWeight})</th>
-                          <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: 'var(--bg-secondary)' }}>ปลายภาค ({finalWeight})</th>
+                          <th style={{ textAlign: 'center', fontSize: '0.75rem', backgroundColor: 'var(--bg-secondary)' }}>ปลายภาคเทอม 2 ({finalWeight})</th>
                         </>
                       )}
                     </>
