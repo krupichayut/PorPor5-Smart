@@ -30,7 +30,7 @@ export default function ReportTermSummary({ students, activeClassId, classes, sc
     }, 0);
     const unitData = classUnits.find(u => u.id === unitId);
     const weight = Number(unitData?.weight || 0);
-    const scaled = unitMaxRaw > 0 ? (unitRaw / unitMaxRaw) * weight : 0;
+    const scaled = unitMaxRaw > 0 ? Math.round((unitRaw / unitMaxRaw) * weight) : 0;
     return { raw: unitRaw, maxRaw: unitMaxRaw, scaled, weight };
   };
 
@@ -42,7 +42,7 @@ export default function ReportTermSummary({ students, activeClassId, classes, sc
       const record = scores.find(r => r.studentId === studentId && r.columnId === col.id);
       return sum + (record && record.score !== '' ? Number(record.score) : 0);
     }, 0);
-    const scaled = maxRaw > 0 ? (raw / maxRaw) * weight : 0;
+    const scaled = maxRaw > 0 ? Math.round((raw / maxRaw) * weight) : 0;
     return { raw, maxRaw, scaled, weight };
   };
 

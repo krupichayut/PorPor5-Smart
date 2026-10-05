@@ -56,7 +56,8 @@ export function calculateStudentScores(studentId, context, scores, selectedTerm 
       const scoreVal = scoreMap.get(`${studentId}_${col.id}`);
       return sum + (scoreVal !== undefined && scoreVal !== null ? Number(scoreVal) : 0);
     }, 0);
-    const scaled = unitMaxRaw > 0 ? (unitRaw / unitMaxRaw) * Number(unit.weight || 0) : 0;
+    const unroundedScaled = unitMaxRaw > 0 ? (unitRaw / unitMaxRaw) * Number(unit.weight || 0) : 0;
+    const scaled = unit.term === '2' ? Math.round(unroundedScaled) : unroundedScaled;
 
     if (unit.term === "2") {
       term2Collected += scaled;
@@ -74,7 +75,8 @@ export function calculateStudentScores(studentId, context, scores, selectedTerm 
       const scoreVal = scoreMap.get(`${studentId}_${col.id}`);
       return sum + (scoreVal !== undefined && scoreVal !== null ? Number(scoreVal) : 0);
     }, 0);
-    const scaled = maxRaw > 0 ? (raw / maxRaw) * weight : 0;
+    const unroundedScaled = maxRaw > 0 ? (raw / maxRaw) * weight : 0;
+    const scaled = type === 'final' ? Math.round(unroundedScaled) : unroundedScaled;
     return { raw, scaled };
   };
 

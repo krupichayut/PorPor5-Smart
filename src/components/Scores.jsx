@@ -192,8 +192,10 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
       return sum + (scoreVal !== undefined && scoreVal !== null ? Number(scoreVal) : 0);
     }, 0);
     const unitWeight = classUnits.find(u => u.id === unitId)?.weight || 0;
-    const scaled = unitMaxRaw > 0 ? (unitRaw / unitMaxRaw) * unitWeight : 0;
-    return { raw: unitRaw, maxRaw: unitMaxRaw, weight: unitWeight, scaled: Number(scaled.toFixed(2)) };
+    const unitTerm = classUnits.find(u => u.id === unitId)?.term || '1';
+    const unroundedScaled = unitMaxRaw > 0 ? (unitRaw / unitMaxRaw) * unitWeight : 0;
+    const scaled = unitTerm === '2' ? Math.round(unroundedScaled) : Number(unroundedScaled.toFixed(2));
+    return { raw: unitRaw, maxRaw: unitMaxRaw, weight: unitWeight, scaled };
   };
 
   const getExamScore = (studentId, type) => {
@@ -204,8 +206,9 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
       return sum + (scoreVal !== undefined && scoreVal !== null ? Number(scoreVal) : 0);
     }, 0);
     const examWeight = type === 'midterm' ? midtermWeight : finalWeight;
-    const scaled = examMaxRaw > 0 ? (examRaw / examMaxRaw) * examWeight : 0;
-    return { raw: examRaw, maxRaw: examMaxRaw, weight: examWeight, scaled: Number(scaled.toFixed(2)) };
+    const unroundedScaled = examMaxRaw > 0 ? (examRaw / examMaxRaw) * examWeight : 0;
+    const scaled = type === 'final' ? Math.round(unroundedScaled) : Number(unroundedScaled.toFixed(2));
+    return { raw: examRaw, maxRaw: examMaxRaw, weight: examWeight, scaled };
   };
 
   const getGrade = (score) => {
