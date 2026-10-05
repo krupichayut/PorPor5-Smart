@@ -607,11 +607,11 @@ body {
   font-size: 0.75rem;
   text-transform: uppercase;
   letter-spacing: 0.6px;
-  color: var(--text-muted);
+  color: var(--text-primary);
   border-bottom: 1px solid var(--border-subtle);
-  background-color: var(--bg-surface);
+  background-color: var(--bg-surface-elevated);
   font-weight: 600;
-  white-space: nowrap;
+  /* Removed white-space: nowrap to allow utilities to control it */
 }
 
 .data-table td {
@@ -925,4 +925,20 @@ body {
     overflow: visible !important;
     height: auto !important;
   }
+}
+
+
+/* TABLE UTILITY CLASSES */
+.col-student-name {
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 220px;
+}
+.col-unit-name {
+  white-space: normal;
+  word-wrap: break-word;
+  line-height: 1.3;
+  min-width: 100px;
+  max-width: 150px;
 }

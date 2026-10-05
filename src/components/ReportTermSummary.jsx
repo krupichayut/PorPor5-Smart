@@ -30,7 +30,8 @@ export default function ReportTermSummary({ students, activeClassId, classes, sc
     }, 0);
     const unitData = classUnits.find(u => u.id === unitId);
     const weight = Number(unitData?.weight || 0);
-    const scaled = unitMaxRaw > 0 ? Math.round((unitRaw / unitMaxRaw) * weight) : 0;
+    const raw0 = unitMaxRaw > 0 ? (unitRaw / unitMaxRaw) * weight : 0;
+    const scaled = (unitData?.term || '1') === '2' ? Math.round(raw0) : raw0;
     return { raw: unitRaw, maxRaw: unitMaxRaw, scaled, weight };
   };
 
@@ -42,7 +43,8 @@ export default function ReportTermSummary({ students, activeClassId, classes, sc
       const record = scores.find(r => r.studentId === studentId && r.columnId === col.id);
       return sum + (record && record.score !== '' ? Number(record.score) : 0);
     }, 0);
-    const scaled = maxRaw > 0 ? Math.round((raw / maxRaw) * weight) : 0;
+    const raw0 = maxRaw > 0 ? (raw / maxRaw) * weight : 0;
+    const scaled = type === 'final' ? Math.round(raw0) : raw0;
     return { raw, maxRaw, scaled, weight };
   };
 
@@ -147,7 +149,7 @@ export default function ReportTermSummary({ students, activeClassId, classes, sc
                     <div>ทุกหน่วย</div>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>({termCollectedWeight})</div>
                   </th>
-                  <th rowSpan={2} style={{ width: '120px', textAlign: 'center', backgroundColor: 'var(--bg-tertiary)', color: 'var(--warning)' }}>
+                  <th rowSpan={2} style={{ width: '120px', textAlign: 'center', backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-primary)' }}>
                     <div>{examLabel}</div>
                     <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>({examWeight})</div>
                   </th>
@@ -159,8 +161,8 @@ export default function ReportTermSummary({ students, activeClassId, classes, sc
                 </tr>
                 <tr>
                   {termUnits.map((unit) => (
-                    <th key={unit.id} style={{ textAlign: 'center', backgroundColor: 'var(--bg-surface-elevated)', borderLeft: '1px solid var(--border-subtle)', borderBottom: '2px solid var(--border-color)', fontSize: '0.85rem' }}>
-                      <div style={{ whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '120px', margin: '0 auto' }}>{unit.name}</div>
+                    <th key={unit.id} className="col-unit-name" style={{ textAlign: 'center', backgroundColor: 'var(--bg-surface-elevated)', borderLeft: '1px solid var(--border-subtle)', borderBottom: '2px solid var(--border-color)', fontSize: '0.85rem' }}>
+                      <div style={{ margin: '0 auto' }}>{unit.name}</div>
                       <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>({unit.weight})</div>
                     </th>
                   ))}
@@ -172,7 +174,7 @@ export default function ReportTermSummary({ students, activeClassId, classes, sc
                   return (
                     <tr key={s.id} className={s.status === "transferred" ? "row-transferred" : ""}>
                       <td style={{ textAlign: 'center', color: 'var(--text-muted)' }}>{index + 1}</td>
-                      <td style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{s.name}</td>
+                      <td className="col-student-name" style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{s.name}</td>
                       
                       {termUnits.map(unit => {
                         const uScore = getUnitScoreLocal(s.id, unit.id);

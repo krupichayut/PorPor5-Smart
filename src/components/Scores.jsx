@@ -393,7 +393,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
           <div>
             <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>น้ำหนักคะแนนรวม (ที่ตั้งค่าไว้)</div>
             <div style={{ fontSize: '1.5rem', fontWeight: 600, color: totalClassWeight !== 100 ? 'var(--danger)' : 'var(--text-primary)' }}>
-              {totalClassWeight} <span style={{ fontSize: '1rem', fontWeight: 'normal', color: 'var(--text-secondary)' }}>คะแนน</span> {totalClassWeight !== 100 && <span style={{ fontSize: '0.85rem', fontWeight: 'normal', color: 'var(--danger)' }}>(ควรปรับให้ครบ 100)</span>}
+              {totalClassWeight} <span style={{ fontSize: '1rem', fontWeight: 'normal', color: 'var(--text-secondary)' }}>คะแนน</span> {totalClassWeight !== 100 && <span style={{ fontSize: '0.85rem', fontWeight: 'normal', color: 'var(--text-primary)' }}>(ควรปรับให้ครบ 100)</span>}
             </div>
           </div>
         </div>
@@ -445,7 +445,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
         ) : (
           <>
             {classUnits.length === 0 && (
-              <div style={{ color: 'var(--warning)', padding: '1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
+              <div style={{ color: 'var(--text-primary)', padding: '1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 <Award size={24} />
                 <div>
                   <strong>ยังไม่ได้สร้างหน่วยการเรียนรู้:</strong> หากต้องการเพิ่ม "ช่องคะแนนเก็บ" กรุณาไปสร้างหน่วยการเรียนรู้ที่เมนู <strong>โครงสร้างรายวิชา</strong> ก่อน
@@ -463,7 +463,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                   {displayUnits.map(unit => {
                     const unitCols = classScoreColumns.filter(c => c.unitId === unit.id && c.type === 'collected');
                     return (
-                      <th key={unit.id} colSpan={Math.max(1, unitCols.length) + 1} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface)' }}>
+                      <th key={unit.id} className="col-unit-name" colSpan={Math.max(1, unitCols.length) + 1} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface)' }}>
                         <div style={{ color: 'var(--text-primary)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
                           {unit.name}
                           {!readOnly && (
@@ -486,10 +486,10 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                   )}
                   {showMidterm && (
                     <th colSpan={Math.max(1, classScoreColumns.filter(c => c.type === 'midterm').length) + 1} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface)' }}>
-                      <div style={{ color: 'var(--warning)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                      <div style={{ color: 'var(--text-primary)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
                         สอบปลายภาคเทอม 1
                         {!readOnly && (
-                          <button className="btn-icon" style={{ color: 'var(--warning)', padding: '2px' }} onClick={() => handleQuickAddColumn('midterm')} title="เพิ่มช่องคะแนนปลายภาคเทอม 1">
+                          <button className="btn-icon" style={{ color: 'var(--text-primary)', padding: '2px' }} onClick={() => handleQuickAddColumn('midterm')} title="เพิ่มช่องคะแนนปลายภาคเทอม 1">
                             <Plus size={14} />
                           </button>
                         )}
@@ -505,10 +505,10 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                   )}
                   {showFinal && (
                     <th colSpan={Math.max(1, classScoreColumns.filter(c => c.type === 'final').length) + 1} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface)' }}>
-                      <div style={{ color: 'var(--danger)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
+                      <div style={{ color: 'var(--text-primary)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
                         สอบปลายภาคเทอม 2
                         {!readOnly && (
-                          <button className="btn-icon" style={{ color: 'var(--danger)', padding: '2px' }} onClick={() => handleQuickAddColumn('final')} title="เพิ่มช่องคะแนนปลายภาคเทอม 2">
+                          <button className="btn-icon" style={{ color: 'var(--text-primary)', padding: '2px' }} onClick={() => handleQuickAddColumn('final')} title="เพิ่มช่องคะแนนปลายภาคเทอม 2">
                             <Plus size={14} />
                           </button>
                         )}
@@ -552,7 +552,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                         {!readOnly && (
                           <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px' }}>
                             <button className="btn-icon" aria-label="แก้ไข" style={{ padding: '2px', color: 'var(--text-muted)' }} onClick={() => handleOpenEditModal(col)}><Edit2 size={11} /></button>
-                            <button className="btn-icon" aria-label="ลบ" style={{ padding: '2px', color: 'var(--danger)', opacity: 0.6 }} onClick={() => handleDeleteColumn(col.id)}><Trash2 size={11} /></button>
+                            <button className="btn-icon" aria-label="ลบ" style={{ padding: '2px', color: 'var(--text-primary)', opacity: 0.6 }} onClick={() => handleDeleteColumn(col.id)}><Trash2 size={11} /></button>
                           </div>
                         )}
                       </th>
@@ -581,7 +581,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                         {!readOnly && (
                           <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px' }}>
                             <button className="btn-icon" aria-label="แก้ไข" style={{ padding: '2px', color: 'var(--text-muted)' }} onClick={() => handleOpenEditModal(col)}><Edit2 size={11} /></button>
-                            <button className="btn-icon" aria-label="ลบ" style={{ padding: '2px', color: 'var(--danger)', opacity: 0.6 }} onClick={() => handleDeleteColumn(col.id)}><Trash2 size={11} /></button>
+                            <button className="btn-icon" aria-label="ลบ" style={{ padding: '2px', color: 'var(--text-primary)', opacity: 0.6 }} onClick={() => handleDeleteColumn(col.id)}><Trash2 size={11} /></button>
                           </div>
                         )}
                       </th>
@@ -593,7 +593,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
 
                     return [
                       ...colsElements,
-                      <th key="total-midterm" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-tertiary)', color: 'var(--warning)', fontSize: '0.75rem' }}>
+                      <th key="total-midterm" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-primary)', fontSize: '0.75rem' }}>
                         <div>แปลงแล้ว</div>
                         <div style={{ color: 'var(--text-muted)', fontSize: '0.68rem' }}>({midtermWeight})</div>
                       </th>
@@ -610,7 +610,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                         {!readOnly && (
                           <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px' }}>
                             <button className="btn-icon" aria-label="แก้ไข" style={{ padding: '2px', color: 'var(--text-muted)' }} onClick={() => handleOpenEditModal(col)}><Edit2 size={11} /></button>
-                            <button className="btn-icon" aria-label="ลบ" style={{ padding: '2px', color: 'var(--danger)', opacity: 0.6 }} onClick={() => handleDeleteColumn(col.id)}><Trash2 size={11} /></button>
+                            <button className="btn-icon" aria-label="ลบ" style={{ padding: '2px', color: 'var(--text-primary)', opacity: 0.6 }} onClick={() => handleDeleteColumn(col.id)}><Trash2 size={11} /></button>
                           </div>
                         )}
                       </th>
@@ -622,7 +622,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
 
                     return [
                       ...colsElements,
-                      <th key="total-final" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-tertiary)', color: 'var(--danger)', fontSize: '0.75rem' }}>
+                      <th key="total-final" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-primary)', fontSize: '0.75rem' }}>
                         <div>แปลงแล้ว</div>
                         <div style={{ color: 'var(--text-muted)', fontSize: '0.68rem' }}>({finalWeight})</div>
                       </th>
@@ -638,7 +638,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                   return (
                     <tr key={s.id} className={s.status === "transferred" ? "row-transferred" : ""}>
                       <td className="sticky-col-left" style={{ boxSizing: 'border-box', width: '60px', minWidth: '60px', padding: '0.5rem', textAlign: 'center', fontWeight: 600, color: 'var(--text-muted)', left: 0 }}>{index + 1}</td>
-                      <td className="sticky-col-left" style={{ boxSizing: 'border-box', width: '220px', minWidth: '220px', padding: '0.5rem 1rem', fontWeight: 500, left: '60px', color: 'var(--text-primary)', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{s.name}</td>
+                      <td className="sticky-col-left col-student-name" style={{ boxSizing: 'border-box', width: '220px', minWidth: '220px', padding: '0.5rem 1rem', fontWeight: 500, left: '60px', color: 'var(--text-primary)', }}>{s.name}</td>
                       
                       {/* Unit Cells */}
                       {displayUnits.map(unit => {
@@ -711,7 +711,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
 
                         return [
                           ...colsElements,
-                          <td key="total-midterm-cell" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-tertiary)', fontWeight: 600, color: 'var(--warning)' }}>
+                          <td key="total-midterm-cell" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-tertiary)', fontWeight: 600, color: 'var(--text-primary)' }}>
                             <div title={`ดิบ: ${mScore.raw}/${mScore.maxRaw}`}>{Math.round(mScore.scaled)}</div>
                           </td>
                         ];
@@ -754,7 +754,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
 
                         return [
                           ...colsElements,
-                          <td key="total-final-cell" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-tertiary)', fontWeight: 600, color: 'var(--danger)' }}>
+                          <td key="total-final-cell" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-tertiary)', fontWeight: 600, color: 'var(--text-primary)' }}>
                             <div title={`ดิบ: ${fScore.raw}/${fScore.maxRaw}`}>{Math.round(fScore.scaled)}</div>
                           </td>
                         ];
@@ -830,7 +830,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                 <div className="form-group">
                   <label className="form-label">สังกัดหน่วยการเรียนรู้ (จำเป็น)</label>
                   {classUnits.length === 0 ? (
-                    <div style={{ color: 'var(--danger)', fontSize: '0.875rem', padding: '0.5rem', backgroundColor: 'var(--bg-secondary)' }}>
+                    <div style={{ color: 'var(--text-primary)', fontSize: '0.875rem', padding: '0.5rem', backgroundColor: 'var(--bg-secondary)' }}>
                       ❌ ยังไม่มีหน่วยการเรียนรู้: กรุณาไปที่เมนู โครงสร้างรายวิชา เพื่อสร้างหน่วยการเรียนรู้ก่อนเพิ่มคะแนนเก็บ
                     </div>
                   ) : (

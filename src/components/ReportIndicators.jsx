@@ -157,7 +157,7 @@ export default function ReportIndicators({ students, activeClassId, classes, sco
                   return (
                     <tr key={s.id} className={s.status === "transferred" ? "row-transferred" : ""}>
                       <td style={{ textAlign: 'center', color: 'var(--text-muted)' }}>{index + 1}</td>
-                      <td style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{s.name}</td>
+                      <td className="col-student-name" style={{ fontWeight: 500, color: 'var(--text-primary)' }}>{s.name}</td>
                       
                       {allIndicators.map(ind => {
                         const score = ind.linkedCols.reduce((sum, col) => {
