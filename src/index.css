@@ -4,7 +4,7 @@
   /* =========================================================
      MODERN STARRY NIGHT PALETTE (Van Gogh meets Apple)
      ========================================================= */
-  --bg-base: #060913; /* Deepest night sky */
+  --bg-base: #101B35; /* Deepest night sky */
   --bg-surface: rgba(15, 23, 42, 0.6); /* Frosted navy glass */
   --bg-surface-elevated: rgba(30, 41, 59, 0.75);
   --bg-surface-hover: rgba(30, 41, 59, 0.9);
@@ -12,8 +12,8 @@
   --bg-glass: rgba(6, 9, 19, 0.75);
   
   /* Text Hierarchy */
-  --text-primary: #f8fafc; /* Ice white */
-  --text-secondary: #cbd5e1; /* Light slate */
+  --text-primary: #F1E9D5; /* Ice white */
+  --text-secondary: #B4C2D4; /* Light slate */
   --text-muted: #64748b;
   --text-faint: #334155;
   
@@ -23,9 +23,9 @@
   --border-focus: rgba(250, 204, 21, 0.5); /* Golden focus */
   
   /* Accents & Brand (Golden Yellow & Cerulean Swirls) */
-  --accent-primary: #facc15; /* Glowing Gold */
+  --accent-primary: #E8BE59; /* Glowing Gold */
   --accent-primary-hover: #fef08a;
-  --accent-cyan: #38bdf8; /* Swirling Cerulean */
+  --accent-cyan: #8DBBD8; /* Swirling Cerulean */
   --accent-purple: #818cf8; /* Soft Indigo */
   
   /* Semantic Colors (Soft Pastel Translucent) */

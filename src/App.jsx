@@ -195,44 +195,26 @@ function App() {
             <span className="sidebar-brand-badge">ปพ.5</span>
           </div>
           <nav className="nav-menu">
-            <NavLink to="/" aria-label="แดชบอร์ด" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} end>
-              <BarChart3 size={17} /> <span>แดชบอร์ด</span>
+            <NavLink to="/" aria-label="ภาพรวม" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} end>
+              <BarChart3 size={17} /> <span>ภาพรวม</span>
             </NavLink>
-            <NavLink to="/classes" aria-label="จัดการวิชา" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <BookOpen size={17} /> <span>จัดการวิชา</span>
+            <NavLink to="/attendance" aria-label="เช็คชื่อ" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Calendar size={17} /> <span>เช็คชื่อ</span>
             </NavLink>
-            <NavLink to="/course-plan" aria-label="โครงสร้างวิชา" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <ClipboardList size={17} /> <span>โครงสร้างวิชา</span>
-            </NavLink>
-            <NavLink to="/students" aria-label="นักเรียน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Users size={17} /> <span>นักเรียน</span>
-            </NavLink>
-            <NavLink to="/attendance" aria-label="เวลาเรียน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Calendar size={17} /> <span>เวลาเรียน</span>
-            </NavLink>
-            <NavLink to="/grading" aria-label="บันทึกคะแนน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+            <NavLink to="/grading/scores" aria-label="บันทึกคะแนน" className={({ isActive }) => `nav-item ${isActive || window.location.pathname === '/grading' ? 'active' : ''}`}>
               <Award size={17} /> <span>บันทึกคะแนน</span>
             </NavLink>
-            <NavLink to="/rewards" aria-label="ของรางวัล" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Paintbrush size={17} /> <span>ของรางวัล</span>
+            <NavLink to="/grading/missing" aria-label="ติดตามงาน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <FileText size={17} /> <span>ติดตามงาน</span>
             </NavLink>
-            <NavLink to="/media-library" aria-label="คลังสื่อ" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Library size={17} /> <span>คลังสื่อ</span>
-            </NavLink>
-            <NavLink to="/gallery" aria-label="ผลงานนักเรียน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Image size={17} /> <span>แกลเลอรีผลงาน</span>
-            </NavLink>
-            <NavLink to="/certificates" aria-label="เกียรติบัตร" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Award size={17} /> <span>เกียรติบัตร</span>
-            </NavLink>
-            <NavLink to="/assessments" aria-label="การประเมิน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Star size={17} /> <span>การประเมิน</span>
+            <NavLink to="/assessments" aria-label="ประเมินผู้เรียน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <ClipboardList size={17} /> <span>ประเมินผู้เรียน</span>
             </NavLink>
             <NavLink to="/reports" aria-label="รายงาน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <FileText size={17} /> <span>รายงาน</span>
             </NavLink>
-            <NavLink to="/settings" aria-label="ตั้งค่าระบบ" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Settings size={17} /> <span>ตั้งค่าระบบ</span>
+            <NavLink to="/classes" aria-label="ตั้งค่ารายวิชา" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <BookOpen size={17} /> <span>ตั้งค่ารายวิชา</span>
             </NavLink>
           </nav>
         </aside>
@@ -241,53 +223,37 @@ function App() {
         <div className="main-wrapper">
           
           {/* Top Header */}
-          <header className="top-header no-print">
-            <div className="header-title" style={{ display: 'flex', alignItems: 'center', gap: '1rem' }}>
+          <header className="top-header no-print" style={{ backgroundColor: 'var(--bg-surface-elevated)', borderBottom: '1px solid var(--border-subtle)' }}>
+            <div className="header-title" style={{ display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 }}>
               <button 
                 className="btn-icon" 
                 onClick={() => setIsSidebarCollapsed(!isSidebarCollapsed)} 
                 aria-label="ซ่อน/แสดงเมนู"
                 title="ซ่อน/แสดงเมนู"
-                style={{ padding: '0.25rem' }}
+                style={{ padding: '0.25rem', color: 'var(--text-primary)' }}
               >
                 <Menu size={20} />
               </button>
               {activeClass ? (
-                <>
-                  <span style={{ color: 'var(--text-primary)' }}>{activeClass.name}</span>
-                  <span style={{ color: 'var(--text-muted)' }}>•</span>
-                  <span style={{ color: 'var(--text-secondary)', fontSize: '0.875rem' }}>{activeClass.subject}</span>
-                </>
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', fontSize: '1rem' }}>
+                  <span style={{ color: 'var(--accent-primary)', fontWeight: '600' }}>{appSettings?.academicYear || 'ปีการศึกษา 2567'}</span>
+                  <span style={{ color: 'var(--text-muted)' }}>|</span>
+                  <span style={{ color: 'var(--text-primary)', fontWeight: '600' }}>{activeClass.name}</span>
+                  <span style={{ color: 'var(--text-muted)' }}>|</span>
+                  <span style={{ color: 'var(--text-secondary)' }}>{activeClass.subject}</span>
+                </div>
               ) : (
-                <span style={{ color: 'var(--text-primary)' }}>ภาพรวมทุกห้องเรียน</span>
+                <span style={{ color: 'var(--text-secondary)' }}>กรุณาเลือกห้องเรียนจากเมนูภาพรวม</span>
               )}
             </div>
-            <div className="header-controls">
-              {classes && classes.length > 0 && (
-                <div className="capsule-select">
-                  <BookOpen size={14} style={{ color: 'var(--text-muted)' }} />
-                  <select 
-                    value={activeClassId || ''}
-                    onChange={(e) => setActiveClassId(e.target.value)}
-                    aria-label="เลือกห้องเรียน"
-                  >
-                    <option value="">-- ทุกห้องเรียน (Overview) --</option>
-                    {classes.map(c => (
-                      <option key={c.id} value={c.id}>{c.name} : {c.subject}</option>
-                    ))}
-                  </select>
+            <div className="header-actions">
+              <div className="user-profile">
+                <div className="avatar">ครู</div>
+                <div className="user-info">
+                  <div className="user-name">{appSettings?.teacherName || 'คุณครู'}</div>
+                  <div className="user-role">{appSettings?.schoolName || 'โรงเรียน'}</div>
                 </div>
-              )}
-
-              {user ? (
-                <button className="btn btn-outline text-danger" onClick={handleLogout} title="ออกจากระบบ" aria-label="ออกจากระบบ" style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}>
-                  <LogOut size={14} /> ออกจากระบบ
-                </button>
-              ) : (
-                <button className="btn btn-primary" onClick={() => setIsLoginModalOpen(true)} title="เข้าสู่ระบบ" aria-label="เข้าสู่ระบบ" style={{ padding: '0.35rem 0.75rem', fontSize: '0.8rem' }}>
-                  <Key size={14} /> เข้าสู่ระบบ
-                </button>
-              )}
+              </div>
             </div>
           </header>
 

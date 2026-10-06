@@ -1,4 +1,4 @@
-import { useState, useMemo } from 'react';
+﻿import { useState, useMemo } from 'react';
 import { Award, Plus, Trash2, Calculator, Edit2, Filter, Users, Download } from 'lucide-react';
 import { getGradeColor, getGrade } from '../utils/scoring';
 import { downloadCsv } from '../utils/fileExports';
@@ -14,6 +14,8 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
   
   const [viewTerm, setViewTerm] = useState('all'); // '1', '2', 'all'
   const [viewUnit, setViewUnit] = useState('all'); // 'all', or unitId
+  const [isFocusMode, setIsFocusMode] = useState(false);
+  const [focusColumnId, setFocusColumnId] = useState('');
 
   const activeClass = classes.find(c => c.id === activeClassId);
   const classStudents = students.filter(s => s.classId === activeClassId).sort((a, b) => a.number - b.number);
@@ -59,14 +61,14 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
     
     // Auto-generate name based on type
     if (type === 'midterm') {
-      setNewColumnName('สอบปลายภาคเทอม 1');
+      setNewColumnName('à¸ªà¸­à¸šà¸›à¸¥à¸²à¸¢à¸ à¸²à¸„à¹€à¸—à¸­à¸¡ 1');
       setNewColumnMax(activeClass?.midtermWeight || 10);
     } else if (type === 'final') {
-      setNewColumnName('สอบปลายภาคเทอม 2');
+      setNewColumnName('à¸ªà¸­à¸šà¸›à¸¥à¸²à¸¢à¸ à¸²à¸„à¹€à¸—à¸­à¸¡ 2');
       setNewColumnMax(activeClass?.finalWeight || 10);
     } else {
       const existingCols = scoreColumns.filter(c => c.classId === activeClassId && c.unitId === unitId);
-      setNewColumnName(`ชิ้นงานที่ ${existingCols.length + 1}`);
+      setNewColumnName(`à¸Šà¸´à¹‰à¸™à¸‡à¸²à¸™à¸—à¸µà¹ˆ ${existingCols.length + 1}`);
       setNewColumnMax(10);
     }
     
@@ -77,7 +79,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
     e.preventDefault();
     if (!newColumnName.trim() || newColumnMax <= 0) return;
     if (newColumnType === 'collected' && !newColumnUnitId) {
-      alert('กรุณาเลือกหน่วยการเรียนรู้');
+      alert('à¸à¸£à¸¸à¸“à¸²à¹€à¸¥à¸·à¸­à¸à¸«à¸™à¹ˆà¸§à¸¢à¸à¸²à¸£à¹€à¸£à¸µà¸¢à¸™à¸£à¸¹à¹‰');
       return;
     }
     
@@ -116,7 +118,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
     
     const column = scoreColumns.find(c => c.id === columnId);
     if (numValue !== '' && numValue > column.maxScore) {
-      alert(`คะแนนต้องไม่เกิน ${column.maxScore}`);
+      alert(`à¸„à¸°à¹à¸™à¸™à¸•à¹‰à¸­à¸‡à¹„à¸¡à¹ˆà¹€à¸à¸´à¸™ ${column.maxScore}`);
       return;
     }
     if (numValue !== '' && numValue < 0) return;
@@ -175,7 +177,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
   };
 
   const handleDeleteColumn = (columnId) => {
-    if (confirm('คุณแน่ใจหรือไม่ว่าต้องการลบช่องคะแนนนี้? ข้อมูลคะแนนทั้งหมดในช่องนี้จะหายไป')) {
+    if (confirm('à¸„à¸¸à¸“à¹à¸™à¹ˆà¹ƒà¸ˆà¸«à¸£à¸·à¸­à¹„à¸¡à¹ˆà¸§à¹ˆà¸²à¸•à¹‰à¸­à¸‡à¸à¸²à¸£à¸¥à¸šà¸Šà¹ˆà¸­à¸‡à¸„à¸°à¹à¸™à¸™à¸™à¸µà¹‰? à¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸„à¸°à¹à¸™à¸™à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”à¹ƒà¸™à¸Šà¹ˆà¸­à¸‡à¸™à¸µà¹‰à¸ˆà¸°à¸«à¸²à¸¢à¹„à¸›')) {
       setScoreColumns(scoreColumns.filter(c => c.id !== columnId));
       setScores(scores.filter(s => s.columnId !== columnId));
     }
@@ -241,41 +243,41 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
 
   const handleExportScores = () => {
     if (classStudents.length === 0) {
-      alert('ไม่มีข้อมูลนักเรียนให้ส่งออก');
+      alert('à¹„à¸¡à¹ˆà¸¡à¸µà¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸™à¸±à¸à¹€à¸£à¸µà¸¢à¸™à¹ƒà¸«à¹‰à¸ªà¹ˆà¸‡à¸­à¸­à¸');
       return;
     }
     
     const headers = [
-      { key: 'number', label: 'เลขที่' },
-      { key: 'studentId', label: 'รหัสประจำตัว' },
-      { key: 'name', label: 'ชื่อ - นามสกุล' },
+      { key: 'number', label: 'à¹€à¸¥à¸‚à¸—à¸µà¹ˆ' },
+      { key: 'studentId', label: 'à¸£à¸«à¸±à¸ªà¸›à¸£à¸°à¸ˆà¸³à¸•à¸±à¸§' },
+      { key: 'name', label: 'à¸Šà¸·à¹ˆà¸­ - à¸™à¸²à¸¡à¸ªà¸à¸¸à¸¥' },
     ];
     
     displayUnits.forEach(unit => {
       const unitCols = classScoreColumns.filter(c => c.unitId === unit.id && c.type === 'collected');
       unitCols.forEach(col => headers.push({ key: col.id, label: col.name }));
-      headers.push({ key: `unit_total_${unit.id}`, label: `แปลงแล้ว (${unit.name})` });
+      headers.push({ key: `unit_total_${unit.id}`, label: `à¹à¸›à¸¥à¸‡à¹à¸¥à¹‰à¸§ (${unit.name})` });
     });
     
     if (showMidterm) {
-      headers.push({ key: 'term1_collected', label: `รวมเก็บเทอม 1 (${term1CollectedWeight} คะแนน)` });
+      headers.push({ key: 'term1_collected', label: `à¸£à¸§à¸¡à¹€à¸à¹‡à¸šà¹€à¸—à¸­à¸¡ 1 (${term1CollectedWeight} à¸„à¸°à¹à¸™à¸™)` });
       const examCols = classScoreColumns.filter(c => c.type === 'midterm');
       examCols.forEach(col => headers.push({ key: col.id, label: col.name }));
-      headers.push({ key: 'midterm_total', label: 'แปลงแล้ว (ปลายภาคเทอม 1)' });
+      headers.push({ key: 'midterm_total', label: 'à¹à¸›à¸¥à¸‡à¹à¸¥à¹‰à¸§ (à¸›à¸¥à¸²à¸¢à¸ à¸²à¸„à¹€à¸—à¸­à¸¡ 1)' });
     }
     
     if (showFinal) {
-      headers.push({ key: 'term2_collected', label: `รวมเก็บเทอม 2 (${term2CollectedWeight} คะแนน)` });
+      headers.push({ key: 'term2_collected', label: `à¸£à¸§à¸¡à¹€à¸à¹‡à¸šà¹€à¸—à¸­à¸¡ 2 (${term2CollectedWeight} à¸„à¸°à¹à¸™à¸™)` });
       const examCols = classScoreColumns.filter(c => c.type === 'final');
       examCols.forEach(col => headers.push({ key: col.id, label: col.name }));
-      headers.push({ key: 'final_total', label: 'แปลงแล้ว (ปลายภาคเทอม 2)' });
+      headers.push({ key: 'final_total', label: 'à¹à¸›à¸¥à¸‡à¹à¸¥à¹‰à¸§ (à¸›à¸¥à¸²à¸¢à¸ à¸²à¸„à¹€à¸—à¸­à¸¡ 2)' });
     }
     
-    headers.push({ key: 'total_raw', label: 'รวมดิบ' });
-    headers.push({ key: 'total_scaled', label: `แปลง (เทอม ${viewTerm !== 'all' ? viewTerm : 'ทั้งหมด'})` });
+    headers.push({ key: 'total_raw', label: 'à¸£à¸§à¸¡à¸”à¸´à¸š' });
+    headers.push({ key: 'total_scaled', label: `à¹à¸›à¸¥à¸‡ (à¹€à¸—à¸­à¸¡ ${viewTerm !== 'all' ? viewTerm : 'à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”'})` });
     
     if (viewTerm === 'all') {
-      headers.push({ key: 'grade', label: 'เกรด' });
+      headers.push({ key: 'grade', label: 'à¹€à¸à¸£à¸”' });
     }
 
     const rows = classStudents.map(s => {
@@ -351,14 +353,14 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
       <div className="animate-fade-in">
         <div className="page-header">
           <div>
-            <h2 className="page-title">บันทึกคะแนน</h2>
-            <p className="page-subtitle">บันทึกคะแนนตามโครงสร้างหน่วยการเรียนรู้</p>
+            <h2 className="page-title">à¸šà¸±à¸™à¸—à¸¶à¸à¸„à¸°à¹à¸™à¸™</h2>
+            <p className="page-subtitle">à¸šà¸±à¸™à¸—à¸¶à¸à¸„à¸°à¹à¸™à¸™à¸•à¸²à¸¡à¹‚à¸„à¸£à¸‡à¸ªà¸£à¹‰à¸²à¸‡à¸«à¸™à¹ˆà¸§à¸¢à¸à¸²à¸£à¹€à¸£à¸µà¸¢à¸™à¸£à¸¹à¹‰</p>
           </div>
         </div>
         <div className="empty-state">
           <Award size={48} />
-          <h3>ไม่มีการเลือกห้องเรียน</h3>
-          <p>กรุณาเลือกห้องเรียนจากเมนู <strong>ห้องเรียน / วิชา</strong> ด้านบนก่อน</p>
+          <h3>à¹„à¸¡à¹ˆà¸¡à¸µà¸à¸²à¸£à¹€à¸¥à¸·à¸­à¸à¸«à¹‰à¸­à¸‡à¹€à¸£à¸µà¸¢à¸™</h3>
+          <p>à¸à¸£à¸¸à¸“à¸²à¹€à¸¥à¸·à¸­à¸à¸«à¹‰à¸­à¸‡à¹€à¸£à¸µà¸¢à¸™à¸ˆà¸²à¸à¹€à¸¡à¸™à¸¹ <strong>à¸«à¹‰à¸­à¸‡à¹€à¸£à¸µà¸¢à¸™ / à¸§à¸´à¸Šà¸²</strong> à¸”à¹‰à¸²à¸™à¸šà¸™à¸à¹ˆà¸­à¸™</p>
         </div>
       </div>
     );
@@ -368,18 +370,18 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
     <div className="animate-fade-in hairline-grid">
       <div className="page-header">
         <div>
-          <h2 className="page-title">บันทึกคะแนน: {activeClass?.name}</h2>
-          <p className="page-subtitle">จัดการคะแนนเก็บตามหน่วยและคะแนนสอบ</p>
+          <h2 className="page-title">à¸šà¸±à¸™à¸—à¸¶à¸à¸„à¸°à¹à¸™à¸™: {activeClass?.name}</h2>
+          <p className="page-subtitle">à¸ˆà¸±à¸”à¸à¸²à¸£à¸„à¸°à¹à¸™à¸™à¹€à¸à¹‡à¸šà¸•à¸²à¸¡à¸«à¸™à¹ˆà¸§à¸¢à¹à¸¥à¸°à¸„à¸°à¹à¸™à¸™à¸ªà¸­à¸š</p>
         </div>
         <div style={{ display: 'flex', gap: '0.5rem', flexWrap: 'wrap' }}>
-          <button className="btn btn-secondary" onClick={handleExportScores} title="ส่งออกคะแนนเป็น Excel">
+          <button className="btn btn-secondary" onClick={handleExportScores} title="à¸ªà¹ˆà¸‡à¸­à¸­à¸à¸„à¸°à¹à¸™à¸™à¹€à¸›à¹‡à¸™ Excel">
             <Download size={18} />
-            <span className="hide-on-mobile">ส่งออก Excel</span>
+            <span className="hide-on-mobile">à¸ªà¹ˆà¸‡à¸­à¸­à¸ Excel</span>
           </button>
           {!readOnly && (
             <button className="btn btn-primary" onClick={handleOpenAddModal}>
               <Plus size={18} />
-              เพิ่มช่องคะแนน
+              à¹€à¸žà¸´à¹ˆà¸¡à¸Šà¹ˆà¸­à¸‡à¸„à¸°à¹à¸™à¸™
             </button>
           )}
         </div>
@@ -391,16 +393,16 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
             <Calculator size={28} />
           </div>
           <div>
-            <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>น้ำหนักคะแนนรวม (ที่ตั้งค่าไว้)</div>
+            <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)' }}>à¸™à¹‰à¸³à¸«à¸™à¸±à¸à¸„à¸°à¹à¸™à¸™à¸£à¸§à¸¡ (à¸—à¸µà¹ˆà¸•à¸±à¹‰à¸‡à¸„à¹ˆà¸²à¹„à¸§à¹‰)</div>
             <div style={{ fontSize: '1.5rem', fontWeight: 600, color: totalClassWeight !== 100 ? 'var(--danger)' : 'var(--text-primary)' }}>
-              {totalClassWeight} <span style={{ fontSize: '1rem', fontWeight: 'normal', color: 'var(--text-secondary)' }}>คะแนน</span> {totalClassWeight !== 100 && <span style={{ fontSize: '0.85rem', fontWeight: 'normal', color: 'var(--text-primary)' }}>(ควรปรับให้ครบ 100)</span>}
+              {totalClassWeight} <span style={{ fontSize: '1rem', fontWeight: 'normal', color: 'var(--text-secondary)' }}>à¸„à¸°à¹à¸™à¸™</span> {totalClassWeight !== 100 && <span style={{ fontSize: '0.85rem', fontWeight: 'normal', color: 'var(--text-primary)' }}>(à¸„à¸§à¸£à¸›à¸£à¸±à¸šà¹ƒà¸«à¹‰à¸„à¸£à¸š 100)</span>}
             </div>
           </div>
         </div>
         <div className="hairline-cell gradebook-filter-card" style={{ padding: '0', display: 'flex' }}>
           <div style={{ flex: 1, padding: '1.5rem', borderRight: '1px solid var(--border-color)' }}>
             <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Filter size={16} /> เลือกภาคเรียน
+              <Filter size={16} /> à¹€à¸¥à¸·à¸­à¸à¸ à¸²à¸„à¹€à¸£à¸µà¸¢à¸™
             </div>
             <select 
               className="form-control" 
@@ -410,21 +412,21 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                 setViewUnit('all'); // Reset unit filter when term changes
               }}
             >
-              <option value="1">เทอม 1 (หน่วย + สอบปลายภาคเทอม 1)</option>
-              <option value="2">เทอม 2 (หน่วย + สอบปลายภาคเทอม 2)</option>
-              <option value="all">ทั้งปีการศึกษา</option>
+              <option value="1">à¹€à¸—à¸­à¸¡ 1 (à¸«à¸™à¹ˆà¸§à¸¢ + à¸ªà¸­à¸šà¸›à¸¥à¸²à¸¢à¸ à¸²à¸„à¹€à¸—à¸­à¸¡ 1)</option>
+              <option value="2">à¹€à¸—à¸­à¸¡ 2 (à¸«à¸™à¹ˆà¸§à¸¢ + à¸ªà¸­à¸šà¸›à¸¥à¸²à¸¢à¸ à¸²à¸„à¹€à¸—à¸­à¸¡ 2)</option>
+              <option value="all">à¸—à¸±à¹‰à¸‡à¸›à¸µà¸à¸²à¸£à¸¨à¸¶à¸à¸©à¸²</option>
             </select>
           </div>
           <div style={{ flex: 1, padding: '1.5rem' }}>
             <div style={{ fontSize: '0.9rem', color: 'var(--text-secondary)', marginBottom: '0.75rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-              <Filter size={16} /> เลือกแสดงผลระดับหน่วย
+              <Filter size={16} /> à¹€à¸¥à¸·à¸­à¸à¹à¸ªà¸”à¸‡à¸œà¸¥à¸£à¸°à¸”à¸±à¸šà¸«à¸™à¹ˆà¸§à¸¢
             </div>
             <select 
               className="form-control" 
               value={viewUnit}
               onChange={(e) => setViewUnit(e.target.value)}
             >
-              <option value="all">แสดงทุกหน่วยในเทอมนี้ + สอบ</option>
+              <option value="all">à¹à¸ªà¸”à¸‡à¸—à¸¸à¸à¸«à¸™à¹ˆà¸§à¸¢à¹ƒà¸™à¹€à¸—à¸­à¸¡à¸™à¸µà¹‰ + à¸ªà¸­à¸š</option>
               {classUnits
                 .filter(u => viewTerm === 'all' || getUnitTerm(u) === viewTerm || getUnitTerm(u) === 'all')
                 .map(unit => (
@@ -436,11 +438,99 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
       </div>
 
       <div className="hairline-cell gradebook-table-card">
+        {isFocusMode ? (
+          <div className="focus-mode-container" style={{ padding: '2rem', maxWidth: '800px', margin: '0 auto' }}>
+            <div style={{ marginBottom: '2rem', textAlign: 'center' }}>
+              <h3 style={{ marginBottom: '1rem', color: 'var(--text-primary)' }}>✨ Focus Mode: กรอกทีละชิ้นงาน</h3>
+              <select 
+                className="form-control" 
+                style={{ maxWidth: '400px', margin: '0 auto', fontSize: '1.1rem', padding: '0.75rem', backgroundColor: 'var(--bg-sidebar)' }}
+                value={focusColumnId}
+                onChange={(e) => setFocusColumnId(e.target.value)}
+              >
+                <option value="">-- เลือกชิ้นงานที่ต้องการกรอก --</option>
+                {classScoreColumns.map(col => (
+                  <option key={col.id} value={col.id}>
+                    {col.name} (คะแนนเต็ม {col.maxScore}) - {col.type === 'collected' ? 'คะแนนเก็บ' : col.type === 'midterm' ? 'สอบกลางภาค' : 'สอบปลายภาค'}
+                  </option>
+                ))}
+              </select>
+            </div>
+            
+            {focusColumnId ? (
+              <div className="hairline-grid" style={{ backgroundColor: 'var(--bg-surface-elevated)', borderRadius: 'var(--radius-md)', padding: '1rem' }}>
+                {(() => {
+                  const focusCol = classScoreColumns.find(c => c.id === focusColumnId);
+                  let filledCount = 0;
+                  
+                  return (
+                    <table className="data-table">
+                      <thead>
+                        <tr>
+                          <th style={{ width: '60px', textAlign: 'center' }}>เลขที่</th>
+                          <th>ชื่อ - นามสกุล</th>
+                          <th style={{ width: '150px', textAlign: 'center', color: 'var(--accent-cyan)' }}>คะแนน (เต็ม {focusCol?.maxScore})</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+                        {classStudents.map((s, index) => {
+                          const record = scores.find(r => r.studentId === s.id && r.columnId === focusColumnId);
+                          const val = record ? record.score : '';
+                          if (val !== '') filledCount++;
+                          
+                          const isZero = val === '0';
+                          const inputStyle = {
+                            backgroundColor: isZero ? 'rgba(251, 113, 133, 0.15)' : 'transparent',
+                            color: isZero ? 'var(--danger)' : 'var(--text-primary)',
+                            borderColor: val !== '' ? 'var(--accent-cyan)' : 'var(--border-subtle)',
+                            fontWeight: val !== '' ? 'bold' : 'normal'
+                          };
+
+                          return (
+                            <tr key={s.id}>
+                              <td style={{ textAlign: 'center', color: 'var(--text-muted)' }}>{index + 1}</td>
+                              <td className="col-student-name" style={{ color: 'var(--text-primary)' }}>{s.name}</td>
+                              <td style={{ textAlign: 'center' }}>
+                                <input 
+                                  type="number"
+                                  min="0"
+                                  max={focusCol?.maxScore || 10}
+                                  className="gradebook-input"
+                                  style={{ ...inputStyle, width: '100%', padding: '0.5rem', textAlign: 'center', borderRadius: 'var(--radius-xs)' }}
+                                  value={val}
+                                  placeholder="-"
+                                  onChange={(e) => handleScoreChange(s.id, focusColumnId, e.target.value)}
+                                  disabled={readOnly}
+                                />
+                              </td>
+                            </tr>
+                          );
+                        })}
+                      </tbody>
+                      <tfoot>
+                        <tr>
+                          <td colSpan="3" style={{ textAlign: 'center', padding: '1rem', color: 'var(--text-secondary)' }}>
+                            ความคืบหน้า: กรอกแล้ว {filledCount} / {classStudents.length} คน ({classStudents.length > 0 ? Math.round((filledCount/classStudents.length)*100) : 0}%)
+                          </td>
+                        </tr>
+                      </tfoot>
+                    </table>
+                  );
+                })()}
+              </div>
+            ) : (
+              <div className="empty-state">
+                <p style={{ color: 'var(--text-muted)' }}>กรุณาเลือกชิ้นงานจากเมนูด้านบน เพื่อเริ่มกรอกคะแนน</p>
+              </div>
+            )}
+          </div>
+        ) : (
+        <>
         {classStudents.length === 0 ? (
           <div className="empty-state">
             <Users size={48} />
-            <h3>ไม่พบข้อมูลนักเรียน</h3>
-            <p>ยังไม่มีข้อมูลนักเรียนในห้องนี้ กรุณาเพิ่มนักเรียนก่อนทำการบันทึกคะแนน</p>
+            <h3>à¹„à¸¡à¹ˆà¸žà¸šà¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸™à¸±à¸à¹€à¸£à¸µà¸¢à¸™</h3>
+            <p>à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¸¡à¸µà¸‚à¹‰à¸­à¸¡à¸¹à¸¥à¸™à¸±à¸à¹€à¸£à¸µà¸¢à¸™à¹ƒà¸™à¸«à¹‰à¸­à¸‡à¸™à¸µà¹‰ à¸à¸£à¸¸à¸“à¸²à¹€à¸žà¸´à¹ˆà¸¡à¸™à¸±à¸à¹€à¸£à¸µà¸¢à¸™à¸à¹ˆà¸­à¸™à¸—à¸³à¸à¸²à¸£à¸šà¸±à¸™à¸—à¸¶à¸à¸„à¸°à¹à¸™à¸™</p>
           </div>
         ) : (
           <>
@@ -448,7 +538,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
               <div style={{ color: 'var(--text-primary)', padding: '1.25rem', marginBottom: '1.5rem', display: 'flex', alignItems: 'center', gap: '1rem' }}>
                 <Award size={24} />
                 <div>
-                  <strong>ยังไม่ได้สร้างหน่วยการเรียนรู้:</strong> หากต้องการเพิ่ม "ช่องคะแนนเก็บ" กรุณาไปสร้างหน่วยการเรียนรู้ที่เมนู <strong>โครงสร้างรายวิชา</strong> ก่อน
+                  <strong>à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¹„à¸”à¹‰à¸ªà¸£à¹‰à¸²à¸‡à¸«à¸™à¹ˆà¸§à¸¢à¸à¸²à¸£à¹€à¸£à¸µà¸¢à¸™à¸£à¸¹à¹‰:</strong> à¸«à¸²à¸à¸•à¹‰à¸­à¸‡à¸à¸²à¸£à¹€à¸žà¸´à¹ˆà¸¡ "à¸Šà¹ˆà¸­à¸‡à¸„à¸°à¹à¸™à¸™à¹€à¸à¹‡à¸š" à¸à¸£à¸¸à¸“à¸²à¹„à¸›à¸ªà¸£à¹‰à¸²à¸‡à¸«à¸™à¹ˆà¸§à¸¢à¸à¸²à¸£à¹€à¸£à¸µà¸¢à¸™à¸£à¸¹à¹‰à¸—à¸µà¹ˆà¹€à¸¡à¸™à¸¹ <strong>à¹‚à¸„à¸£à¸‡à¸ªà¸£à¹‰à¸²à¸‡à¸£à¸²à¸¢à¸§à¸´à¸Šà¸²</strong> à¸à¹ˆà¸­à¸™
                 </div>
               </div>
             )}
@@ -456,8 +546,8 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
             <table className="data-table gradebook-table" style={{ whiteSpace: 'nowrap' }}>
               <thead>
                 <tr>
-                  <th className="sticky-col-left" rowSpan={2} style={{ boxSizing: 'border-box', width: '60px', minWidth: '60px', padding: '0.5rem', textAlign: 'center', left: 0, verticalAlign: 'middle' }}>เลขที่</th>
-                  <th className="sticky-col-left" rowSpan={2} style={{ boxSizing: 'border-box', width: '220px', minWidth: '220px', padding: '0.5rem 1rem', left: '60px', verticalAlign: 'middle' }}>ชื่อ - นามสกุล</th>
+                  <th className="sticky-col-left" rowSpan={2} style={{ boxSizing: 'border-box', width: '60px', minWidth: '60px', padding: '0.5rem', textAlign: 'center', left: 0, verticalAlign: 'middle' }}>à¹€à¸¥à¸‚à¸—à¸µà¹ˆ</th>
+                  <th className="sticky-col-left" rowSpan={2} style={{ boxSizing: 'border-box', width: '220px', minWidth: '220px', padding: '0.5rem 1rem', left: '60px', verticalAlign: 'middle' }}>à¸Šà¸·à¹ˆà¸­ - à¸™à¸²à¸¡à¸ªà¸à¸¸à¸¥</th>
                   
                   {/* Unit Groups */}
                   {displayUnits.map(unit => {
@@ -467,12 +557,12 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                         <div style={{ color: 'var(--text-primary)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
                           {unit.name}
                           {!readOnly && (
-                            <button className="btn-icon" style={{ color: 'var(--accent-cyan)', padding: '2px' }} onClick={() => handleQuickAddColumn('collected', unit.id)} title="เพิ่มชิ้นงานในหน่วยนี้">
+                            <button className="btn-icon" style={{ color: 'var(--accent-cyan)', padding: '2px' }} onClick={() => handleQuickAddColumn('collected', unit.id)} title="à¹€à¸žà¸´à¹ˆà¸¡à¸Šà¸´à¹‰à¸™à¸‡à¸²à¸™à¹ƒà¸™à¸«à¸™à¹ˆà¸§à¸¢à¸™à¸µà¹‰">
                               <Plus size={14} />
                             </button>
                           )}
                         </div>
-                        <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>น้ำหนัก: {unit.weight} คะแนน</div>
+                        <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>à¸™à¹‰à¸³à¸«à¸™à¸±à¸: {unit.weight} à¸„à¸°à¹à¸™à¸™</div>
                       </th>
                     );
                   })}
@@ -480,53 +570,53 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                   {/* Exams Groups */}
                   {showMidterm && (
                     <th rowSpan={2} style={{ textAlign: "center", borderLeft: "1px solid var(--border-subtle)", backgroundColor: "var(--bg-surface-elevated)", color: "var(--accent-cyan)", verticalAlign: "middle" }}>
-                      <div style={{ fontWeight: 600 }}>รวมเก็บเทอม 1</div>
-                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>({term1CollectedWeight} คะแนน)</div>
+                      <div style={{ fontWeight: 600 }}>à¸£à¸§à¸¡à¹€à¸à¹‡à¸šà¹€à¸—à¸­à¸¡ 1</div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>({term1CollectedWeight} à¸„à¸°à¹à¸™à¸™)</div>
                     </th>
                   )}
                   {showMidterm && (
                     <th colSpan={Math.max(1, classScoreColumns.filter(c => c.type === 'midterm').length) + 1} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface)' }}>
                       <div style={{ color: 'var(--text-primary)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-                        สอบปลายภาคเทอม 1
+                        à¸ªà¸­à¸šà¸›à¸¥à¸²à¸¢à¸ à¸²à¸„à¹€à¸—à¸­à¸¡ 1
                         {!readOnly && (
-                          <button className="btn-icon" style={{ color: 'var(--text-primary)', padding: '2px' }} onClick={() => handleQuickAddColumn('midterm')} title="เพิ่มช่องคะแนนปลายภาคเทอม 1">
+                          <button className="btn-icon" style={{ color: 'var(--text-primary)', padding: '2px' }} onClick={() => handleQuickAddColumn('midterm')} title="à¹€à¸žà¸´à¹ˆà¸¡à¸Šà¹ˆà¸­à¸‡à¸„à¸°à¹à¸™à¸™à¸›à¸¥à¸²à¸¢à¸ à¸²à¸„à¹€à¸—à¸­à¸¡ 1">
                             <Plus size={14} />
                           </button>
                         )}
                       </div>
-                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>น้ำหนัก: {midtermWeight} คะแนน</div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>à¸™à¹‰à¸³à¸«à¸™à¸±à¸: {midtermWeight} à¸„à¸°à¹à¸™à¸™</div>
                     </th>
                   )}
                   {showFinal && (
                     <th rowSpan={2} style={{ textAlign: "center", borderLeft: "1px solid var(--border-subtle)", backgroundColor: "var(--bg-surface-elevated)", color: "var(--accent-cyan)", verticalAlign: "middle" }}>
-                      <div style={{ fontWeight: 600 }}>รวมเก็บเทอม 2</div>
-                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>({term2CollectedWeight} คะแนน)</div>
+                      <div style={{ fontWeight: 600 }}>à¸£à¸§à¸¡à¹€à¸à¹‡à¸šà¹€à¸—à¸­à¸¡ 2</div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)' }}>({term2CollectedWeight} à¸„à¸°à¹à¸™à¸™)</div>
                     </th>
                   )}
                   {showFinal && (
                     <th colSpan={Math.max(1, classScoreColumns.filter(c => c.type === 'final').length) + 1} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface)' }}>
                       <div style={{ color: 'var(--text-primary)', fontWeight: 600, display: 'flex', alignItems: 'center', justifyContent: 'center', gap: '4px' }}>
-                        สอบปลายภาคเทอม 2
+                        à¸ªà¸­à¸šà¸›à¸¥à¸²à¸¢à¸ à¸²à¸„à¹€à¸—à¸­à¸¡ 2
                         {!readOnly && (
-                          <button className="btn-icon" style={{ color: 'var(--text-primary)', padding: '2px' }} onClick={() => handleQuickAddColumn('final')} title="เพิ่มช่องคะแนนปลายภาคเทอม 2">
+                          <button className="btn-icon" style={{ color: 'var(--text-primary)', padding: '2px' }} onClick={() => handleQuickAddColumn('final')} title="à¹€à¸žà¸´à¹ˆà¸¡à¸Šà¹ˆà¸­à¸‡à¸„à¸°à¹à¸™à¸™à¸›à¸¥à¸²à¸¢à¸ à¸²à¸„à¹€à¸—à¸­à¸¡ 2">
                             <Plus size={14} />
                           </button>
                         )}
                       </div>
-                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>น้ำหนัก: {finalWeight} คะแนน</div>
+                      <div style={{ fontSize: '0.72rem', color: 'var(--text-muted)', fontWeight: 'normal' }}>à¸™à¹‰à¸³à¸«à¸™à¸±à¸: {finalWeight} à¸„à¸°à¹à¸™à¸™</div>
                     </th>
                   )}
                   
                                     {/* Summary */}
                   <th rowSpan={2} style={{ textAlign: "center", borderLeft: "1px solid var(--border-subtle)", backgroundColor: "var(--bg-surface-elevated)", color: "var(--text-primary)", verticalAlign: "middle" }}>
-                    รวมดิบ
+                    à¸£à¸§à¸¡à¸”à¸´à¸š
                   </th>
                   <th rowSpan={2} style={{ textAlign: "center", borderLeft: "1px solid var(--border-subtle)", backgroundColor: "var(--bg-surface-elevated)", color: "var(--text-primary)", verticalAlign: "middle" }}>
-                    แปลง (เทอม {viewTerm !== "all" ? viewTerm : "ทั้งหมด"})
+                    à¹à¸›à¸¥à¸‡ (à¹€à¸—à¸­à¸¡ {viewTerm !== "all" ? viewTerm : "à¸—à¸±à¹‰à¸‡à¸«à¸¡à¸”"})
                   </th>
                   {viewTerm === 'all' && (
                     <th rowSpan={2} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface-elevated)', verticalAlign: 'middle', width: '60px' }}>
-                      เกรด
+                      à¹€à¸à¸£à¸”
                     </th>
                   )}
                 </tr>
@@ -542,7 +632,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                         {targetIndicator && (
                           <div 
                             title={`${targetIndicator.code}: ${targetIndicator.description}`}
-                            onClick={() => alert(`รหัสตัวชี้วัด: ${targetIndicator.code}\nรายละเอียด: ${targetIndicator.description}`)}
+                            onClick={() => alert(`à¸£à¸«à¸±à¸ªà¸•à¸±à¸§à¸Šà¸µà¹‰à¸§à¸±à¸”: ${targetIndicator.code}\nà¸£à¸²à¸¢à¸¥à¸°à¹€à¸­à¸µà¸¢à¸”: ${targetIndicator.description}`)}
                             style={{ fontSize: '0.65rem', color: 'var(--accent-cyan)', cursor: 'help', marginTop: '2px', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis', maxWidth: '65px', margin: '2px auto 0' }}
                           >
                             {targetIndicator.code}
@@ -551,21 +641,21 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                         <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>({col.maxScore})</div>
                         {!readOnly && (
                           <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px' }}>
-                            <button className="btn-icon" aria-label="แก้ไข" style={{ padding: '2px', color: 'var(--text-muted)' }} onClick={() => handleOpenEditModal(col)}><Edit2 size={11} /></button>
-                            <button className="btn-icon" aria-label="ลบ" style={{ padding: '2px', color: 'var(--text-primary)', opacity: 0.6 }} onClick={() => handleDeleteColumn(col.id)}><Trash2 size={11} /></button>
+                            <button className="btn-icon" aria-label="à¹à¸à¹‰à¹„à¸‚" style={{ padding: '2px', color: 'var(--text-muted)' }} onClick={() => handleOpenEditModal(col)}><Edit2 size={11} /></button>
+                            <button className="btn-icon" aria-label="à¸¥à¸š" style={{ padding: '2px', color: 'var(--text-primary)', opacity: 0.6 }} onClick={() => handleDeleteColumn(col.id)}><Trash2 size={11} /></button>
                           </div>
                         )}
                       </th>
                     ); }) : [
                       <th key={`empty-${unit.id}`} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', color: 'var(--text-muted)', fontWeight: 'normal', fontStyle: 'italic', fontSize: '0.75rem' }}>
-                        (ยังไม่มีช่อง)
+                        (à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¸¡à¸µà¸Šà¹ˆà¸­à¸‡)
                       </th>
                     ];
 
                     return [
                       ...colsElements,
                       <th key={`total-${unit.id}`} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-primary)', fontSize: '0.75rem' }}>
-                        <div>แปลงแล้ว</div>
+                        <div>à¹à¸›à¸¥à¸‡à¹à¸¥à¹‰à¸§</div>
                         <div style={{ color: 'var(--text-muted)', fontSize: '0.68rem' }}>({unit.weight})</div>
                       </th>
                     ];
@@ -580,21 +670,21 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                         <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>({col.maxScore})</div>
                         {!readOnly && (
                           <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px' }}>
-                            <button className="btn-icon" aria-label="แก้ไข" style={{ padding: '2px', color: 'var(--text-muted)' }} onClick={() => handleOpenEditModal(col)}><Edit2 size={11} /></button>
-                            <button className="btn-icon" aria-label="ลบ" style={{ padding: '2px', color: 'var(--text-primary)', opacity: 0.6 }} onClick={() => handleDeleteColumn(col.id)}><Trash2 size={11} /></button>
+                            <button className="btn-icon" aria-label="à¹à¸à¹‰à¹„à¸‚" style={{ padding: '2px', color: 'var(--text-muted)' }} onClick={() => handleOpenEditModal(col)}><Edit2 size={11} /></button>
+                            <button className="btn-icon" aria-label="à¸¥à¸š" style={{ padding: '2px', color: 'var(--text-primary)', opacity: 0.6 }} onClick={() => handleDeleteColumn(col.id)}><Trash2 size={11} /></button>
                           </div>
                         )}
                       </th>
                     )) : [
                       <th key="empty-midterm" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', color: 'var(--text-muted)', fontWeight: 'normal', fontStyle: 'italic', fontSize: '0.75rem' }}>
-                        (ยังไม่มีช่อง)
+                        (à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¸¡à¸µà¸Šà¹ˆà¸­à¸‡)
                       </th>
                     ];
 
                     return [
                       ...colsElements,
                       <th key="total-midterm" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-primary)', fontSize: '0.75rem' }}>
-                        <div>แปลงแล้ว</div>
+                        <div>à¹à¸›à¸¥à¸‡à¹à¸¥à¹‰à¸§</div>
                         <div style={{ color: 'var(--text-muted)', fontSize: '0.68rem' }}>({midtermWeight})</div>
                       </th>
                     ];
@@ -609,21 +699,21 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                         <div style={{ fontSize: '0.68rem', color: 'var(--text-muted)' }}>({col.maxScore})</div>
                         {!readOnly && (
                           <div style={{ display: 'flex', justifyContent: 'center', gap: '2px', marginTop: '2px' }}>
-                            <button className="btn-icon" aria-label="แก้ไข" style={{ padding: '2px', color: 'var(--text-muted)' }} onClick={() => handleOpenEditModal(col)}><Edit2 size={11} /></button>
-                            <button className="btn-icon" aria-label="ลบ" style={{ padding: '2px', color: 'var(--text-primary)', opacity: 0.6 }} onClick={() => handleDeleteColumn(col.id)}><Trash2 size={11} /></button>
+                            <button className="btn-icon" aria-label="à¹à¸à¹‰à¹„à¸‚" style={{ padding: '2px', color: 'var(--text-muted)' }} onClick={() => handleOpenEditModal(col)}><Edit2 size={11} /></button>
+                            <button className="btn-icon" aria-label="à¸¥à¸š" style={{ padding: '2px', color: 'var(--text-primary)', opacity: 0.6 }} onClick={() => handleDeleteColumn(col.id)}><Trash2 size={11} /></button>
                           </div>
                         )}
                       </th>
                     )) : [
                       <th key="empty-final" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', color: 'var(--text-muted)', fontWeight: 'normal', fontStyle: 'italic', fontSize: '0.75rem' }}>
-                        (ยังไม่มีช่อง)
+                        (à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¸¡à¸µà¸Šà¹ˆà¸­à¸‡)
                       </th>
                     ];
 
                     return [
                       ...colsElements,
                       <th key="total-final" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-tertiary)', color: 'var(--text-primary)', fontSize: '0.75rem' }}>
-                        <div>แปลงแล้ว</div>
+                        <div>à¹à¸›à¸¥à¸‡à¹à¸¥à¹‰à¸§</div>
                         <div style={{ color: 'var(--text-muted)', fontSize: '0.68rem' }}>({finalWeight})</div>
                       </th>
                     ];
@@ -652,11 +742,17 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                           return (
                             <td key={col.id} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', padding: '4px' }}>
                               <input 
-                                type="number"
-                                min="0"
-                                max={col.maxScore}
-                                className="gradebook-input"
-                                value={record ? record.score : ''}
+    type="number"
+    min="0"
+    max={col.maxScore}
+    className="gradebook-input"
+    style={{ 
+      backgroundColor: record && record.score === '0' ? 'rgba(251, 113, 133, 0.15)' : 'transparent',
+      color: record && record.score === '0' ? 'var(--danger)' : 'var(--text-primary)',
+      fontWeight: record && record.score !== '' ? '500' : 'normal'
+    }}
+    placeholder="-"
+    value={record ? record.score : ''}
                                 onChange={(e) => handleScoreChange(s.id, col.id, e.target.value)}
                                 disabled={readOnly}
                               />
@@ -669,7 +765,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                         return [
                           ...colsElements,
                           <td key={`total-cell-${unit.id}`} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-tertiary)', fontWeight: 600, color: 'var(--text-primary)' }}>
-                            <div title={`ดิบ: ${uScore.raw}/${uScore.maxRaw}`}>{Math.round(uScore.scaled)}</div>
+                            <div title={`à¸”à¸´à¸š: ${uScore.raw}/${uScore.maxRaw}`}>{Math.round(uScore.scaled)}</div>
                           </td>
                         ];
                       })}
@@ -679,7 +775,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                         <td style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface-elevated)', fontWeight: 600, color: 'var(--accent-cyan)' }}>
                           {(() => {
                              const term1Score = classUnits.filter(u => getUnitTerm(u) === '1' || getUnitTerm(u) === 'all').reduce((sum, u) => sum + getUnitScore(s.id, u.id).scaled, 0);
-                             return <div title={`รวมเก็บเทอม 1 (แปลงแล้ว)`}>{Math.round(term1Score)}</div>;
+                             return <div title={`à¸£à¸§à¸¡à¹€à¸à¹‡à¸šà¹€à¸—à¸­à¸¡ 1 (à¹à¸›à¸¥à¸‡à¹à¸¥à¹‰à¸§)`}>{Math.round(term1Score)}</div>;
                           })()}
                         </td>
                       )}
@@ -695,11 +791,17 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                           return (
                             <td key={col.id} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', padding: '4px' }}>
                               <input 
-                                type="number"
-                                min="0"
-                                max={col.maxScore}
-                                className="gradebook-input"
-                                value={record ? record.score : ''}
+    type="number"
+    min="0"
+    max={col.maxScore}
+    className="gradebook-input"
+    style={{ 
+      backgroundColor: record && record.score === '0' ? 'rgba(251, 113, 133, 0.15)' : 'transparent',
+      color: record && record.score === '0' ? 'var(--danger)' : 'var(--text-primary)',
+      fontWeight: record && record.score !== '' ? '500' : 'normal'
+    }}
+    placeholder="-"
+    value={record ? record.score : ''}
                                 onChange={(e) => handleScoreChange(s.id, col.id, e.target.value)}
                                 disabled={readOnly}
                               />
@@ -712,7 +814,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                         return [
                           ...colsElements,
                           <td key="total-midterm-cell" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-tertiary)', fontWeight: 600, color: 'var(--text-primary)' }}>
-                            <div title={`ดิบ: ${mScore.raw}/${mScore.maxRaw}`}>{Math.round(mScore.scaled)}</div>
+                            <div title={`à¸”à¸´à¸š: ${mScore.raw}/${mScore.maxRaw}`}>{Math.round(mScore.scaled)}</div>
                           </td>
                         ];
                       })()}
@@ -722,7 +824,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                         <td style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-surface-elevated)', fontWeight: 600, color: 'var(--accent-cyan)' }}>
                           {(() => {
                              const term2Score = classUnits.filter(u => getUnitTerm(u) === '2' || getUnitTerm(u) === 'all').reduce((sum, u) => sum + getUnitScore(s.id, u.id).scaled, 0);
-                             return <div title={`รวมเก็บเทอม 2 (แปลงแล้ว)`}>{Math.round(term2Score)}</div>;
+                             return <div title={`à¸£à¸§à¸¡à¹€à¸à¹‡à¸šà¹€à¸—à¸­à¸¡ 2 (à¹à¸›à¸¥à¸‡à¹à¸¥à¹‰à¸§)`}>{Math.round(term2Score)}</div>;
                           })()}
                         </td>
                       )}
@@ -738,11 +840,17 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                           return (
                             <td key={col.id} style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', padding: '4px' }}>
                               <input 
-                                type="number"
-                                min="0"
-                                max={col.maxScore}
-                                className="gradebook-input"
-                                value={record ? record.score : ''}
+    type="number"
+    min="0"
+    max={col.maxScore}
+    className="gradebook-input"
+    style={{ 
+      backgroundColor: record && record.score === '0' ? 'rgba(251, 113, 133, 0.15)' : 'transparent',
+      color: record && record.score === '0' ? 'var(--danger)' : 'var(--text-primary)',
+      fontWeight: record && record.score !== '' ? '500' : 'normal'
+    }}
+    placeholder="-"
+    value={record ? record.score : ''}
                                 onChange={(e) => handleScoreChange(s.id, col.id, e.target.value)}
                                 disabled={readOnly}
                               />
@@ -755,7 +863,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                         return [
                           ...colsElements,
                           <td key="total-final-cell" style={{ textAlign: 'center', borderLeft: '1px solid var(--border-subtle)', backgroundColor: 'var(--bg-tertiary)', fontWeight: 600, color: 'var(--text-primary)' }}>
-                            <div title={`ดิบ: ${fScore.raw}/${fScore.maxRaw}`}>{Math.round(fScore.scaled)}</div>
+                            <div title={`à¸”à¸´à¸š: ${fScore.raw}/${fScore.maxRaw}`}>{Math.round(fScore.scaled)}</div>
                           </td>
                         ];
                       })()}
@@ -780,18 +888,20 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
           </div>
           </>
         )}
+      </>
+    )}
       </div>
 
       {isColumnModalOpen && (
         <div className="modal-overlay">
           <div className="modal-content">
             <div className="modal-header">
-              <h3 className="modal-title">{editingColumnId ? 'แก้ไขช่องคะแนน' : 'เพิ่มช่องคะแนน'}</h3>
-              <button className="btn-icon" aria-label="ปิด" onClick={() => setIsColumnModalOpen(false)}>×</button>
+              <h3 className="modal-title">{editingColumnId ? 'à¹à¸à¹‰à¹„à¸‚à¸Šà¹ˆà¸­à¸‡à¸„à¸°à¹à¸™à¸™' : 'à¹€à¸žà¸´à¹ˆà¸¡à¸Šà¹ˆà¸­à¸‡à¸„à¸°à¹à¸™à¸™'}</h3>
+              <button className="btn-icon" aria-label="à¸›à¸´à¸”" onClick={() => setIsColumnModalOpen(false)}>Ã—</button>
             </div>
             <form onSubmit={handleSaveColumn}>
               <div className="form-group">
-                <label className="form-label">ประเภทคะแนน</label>
+                <label className="form-label">à¸›à¸£à¸°à¹€à¸ à¸—à¸„à¸°à¹à¸™à¸™</label>
                 <div style={{ display: 'flex', gap: '1rem' }}>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
                     <input 
@@ -801,7 +911,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                       checked={newColumnType === 'collected'}
                       onChange={() => setNewColumnType('collected')}
                     />
-                    คะแนนเก็บตามหน่วย
+                    à¸„à¸°à¹à¸™à¸™à¹€à¸à¹‡à¸šà¸•à¸²à¸¡à¸«à¸™à¹ˆà¸§à¸¢
                   </label>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
                     <input 
@@ -811,7 +921,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                       checked={newColumnType === 'midterm'}
                       onChange={() => setNewColumnType('midterm')}
                     />
-                    สอบปลายภาคเทอม 1
+                    à¸ªà¸­à¸šà¸›à¸¥à¸²à¸¢à¸ à¸²à¸„à¹€à¸—à¸­à¸¡ 1
                   </label>
                   <label style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', cursor: 'pointer' }}>
                     <input 
@@ -821,17 +931,17 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                       checked={newColumnType === 'final'}
                       onChange={() => setNewColumnType('final')}
                     />
-                    สอบปลายภาคเทอม 2
+                    à¸ªà¸­à¸šà¸›à¸¥à¸²à¸¢à¸ à¸²à¸„à¹€à¸—à¸­à¸¡ 2
                   </label>
                 </div>
               </div>
 
               {newColumnType === 'collected' && (
                 <div className="form-group">
-                  <label className="form-label">สังกัดหน่วยการเรียนรู้ (จำเป็น)</label>
+                  <label className="form-label">à¸ªà¸±à¸‡à¸à¸±à¸”à¸«à¸™à¹ˆà¸§à¸¢à¸à¸²à¸£à¹€à¸£à¸µà¸¢à¸™à¸£à¸¹à¹‰ (à¸ˆà¸³à¹€à¸›à¹‡à¸™)</label>
                   {classUnits.length === 0 ? (
                     <div style={{ color: 'var(--text-primary)', fontSize: '0.875rem', padding: '0.5rem', backgroundColor: 'var(--bg-secondary)' }}>
-                      ❌ ยังไม่มีหน่วยการเรียนรู้: กรุณาไปที่เมนู โครงสร้างรายวิชา เพื่อสร้างหน่วยการเรียนรู้ก่อนเพิ่มคะแนนเก็บ
+                      âŒ à¸¢à¸±à¸‡à¹„à¸¡à¹ˆà¸¡à¸µà¸«à¸™à¹ˆà¸§à¸¢à¸à¸²à¸£à¹€à¸£à¸µà¸¢à¸™à¸£à¸¹à¹‰: à¸à¸£à¸¸à¸“à¸²à¹„à¸›à¸—à¸µà¹ˆà¹€à¸¡à¸™à¸¹ à¹‚à¸„à¸£à¸‡à¸ªà¸£à¹‰à¸²à¸‡à¸£à¸²à¸¢à¸§à¸´à¸Šà¸² à¹€à¸žà¸·à¹ˆà¸­à¸ªà¸£à¹‰à¸²à¸‡à¸«à¸™à¹ˆà¸§à¸¢à¸à¸²à¸£à¹€à¸£à¸µà¸¢à¸™à¸£à¸¹à¹‰à¸à¹ˆà¸­à¸™à¹€à¸žà¸´à¹ˆà¸¡à¸„à¸°à¹à¸™à¸™à¹€à¸à¹‡à¸š
                     </div>
                   ) : (
                     <select 
@@ -843,10 +953,10 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                       }}
                       required
                     >
-                      <option value="">-- เลือกหน่วยการเรียนรู้ --</option>
+                      <option value="">-- à¹€à¸¥à¸·à¸­à¸à¸«à¸™à¹ˆà¸§à¸¢à¸à¸²à¸£à¹€à¸£à¸µà¸¢à¸™à¸£à¸¹à¹‰ --</option>
                       {classUnits.map(unit => (
                         <option key={unit.id} value={unit.id}>
-                          {unit.name} (น้ำหนัก {unit.weight})
+                          {unit.name} (à¸™à¹‰à¸³à¸«à¸™à¸±à¸ {unit.weight})
                         </option>
                       ))}
                     </select>
@@ -855,7 +965,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
               )}
 
               <div className="form-group">
-                <label className="form-label">ชื่อช่องคะแนน (เช่น ชิ้นงานที่ 1, สมุดประจำตัว)</label>
+                <label className="form-label">à¸Šà¸·à¹ˆà¸­à¸Šà¹ˆà¸­à¸‡à¸„à¸°à¹à¸™à¸™ (à¹€à¸Šà¹ˆà¸™ à¸Šà¸´à¹‰à¸™à¸‡à¸²à¸™à¸—à¸µà¹ˆ 1, à¸ªà¸¡à¸¸à¸”à¸›à¸£à¸°à¸ˆà¸³à¸•à¸±à¸§)</label>
                 <input 
                   type="text" 
                   className="form-control" 
@@ -868,13 +978,13 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
 
               {newColumnType === 'collected' && newColumnUnitId && (
                 <div className="form-group">
-                  <label className="form-label">ผูกกับตัวชี้วัดในหน่วย (ไม่บังคับ)</label>
+                  <label className="form-label">à¸œà¸¹à¸à¸à¸±à¸šà¸•à¸±à¸§à¸Šà¸µà¹‰à¸§à¸±à¸”à¹ƒà¸™à¸«à¸™à¹ˆà¸§à¸¢ (à¹„à¸¡à¹ˆà¸šà¸±à¸‡à¸„à¸±à¸š)</label>
                   <select 
                     className="form-control"
                     value={newColumnIndicatorId}
                     onChange={(e) => setNewColumnIndicatorId(e.target.value)}
                   >
-                    <option value="">-- ไม่ระบุตัวชี้วัด --</option>
+                    <option value="">-- à¹„à¸¡à¹ˆà¸£à¸°à¸šà¸¸à¸•à¸±à¸§à¸Šà¸µà¹‰à¸§à¸±à¸” --</option>
                     {currentUnitIndicators.map(ind => (
                       <option key={ind.id} value={ind.id}>
                         {ind.code}
@@ -885,7 +995,7 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
               )}
 
               <div className="form-group">
-                <label className="form-label">คะแนนเต็มดิบ (Raw Max Score)</label>
+                <label className="form-label">à¸„à¸°à¹à¸™à¸™à¹€à¸•à¹‡à¸¡à¸”à¸´à¸š (Raw Max Score)</label>
                 <input 
                   type="number" 
                   className="form-control" 
@@ -896,9 +1006,9 @@ export default function Scores({ students, activeClassId, classes, scores, setSc
                 />
               </div>
               <div className="modal-footer">
-                <button type="button" className="btn btn-outline" onClick={() => setIsColumnModalOpen(false)}>ยกเลิก</button>
+                <button type="button" className="btn btn-outline" onClick={() => setIsColumnModalOpen(false)}>à¸¢à¸à¹€à¸¥à¸´à¸</button>
                 <button type="submit" className="btn btn-primary" disabled={!newColumnName.trim() || newColumnMax <= 0 || (newColumnType === 'collected' && !newColumnUnitId)}>
-                  {editingColumnId ? 'บันทึกการแก้ไข' : 'เพิ่มช่องคะแนน'}
+                  {editingColumnId ? 'à¸šà¸±à¸™à¸—à¸¶à¸à¸à¸²à¸£à¹à¸à¹‰à¹„à¸‚' : 'à¹€à¸žà¸´à¹ˆà¸¡à¸Šà¹ˆà¸­à¸‡à¸„à¸°à¹à¸™à¸™'}
                 </button>
               </div>
             </form>
