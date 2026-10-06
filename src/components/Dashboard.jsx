@@ -596,186 +596,162 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
   const classColumns = scoreColumns.filter(c => c.classId === activeClassId);
   
   const classAttRate = calculateAttendanceRate(classAttendance);
-  const totalMissingClass = calculateMissingWork(classStudents, classColumns, scores);
-
-  const missingByStudent = classStudents.map(student => {
-    let missingCount = 0;
-    classColumns.forEach(col => {
-      const hasScore = scores.some(s => s.studentId === student.id && s.columnId === col.id && s.score !== null && s.score !== '');
-      if (!hasScore) missingCount++;
-    });
-    return { ...student, missingCount };
-  });
-
-  const topMissingStudents = missingByStudent
-    .filter(s => s.missingCount > 0)
-    .sort((a, b) => b.missingCount - a.missingCount)
-    .slice(0, 5);
-
   const uniqueDates = [...new Set(classAttendance.map(a => a.date))];
+  const classMissing = calculateMissingWork(classStudents, classColumns, scores);
+  const classUnits = indicators ? indicators.filter(i => i.classId === activeClassId) : [];
 
   return (
-    <div className="animate-fade-in">
-      <div className="page-header">
-        <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem' }}>
-          <button className="btn-icon" onClick={() => setActiveClassId(null)} title="กลับไปหน้าภาพรวม" aria-label="กลับไปหน้าภาพรวม">
-            <ChevronRight size={20} style={{ transform: 'rotate(180deg)' }} />
-          </button>
-          <div>
-            <h2 className="page-title">{activeClass?.name}</h2>
-            <p className="page-subtitle">{activeClass?.subject} • นักเรียน {classStudents.length} คน</p>
+    <div className="animate-fade-in" style={{ height: '100%', display: 'flex', flexDirection: 'column', backgroundColor: 'var(--bg-base)' }}>
+      {/* Header Area (ปกสมุด) */}
+      <div className="pitchclass-header">
+        <div className="pitchclass-header-content">
+          <div style={{ fontSize: '0.85rem', color: 'var(--text-muted)', marginBottom: '1.5rem', fontFamily: 'var(--font-sans)' }}>
+            ปีการศึกษา 2567 / {activeClass?.subject || 'วิชา'} / {activeClass?.name || 'ห้องเรียน'}
           </div>
-        </div>
-      </div>
-      
-      <div className="hairline-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', marginBottom: '1.5rem' }}>
-        <div className="stat-card" style={{ position: 'relative', overflow: 'hidden' }}>
-
-          <div style={{ position: 'absolute', bottom: '-15px', right: '-15px', opacity: 0.1, pointerEvents: 'none', transform: 'rotate(-10deg)' }}>
-            <svg width="100" height="70" viewBox="0 0 100 70">
-              <path d="M10,40 Q30,20 60,50 T90,30" fill="none" stroke="var(--accent-cyan)" strokeWidth="15" strokeLinecap="round" />
-            </svg>
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div className="stat-label">นักเรียนในห้อง</div>
-            <Users size={16} style={{ color: 'var(--text-muted)' }} />
-          </div>
-          <div className="stat-value" style={{ marginTop: '0.5rem' }}>{classStudents.length}</div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>คนทั้งหมด</div>
-        </div>
-        <div className="stat-card" style={{ position: 'relative', overflow: 'hidden' }}>
-
-          <div style={{ position: 'absolute', bottom: '-15px', right: '-15px', opacity: 0.1, pointerEvents: 'none', transform: 'rotate(-10deg)' }}>
-            <svg width="100" height="70" viewBox="0 0 100 70">
-              <path d="M10,40 Q30,20 60,50 T90,30" fill="none" stroke="var(--accent-cyan)" strokeWidth="15" strokeLinecap="round" />
-            </svg>
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div className="stat-label">ช่องประเมินคะแนน</div>
-            <BarChart3 size={16} style={{ color: 'var(--text-muted)' }} />
-          </div>
-          <div className="stat-value" style={{ marginTop: '0.5rem' }}>{classColumns.length}</div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>ช่องเก็บคะแนน</div>
-        </div>
-        <div className="stat-card" style={{ position: 'relative', overflow: 'hidden' }}>
-
-          <div style={{ position: 'absolute', bottom: '-15px', right: '-15px', opacity: 0.1, pointerEvents: 'none', transform: 'rotate(-10deg)' }}>
-            <svg width="100" height="70" viewBox="0 0 100 70">
-              <path d="M10,40 Q30,20 60,50 T90,30" fill="none" stroke="var(--accent-cyan)" strokeWidth="15" strokeLinecap="round" />
-            </svg>
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div className="stat-label">อัตราเข้าเรียน ({uniqueDates.length} วัน)</div>
-            <Calendar size={16} style={{ color: 'var(--text-muted)' }} />
-          </div>
-          <div className="stat-value" style={{ marginTop: '0.5rem', color: classAttRate < 80 ? 'var(--warning)' : 'var(--success)' }}>{classAttRate}%</div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>ของชั่วโมงเรียนทั้งหมด</div>
-        </div>
-        <div className="stat-card" style={{ position: 'relative', overflow: 'hidden' }}>
-
-          <div style={{ position: 'absolute', bottom: '-15px', right: '-15px', opacity: 0.1, pointerEvents: 'none', transform: 'rotate(-10deg)' }}>
-            <svg width="100" height="70" viewBox="0 0 100 70">
-              <path d="M10,40 Q30,20 60,50 T90,30" fill="none" stroke="var(--accent-cyan)" strokeWidth="15" strokeLinecap="round" />
-            </svg>
-          </div>
-
-          <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-            <div className="stat-label">งานค้างส่งในห้อง</div>
-            <FileWarning size={16} style={{ color: 'var(--text-muted)' }} />
-          </div>
-          <div className="stat-value" style={{ marginTop: '0.5rem', color: totalMissingClass > 0 ? 'var(--danger)' : 'var(--text-primary)' }}>{totalMissingClass}</div>
-          <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>รายการ</div>
-        </div>
-      </div>
-
-      <div className="hairline-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(350px, 1fr))', marginBottom: '1.5rem' }}>
-        <div className="hairline-cell">
-          <div className="stat-label" style={{ marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <Calendar size={15} style={{ color: 'var(--text-primary)' }} /> สัดส่วนการเข้าเรียน (Attendance Breakdown)
-          </div>
-          <ChartFrame style={{ height: 260 }}>
-            {({ width, height }) => classAttendance.filter(r => r.status !== 'holiday').length > 0 ? (
-                <PieChart width={width} height={height}>
-                  <Pie
-                    data={[
-                      { name: 'มา / สาย', value: classAttendance.filter(r => r.status === 'present' || r.status === 'late').length },
-                      { name: 'ลา', value: classAttendance.filter(r => r.status === 'leave').length },
-                      { name: 'ขาด', value: classAttendance.filter(r => r.status === 'absent').length }
-                    ]}
-                    cx="50%"
-                    cy="50%"
-                    innerRadius={65}
-                    outerRadius={85}
-                    paddingAngle={3}
-                    dataKey="value"
-                    stroke="none"
-                  >
-                    <Cell fill="var(--success)" />
-                    <Cell fill="var(--warning)" />
-                    <Cell fill="var(--danger)" />
-                  </Pie>
-                  <Tooltip contentStyle={{ backgroundColor: 'var(--bg-surface-elevated)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '0.85rem' }} />
-                  <Legend verticalAlign="bottom" height={36} iconType="circle" wrapperStyle={{ fontSize: '0.85rem', color: 'var(--text-secondary)' }} />
-                </PieChart>
-            ) : (
-              <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>ไม่มีข้อมูล</div>
-            )}
-          </ChartFrame>
-        </div>
-        
-        <div className="hairline-cell">
-          <div className="stat-label" style={{ marginBottom: '1.25rem', display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
-            <BarChart3 size={15} style={{ color: 'var(--text-primary)' }} /> ผลการเรียนจำลองของห้องนี้ (Grade Radar)
-          </div>
-          <ChartFrame style={{ height: 260 }}>
-            {({ width, height }) => classColumns.length > 0 ? (
-                <RadarChart width={width} height={height} cx="50%" cy="50%" outerRadius="70%" data={getGradeSummaryData(classStudents, getClassScoreContext(activeClassId, classes, scoreColumns, indicators), scores)}>
-                  <PolarGrid stroke="var(--border-subtle)" />
-                  <PolarAngleAxis dataKey="grade" tick={{ fill: 'var(--text-secondary)', fontSize: 11 }} />
-                  <PolarRadiusAxis angle={30} domain={[0, 'auto']} tick={false} axisLine={false} />
-                  <Radar name="นักเรียน" dataKey="value" stroke="var(--accent-primary)" fill="var(--accent-primary)" fillOpacity={0.15} />
-                  <Tooltip 
-                    contentStyle={{ backgroundColor: 'var(--bg-surface-elevated)', border: '1px solid var(--border-strong)', borderRadius: '8px', color: 'var(--text-primary)', fontSize: '0.85rem' }} 
-                  />
-                </RadarChart>
-            ) : (
-              <div style={{ display: 'flex', height: '100%', alignItems: 'center', justifyContent: 'center', color: 'var(--text-muted)' }}>ไม่มีข้อมูล</div>
-            )}
-          </ChartFrame>
-        </div>
-      </div>
-
-      {topMissingStudents.length > 0 && (
-        <div className="data-table-container" style={{ borderColor: 'var(--danger-border)', backgroundColor: 'var(--bg-surface)' }}>
-          <div style={{ padding: '1rem 1.25rem', borderBottom: '1px solid var(--danger-border)', display: 'flex', justifyContent: 'space-between', alignItems: 'center', backgroundColor: 'var(--danger-bg)' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', color: 'var(--danger)', fontWeight: 600, fontSize: '0.875rem' }}>
-              <FileWarning size={16} /> 🚨 นักเรียนที่ค้างส่งงานมากที่สุด (เฉพาะห้องนี้)
+          <div style={{ display: 'flex', flexDirection: 'column', gap: '0.5rem' }}>
+            <h1 style={{ fontSize: '7rem', fontWeight: 'bold', margin: '-1rem 0 -1.5rem -0.5rem', color: 'var(--text-primary)', fontFamily: 'var(--font-serif)', lineHeight: '1' }}>
+              {activeClass?.name ? activeClass.name.replace('ป.', '') : ''}
+            </h1>
+            <h2 style={{ fontSize: '2rem', fontWeight: '500', color: 'var(--text-primary)', margin: 0, fontFamily: 'var(--font-serif)' }}>
+              สมุดประจำห้องเรียน
+            </h2>
+            <div style={{ fontSize: '0.9rem', color: 'var(--text-muted)', marginTop: '0.5rem' }}>
+              ครูประจำวิชา | โรงเรียน
             </div>
-            <span style={{ fontSize: '0.75rem', color: 'var(--danger)' }}>{topMissingStudents.length} คน</span>
-          </div>
-          <div style={{ overflowX: 'auto' }}>
-            <table className="data-table">
-              <tbody>
-                {topMissingStudents.map((s, idx) => (
-                  <tr key={s.id}>
-                    <td style={{ width: '40px', color: 'var(--text-muted)', fontWeight: 600 }}>#{idx + 1}</td>
-                    <td>
-                      <div style={{ color: 'var(--text-primary)', fontWeight: 500 }}>{s.name}</div>
-                      <div style={{ fontSize: '0.78rem', color: 'var(--text-muted)' }}>เลขที่ {s.number} | รหัส {s.studentId}</div>
-                    </td>
-                    <td style={{ textAlign: 'right' }}>
-                      <span className="badge badge-danger">ค้าง {s.missingCount} งาน</span>
-                    </td>
-                  </tr>
-                ))}
-              </tbody>
-            </table>
           </div>
         </div>
-      )}
+        <div className="pitchclass-header-art"></div>
+      </div>
+
+      {/* Stats Bar (แถบทะเบียน) */}
+      <div className="pitchclass-stats-bar">
+        <div className="pitchclass-stat-item">
+          <Users size={32} color="var(--accent-primary)" />
+          <div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>นักเรียน</div>
+            <div style={{ fontSize: '1.75rem', fontWeight: '600', color: 'var(--text-primary)', fontFamily: 'var(--font-serif)', lineHeight: '1.2' }}>{classStudents.length} <span style={{ fontSize: '1rem', fontWeight: 'normal', fontFamily: 'var(--font-sans)' }}>คน</span></div>
+          </div>
+        </div>
+        <div className="pitchclass-stat-item">
+          <FileText size={32} color="var(--accent-primary)" />
+          <div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>ช่องคะแนน</div>
+            <div style={{ fontSize: '1.75rem', fontWeight: '600', color: 'var(--text-primary)', fontFamily: 'var(--font-serif)', lineHeight: '1.2' }}>{classColumns.length} <span style={{ fontSize: '1rem', fontWeight: 'normal', fontFamily: 'var(--font-sans)' }}>ช่อง</span></div>
+          </div>
+        </div>
+        <div className="pitchclass-stat-item">
+          <BarChart3 size={32} color="var(--accent-primary)" />
+          <div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>เข้าเรียน</div>
+            <div style={{ fontSize: '1.75rem', fontWeight: '600', color: 'var(--text-primary)', fontFamily: 'var(--font-serif)', lineHeight: '1.2' }}>{classAttRate}%</div>
+          </div>
+        </div>
+        <div className="pitchclass-stat-item">
+          <FileWarning size={32} color="var(--accent-primary)" />
+          <div>
+            <div style={{ fontSize: '0.8rem', color: 'var(--text-muted)' }}>งานค้าง</div>
+            <div style={{ fontSize: '1.75rem', fontWeight: '600', color: 'var(--text-primary)', fontFamily: 'var(--font-serif)', lineHeight: '1.2' }}>{classMissing} <span style={{ fontSize: '1rem', fontWeight: 'normal', fontFamily: 'var(--font-sans)' }}>รายการ</span></div>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Content Area */}
+      <div style={{ flex: 1, display: 'flex', overflow: 'hidden' }}>
+        {/* Left: Units Table */}
+        <div style={{ flex: '2', padding: '2rem', overflowY: 'auto', borderRight: '1px solid var(--border-subtle)' }}>
+          <h3 style={{ fontSize: '1.5rem', fontWeight: '600', color: 'var(--text-primary)', fontFamily: 'var(--font-serif)', marginBottom: '0.5rem' }}>หน่วยการเรียนรู้</h3>
+          <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', marginBottom: '1.5rem' }}>ข้อมูลโครงสร้างและตัวชี้วัด</p>
+          
+          <table className="data-table" style={{ width: '100%', borderCollapse: 'collapse' }}>
+            <thead>
+              <tr>
+                <th style={{ backgroundColor: 'transparent', padding: '1rem 0', color: 'var(--text-primary)', borderBottom: '1px solid var(--border-strong)' }}>ลำดับ</th>
+                <th style={{ backgroundColor: 'transparent', padding: '1rem', color: 'var(--text-primary)', borderBottom: '1px solid var(--border-strong)' }}>ชื่อหน่วยการเรียนรู้</th>
+                <th style={{ backgroundColor: 'transparent', padding: '1rem', color: 'var(--text-primary)', borderBottom: '1px solid var(--border-strong)', textAlign: 'center' }}>ช่องคะแนน</th>
+                <th style={{ backgroundColor: 'transparent', padding: '1rem', color: 'var(--text-primary)', borderBottom: '1px solid var(--border-strong)', textAlign: 'center' }}>สถานะ</th>
+                <th style={{ backgroundColor: 'transparent', padding: '1rem', color: 'var(--text-primary)', borderBottom: '1px solid var(--border-strong)', textAlign: 'center' }}>ดำเนินการ</th>
+              </tr>
+            </thead>
+            <tbody>
+              {classUnits.length === 0 ? (
+                <tr>
+                  <td colSpan="5" style={{ padding: '2rem', textAlign: 'center', color: 'var(--text-muted)' }}>ยังไม่ได้ตั้งค่าหน่วยการเรียนรู้</td>
+                </tr>
+              ) : (
+                classUnits.map((unit, idx) => {
+                  const unitCols = classColumns.filter(c => c.unitId === unit.id).length;
+                  const hasScores = unitCols > 0;
+                  
+                  return (
+                    <tr key={unit.id}>
+                      <td style={{ padding: '1rem 0', color: 'var(--accent-primary)', fontSize: '1.25rem', fontFamily: 'var(--font-serif)', fontWeight: 'bold' }}>{String(idx + 1).padStart(2, '0')}</td>
+                      <td style={{ padding: '1rem', color: 'var(--text-primary)', fontWeight: '500' }}>{unit.name}</td>
+                      <td style={{ padding: '1rem', textAlign: 'center', color: 'var(--text-muted)' }}>{unitCols} ช่อง</td>
+                      <td style={{ padding: '1rem', textAlign: 'center' }}>
+                        <span style={{ display: 'inline-flex', alignItems: 'center', gap: '0.5rem', fontSize: '0.85rem', color: hasScores ? 'var(--text-primary)' : 'var(--text-muted)' }}>
+                          <span style={{ width: '8px', height: '8px', borderRadius: '50%', backgroundColor: hasScores ? 'var(--accent-primary)' : 'var(--text-muted)' }}></span>
+                          {hasScores ? 'ใช้งานอยู่' : 'ยังไม่เริ่ม'}
+                        </span>
+                      </td>
+                      <td style={{ padding: '1rem', textAlign: 'center' }}>
+                        <button className="btn-icon" onClick={() => navigate('/grading/scores')} style={{ color: 'var(--accent-cobalt)', fontSize: '0.85rem', fontWeight: '500' }}>
+                          เปิดคะแนน &rarr;
+                        </button>
+                      </td>
+                    </tr>
+                  )
+                })
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Right: Summary Panel */}
+        <div style={{ flex: '1', padding: '2rem', overflowY: 'auto', backgroundColor: 'var(--bg-surface)' }}>
+          <div style={{ marginBottom: '2.5rem' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-end', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.5rem', marginBottom: '1.5rem' }}>
+              <h3 style={{ fontSize: '1.25rem', fontWeight: '600', color: 'var(--text-primary)', fontFamily: 'var(--font-serif)', margin: 0 }}>การเข้าเรียน</h3>
+              <span style={{ fontSize: '0.85rem', color: 'var(--text-muted)' }}>ข้อมูล {uniqueDates.length} วัน</span>
+            </div>
+            
+            <div style={{ fontSize: '4rem', fontWeight: 'bold', color: 'var(--text-primary)', fontFamily: 'var(--font-serif)', lineHeight: '1', marginBottom: '1rem' }}>
+              {classAttRate}%
+            </div>
+            
+            <div style={{ height: '12px', backgroundColor: 'var(--bg-surface-elevated)', width: '100%' }}>
+              <div style={{ height: '100%', backgroundColor: 'var(--accent-cyan)', width: `${classAttRate}%` }}></div>
+            </div>
+          </div>
+
+          <div>
+            <div style={{ display: 'flex', alignItems: 'center', gap: '0.75rem', borderBottom: '1px solid var(--border-subtle)', paddingBottom: '0.5rem', marginBottom: '1.5rem' }}>
+              <LayoutList size={24} color="var(--text-primary)" />
+              <h3 style={{ fontSize: '1.25rem', fontWeight: '600', color: 'var(--text-primary)', fontFamily: 'var(--font-serif)', margin: 0 }}>ผลการเรียน</h3>
+            </div>
+            
+            <p style={{ color: 'var(--text-muted)', fontSize: '0.9rem', lineHeight: '1.6', marginBottom: '1.5rem' }}>
+              ดูรายละเอียดผลการเรียน รายหน่วยการเรียนรู้ และช่องคะแนนทั้งหมด
+            </p>
+            
+            <button className="btn-icon" onClick={() => navigate('/reports/indicators')} style={{ color: 'var(--accent-cobalt)', fontSize: '0.95rem', fontWeight: '500', width: '100%', textAlign: 'right' }}>
+              ดูรายละเอียด &rarr;
+            </button>
+          </div>
+        </div>
+      </div>
+
+      {/* Bottom Actions */}
+      <div className="pitchclass-bottom-actions">
+        <div className="pitchclass-action-btn" onClick={() => navigate('/attendance')}>
+          <Calendar size={18} /> เช็คชื่อ &rarr;
+        </div>
+        <div className="pitchclass-action-btn" onClick={() => navigate('/grading/scores')}>
+          <FileText size={18} /> บันทึกคะแนน &rarr;
+        </div>
+        <div className="pitchclass-action-btn" style={{ borderRight: 'none' }} onClick={() => navigate('/reports')}>
+          <BarChart3 size={18} /> ออกรายงาน &rarr;
+        </div>
+      </div>
     </div>
   );
 }

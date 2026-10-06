@@ -238,6 +238,13 @@ function App() {
               <Settings size={17} /> <span>ตั้งค่าระบบ</span>
             </NavLink>
           </nav>
+        <div className="sidebar-footer-art">
+          ศิลปะ<br/>
+          สร้างคน<br/>
+          ให้มองเห็น<br/>
+          ความงดงาม<br/>
+          ในชีวิต
+        </div>
         </aside>
 
         {/* Main Wrapper */}
@@ -246,18 +253,7 @@ function App() {
           {/* Top Header */}
           <header className="top-header no-print" style={{ backgroundColor: 'var(--bg-surface-elevated)', borderBottom: '1px solid var(--border-subtle)', position: 'relative' }}>
 
-            <div className="header-art" style={{ position: 'absolute', right: 0, top: 0, height: '100%', width: '350px', overflow: 'hidden', pointerEvents: 'none', zIndex: 0 }}>
-              <svg viewBox="0 0 350 100" preserveAspectRatio="none" style={{ width: '100%', height: '100%' }}>
-                {/* Cobalt Wave */}
-                <path d="M0,100 C150,80 200,20 350,60 L350,0 L0,0 Z" fill="var(--accent-cobalt)" opacity="0.15" />
-                {/* Cyan Wave */}
-                <path d="M50,100 C180,50 250,70 350,30 L350,0 L0,0 Z" fill="var(--accent-cyan)" opacity="0.1" />
-                {/* Yellow Stars */}
-                <circle cx="280" cy="30" r="4" fill="var(--accent-primary)" className="star-glow" style={{ filter: 'blur(1px)' }} />
-                <circle cx="220" cy="65" r="2.5" fill="var(--accent-primary)" className="star-glow-delayed" style={{ filter: 'blur(0.5px)' }} opacity="0.7" />
-                <circle cx="320" cy="70" r="1.5" fill="var(--accent-cyan)" opacity="0.5" />
-              </svg>
-            </div>
+            
             
             <div className="header-title" style={{ position: 'relative', zIndex: 1, display: 'flex', alignItems: 'center', gap: '1rem', flex: 1 }}>
               <button 
