@@ -23,6 +23,7 @@
   --border-focus: rgba(250, 204, 21, 0.5); /* Golden focus */
   
   /* Accents & Brand (Golden Yellow & Cerulean Swirls) */
+  --accent-cobalt: #294A8A;
   --accent-primary: #E8BE59; /* Glowing Gold */
   --accent-primary-hover: #fef08a;
   --accent-cyan: #8DBBD8; /* Swirling Cerulean */
@@ -941,4 +942,17 @@ body {
   line-height: 1.3;
   min-width: 100px;
   max-width: 150px;
+}
+
+
+@keyframes starryFloat {
+  0% { transform: translateY(0px) scale(1); opacity: 0.8; }
+  50% { transform: translateY(-3px) scale(1.1); opacity: 1; }
+  100% { transform: translateY(0px) scale(1); opacity: 0.8; }
+}
+.star-glow {
+  animation: starryFloat 4s ease-in-out infinite;
+}
+.star-glow-delayed {
+  animation: starryFloat 5s ease-in-out 2s infinite;
 }

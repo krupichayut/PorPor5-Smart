@@ -420,7 +420,14 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
         ) : (
           <>
             <div className="hairline-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', marginBottom: '1.5rem' }}>
-              <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => navigate('/classes')}>
+              <div className="stat-card" style={{ cursor: 'pointer', position: 'relative', overflow: 'hidden' }} onClick={() => navigate('/classes')}>
+
+          <div style={{ position: 'absolute', bottom: '-15px', right: '-15px', opacity: 0.1, pointerEvents: 'none', transform: 'rotate(-10deg)' }}>
+            <svg width="100" height="70" viewBox="0 0 100 70">
+              <path d="M10,40 Q30,20 60,50 T90,30" fill="none" stroke="var(--accent-cyan)" strokeWidth="15" strokeLinecap="round" />
+            </svg>
+          </div>
+
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div className="stat-label">วิชา / ห้องเรียน</div>
                   <BookOpen size={16} style={{ color: 'var(--text-muted)' }} />
@@ -428,7 +435,14 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                 <div className="stat-value" style={{ marginTop: '0.5rem' }}>{totalClasses}</div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>ห้องที่กำลังสอน</div>
               </div>
-              <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => navigate('/students')}>
+              <div className="stat-card" style={{ cursor: 'pointer', position: 'relative', overflow: 'hidden' }} onClick={() => navigate('/students')}>
+
+          <div style={{ position: 'absolute', bottom: '-15px', right: '-15px', opacity: 0.1, pointerEvents: 'none', transform: 'rotate(-10deg)' }}>
+            <svg width="100" height="70" viewBox="0 0 100 70">
+              <path d="M10,40 Q30,20 60,50 T90,30" fill="none" stroke="var(--accent-cyan)" strokeWidth="15" strokeLinecap="round" />
+            </svg>
+          </div>
+
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div className="stat-label">นักเรียนทั้งหมด</div>
                   <Users size={16} style={{ color: 'var(--text-muted)' }} />
@@ -436,7 +450,14 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                 <div className="stat-value" style={{ marginTop: '0.5rem' }}>{totalStudents}</div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>คนในระบบ</div>
               </div>
-              <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => navigate('/attendance')}>
+              <div className="stat-card" style={{ cursor: 'pointer', position: 'relative', overflow: 'hidden' }} onClick={() => navigate('/attendance')}>
+
+          <div style={{ position: 'absolute', bottom: '-15px', right: '-15px', opacity: 0.1, pointerEvents: 'none', transform: 'rotate(-10deg)' }}>
+            <svg width="100" height="70" viewBox="0 0 100 70">
+              <path d="M10,40 Q30,20 60,50 T90,30" fill="none" stroke="var(--accent-cyan)" strokeWidth="15" strokeLinecap="round" />
+            </svg>
+          </div>
+
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div className="stat-label">เวลาเรียนรวม</div>
                   <Calendar size={16} style={{ color: 'var(--text-muted)' }} />
@@ -444,7 +465,14 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
                 <div className="stat-value" style={{ marginTop: '0.5rem', color: overallAttRate < 80 ? 'var(--warning)' : 'var(--success)' }}>{overallAttRate}%</div>
                 <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>อัตราการเข้าเรียน</div>
               </div>
-              <div className="stat-card" style={{ cursor: 'pointer' }} onClick={() => navigate('/grading')}>
+              <div className="stat-card" style={{ cursor: 'pointer', position: 'relative', overflow: 'hidden' }} onClick={() => navigate('/grading')}>
+
+          <div style={{ position: 'absolute', bottom: '-15px', right: '-15px', opacity: 0.1, pointerEvents: 'none', transform: 'rotate(-10deg)' }}>
+            <svg width="100" height="70" viewBox="0 0 100 70">
+              <path d="M10,40 Q30,20 60,50 T90,30" fill="none" stroke="var(--accent-cyan)" strokeWidth="15" strokeLinecap="round" />
+            </svg>
+          </div>
+
                 <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
                   <div className="stat-label">งานค้างส่งรวม</div>
                   <FileWarning size={16} style={{ color: 'var(--text-muted)' }} />
@@ -601,7 +629,14 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
       </div>
       
       <div className="hairline-grid" style={{ gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))', marginBottom: '1.5rem' }}>
-        <div className="stat-card">
+        <div className="stat-card" style={{ position: 'relative', overflow: 'hidden' }}>
+
+          <div style={{ position: 'absolute', bottom: '-15px', right: '-15px', opacity: 0.1, pointerEvents: 'none', transform: 'rotate(-10deg)' }}>
+            <svg width="100" height="70" viewBox="0 0 100 70">
+              <path d="M10,40 Q30,20 60,50 T90,30" fill="none" stroke="var(--accent-cyan)" strokeWidth="15" strokeLinecap="round" />
+            </svg>
+          </div>
+
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div className="stat-label">นักเรียนในห้อง</div>
             <Users size={16} style={{ color: 'var(--text-muted)' }} />
@@ -609,7 +644,14 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
           <div className="stat-value" style={{ marginTop: '0.5rem' }}>{classStudents.length}</div>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>คนทั้งหมด</div>
         </div>
-        <div className="stat-card">
+        <div className="stat-card" style={{ position: 'relative', overflow: 'hidden' }}>
+
+          <div style={{ position: 'absolute', bottom: '-15px', right: '-15px', opacity: 0.1, pointerEvents: 'none', transform: 'rotate(-10deg)' }}>
+            <svg width="100" height="70" viewBox="0 0 100 70">
+              <path d="M10,40 Q30,20 60,50 T90,30" fill="none" stroke="var(--accent-cyan)" strokeWidth="15" strokeLinecap="round" />
+            </svg>
+          </div>
+
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div className="stat-label">ช่องประเมินคะแนน</div>
             <BarChart3 size={16} style={{ color: 'var(--text-muted)' }} />
@@ -617,7 +659,14 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
           <div className="stat-value" style={{ marginTop: '0.5rem' }}>{classColumns.length}</div>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>ช่องเก็บคะแนน</div>
         </div>
-        <div className="stat-card">
+        <div className="stat-card" style={{ position: 'relative', overflow: 'hidden' }}>
+
+          <div style={{ position: 'absolute', bottom: '-15px', right: '-15px', opacity: 0.1, pointerEvents: 'none', transform: 'rotate(-10deg)' }}>
+            <svg width="100" height="70" viewBox="0 0 100 70">
+              <path d="M10,40 Q30,20 60,50 T90,30" fill="none" stroke="var(--accent-cyan)" strokeWidth="15" strokeLinecap="round" />
+            </svg>
+          </div>
+
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div className="stat-label">อัตราเข้าเรียน ({uniqueDates.length} วัน)</div>
             <Calendar size={16} style={{ color: 'var(--text-muted)' }} />
@@ -625,7 +674,14 @@ export default function Dashboard({ classes, students, activeClassId, setActiveC
           <div className="stat-value" style={{ marginTop: '0.5rem', color: classAttRate < 80 ? 'var(--warning)' : 'var(--success)' }}>{classAttRate}%</div>
           <div style={{ fontSize: '0.75rem', color: 'var(--text-muted)' }}>ของชั่วโมงเรียนทั้งหมด</div>
         </div>
-        <div className="stat-card">
+        <div className="stat-card" style={{ position: 'relative', overflow: 'hidden' }}>
+
+          <div style={{ position: 'absolute', bottom: '-15px', right: '-15px', opacity: 0.1, pointerEvents: 'none', transform: 'rotate(-10deg)' }}>
+            <svg width="100" height="70" viewBox="0 0 100 70">
+              <path d="M10,40 Q30,20 60,50 T90,30" fill="none" stroke="var(--accent-cyan)" strokeWidth="15" strokeLinecap="round" />
+            </svg>
+          </div>
+
           <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
             <div className="stat-label">งานค้างส่งในห้อง</div>
             <FileWarning size={16} style={{ color: 'var(--text-muted)' }} />
