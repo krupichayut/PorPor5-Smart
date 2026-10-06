@@ -198,6 +198,15 @@ function App() {
             <NavLink to="/" aria-label="ภาพรวม" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`} end>
               <BarChart3 size={17} /> <span>ภาพรวม</span>
             </NavLink>
+            <NavLink to="/classes" aria-label="ตั้งค่ารายวิชา" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <BookOpen size={17} /> <span>ตั้งค่ารายวิชา</span>
+            </NavLink>
+            <NavLink to="/course-plan" aria-label="ตัวชี้วัดและแผนฯ" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <ClipboardList size={17} /> <span>ตัวชี้วัดและแผนฯ</span>
+            </NavLink>
+            <NavLink to="/students" aria-label="ข้อมูลนักเรียน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Users size={17} /> <span>ข้อมูลนักเรียน</span>
+            </NavLink>
             <NavLink to="/attendance" aria-label="เช็คชื่อ" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Calendar size={17} /> <span>เช็คชื่อ</span>
             </NavLink>
@@ -208,13 +217,25 @@ function App() {
               <FileText size={17} /> <span>ติดตามงาน</span>
             </NavLink>
             <NavLink to="/assessments" aria-label="ประเมินผู้เรียน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <ClipboardList size={17} /> <span>ประเมินผู้เรียน</span>
+              <Star size={17} /> <span>ประเมินผู้เรียน</span>
+            </NavLink>
+            <NavLink to="/rewards" aria-label="ระบบรางวัล" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Paintbrush size={17} /> <span>ระบบรางวัล</span>
+            </NavLink>
+            <NavLink to="/media-library" aria-label="คลังสื่อ" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Library size={17} /> <span>คลังสื่อ</span>
+            </NavLink>
+            <NavLink to="/gallery" aria-label="ผลงานนักเรียน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Image size={17} /> <span>ผลงานนักเรียน</span>
+            </NavLink>
+            <NavLink to="/certificates" aria-label="เกียรติบัตร" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Award size={17} /> <span>เกียรติบัตร</span>
             </NavLink>
             <NavLink to="/reports" aria-label="รายงาน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <FileText size={17} /> <span>รายงาน</span>
             </NavLink>
-            <NavLink to="/classes" aria-label="ตั้งค่ารายวิชา" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <BookOpen size={17} /> <span>ตั้งค่ารายวิชา</span>
+            <NavLink to="/settings" aria-label="ตั้งค่าระบบ" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
+              <Settings size={17} /> <span>ตั้งค่าระบบ</span>
             </NavLink>
           </nav>
         </aside>
