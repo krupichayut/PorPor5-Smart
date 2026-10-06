@@ -1,4 +1,4 @@
-import { BarChart3, Users, Calendar, FileWarning, TrendingUp, ChevronRight, BookOpen, CheckCircle } from 'lucide-react';
+import { BarChart3, Users, Calendar, FileWarning, TrendingUp, ChevronRight, BookOpen, CheckCircle, FileText, LayoutList } from 'lucide-react';
 import { useEffect, useRef, useState, useMemo } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, PieChart, Pie, Cell, Legend, Radar, RadarChart, PolarGrid, PolarAngleAxis, PolarRadiusAxis } from 'recharts';
