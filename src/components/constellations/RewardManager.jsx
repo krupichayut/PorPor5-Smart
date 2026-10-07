@@ -149,7 +149,7 @@ export default function RewardManager({ activeClassId, classes, students }) {
                       {reward.constellationCost} กลุ่มดาว
                     </div>
                     <div style={{ color: reward.stock <= 0 ? 'var(--danger-color)' : 'var(--text-muted)', fontSize: '0.9rem', display: 'flex', alignItems: 'center', gap: '0.25rem' }}>
-                      <Package size={14} /> {reward.stock !== null ? \`เหลือ \${reward.stock} ชิ้น\` : 'ไม่จำกัด'}
+                      <Package size={14} /> {reward.stock !== null ? `เหลือ ${reward.stock} ชิ้น` : 'ไม่จำกัด'}
                     </div>
                   </div>
                 </div>
