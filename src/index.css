@@ -980,11 +980,11 @@ body {
   opacity: 1;
 }
 .nav-item.active {
-  background-color: var(--bg-base);
+  background-color: var(--accent-primary);
   color: var(--bg-sidebar);
   opacity: 1;
   font-weight: 600;
-  box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+  box-shadow: 0 2px 5px rgba(232,190,89,0.3);
 }
 .sidebar-footer-art {
   padding: 2rem 1.5rem;
