@@ -93,6 +93,7 @@ import RewardManager from './components/constellations/RewardManager';
 import TVClassroomSky from './components/display/TVClassroomSky';
 
 function App() {
+  const isDisplayMode = typeof window !== 'undefined' && window.location.pathname.startsWith('/display');
   const [user, setUser] = useState(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
   const [loginEmail, setLoginEmail] = useState('');
@@ -255,7 +256,7 @@ function App() {
         <div className="main-wrapper">
           
           {/* Top Header */}
-          <header className="top-header no-print" style={{ backgroundColor: 'var(--bg-surface-elevated)', borderBottom: '1px solid var(--border-subtle)', position: 'relative' }}>
+          {!isDisplayMode && (<header className="top-header no-print" style={{ backgroundColor: 'var(--bg-surface-elevated)', borderBottom: '1px solid var(--border-subtle)', position: 'relative' }}>
 
             
             
@@ -325,7 +326,7 @@ function App() {
                 </div>
               </div>
             </div>
-          </header>
+          </header>)}
 
           {/* Modal Overlay */}
           {isLoginModalOpen && (
@@ -352,7 +353,7 @@ function App() {
           )}
 
           {/* Main Content Area */}
-          <main className="content-area">
+          <main className="content-area" style={{ padding: isDisplayMode ? 0 : undefined }}>
             {hasSaveError && (
               <div className="badge badge-danger" style={{ width: '100%', marginBottom: '1rem', padding: '1rem' }} role="alert">
                 บันทึกข้อมูลไม่สำเร็จ กรุณาตรวจสอบอินเทอร์เน็ตหรือสิทธิ์ Firebase แล้วลองอีกครั้ง

@@ -16,6 +16,23 @@ const tvTheme = {
   blue: '#35BDEB'
 };
 
+
+const CONSTELLATION_POINTS = [
+  { x: 10, y: 75 }, // 1
+  { x: 35, y: 55 }, // 2
+  { x: 55, y: 70 }, // 3
+  { x: 75, y: 40 }, // 4
+  { x: 90, y: 15 }, // 5
+];
+
+const CONSTELLATION_LINES = [
+  { from: 0, to: 1 },
+  { from: 1, to: 2 },
+  { from: 2, to: 3 },
+  { from: 3, to: 4 },
+  { from: 4, to: 2 }, // connects 5 back to 3 to form a shape
+];
+
 export default function TVClassroomSky() {
   const { classId } = useParams();
   const [classes] = useFirestoreData('appData', 'classes', []);
@@ -123,17 +140,40 @@ export default function TVClassroomSky() {
             {student?.name} {student?.nickname ? `(${student.nickname})` : ''}
           </h1>
 
-          <div style={{ display: 'flex', justifyContent: 'center', gap: '2rem', marginBottom: '3rem' }}>
-            {[1, 2, 3, 4, 5].map(i => {
-              // If completion, all 5 stars are lit. Otherwise, lit up to partialStars.
+          
+          <div style={{ position: 'relative', width: '800px', height: '400px', margin: '0 auto 3rem auto' }}>
+            <svg style={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', zIndex: 1, overflow: 'visible' }}>
+              {CONSTELLATION_LINES.map((line, idx) => {
+                const p1 = CONSTELLATION_POINTS[line.from];
+                const p2 = CONSTELLATION_POINTS[line.to];
+                const star1Lit = isCompletion ? true : (line.from + 1) <= (sData?.partialStars || 0);
+                const star2Lit = isCompletion ? true : (line.to + 1) <= (sData?.partialStars || 0);
+                const isLineLit = star1Lit && star2Lit;
+                return (
+                  <line 
+                    key={idx}
+                    x1={`${p1.x}%`} y1={`${p1.y}%`} x2={`${p2.x}%`} y2={`${p2.y}%`}
+                    stroke={isLineLit ? tvTheme.gold : 'rgba(255,255,255,0.1)'}
+                    strokeWidth={isLineLit ? 3 : 2}
+                    style={{ transition: 'stroke 1s, stroke-width 1s', filter: isLineLit ? 'drop-shadow(0 0 10px rgba(245,196,81,0.5))' : 'none' }}
+                  />
+                );
+              })}
+            </svg>
+
+            {CONSTELLATION_POINTS.map((pos, index) => {
+              const i = index + 1;
               const isLit = isCompletion ? true : i <= (sData?.partialStars || 0);
               const isJustEarned = isCompletion ? i === 5 : i === (sData?.partialStars || 0);
-              
               return (
                 <div key={i} style={{ 
-                  transform: isJustEarned ? 'scale(1.5)' : 'scale(1)', 
+                  position: 'absolute',
+                  left: `${pos.x}%`,
+                  top: `${pos.y}%`,
+                  transform: `translate(-50%, -50%) ${isJustEarned ? 'scale(1.5)' : 'scale(1)'}`, 
                   transition: 'transform 1s cubic-bezier(0.175, 0.885, 0.32, 1.275)',
-                  animation: isJustEarned ? 'pulse 2s infinite' : 'none'
+                  animation: isJustEarned ? 'pulse 2s infinite' : 'none',
+                  zIndex: 2
                 }}>
                   <Star 
                     size={isJustEarned ? 120 : 80} 
