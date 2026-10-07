@@ -88,6 +88,10 @@ function ToastContainer() {
     </div>
   );
 }
+import ConstellationDashboard from './components/constellations/ConstellationDashboard';
+import RewardManager from './components/constellations/RewardManager';
+import TVClassroomSky from './components/display/TVClassroomSky';
+
 function App() {
   const [user, setUser] = useState(null);
   const [isLoginModalOpen, setIsLoginModalOpen] = useState(false);
@@ -369,7 +373,9 @@ function App() {
                   <Route path="/reports" element={<ReportsContainer appSettings={appSettings} activeClassId={activeClassId} classes={classes} students={students} attendance={attendance} scoreColumns={scoreColumns} scores={scores} attributes={attributes} literacy={literacy} competencies={competencies} indicators={indicators} readOnly={readOnly} />} />
                   <Route path="/reports/:tab" element={<ReportsContainer appSettings={appSettings} activeClassId={activeClassId} classes={classes} students={students} attendance={attendance} scoreColumns={scoreColumns} scores={scores} attributes={attributes} literacy={literacy} competencies={competencies} indicators={indicators} readOnly={readOnly} />} />
                   <Route path="/assessments" element={<AssessmentsContainer students={students} activeClassId={activeClassId} classes={classes} attributes={attributes} setAttributes={setAttributes} literacy={literacy} setLiteracy={setLiteracy} competencies={competencies} setCompetencies={setCompetencies} readOnly={readOnly} />} />
-                  <Route path="/rewards" element={<Rewards students={students} activeClassId={activeClassId} classes={classes} studentPoints={studentPoints} setStudentPoints={setStudentPoints} rewards={rewards} setRewards={setRewards} readOnly={readOnly} />} />
+                  <Route path="/teacher/constellations" element={<ConstellationDashboard activeClassId={activeClassId} classes={classes} students={students} />} />
+                  <Route path="/teacher/rewards" element={<RewardManager activeClassId={activeClassId} classes={classes} students={students} />} />
+                  <Route path="/display/classroom/:classId" element={<TVClassroomSky />} />
                   <Route path="/media-library" element={<MediaLibrary appSettings={appSettings} activeClassId={activeClassId} classes={classes} mediaLibrary={mediaLibrary} setMediaLibrary={setMediaLibrary} readOnly={readOnly} />} />
                   <Route path="/gallery" element={<StudentWorks works={studentWorks} setWorks={setStudentWorks} classes={classes} readOnly={readOnly} />} />
                   <Route path="/certificates" element={<Certificates certificates={certificates} setCertificates={setCertificates} classes={classes} appSettings={appSettings} readOnly={readOnly} />} />
