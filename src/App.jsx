@@ -223,8 +223,8 @@ function App() {
             <NavLink to="/assessments" aria-label="ประเมินผู้เรียน" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Star size={17} /> <span>ประเมินผู้เรียน</span>
             </NavLink>
-            <NavLink to="/rewards" aria-label="ระบบรางวัล" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
-              <Paintbrush size={17} /> <span>ระบบรางวัล</span>
+            <NavLink to="/teacher/constellations" aria-label="กลุ่มดาวการเติบโต" className={({ isActive }) => `nav-item ${isActive || window.location.pathname.includes('/teacher') ? 'active' : ''}`}>
+              <Award size={17} /> <span>กลุ่มดาวแห่งการเติบโต</span>
             </NavLink>
             <NavLink to="/media-library" aria-label="คลังสื่อ" className={({ isActive }) => `nav-item ${isActive ? 'active' : ''}`}>
               <Library size={17} /> <span>คลังสื่อ</span>
